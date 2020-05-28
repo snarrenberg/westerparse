@@ -1,3 +1,9 @@
+#-------------------------------------------------------------------------------
+# Name:         rule.py
+# Purpose:      Object for storing the syntactic role of a note
+#
+# Author:       Robert Snarrenberg
+#-------------------------------------------------------------------------------
 class Rule():
     """ A rule that can be assigned as an attribute to a Note in a Lyne """
     validRuleScopes = ('global', 'local')
