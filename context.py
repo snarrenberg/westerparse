@@ -1,3 +1,9 @@
+#-------------------------------------------------------------------------------
+# Name:         context.py
+# Purpose:      Framework for analyzing species counterpoint
+#
+# Author:      Robert Snarrenberg
+#-------------------------------------------------------------------------------
 '''Contextualizer converts a musicxml source file, 
 segments into tonal contexts, and runs the KeyFinder, Parser, and VLChecker machines'''
 
@@ -24,7 +30,8 @@ def evaluateCounterpoint(source, report=True, **kwargs):
         print('The composition is only a single line. There is no voice-leading to check.')
         return False
     else:
-        vlChecker.checkCounterpoint(cxt, report)
+        vlReport = vlChecker.checkCounterpoint(cxt, report=True)
+        if vlReport = []:       
 
 def makeGlobalContext(source, **kwargs):
     # import a musicxml file and convert to music21 Stream
@@ -159,6 +166,9 @@ class GlobalContext(Context):
         # setup key, using information provided by user or inferred from parts
         knote = kwargs.get('keynote')
         kmode = kwargs.get('mode')
+        kvalidate = kwargs.get('validateKey')
+        if not kvalidate: 
+            kvalidate == True
         if knote and kmode: # need to add a data validity check
             if knote != None and kmode != None:
                 self.key = key.Key(tonic=knote, mode=kmode)
@@ -167,7 +177,7 @@ class GlobalContext(Context):
             self.key = keyFinder.findKey(self.score)
             self.keyFromUser = False
         # report errors is user-defined key is problematic
-        if knote and kmode:
+        if knote and kmode and kvalidate==True:
             e = keyFinder.reportKeyFinderLineErrorsGivenKey(self.parts[0], knote, kmode)
             if e != []:
                 print('Key finder errors. Given key =', knote, kmode)
@@ -175,6 +185,8 @@ class GlobalContext(Context):
                     print('\t', error)
 # TODO replace exit()
                 exit()
+        else:
+            pass
 
         if self.score.errors:
             print('Global Context Error Report')
@@ -365,15 +377,18 @@ def parseContext(context, show=None, partSelection=None, partLineType=None):
         else:
             print('Key inferred by program:', context.key.nameString)      
 
+# REMOVED 2020-05-27 if at least one part fails to be generable: 9 lines
+# I think this is taken care of by trap below, when generableContext == False
+# these lines didn't always work if partSelection != None
     # if at least one part fails to be generable, report and exit
-    partErrorsTrue = False
-    for part in context.parts:
-        if part.errors:
-            partErrorsTrue = True
-            break
-    if partErrorsTrue == True:
-        reportErrors(context)
-        exit()
+#    partErrorsTrue = False
+#    for part in context.parts:
+#        if part.errors:
+#            partErrorsTrue = True
+#            break
+#    if partErrorsTrue == True:
+#        reportErrors(context)
+#        exit()
 
     # else continue and report/show results
     generableParts = 0
@@ -434,11 +449,11 @@ def parseContext(context, show=None, partSelection=None, partLineType=None):
             if part.isPrimary == False and part.isBass == False and part.isGeneric == True:
                 print('The line is generable only as a generic line.')
         elif show != None:# and partLineType == None:
-            showInterpretations(context, show)
+            showInterpretations(context, show, partSelection, partLineType)
         else:
             print('The line is not generable as a', partLineType, 'line.')
     elif generableContext == False:
-        reportErrors(context)        
+        reportErrors(context, partSelection)        
 
 def parsePart(part, context):
     # run the Parser
@@ -501,10 +516,14 @@ def selectedPreferredParseSets(context, show):
     elif len(context.parts) == 1:
         showInterpretations(context, show)
         
-def reportErrors(context):
+def reportErrors(context, partSelection=None):
     print('Line Parsing Report')
-    if len(context.parts) == 1:
-        part = context.parts[0]
+    if len(context.parts) == 1 or partSelection !=None:
+        if len(context.parts) == 1:
+            partNum = 0
+        else:
+            partNum = partSelection
+        part = context.parts[partNum]
         # TODO also report if the line is generable in at least some fashion
         if part.isPrimary == True: 
             print('\tThe line is generable as a primary upper line.')
@@ -518,7 +537,7 @@ def reportErrors(context):
                     'part as a', type, 'line:')
                 for error in context.errorsDict[part.name]:
                     print('\t\t', error)
-    if len(context.parts) > 1:
+    if len(context.parts) > 1 and partSelection==None:
         for part in context.parts[:-1]:
             if part.isPrimary == True: 
                 print('\tPart number', part.partNum+1, 'is generable as a primary upper line.')
@@ -538,7 +557,8 @@ def reportErrors(context):
                 for error in context.errorsDict[part.name]:
                     print('\t\t', error)
         
-def showInterpretations(context, show):
+def showInterpretations(context, show, partSelection=None, partLineType=None):
+
 
     def buildInterpretation(parse):
         # clean out slurs that might have been left behind by a previous parse
@@ -555,35 +575,55 @@ def showInterpretations(context, show):
         assignParentheses(context.parts[parse.partNum], parse.parentheses)    
 
 
-    def selectOutput(show):
+    def selectOutput(content, show):
         if show == 'show':
-            context.score.show()
+            content.show()
         elif show == 'writeToServer':
             timestamp = str(time.time())
             filename = '/home/spenteco/1/snarrenberg/parses_from_context/' + 'parser_output_' + timestamp + '.musicxml'
-            context.score.write('musicxml', filename)
+            content.write('musicxml', filename)
             print(filename)
         elif show == 'writeToLocal':
             timestamp = str(time.time())
             filename = 'parses_from_context/' + 'parser_output_' + timestamp + '.musicxml'
-            context.score.write('musicxml', filename)
+            content.write('musicxml', filename)
             print(filename)
+        elif show == 'showWestergaardParse':
+            pass
+            # create a function for displaying layered representation of a parsed line, for one line only
+            
+    if partSelection != None:
+        part = context.parts[partSelection]
+        if partLineType == 'primary' and context.parts[partSelection].isPrimary:
+            for P in part.Pinterps:
+                buildInterpretation(P)
+                selectOutput(part, show)
+        elif partLineType == 'bass' and context.parts[partSelection].isBass:
+            for B in part.Binterps:
+                buildInterpretation(B)
+                selectOutput(part, show)
+        elif partLineType == 'generic' and context.parts[partSelection].isGeneric:
+            for G in part.Ginterps:
+                buildInterpretation(G)
+                selectOutput(part, show)
+         
 
-    if len(context.parts) == 1:
+    elif len(context.parts) == 1 and partSelection==None:
         part = context.parts[0]
         if part.Pinterps: 
             for P in part.Pinterps:
                 buildInterpretation(P)
-                selectOutput(show)
+                selectOutput(part, show)
         if part.Binterps:
             for B in part.Binterps: 
                 buildInterpretation(B)
-                selectOutput(show)
+                selectOutput(part, show)
         if part.Ginterps:
             for G in part.Ginterps: 
                 buildInterpretation(G)
-                selectOutput(show)
-    elif len(context.parts) == 2:
+                selectOutput(part, show)
+
+    elif len(context.parts) == 2 and partSelection==None:
         # TODO transfer this testing to the verify function
         upperPart = context.parts[0]
         lowerPart = context.parts[1]
@@ -595,9 +635,10 @@ def showInterpretations(context, show):
                 buildInterpretation(P)
                 for B in lowerPart.Binterps: 
                     buildInterpretation(B)
-                    selectOutput(show)
+                    selectOutput(context.score, show)
                     time.sleep(2)        
-    elif len(context.parts) == 3:
+
+    elif len(context.parts) == 3 and partSelection==None:
         # TODO transfer this testing to the verify function
         upperPart = context.parts[0]
         innerPart = context.parts[1]
@@ -624,7 +665,7 @@ def showInterpretations(context, show):
                     buildInterpretation(I)
                     for B in lowerPart.Binterps: 
                         buildInterpretation(B)
-                        selectOutput(show)
+                        selectOutput(context.score, show)
                         time.sleep(2)
     elif len(context.parts) > 3:
             print('Not yet able to display counterpoint in four or more parts.')
@@ -673,6 +714,7 @@ def pairwise(span):
 # OPERATIONAL SCRIPTS
 def gatherArcs(source, arcs):
     # source is a Part in the input Score
+    # sort through the arcs and create a spanner(tie/slur) for each
     tempArcs = []
     # skip duplicate arcs
     for elem in arcs:
