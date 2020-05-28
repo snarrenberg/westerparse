@@ -1,3 +1,11 @@
+#-------------------------------------------------------------------------------
+# Name:         csd.py
+# Purpose:      Object for storing scale degree properties of a note
+#
+# Author:       Robert Snarrenberg
+#-------------------------------------------------------------------------------
+'''This should be converted to a method, using the key of a Note's Context.'''
+
 from music21 import *
 
 class ConcreteScaleDegree:
@@ -58,10 +66,6 @@ class ConcreteScaleDegree:
     def __repr__(self):
         csd = self.value
         return "<" + self.name + ": scale degree " + self.dir + self.degree + " direction=" + self.direction + ">"
-
-#     def is_descending(self, t):
-#         if self.notes[t].csd.direction != "ascending":
-#             return True
 
 if __name__ == "__main__":
     # self_test code
