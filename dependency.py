@@ -1,17 +1,23 @@
+#-------------------------------------------------------------------------------
+# Name:         dependency.py
+# Purpose:      Object for storing the linear dependencies of a note
+#
+# Author:       Robert Snarrenberg
+#-------------------------------------------------------------------------------
 from music21 import *
 
 class DependencyException(exceptions21.Music21Exception):
     pass
 
 class Dependency():
-    '''An object for storing the dependencies of a Note in a Lyne'''
+    '''An object for storing the dependencies of a Note in a Line'''
     validDirections = ('ascending', 'descending', None)
 
     def __init__(self, *args, **keywords):
-        '''Object for storing the dependencies of a Note in a Lyne'''        
+        '''Object for storing the dependencies of a Note in a Line'''        
         # dependencies default to None
-        self._lefthead = None  # can be a single lyne element -- note.index
-        self._righthead = None  # can be a single lyne element -- note.index
+        self._lefthead = None  # can be a single line element -- note.index
+        self._righthead = None  # can be a single line element -- note.index
         # self.heads = [lefthead, righthead] either may be None, 
         # L = self.heads[0], R= self.heads[1]
         self._left = None  # a single Note [index?]
