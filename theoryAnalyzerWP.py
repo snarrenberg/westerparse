@@ -6,7 +6,7 @@
 # Authors:      Beth Hadley
 #               Lars Johnson
 #               Michael Scott Cuthbert
-#                EDITED BY ROBERT SNARRENBERG (2019)
+#                EDITED BY ROBERT SNARRENBERG and TONY LI (2019)
 #
 # Copyright:    Copyright © 2009-2015 Michael Scott Cuthbert and the music21 Project
 # License:      LGPL or BSD, see license.txt
@@ -172,7 +172,7 @@ from music21 import roman
 from music21 import stream
 from music21 import voiceLeading
 
-import theoryResultRS
+import theoryResultWP
 #from . import theoryResult
 
 from music21 import environment
@@ -937,7 +937,7 @@ class Analyzer:
             for vlq in vlqList[startIndex:endIndex]:
 
                 if testFunction(vlq) is not False: # True or value
-                    tr = theoryResultRS.VLQTheoryResult(vlq)
+                    tr = theoryResultWP.VLQTheoryResult(vlq)
                     tr.value = testFunction(vlq)
                     if textFunction is None:
                         tr.text = tr.value
@@ -966,7 +966,7 @@ class Analyzer:
             for hIntv in hIntvList:
                 if testFunction(hIntv) is not False: # True or value
 
-                    tr = theoryResultRS.IntervalTheoryResult(hIntv)
+                    tr = theoryResultWP.IntervalTheoryResult(hIntv)
                     tr.value = valueFunction(hIntv)
                     tr.text = textFunction(hIntv, partNum1, partNum2)
 
@@ -986,7 +986,7 @@ class Analyzer:
 
             for mIntv in mIntvList:
                 if testFunction(mIntv) is not False: # True or value
-                    tr = theoryResultRS.IntervalTheoryResult(mIntv)
+                    tr = theoryResultWP.IntervalTheoryResult(mIntv)
                     tr.value = testFunction(mIntv)
                     tr.text = textFunction(mIntv, partNum)
                     if color is not None:
@@ -1006,7 +1006,7 @@ class Analyzer:
 
             for n in nList:
                 if testFunction(score, n) is not False: # True or value
-                    tr = theoryResultRS.NoteTheoryResult(n)
+                    tr = theoryResultWP.NoteTheoryResult(n)
                     tr.value = testFunction(score, n)
 
                     tr.text = textFunction(n, partNum, tr.value)
@@ -1027,7 +1027,7 @@ class Analyzer:
             if responseOffsetMap and vs.offset(leftAlign=True) not in responseOffsetMap:
                 continue
             if testFunction(vs, score) is not False:
-                tr = theoryResultRS.VerticalityTheoryResult(vs)
+                tr = theoryResultWP.VerticalityTheoryResult(vs)
                 tr.value = testFunction(vs, score)
 
                 if dictKey == 'romanNumerals' or dictKey == 'romanNumeralsVandI':
@@ -1056,7 +1056,7 @@ class Analyzer:
         else:
             for vsnt in self.getVerticalityNTuplets(score, nTupletNum):
                 if testFunction(vsnt, partNumToIdentify) is not False:
-                    tr = theoryResultRS.VerticalityNTupletTheoryResult(vsnt, partNumToIdentify)
+                    tr = theoryResultWP.VerticalityNTupletTheoryResult(vsnt, partNumToIdentify)
                     if editorialDictKey != None:
                         tr.markNoteEditorial(editorialDictKey, editorialValue, editorialMarkDict)
                     if textFunction is not None:
@@ -1078,7 +1078,7 @@ class Analyzer:
 
             for tnls in tnlsList:
                 if testFunction(tnls) is not False:
-                    tr = theoryResultRS.ThreeNoteLinearSegmentTheoryResult(tnls)
+                    tr = theoryResultWP.ThreeNoteLinearSegmentTheoryResult(tnls)
                     tr.value = testFunction(tnls)
                     tr.text = textFunction(tnls, partNum)
                     if color is not None:
@@ -1098,7 +1098,7 @@ class Analyzer:
 
             for nnls in nnlsList:
                 if testFunction(nnls) is not False:
-                    tr = theoryResultRS.NNoteLinearSegmentTheoryResult(nnls)
+                    tr = theoryResultWP.NNoteLinearSegmentTheoryResult(nnls)
                     tr.value = testFunction(nnls)
                     tr.text = textFunction(nnls, partNum)
                     if color is not None:
@@ -2005,7 +2005,7 @@ class Analyzer:
                         continue
                     else:
                         intv = resultTheoryObject.intv
-                        tr = theoryResultRS.IntervalTheoryResult(intv)
+                        tr = theoryResultWP.IntervalTheoryResult(intv)
                         #tr.value = valueFunction(hIntv)
                         tr.text = ("Improper dissonant harmonic interval in measure " +
                                    str(intv.noteStart.measureNumber) +": " +
@@ -2419,7 +2419,7 @@ class Analyzer:
         between partNum1 and
         partNum2, or all possible voiceLeadingQuartets if not specified
 
-        :class:`~music21.theoryResultRS.VLQTheoryResult` by calling
+        :class:`~music21.theoryResultWP.VLQTheoryResult` by calling
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.motionType`
         Possible values for VLQTheoryResult are 'Oblique', 'Parallel', 'Similar', 'Contrary',
         'Anti-Parallel', 'No Motion'
