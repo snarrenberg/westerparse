@@ -1,3 +1,12 @@
+#-------------------------------------------------------------------------------
+# Name:         consecutions.py
+# Purpose:      Object for storing a note's consecutive relationships in its line
+#
+# Author:       Robert Snarrenberg
+#
+#-------------------------------------------------------------------------------
+'''This should be converted to a method.'''
+
 from music21 import *
 
 class Consecutions():
