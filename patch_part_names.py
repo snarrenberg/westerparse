@@ -1,3 +1,8 @@
+#-------------------------------------------------------------------------------
+# Name:         patch_part_names.py
+# Purpose:      
+# Author:       Stephen Pentecost
+#-------------------------------------------------------------------------------
 import sys
 from lxml import etree
 
@@ -19,27 +24,7 @@ if __name__ == "__main__":
         d = p.xpath('ancestor::note/duration|ancestor::note/tie[@type="stop"]')[-1]
         d.addnext(etree.XML('<tie type="start"/>'))
 
-    nodes_to_delete = []
-
-    for p in tree.xpath('//part'):
-
-        if evaluation_type == 'upper line':
-            if p.get('id') == 'P1':
-                nodes_to_delete.append(p)
-
-        if evaluation_type == 'bass line':
-            if p.get('id') == 'P0':
-                nodes_to_delete.append(p)
-
     for p in tree.xpath('//score-part'):
-
-        if evaluation_type == 'upper line':
-            if p.get('id') == 'P1':
-                nodes_to_delete.append(p)
-
-        if evaluation_type == 'bass line':
-            if p.get('id') == 'P0':
-                nodes_to_delete.append(p)
 
         if p.get('id') == 'P0':
 
@@ -63,9 +48,6 @@ if __name__ == "__main__":
 
             p.append(b)
 
-    #for p in nodes_to_delete:
-    #    p.getparent().remove(p)
-
     for p in tree.xpath('//note/type'):
         if p.text == 'long':
             p.text = 'whole'
@@ -73,6 +55,23 @@ if __name__ == "__main__":
             p.text = 'half'
         elif p.text == 'whole':
             p.text = 'quarter'
+
+    for p in tree.xpath('//divisions'):
+        p.text = '1'
+
+    for p in tree.xpath('//note'):
+        
+        note_type = p.xpath('descendant::type')[0]
+        duration = p.xpath('descendant::duration')[0]
+        
+        if note_type.text == 'whole':
+            duration.text = '4'
+        elif note_type.text == 'half':
+            duration.text = '2'
+        elif note_type.text == 'quarter':
+            duration.text = '1'
+            
+        print(duration.text)
 
     tree.write(output_file_name, pretty_print=True)
         
