@@ -1,5 +1,12 @@
+#-------------------------------------------------------------------------------
+# Name:         interface_to_context.py
+# Purpose:      
+# Author:       Stephen Pentecost
+#-------------------------------------------------------------------------------
 import sys
 import context
+from multiprocessing import Process
+    
 
 if __name__ == "__main__":
 
@@ -36,35 +43,43 @@ if __name__ == "__main__":
 
     if display_type == 'writeToServer':
         
-        context.evaluateLines(source, 
-                                show='writeToServer', 
-                                keynote=keynote,
-                                mode=mode)
+        context_process = Process(target=context.evaluateLines, 
+                                    args=(source,), 
+                                    kwargs={'show': 'writeToServer',
+                                            'keynote': keynote,
+                                            'mode': mode})
                                 
     elif evaluation_type == 'upper line':
         
-        context.evaluateLines(source, 
-                                show=None, 
-                                partSelection= 0, 
-                                partLineType='primary',
-                                keynote=keynote,
-                                mode=mode)
+        context_process = Process(target=context.evaluateLines, 
+                                    args=(source,), 
+                                    kwargs={'show': None, 
+                                            'partSelection': 0, 
+                                            'partLineType': 'primary',
+                                            'keynote': keynote,
+                                            'mode': mode})
                             
     elif evaluation_type == 'bass line':
-
-        context.evaluateLines(source, 
-                                show=None, 
-                                partSelection= 1, 
-                                partLineType='bass',
-                                keynote=keynote,
-                                mode=mode)
+        
+        context_process = Process(target=context.evaluateLines, 
+                                    args=(source,), 
+                                    kwargs={'show': None, 
+                                            'partSelection': 1, 
+                                            'partLineType': 'bass',
+                                            'keynote': keynote,
+                                            'mode': mode})
                             
     elif evaluation_type == 'counterpoint':
-
-        context.evaluateCounterpoint(source, 
-                                report=True, 
-                                keynote=keynote,
-                                mode=mode)
+        
+        context_process = Process(target=context.evaluateCounterpoint, 
+                                    args=(source,), 
+                                    kwargs={'report': True, 
+                                            'keynote': keynote,
+                                            'mode': mode})
 
     else:
         print('interface_to_context.py ERROR -- Invalid evaluation_type')
+                                            
+    context_process.start()
+    context_process.join(timeout=60)
+    context_process.terminate()
