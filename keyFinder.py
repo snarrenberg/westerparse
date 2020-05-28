@@ -1,9 +1,15 @@
-'''key converts a musicxml source file
+#-------------------------------------------------------------------------------
+# Name:         keyFinder.py
+# Purpose:      Framework for determining the key of simple tonal lines
+#
+# Author:       Robert Snarrenberg
+#
+#-------------------------------------------------------------------------------
+'''KeyFinder converts a musicxml source file
 and attempts to analyze the key of a given line'''
 
 from music21 import *
 import context
-
 
 minorMode = {'triad': [0,3,7], 'scale': [0,2,3,5,7,8,9,10,11]}
 majorMode = {'triad': [0,4,7], 'scale': [0,2,4,5,7,9,11]}
