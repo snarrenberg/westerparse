@@ -1,5 +1,11 @@
+#-------------------------------------------------------------------------------
+# Name:         interface_to_linear_parser.py
+# Purpose:      
+# Author:       Stephen Pentecost
+#-------------------------------------------------------------------------------
 import sys
 import context
+from multiprocessing import Process
 
 if __name__ == "__main__":
 
@@ -36,17 +42,25 @@ if __name__ == "__main__":
             '\n')
 
     if display_type == None:
-        context.evaluateLines(source, 
-                                show=None, 
-                                partSelection=0, 
-                                partLineType=evaluation_type,
-                                keynote=keynote,
-                                mode=mode)
+        
+        context_process = Process(target=context.evaluateLines, 
+                                    args=(source,), 
+                                    kwargs={'show': None,
+                                            'partSelection': 0,
+                                            'partLineType': evaluation_type,
+                                            'keynote': keynote,
+                                            'mode': mode})
 
     if display_type == 'writeToServer':
-        context.evaluateLines(source, 
-                                show='writeToServer', 
-                                partSelection=0, 
-                                partLineType=evaluation_type,
-                                keynote=keynote,
-                                mode=mode)
+        
+        context_process = Process(target=context.evaluateLines, 
+                                    args=(source,), 
+                                    kwargs={'show': 'writeToServer',
+                                            'partSelection': 0,
+                                            'partLineType': evaluation_type,
+                                            'keynote': keynote,
+                                            'mode': mode})
+                                            
+    context_process.start()
+    context_process.join(timeout=60)
+    context_process.terminate()
