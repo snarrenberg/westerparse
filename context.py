@@ -30,8 +30,7 @@ def evaluateCounterpoint(source, report=True, **kwargs):
         print('The composition is only a single line. There is no voice-leading to check.')
         return False
     else:
-        vlReport = vlChecker.checkCounterpoint(cxt, report=True)
-        if vlReport = []:       
+        vlChecker.checkCounterpoint(cxt, report=True)
 
 def makeGlobalContext(source, **kwargs):
     # import a musicxml file and convert to music21 Stream
