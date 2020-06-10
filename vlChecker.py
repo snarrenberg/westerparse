@@ -1313,3 +1313,6 @@ if __name__ == '__main__':
     # self_test code
     pass
 
+    source='TestScoresXML/FirstSpecies10.musicxml'
+    cxt = context.makeGlobalContext(source)
+    checkCounterpoint(cxt, report=True)
