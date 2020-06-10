@@ -394,12 +394,12 @@ def parseContext(context, show=None, partSelection=None, partLineType=None):
     generableContext = False
     if partSelection == None:
         for part in context.parts:
-            if part.interpretations:
+            if part.isPrimary or part.isBass or part.isGeneric:
                 generableParts += 1
         if generableParts == len(context.parts):
             generableContext = True
     elif partSelection != None:
-        if context.parts[partSelection].interpretations:
+        if context.parts[partSelection].isPrimary or context.parts[partSelection].isBass or context.parts[partSelection].isGeneric:
             generableContext = True
 
     # report to user if all parts are generable 
@@ -447,8 +447,11 @@ def parseContext(context, show=None, partSelection=None, partLineType=None):
                 print('The line is generable as a primary line but not as a bass line.')
             if part.isPrimary == False and part.isBass == False and part.isGeneric == True:
                 print('The line is generable only as a generic line.')
-        elif show != None:# and partLineType == None:
+        elif show != None and partLineType != None:
             showInterpretations(context, show, partSelection, partLineType)
+        elif show != None and partLineType == None:
+            for type in context.parts[partSelection].lineTypes:
+                showInterpretations(context, show, partSelection, type)
         else:
             print('The line is not generable as a', partLineType, 'line.')
     elif generableContext == False:
