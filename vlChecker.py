@@ -3,20 +3,28 @@
 # Purpose:      Framework for analyzing voice leading in species counterpoint
 #
 # Author:       Robert Snarrenberg
+# Copyright:    (c) 2020 by Robert Snarrenberg
+# License:      LGPL or BSD, see license.txt
 #-------------------------------------------------------------------------------
-'''Takes a score (source) with two or more parts (lines)
-and examines the local voice leading 
-for conformity with Westergaard's rules of species counterpoint.'''
+'''
+Voice Leading Checker
+=====================
+
+The Voice Leading Checker module takes a score with two or more parts (lines)
+and examines the local voice leading for conformity with Westergaard's rules of species counterpoint.'''
 
 # NB: vlq parts and score Parts are numbered top to bottom
 # NB: vPair parts are numbered bottom to top
 
 from music21 import *
+# TODO may not need to import csd and context, since these are already active?
 import csd
 import context
 import theoryAnalyzerWP
 import theoryResultWP
 import itertools
+from utilities import *
+
 
 # variables set by instructor
 allowSecondSpeciesBreak = True
@@ -24,8 +32,11 @@ allowSecondSpeciesBreak = True
 # create lists to collect errors, for reporting to user
 vlErrors = []
 
-# MAIN VOICE LEADING SCRIPT
-def checkCounterpoint(context, report):
+##################################################################
+# MAIN SCRIPT
+##################################################################
+
+def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
     # extract relevant information from the score, if contrapuntal
     # use revised versions of music21 theory analyzer module
     analytics = theoryAnalyzerWP.Analyzer()
@@ -42,25 +53,18 @@ def checkCounterpoint(context, report):
     # report voice-leading errors, if asked
     if report == True:
         if vlErrors == []:
-            print('No voice-leading errors found.\n')
+            result = 'No voice-leading errors found.\n'
         else:
-            print('Voice Leading Report \n\n\tThe following voice-leading errors were found:')
-            for error in vlErrors: print('\t\t' + error)
-            print('\n\n')
-    else: pass
+            result = 'Voice Leading Report \n\n\tThe following voice-leading errors were found:'
+            for error in vlErrors: 
+                result = result + '\n\t\t' + error
+        print(result)
+    else: 
+        pass
 
-# utility function for finding pairs of parts    
-def getAllPartNumPairs(score):
-    '''from theory analyzer'''
-    partNumPairs = []
-    numParts = len(score.parts)
-    for partNum1 in range(numParts - 1):
-        for partNum2 in range(partNum1 + 1, numParts):
-            partNumPairs.append((partNum1, partNum2))
-    return partNumPairs    
-    
-
+##################################################################
 # LIBRARY OF METHODS FOR EVALUTING VOICE LEADING ATOMS
+##################################################################
 
 # Methods for note pairs
 
@@ -143,7 +147,6 @@ def isOctave(n1, n2):
         return True
     else: return False
         
-
 # Methods for voice-leading quartets
 
 def isSimilarUnison(vlq):
@@ -254,10 +257,9 @@ def isSyncopated(score, note):
     else:
         return False
     
-
-
-
-# METHODS FOR EVALUATING VOICE LEADING, BY SPECIES
+##################################################################
+# SCRIPTS FOR EVALUATING VOICE LEADING, BY SPECIES
+##################################################################
 
 def checkPartPairs(score, analyzer):
     partNumPairs = getAllPartNumPairs(score)
@@ -394,9 +396,7 @@ def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
             vlErrors.append(error)
     else:
         pass
-
-
-    
+   
 def checkControlOfDissonance(score, analyzer):
     partNumPairs = getAllPartNumPairs(score)
     verts = analyzer.getVerticalities(score)
@@ -1257,9 +1257,20 @@ def checkFourthLeapsInBass(score, analyzer):
             vlErrors.append(error)
 #        return impliedSixFour
 
+##################################################################
+# UTILITY SCRIPTS
+##################################################################
 
-
-
+# utility function for finding pairs of parts    
+def getAllPartNumPairs(score):
+    # from theory analyzer
+    partNumPairs = []
+    numParts = len(score.parts)
+    for partNum1 in range(numParts - 1):
+        for partNum2 in range(partNum1 + 1, numParts):
+            partNumPairs.append((partNum1, partNum2))
+    return partNumPairs    
+    
 def makeVLQFromVPair(vPairList):
 #    a, b = itertools.tee(vPairList)
 #    next(b, None)
@@ -1291,23 +1302,7 @@ def makeVLQsFromVertPair(vertPair, partNumPairs):
             vlqList.append((numPair, voiceLeading.VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2)))
     return vlqList        
 
-def pairwise(span):
-    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
-    a, b = itertools.tee(span)
-    next(b, None)
-    zipped = zip(a, b)
-    return list(zipped)
-
-def pairwiseFromLists(list1, list2):
-    'return permutations from two lists'
-    comb = [(i,j) for i in list1 for j in list2]
-    result = []
-    for c in comb:
-        if c[0] < c[1]:
-            result.append(c)
-        else:
-            result.append((c[1],c[0]))
-    return result
+##################################################################
 
 if __name__ == '__main__':
     # self_test code

@@ -2,57 +2,79 @@
 # Name:         context.py
 # Purpose:      Framework for analyzing species counterpoint
 #
-# Author:      Robert Snarrenberg
+# Author:       Robert Snarrenberg
+# Copyright:    (c) 2020 by Robert Snarrenberg
+# License:      LGPL or BSD, see license.txt
 #-------------------------------------------------------------------------------
-'''Contextualizer converts a musicxml source file, 
-segments into tonal contexts, and runs the KeyFinder, Parser, and VLChecker machines'''
+'''
+Context
+=======
 
-from music21 import *
+The Context module includes classes to represent both global and local contexts. 
+
+When a global context is created, a key for the context is automatically validated 
+or inferred; parts are assigned names, their rhythmic species is identified, 
+a concrete tonic scale degree is selected, and list is created to collect errors; 
+notes are assigned position indexes, scale degrees, placeholders for rules 
+and dependency relationships, and consecutions.
+
+Measure-long local harmonic contexts are also created, 
+for use in parsing events in third species.'''
+
+#from music21 import *
 import itertools
+#import time
+
+import keyFinder
 from csd import *
 from rule import *
 from dependency import *
 from consecutions import *
-import parser
-import time
-import vlChecker
-import keyFinder
+from utilities import pairwise
 
- 
-def evaluateLines(source, show, partSelection=None, partLineType=None, **kwargs):
-    
-    cxt = makeGlobalContext(source, **kwargs)
-    parseContext(cxt, show, partSelection, partLineType)
+##################################################################
+# EXCEPTION HANDLERS
+##################################################################
+
+logfile = 'logfile.txt'
+
+def clearLogfile(logfile):
+    file = open(logfile, 'w+')
+#    file.truncate(0)
+    file.close()
+
+def printLogfile(logfile):
+    with open(logfile) as file:
+        print(file.read())
+
+class ContextError(Exception):
+    def __init__(self, desc):
+        self.desc = desc
+        self.logfile = logfile
+    def logerror(self):
+        log = open(self.logfile, 'a')
+        print(self.desc, file=log)
+
+class EvaluationException(Exception):
+    def __init__(self):
+        self.logfile = logfile
+    def show(self):
+        printLogfile(self.logfile)
         
-def evaluateCounterpoint(source, report=True, **kwargs):
-    cxt = makeGlobalContext(source, **kwargs)
-    if len(cxt.parts) == 1:
-        print('The composition is only a single line. There is no voice-leading to check.')
-        return False
-    else:
-        vlChecker.checkCounterpoint(cxt, report=True)
 
-def makeGlobalContext(source, **kwargs):
-    # import a musicxml file and convert to music21 Stream
-    cxt = converter.parse(source)
-    gxt = GlobalContext(cxt, **kwargs)
-    return gxt
-
-def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
-    # create a context given a start and stop offset in an enclosing Context
-    locCxt = cxt.getElementsByOffset(cxtOn, cxtOff, includeEndBoundary=True, 
-        mustFinishInSpan=False, mustBeginInSpan=True, includeElementsThatEndAtStart=False, 
-        classList=None)
-    locCxt.harmony = cxtHarmony
-    return locCxt
-
+##################################################################
+# MAIN SCRIPTS AND CLASSES
+##################################################################
 
 # TODO: figure out how to accommodate tonal ambiguity: make a global context for each option?
 
+##################################################################
+# MAIN CLASSES
+##################################################################
+
 class Context():
     '''An object for representing a span of a composition 
-    and for storing objects that represent local spans, thus
-    permitting recursive interpretive assessment'''
+    and for storing objects that represent smaller spans.'''
 
     def __init__(self, music21Stream):
         self.scale
@@ -82,29 +104,40 @@ class LocalContext(Context):
         return str('Local context starting at ' + str(self.offset))        
 
 class GlobalContext(Context):
-    '''An object for representing a significant span of a composition 
-    and for storing objects that represent significant spans, thus
-    permitting recursive interpretive assessment'''
+    '''An object for representing a tonally unified span of a composition 
+    and for storing objects that represent local spans within the global context.'''
 
     def __init__(self, score, **kwargs):
         self.score = score
         self.parts = self.score.parts
         self.score.measures = len(self.parts[0].getElementsByClass('Measure'))
-        self.errors = []
         self.score.errors = []
+        self.errors = []
         
-        # to parts: assign numbers, rhythmic species, error lists to part
+        # (1) verify that there are parts populated with notes
+        try:
+            validateParts(self.score)
+        except ContextError as ce:
+            ce.logerror()
+            raise EvaluationException
+            return
+        # (2) general set up for notes and parts
+        # to parts: assign numbers, rhythmic species, error list
         # to notes: assign consecutions, rules, dependencies, and indexes
         self.setupPartsGeneral()
         
-        # accept key from user if provided, else infer one from the parts
+        # (3) accept key from user if provided, else infer one from the parts
+        # exit if errors are encountered
         self.setupTonalityGeneral(**kwargs)
+
+        # (4) specific set up for notes and parts
         # to parts: assign tonic, mode, scale
         # to notes: assign csds
         self.setupPartsTonality()
 
-        # prepare local contexts for harmonic analysis
+        # (5) prepare local contexts for harmonic analysis
         self.localContexts = {}
+
 
 # TODO move harmonic species span stuff to a different place
         if kwargs.get('harmonicSpecies'):
@@ -130,9 +163,10 @@ class GlobalContext(Context):
         
         # TODO local contexts aren't yet used by the parser
 #        self.setupLocalContexts()
+
     def __repr__(self):
         return('Global context')
-
+    
     def setupPartsGeneral(self):
         # set part properties: part number, rhythmic species
         for num,part in enumerate(self.parts):
@@ -140,59 +174,40 @@ class GlobalContext(Context):
             part.partNum = num
             part.name = 'Part ' + str(num+1)
             part.errors = []
-            
             # part rhythmic species
             part.species = assignSpecies(part)
-            
             # set up note consecution relations, from consecutions.py
             getConsecutions(part)
-
             # set up note properties used in parsing
-            for indx, note in enumerate(part.recurse().notes):
+            for idx, note in enumerate(part.recurse().notes):
                 # assigns a Rule object to each Note
                 note.rule = Rule()
                 # assigns a Dependency object to each Note
                 note.dependency = Dependency()
-                # fix the order position of the note in the line
-                note.index = indx
-
-            # if creation of the context fails, report and exit
-            if self.errors:
-                print('Global Context Error Report')
-                for error in self.errors: print('\t', error)
+                # get the order position of the note in the line
+                note.index = idx
 
     def setupTonalityGeneral(self, **kwargs):
         # setup key, using information provided by user or inferred from parts
         knote = kwargs.get('keynote')
         kmode = kwargs.get('mode')
-        kvalidate = kwargs.get('validateKey')
-        if not kvalidate: 
-            kvalidate == True
-        if knote and kmode: # need to add a data validity check
-            if knote != None and kmode != None:
-                self.key = key.Key(tonic=knote, mode=kmode)
+        # (1a) if user provides key, validate and test
+        if knote and kmode:
+            self.key = keyFinder.testKey(self.score, knote, kmode)
+            if self.key == False:
+                raise EvaluationException
+                return
+            else:
                 self.keyFromUser = True
+        # (1b) else attempt to derive a key from the score
         else:
-            self.key = keyFinder.findKey(self.score)
-            self.keyFromUser = False
-        # report errors is user-defined key is problematic
-        if knote and kmode and kvalidate==True:
-            e = keyFinder.reportKeyFinderLineErrorsGivenKey(self.parts[0], knote, kmode)
-            if e != []:
-                print('Key finder errors. Given key =', knote, kmode)
-                for error in e:
-                    print('\t', error)
-# TODO replace exit()
-                exit()
-        else:
-            pass
-
-        if self.score.errors:
-            print('Global Context Error Report')
-            for error in self.score.errors: print('\t', error)
-# TODO find a solution that does not require the exit() command
-            exit()    
-        # create name string for key
+            self.key = keyFinder.inferKey(self.score)
+            if self.key == False:
+                raise EvaluationException
+                return
+            else:
+                self.keyFromUser = False
+        # (2) if successful, create a pretty name for the key
         if self.key.getTonic().accidental != None:
             keyAccidental = '-' + self.key.getTonic().accidental.name
         else: keyAccidental = ''
@@ -245,13 +260,11 @@ class GlobalContext(Context):
             for indx, note in enumerate(part.recurse().notes):
                 # create a ConcreteScaleDegree object for each note
                 note.csd = ConcreteScaleDegree(note.pitch, part.scale)
-                if note.csd.errors:
-                    self.errors.append(note.csd.errors)
-
-            # if creation of the context fails, report and exit
-            if self.errors:
-                print('Global Context Error Report')
-                for error in self.errors: print('\t', error)
+                # 2020-06-29 by this point, it's probably already been established that all of the 
+                # pitches belong to the scale, so this exception is probably not necessary
+                if note.csd == False:
+                    raise EvaluationException
+                    return
 
     # for parsing third or fifth species and for counterpoint analysis, collect dictionary of onbeat harmonies
     def getLocalOnbeatHarmonies(self):
@@ -343,335 +356,19 @@ class GlobalContext(Context):
 #                newpart.openTransitions = []
             self.localContexts[cxt.offset] = cxt
 
-def parseContext(context, show=None, partSelection=None, partLineType=None):
-    
-    # dictionary for collecting error reports
-    context.errorsDict = {}
+##################################################################
+# HELPER SCRIPTS
+##################################################################
 
-    # parse the selected part, if given and extant
-    if partSelection != None and partSelection < len(context.parts):
-        # set the part's lyneType if given by the user
-        part = context.parts[partSelection]
-        if partLineType:
-            part.lineType = partLineType
-        else: part.lineType = None
-        # parse the selected part
-        parsePart(part, context)
-        if part.errors:
-            context.errorsDict.update({part.name: part.errors})
-            
-    # otherwise generate interpretations of all the parts
-    elif partSelection == None:
-        texture = len(context.parts) # just need a line here to keep from doing an extra loop???
-        for part in context.parts:
-            part.lineType = None
-            parsePart(part, context)
-            if part.errors:
-                context.errorsDict.update({part.name: part.errors})
-
-    # report the information on the key to the user
-    if show == None:
-        if context.keyFromUser == True:
-            print('Key supplied by user:', context.key.nameString)
-        else:
-            print('Key inferred by program:', context.key.nameString)      
-
-# REMOVED 2020-05-27 if at least one part fails to be generable: 9 lines
-# I think this is taken care of by trap below, when generableContext == False
-# these lines didn't always work if partSelection != None
-    # if at least one part fails to be generable, report and exit
-#    partErrorsTrue = False
-#    for part in context.parts:
-#        if part.errors:
-#            partErrorsTrue = True
-#            break
-#    if partErrorsTrue == True:
-#        reportErrors(context)
-#        exit()
-
-    # else continue and report/show results
-    generableParts = 0
-    generableContext = False
-    if partSelection == None:
-        for part in context.parts:
-            if part.isPrimary or part.isBass or part.isGeneric:
-                generableParts += 1
-        if generableParts == len(context.parts):
-            generableContext = True
-    elif partSelection != None:
-        if context.parts[partSelection].isPrimary or context.parts[partSelection].isBass or context.parts[partSelection].isGeneric:
-            generableContext = True
-
-    # report to user if all parts are generable 
-    # TODO improve reporting on generability as a specific lineType 
-    if generableContext == True and partSelection == None:
-        if show == None: 
-            if len(context.parts) == 1:
-                # TODO report on the types of valid line 
-                if part.isPrimary == True and part.isBass == True:
-                    print('The line is generable as both a primary line and a bass line.')
-                elif part.isPrimary == False and part.isBass == True:
-                    print('The line is generable as a bass line but not as a primary line.')
-                elif part.isPrimary == True and part.isBass == False:
-                    print('The line is generable as a primary line but not as a bass line.')
-                if part.isPrimary == False and part.isBass == False and part.isGeneric == True:
-                    print('The line is generable only as a generic line.')
-            elif len(context.parts) == 2:
-                print('Both lines are generable.')
-                if context.parts[0].isPrimary == False:
-                    print('But the upper line is not a primary line.')
-                else:
-                    print('The upper line is a primary line.')
-                if context.parts[1].isBass == False:
-                    print('But the lower line is not a bass line.')
-                else:
-                    print('The lower line is a bass line.')
-#                selectedPreferredParseSets(context)
-            else:
-                print('All lines are generable.')
-        elif show != None:
-            selectedPreferredParseSets(context, show)
-#            showInterpretations(context, show)
-    elif generableContext == True and partSelection != None:
-        if show == None and partLineType in context.parts[partSelection].interpretations.keys():
-            print('The line is generable as a', partLineType, 'line.')
-#        elif show != None and partLineType in context.parts[partSelection].interpretations.keys():
-#            showInterpretations(context, show)
-        elif show == None and partLineType == None:
-            part = context.parts[partSelection]
-            if part.isPrimary == True and part.isBass == True:
-                print('The line is generable as both a primary line and a bass line.')
-            elif part.isPrimary == False and part.isBass == True:
-                print('The line is generable as a bass line but not as a primary line.')
-            elif part.isPrimary == True and part.isBass == False:
-                print('The line is generable as a primary line but not as a bass line.')
-            if part.isPrimary == False and part.isBass == False and part.isGeneric == True:
-                print('The line is generable only as a generic line.')
-        elif show != None and partLineType != None:
-            showInterpretations(context, show, partSelection, partLineType)
-        elif show != None and partLineType == None:
-            for type in context.parts[partSelection].lineTypes:
-                showInterpretations(context, show, partSelection, type)
-        else:
-            print('The line is not generable as a', partLineType, 'line.')
-    elif generableContext == False:
-        reportErrors(context, partSelection)        
-
-def parsePart(part, context):
-    # run the Parser
-    partParser = parser.Parser(part, context)
-    # sort out the interpretations of the part
-    part.isPrimary = partParser.isPrimary
-    part.isGeneric = partParser.isGeneric
-    part.isBass = partParser.isBass
-    part.Pinterps = partParser.Pinterps
-    part.Ginterps = partParser.Ginterps
-    part.Binterps = partParser.Binterps
-    part.interpretations = partParser.interpretations
-    # gather errors, if any
-    part.errors = partParser.errors
-
-def selectedPreferredParseSets(context, show):
-    '''After parsing the individual parses, select contrapuntal sets of parses 
-    based on Westergaard preference rules'''
-    
-    # TODO currently only works for two-part counterpoint
-    
-    # negotiate best match between global structures in two parts
-        
-    # TODO need to refine the preferences substantially
-    if len(context.parts) > 1:
-        # select uppermost part that isPrimary as the primaryPart
-        primaryPart = None
-        for part in context.parts[:-1]:
-            if part.isPrimary:
-                primaryPart = part
-                break
-        if primaryPart == None:
-            print('Failed to find a primary upper line.')
-            exit
-        # select lowest part as the bassPart
-        bassPart = context.parts[-1]
-        if not bassPart.isBass:
-            print('The lowest line is not a bass line.')
-            exit
-        primaryS3Finals = [interp.S3Final for interp in primaryPart.interpretations['primary']]
-        bassS3s = [interp.S3Index for interp in bassPart.interpretations['bass']]
-        preferredGlobals = []
-        structuralDominantOffsetDifferencesList = []
-        lowestDifference = 100
-        for interpPrimary in primaryPart.interpretations['primary']:
-            for interpBass in bassPart.interpretations['bass']:
-                structuralDominantOffsetDifference = (primaryPart.recurse().flat.notes[interpPrimary.S3Final].offset - bassPart.recurse().flat.notes[interpBass.S3Index].offset)
-                if abs(structuralDominantOffsetDifference) < lowestDifference:
-                    lowestDifference = structuralDominantOffsetDifference
-                structuralDominantOffsetDifferencesList.append((structuralDominantOffsetDifference,(interpPrimary, interpBass)))
-#                    if interpBass.S3Index == interpPrimary.S3Final:
-#                        preferredGlobals.append((interpPrimary, interpBass))
-        for pair in structuralDominantOffsetDifferencesList:
-            if abs(pair[0]) == abs(lowestDifference):
-                preferredGlobals.append(pair[1])
-        for pair in preferredGlobals:
-            primaryPart.Pinterps = [pair[0]]
-            bassPart.Binterps = [pair[1]]
-            showInterpretations(context, show)
-    elif len(context.parts) == 1:
-        showInterpretations(context, show)
-        
-def reportErrors(context, partSelection=None):
-    print('Line Parsing Report')
-    if len(context.parts) == 1 or partSelection !=None:
-        if len(context.parts) == 1:
-            partNum = 0
-        else:
-            partNum = partSelection
-        part = context.parts[partNum]
-        # TODO also report if the line is generable in at least some fashion
-        if part.isPrimary == True: 
-            print('\tThe line is generable as a primary upper line.')
-        elif part.isGeneric == True: 
-            print('\tThe line is generable as a generic line.')
-        elif part.isBass == True: 
-            print('\tThe line is generable as a bass line.')
-        elif part.errors:
-            for type in part.lineTypes:
-                print('\tThe following linear errors were found when attempting to interpret the ' \
-                    'part as a', type, 'line:')
-                for error in context.errorsDict[part.name]:
-                    print('\t\t', error)
-    if len(context.parts) > 1 and partSelection==None:
-        for part in context.parts[:-1]:
-            if part.isPrimary == True: 
-                print('\tPart number', part.partNum+1, 'is generable as a primary upper line.')
-            elif part.isGeneric == True: 
-                print('\tPart number', part.partNum+1, 'is generable as a generic line.')
-            elif part.errors:
-                print('\tThe following linear errors were found when attempting to interpret ' \
-                     'part number', part.partNum+1, 'as an upper line:')
-                for error in context.errorsDict[part.name]:
-                    print('\t\t', error)
-        for part in context.parts[-1:]:
-            if part.isBass == True:
-                print('\tPart number', part.partNum+1, 'is generable as a bass line.')
-            elif part.errors:
-                print('\tThe following linear errors were found when attempting to interpret ' \
-                     'part number', part.partNum+1, 'as a bass line:')
-                for error in context.errorsDict[part.name]:
-                    print('\t\t', error)
-        
-def showInterpretations(context, show, partSelection=None, partLineType=None):
-
-
-    def buildInterpretation(parse):
-        # clean out slurs that might have been left behind by a previous parse
-        slurs = context.parts[parse.partNum].recurse().getElementsByClass(spanner.Slur)
-        for slur in slurs:
-            context.parts[parse.partNum].remove(slur)
-        # TODO remove not only slurs but also parentheses and colors
-
-        # BUILD the interpretation 
-        # arcs, rules, and parens are tied to note indexes in the line 
-        # and these are then attached to notes in the source part
-        gatherArcs(context.parts[parse.partNum], parse.arcs)
-        assignRules(context.parts[parse.partNum], parse.ruleLabels)
-        assignParentheses(context.parts[parse.partNum], parse.parentheses)    
-
-
-    def selectOutput(content, show):
-        if show == 'show':
-            content.show()
-        elif show == 'writeToServer':
-            timestamp = str(time.time())
-            filename = '/home/spenteco/1/snarrenberg/parses_from_context/' + 'parser_output_' + timestamp + '.musicxml'
-            content.write('musicxml', filename)
-            print(filename)
-        elif show == 'writeToLocal':
-            timestamp = str(time.time())
-            filename = 'parses_from_context/' + 'parser_output_' + timestamp + '.musicxml'
-            content.write('musicxml', filename)
-            print(filename)
-        elif show == 'showWestergaardParse':
-            pass
-            # create a function for displaying layered representation of a parsed line, for one line only
-            
-    if partSelection != None:
-        part = context.parts[partSelection]
-        if partLineType == 'primary' and context.parts[partSelection].isPrimary:
-            for P in part.Pinterps:
-                buildInterpretation(P)
-                selectOutput(part, show)
-        elif partLineType == 'bass' and context.parts[partSelection].isBass:
-            for B in part.Binterps:
-                buildInterpretation(B)
-                selectOutput(part, show)
-        elif partLineType == 'generic' and context.parts[partSelection].isGeneric:
-            for G in part.Ginterps:
-                buildInterpretation(G)
-                selectOutput(part, show)
-         
-
-    elif len(context.parts) == 1 and partSelection==None:
-        part = context.parts[0]
-        if part.Pinterps: 
-            for P in part.Pinterps:
-                buildInterpretation(P)
-                selectOutput(part, show)
-        if part.Binterps:
-            for B in part.Binterps: 
-                buildInterpretation(B)
-                selectOutput(part, show)
-        if part.Ginterps:
-            for G in part.Ginterps: 
-                buildInterpretation(G)
-                selectOutput(part, show)
-
-    elif len(context.parts) == 2 and partSelection==None:
-        # TODO transfer this testing to the verify function
-        upperPart = context.parts[0]
-        lowerPart = context.parts[1]
-        if not upperPart.isPrimary or not lowerPart.isBass:
-            print('Either the upper line is not a primary line or the lower line is not a bass line.')
-            return
-        else:
-            for P in upperPart.Pinterps:
-                buildInterpretation(P)
-                for B in lowerPart.Binterps: 
-                    buildInterpretation(B)
-                    selectOutput(context.score, show)
-                    time.sleep(2)        
-
-    elif len(context.parts) == 3 and partSelection==None:
-        # TODO transfer this testing to the verify function
-        upperPart = context.parts[0]
-        innerPart = context.parts[1]
-        lowerPart = context.parts[2]
-
-        if upperPart.isPrimary:
-            upperPartPreferredInterps = upperPart.Pinterps
-        else: 
-            upperPartPreferredInterps = upperPart.Ginterps
-        if innerPart.isPrimary:
-            innerPartPreferredInterps = innerPart.Pinterps
-        else: 
-            innerPartPreferredInterps = innerPart.Ginterps
-
-        if not upperPart.isPrimary and not innerPart.isPrimary:
-            print('Neither of the upper lines is a primary line.')
-        if not lowerPart.isBass:
-            print('The lower line is not a bass line.')
-            return
-        else:
-            for U in upperPartPreferredInterps:
-                buildInterpretation(U)
-                for I in innerPartPreferredInterps:
-                    buildInterpretation(I)
-                    for B in lowerPart.Binterps: 
-                        buildInterpretation(B)
-                        selectOutput(context.score, show)
-                        time.sleep(2)
-    elif len(context.parts) > 3:
-            print('Not yet able to display counterpoint in four or more parts.')
-    return
+def validateParts(score):
+    if len(score.parts) < 1:
+        error = 'The source does not contain any parts.'
+        raise ContextError(error)
+    else:
+        for num,part in enumerate(score.parts):
+            if len(part.recurse().notes) < 1:
+                error = 'Part ' + str(num+1) + ' contains no notes.'
+                raise ContextError(error)
 
 def assignSpecies(part):
     # TODO examine input measure by measure and build up the Context
@@ -706,64 +403,8 @@ def assignSpecies(part):
     else:
         return None
 
-def pairwise(span):
-    "s -> (s0,s1), (s1,s2), (s2, s3), ..."
-    a, b = itertools.tee(span)
-    next(b, None)
-    zipped = zip(a, b)
-    return list(zipped)
-
-# OPERATIONAL SCRIPTS
-def gatherArcs(source, arcs):
-    # source is a Part in the input Score
-    # sort through the arcs and create a spanner(tie/slur) for each
-    tempArcs = []
-    # skip duplicate arcs
-    for elem in arcs:
-        if elem not in tempArcs:
-            tempArcs.append(elem)
-    arcs = tempArcs
-    # build arcs
-    for arc in arcs:
-        arcBuild(source, arc)
-    # TODO set up separate function for the basic arc 
-
-def arcBuild(source, arc):
-    # source is a Part in the input Score
-    if len(arc) == 2:
-        slurStyle = 'dashed'
-    else: slurStyle = 'solid'
-    thisSlur = spanner.Slur()
-    thisSlur.lineType = slurStyle
-    source.insert(0, thisSlur)
-    for ind in arc:
-        obj = source.recurse().notes[ind]
-        thisSlur.addSpannedElements(obj)
-          
-def assignRules(source, rules):
-    # source is a Part in the input Score
-    ruleLabels = rules
-    for index,elem in enumerate(source.recurse().notes):
-        for rule in ruleLabels:
-            if index == rule[0]:
-                elem.lyric = rule[1]
-                if elem.lyric !=None and elem.lyric[0] == 'S':
-                    elem.style.color = 'blue'
-                else: elem.style.color = 'black'
-            else:
-                pass
-
-def assignParentheses(source, parentheses):
-    # source is a Part in the input Score
-    parentheses = parentheses
-    for index,elem in enumerate(source.recurse().notes):
-        for parens in parentheses:
-            if index == parens[0]:
-                elem.noteheadParenthesis = parens[1]
-            else:
-                pass
-
-##########################################################################################
+##################################################################
 if __name__ == "__main__":
     pass
 
+    source = 'TestScoresXML/ChromaTest.musicxml'

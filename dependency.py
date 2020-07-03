@@ -3,18 +3,40 @@
 # Purpose:      Object for storing the linear dependencies of a note
 #
 # Author:       Robert Snarrenberg
+# Copyright:    (c) 2020 by Robert Snarrenberg
+# License:      LGPL or BSD, see license.txt
 #-------------------------------------------------------------------------------
+'''
+Dependency
+==========
+
+The Dependency class stores syntactic dependency relationships among notes in the form
+of references to a lefthand head, a righthand head, and dependents. 
+
+A passing tone in the space of a third, for example, stores a reference to 
+a lefthead and a righthead, but not to any dependents. The note that initiates the 
+passing motion, by contrast, has one dependent (the passing tone) but no left- or 
+righthead. An anticipation stores a reference to a righthead, but has no 
+lefthead and no dependents.'''
+
+
+# TODO left, right, approach, departure -- these are now handled in Consecutions, 
+# and aren't used in the program, so maybe delete them
+
 from music21 import *
 
-class DependencyException(exceptions21.Music21Exception):
+class DependencyException(Exception):
     pass
 
+##################################################################
+# MAIN CLASSES
+##################################################################
+
 class Dependency():
-    '''An object for storing the dependencies of a Note in a Line'''
+    '''An object for storing the dependencies of a note in a line'''
     validDirections = ('ascending', 'descending', None)
 
     def __init__(self, *args, **keywords):
-        '''Object for storing the dependencies of a Note in a Line'''        
         # dependencies default to None
         self._lefthead = None  # can be a single line element -- note.index
         self._righthead = None  # can be a single line element -- note.index
@@ -151,7 +173,7 @@ class Dependency():
     @approach.setter
     def approach(self, d):
         if d not in self.validDirections:
-            raise LyneException('not a valid direction: %s' % d)
+            raise DependencyException('not a valid direction: %s' % d)
         self._approach = d
 
     @property
@@ -160,7 +182,7 @@ class Dependency():
     @approach.setter
     def departure(self, d):
         if d not in self.validDirections:
-            raise LyneException('not a valid direction: %s' % d)
+            raise DependencyException('not a valid direction: %s' % d)
         self._departure = d
 
     @property

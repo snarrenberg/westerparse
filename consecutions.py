@@ -4,16 +4,25 @@
 #
 # Author:       Robert Snarrenberg
 #
+# Copyright:    (c) 2020 by Robert Snarrenberg
+# License:      LGPL or BSD, see license.txt
 #-------------------------------------------------------------------------------
-'''This should be converted to a method.'''
+'''
+Consecutions
+============
+
+The Consecutions class stores information about how a note in a line is approached and left. 
+This should be converted to a method.'''
+
+# TODO add categories for chromatic semitones and other nondiatonic steps, currently set to None
+# perhaps add modifier to step: diatonic (m2, M2), chromatic (A1, d1), nondiatonic (A2)
 
 from music21 import *
 
 class Consecutions():
-    '''An object holding the generic types of melodic consecution for a note
-    left and right = approach and departure. 
-    an interval, its direction, and the consecution type
-    Calculated from a three-note linear segment'''
+    '''An object holding the generic types of melodic consecution for a note to the 
+    left and right (approach and departure): the interval, its direction, and the consecution type
+    ('same', 'step', 'skip', None) are calculated from a three-note linear segment.'''
     def __init__(self, targetNote, leftNote=None, rightNote=None):
 
 #        validConsecutionTypes = ('same', 'step', 'skip', None)    

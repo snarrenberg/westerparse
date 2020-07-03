@@ -3,54 +3,202 @@
 # Purpose:      Framework for determining the key of simple tonal lines
 #
 # Author:       Robert Snarrenberg
-#
+# Copyright:    (c) 2020 by Robert Snarrenberg
+# License:      LGPL or BSD, see license.txt
 #-------------------------------------------------------------------------------
-'''KeyFinder converts a musicxml source file
-and attempts to analyze the key of a given line'''
+'''
+Key Finder
+==========
+
+The Key Finder module examines a music21 Stream
+and either validates a key provided by the user or infers a key.
+
+Key inference begins by examining each part in the context to determine the scales 
+in which the following criteria are met: first and last pitches are tonic-triad pitches, 
+all pitches in the line belong to the scale, and at least one pitch in any leap is 
+a triad pitch. The list of possibilities is collected in part.keyCandidatesFromScale.
+Then each part is examined to determine the keys in which only tonic-triad
+pitches are left hanging. The list of possibilities is collected in 
+part.keyCandidatesFromHanging.
+The lists resulting from the first two steps are sifted to see what possibilities 
+are common to all parts. The results are collected in scoreKeyCandidates.
+If there are still multiple options for key, the list is winnowed using two preference 
+rules: (a) prefer most lines to end on tonic degree, and (b) prefer major rather than minor 
+if ambiguously mixed. If winnowed to one option, the appropriate major or melodic minor scale and key are 
+assigned to the context, otherwise an exception is raised and the failure to find a single
+key is reported to the user.
+
+Validation of a user-provided key involves two steps: the name of the key is tested 
+for validity ('Q# diminished' is not a valid option) and the validated name is then 
+tested using the same criteria as in key inference.
+'''
 
 from music21 import *
-import context
+#import context
 
 minorMode = {'triad': [0,3,7], 'scale': [0,2,3,5,7,8,9,10,11]}
 majorMode = {'triad': [0,4,7], 'scale': [0,2,4,5,7,9,11]}
 
-def findKey(score):
-    '''
-    For each part in the score, make an educated guess as to its key.
-    (1) Some essential properties of generic lines:
-        first and last pitches are triad pitches
-        all pitches belong to the scale
-        at least one pitch in any leap is a triad pitch
-    Collect the possibilities in part.keyCandidatesFromScale
-    (2) Another essential property:
-        only triad pitches can be left hanging
-    Collect the possibilities in part.keyCandidatesFromHanging
-    (3) Sift the results of (1) and (2) and see what remains common to all parts
-    Sift the possibilities and collect in scoreKeyCandidates
+##################################################################
+# TODO LISTS
+##################################################################
+
+#    TO DO, ADD OPTION: Test each key using parser.preParseLine
+
+#    TODO: create selectable options for the tests and
+#    TODO: allow ambiguous results to pass through
+#        terminals=True
+#        leaps=True
+#        finalTonic=True
+#        preferMajor=True
+#        preferences=True
+#        ambiguityAllowed=False
+
+##################################################################
+# EXCEPTION HANDLERS
+##################################################################
+
+class KeyFinderError(Exception):
+    logfile = 'logfile.txt'
+    def __init__(self, desc):
+        self.desc = desc
+        self.logfile = 'logfile.txt'
+    def logerror(self):
+        log = open(self.logfile, 'a')
+        print('Key Finder Error:', self.desc, file=log)
+
+##################################################################
+# MAIN SCRIPTS
+##################################################################
+
+def testKey(score, knote=None, kmode=None):
+    '''Validate and test a key provided by the user'''
+    # (1) validate the user selected key
+    try: 
+        userKey = validateKeySelection(knote, kmode)
+    except KeyFinderError as kfe:
+        kfe.logerror()
+        return False
+    # (2) test each part for generic errors
+    try:
+        testValidatedKey(score, knote, kmode)
+    except KeyFinderError as kfe:
+        kfe.logerror()
+        return False
+    else:
+        return userKey
+
+def inferKey(score):
+    '''Infer a key from the parts'''
+    # (1)find the keys of each part
+    try:
+        allPartKeys = findPartKeys(score)
+    except KeyFinderError as kfe:
+        kfe.logerror()
+        return False
+    # (2) and then find the keys of the score
+    try:
+        key = findScoreKeys(score)
+    except KeyFinderError as kfe:
+        kfe.logerror()
+        return False
+    else:
+        return key
+
+##################################################################
+# HELPER SCRIPTS
+##################################################################
+
+def validateKeySelection(knote, kmode):
+    # Validate the name of the key provided by the user
+    validKeys = ['A- minor', 'A- major', 
+                 'A minor', 'A major',
+                 'A# minor',
+                 'B- minor', 'B- major',
+                 'B minor', 'B major',
+                 'C- major',
+                 'C minor', 'C major',
+                 'C# minor', 'C# major',
+                 'D- major',
+                 'D minor', 'D major',
+                 'D# minor'
+                 'E- minor', 'E- major',
+                 'E minor', 'E major',
+                 'F minor', 'F major',
+                 'F# minor', 'F# major',
+                 'G- major',
+                 'G minor', 'G major',
+                 'G# minor']
+    # three possibilities: no key info provided, invalid key info, valid key ino
+    if knote == None or kmode == None:
+        # pass to next step if key not provided by user
+        return None
+    elif str(knote + ' ' + kmode) not in validKeys:
+        error = 'The user-selected key (' + knote + ' ' + kmode + ') is not a valid key.'
+        raise KeyFinderError(error)
+    else:
+        userKey = key.Key(tonic=knote, mode=kmode)
+        return userKey
+
+def testValidatedKey(score, keynote, mode):
+    # Test whether the user-selected key is fits the context.
+    userKeyErrors = ''
+    for part in score.parts:
+        partErrors = ''
+        thisKey = key.Key(tonic=keynote, mode=mode)
+        if mode == 'minor':
+            thisScale = scale.MelodicMinorScale(keynote)
+            thisPitches = scale.MelodicMinorScale(keynote).pitches + scale.MinorScale(keynote).pitches
+            thisCollection = [p.name for p in thisPitches]
+        elif mode == 'major':
+            thisScale = scale.MajorScale(keynote)
+            thisPitches = scale.MajorScale(keynote).pitches
+            thisCollection = [p.name for p in thisPitches]
+        thisTriad = [thisScale.pitchFromDegree(1).name, 
+                     thisScale.pitchFromDegree(3).name, 
+                     thisScale.pitchFromDegree(5).name]
+        # test first and last notes
+        if part.flat.notes[0].pitch.name not in thisTriad:
+            error = 'The first note is not a triad pitch.'
+            partErrors = partErrors + error + '\n\t'
+        if part.flat.notes[-1].pitch.name not in thisTriad:
+            error = 'The last note is not a triad pitch.'
+            partErrors = partErrors + error + '\n\t'
+        # test for scale pitches
+        nonscalars = 0
+        for n in part.flat.notes:
+            if n.pitch.name not in thisCollection:
+                nonscalars += 1
+        if nonscalars == 1:
+            error = 'One note in the line does not belong to the scale.'
+            partErrors = partErrors + error + '\n\t'
+        if nonscalars > 1:
+            error = str(nonscalars) + ' notes in the line do not belong to the scale.'
+            partErrors = partErrors + error + '\n\t'
+        # test leaps
+        leapPairs = {(note.pitch.name, note.next().pitch.name) for note in part.flat.notes if note.consecutions.rightType == 'skip'} 
+        if part.species in ['first', 'second', 'fourth'] and leapTestWeak(leapPairs, thisTriad) == False:
+            error = 'At least one leap fails to include a triad pitch.'
+            partErrors = partErrors + error + '\n\t'
+        if partErrors:
+            partErrorStr = '\nProblems found in ' + part.name + '. Given key = ' + keynote + ' ' + mode + '.\n' + partErrors
+        userKeyErrors = userKeyErrors + partErrorStr
     
-    TO DO, ADD OPTION: Test each key using parser.preParseLine
+    if len(userKeyErrors) > 0:
+        raise KeyFinderError(userKeyErrors)
+    else: return True
 
-    Preferences if there are still multiple options for key:
-        most lines end on tonic degree
-        major rather than minor if ambiguously mixed
-
-    TODO: create selectable options for the tests and
-    TODO: allow ambiguous results to pass through
-        terminals=True
-        leaps=True
-        finalTonic=True
-        preferMajor=True
-        preferences=True
-        ambiguityAllowed=False
-    '''
+def findPartKeys(score):
     for part in score.parts:
         getPartKeysUsingScale(part)
         getPartKeyUsingHangingNotes(part)
         
-        if len(score.parts)>1 and part.keyCandidatesFromScale == []:
-            error = 'KEYFINDER ERROR: Error in deriving key from at least one of the parts.'
-            score.errors.append(error)
-
+        if part.keyCandidatesFromScale == []:
+            error = 'Unable to derive a key from one or more of the parts.'
+            raise KeyFinderError(error)
+     
+def findScoreKeys(score):
+    error = ''
     partKeyListsFromScale = [part.keyCandidatesFromScale for part in score.parts]
     partKeyListsFromHanging = [part.keyCandidatesFromHanging for part in score.parts]
     # get only those keys that are shared among all parts    
@@ -89,18 +237,22 @@ def findKey(score):
 #            pass
         else:
             keystring = k[0][0] + ' ' + k[0][1] + ' and ' + k[1][0] + ' ' + k[1][1]
-            error = 'KEYFINDER ERROR: Two keys are possible for this score: ' + keystring
-            score.errors.append(error)
+            error = 'Two keys are possible for this score: ' + keystring
+#            raise KeyFinderError(error)
     elif len(scoreKeyCandidates) == 1:
         k = list(scoreKeyCandidates)
         thisKey = key.Key(tonic=k[0][0], mode=k[0][1])
-        return thisKey
+#        return thisKey
     elif len(scoreKeyCandidates) == 0:
-        error = 'KEYFINDER ERROR: No viable key inferrable from this score.'
-        score.errors.append(error)
+        error = 'No viable key inferrable from this score.'
+#        raise KeyFinderError(error)
     else: 
-        error = 'KEYFINDER ERROR: More than one key is possible for this score.'
-        score.errors.append(error)
+        error = 'More than two keys are possible for this score.'
+#        raise KeyFinderError(error)
+    if error:
+        raise KeyFinderError(error)
+    else:
+        return thisKey
 
 def terminalsTest(initial, final, triad):
 				if {initial, final} <= triad:
@@ -211,7 +363,6 @@ def getPartKeysUsingScale(part):
 
     part.keyCandidatesFromScale = keyCandidates
 
-
 def getPartKeyUsingHangingNotes(part):
     hangingNotes = []
     displacedNotes = []
@@ -266,47 +417,6 @@ def getPartKeyUsingHangingNotes(part):
 
 # TODO: REVISE THIS FUNCTION: unlike the keyFinder, it needs to distinguish enharmonics
  
-def reportKeyFinderLineErrorsGivenKey(part, keynote, mode):
-    'given a line and a key (strings: keynote, mode), tell the user which tests the part fails'
-    errors = []
-    # keynote as string, e.g., E-, D#, F
-    # mode as string: minor, major
-    
-    thisKey = key.Key(tonic=keynote, mode=mode)
-    if mode == 'minor':
-        thisScale = scale.MelodicMinorScale(keynote)
-        thisPitches = scale.MelodicMinorScale(keynote).pitches + scale.MinorScale(keynote).pitches
-        thisCollection = [p.name for p in thisPitches]
-    elif mode == 'major':
-        thisScale = scale.MajorScale(keynote)
-        thisPitches = scale.MajorScale(keynote).pitches
-        thisCollection = [p.name for p in thisPitches]
-    thisTriad = [thisScale.pitchFromDegree(1).name, 
-                thisScale.pitchFromDegree(3).name, 
-                thisScale.pitchFromDegree(5).name]
-    if part.flat.notes[0].pitch.name not in thisTriad:
-        error = 'The first note is not a triad pitch.'
-        errors.append(error)
-    if part.flat.notes[-1].pitch.name not in thisTriad:
-        error = 'The last note is not a triad pitch.'
-        errors.append(error)
-    nonscalars = 0
-    for n in part.flat.notes:
-        if n.pitch.name not in thisCollection:
-            nonscalars += 1
-    if nonscalars == 1:
-        error = 'One note in the line does not belong to the scale.'
-        errors.append(error)
-    if nonscalars > 1:
-        error = str(nonscalars) + ' notes in the line do not belong to the scale.'
-        errors.append(error)
-    # TODO write script for leaps
-    leapPairs = {(note.pitch.name, note.next().pitch.name) for note in part.flat.notes if note.consecutions.rightType == 'skip'} 
-    if part.species in ['first', 'second', 'fourth'] and leapTestWeak(leapPairs, thisTriad) == False:
-        error = 'At least one leap does not include a triad pitch.'
-        errors.append(error)
-    return errors
-        
 ##########################################################################################
 if __name__ == "__main__":
     pass
@@ -336,7 +446,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_04_27T16_06_46_776Z.musicxml'
 #    source = 'TestScoresXML/2020_04_27T18_21_12_217Z.musicxml'
 #    source = 'TestScoresXML/2020_04_29T19_28_50_357Z.musicxml'
-    source = 'TestScoresXML/2020_05_22T14_39_18_497Z.musicxml'
+#    source = 'TestScoresXML/2020_05_22T14_39_18_497Z.musicxml'
     
     gxt = context.makeGlobalContext(source)
 

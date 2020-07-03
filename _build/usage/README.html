@@ -1,0 +1,209 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started &#8212; WesterParse 2020.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="User’s Guide" href="userguide.html" />
+    <link rel="prev" title="The WesterParse Project" href="../index.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="userguide.html" title="User’s Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="The WesterParse Project"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">WesterParse 2020.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Getting Started</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="first-questions">
+<h2>First Questions<a class="headerlink" href="#first-questions" title="Permalink to this headline">¶</a></h2>
+<p>What music theory do I need to know?  Users who are familiar with traditional species
+counterpoint may only need to consult Westergaard’s rules:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="speciesrules.html"><span class="doc">The Westergaard Rules</span></a></p></li>
+</ul>
+</div></blockquote>
+<p>If you are new to species counterpoint, you may find the following guide of use:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="speciesguide.html"><span class="doc">A Brief Introduction to Westergaardian Species Counterpoint</span></a> [in preparation]</p></li>
+</ul>
+</div></blockquote>
+<p>What software do I need to install to run the project on my own system?</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Python</p></li>
+<li><p><a class="reference external" href="http://web.mit.edu/music21/">the music21 toolkit</a></p></li>
+<li><p>WesterParse</p></li>
+<li><p>a music notation program like MuseScore</p></li>
+</ul>
+</div></blockquote>
+<p>I just want to play around with it. Is there a website I can use instead of
+installing all this stuff? Yes.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Westegaardian Species Counterpoint Online: <a class="reference external" href="https://talus.artsci.wustl.edu/counterpoint_tester/">https://talus.artsci.wustl.edu/counterpoint_tester/</a></p></li>
+</ul>
+</div></blockquote>
+<p>Where can I find more information about using the program?</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="userguide.html"><span class="doc">User’s Guide to WesterParse</span></a></p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="an-example">
+<h2>An Example<a class="headerlink" href="#an-example" title="Permalink to this headline">¶</a></h2>
+<p>Compose an exercise in music notation software or on the project website.
+Save the exercise in MusicXML format.
+Run the line parser or voice-leading checker.
+In the case of the parser, you have the option of seeing
+the results displayed in musical notation. Otherwise you will see a text report.</p>
+<p>Let’s say you notate Fux’s well-known Dorian cantus firmus using your favorite
+notation software:</p>
+<a class="reference internal image-reference" href="../_images/FuxDorian.png"><img alt="Fux Dorian cF" src="../_images/FuxDorian.png" style="width: 600px;" /></a>
+<p>You can then ask WesterParse to parse the line:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">westerparse</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;usage/sampledocs/FuxDorian.musicxml&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evaluateLines</span><span class="p">(</span><span class="n">source</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">show</span><span class="o">=</span><span class="s1">&#39;show&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">partLineType</span><span class="o">=</span><span class="s1">&#39;primary&#39;</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">report</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The program infers the key of D minor and attempts to parse the line as a primary
+upper line. There are two possible interpretations (actually, there are a few more,
+but the program exercises some preferential judgment and weeds out the less plausible
+interpretations).</p>
+<p>The result could take the form of a text report:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PARSE</span> <span class="n">REPORT</span>
+<span class="n">Key</span> <span class="n">inferred</span> <span class="n">by</span> <span class="n">program</span><span class="p">:</span> <span class="n">D</span> <span class="n">minor</span>
+<span class="n">The</span> <span class="n">line</span> <span class="ow">is</span> <span class="n">generable</span> <span class="k">as</span> <span class="n">a</span> <span class="n">primary</span> <span class="n">line</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>But since the keyword show was set to ‘show’, the program will display the
+interpretations in a notation program.</p>
+<a class="reference internal image-reference" href="../_images/FuxDorianP1.png"><img alt="Fux Dorian cF, as PL1" src="../_images/FuxDorianP1.png" style="width: 600px;" /></a>
+<a class="reference internal image-reference" href="../_images/FuxDorianP2.png"><img alt="Fux Dorian cF, as PL2" src="../_images/FuxDorianP2.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="installation-instructions">
+<h2>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h2>
+<p>[Not yet available: Download the zip file (westerparse.zip) and open it in your favorite directory.]</p>
+</div>
+<div class="section" id="how-to-get-support">
+<h2>How to Get Support<a class="headerlink" href="#how-to-get-support" title="Permalink to this headline">¶</a></h2>
+<p>If you are having issues, please contact me at: <a class="reference external" href="mailto:snarrenberg&#37;&#52;&#48;wustl&#46;edu">snarrenberg<span>&#64;</span>wustl<span>&#46;</span>edu</a></p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>The project is licensed under the LGPL or BSD license.
+.. See <a class="reference internal" href="license.html"><span class="doc">License</span></a>.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/WesterParseLogo.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#first-questions">First Questions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#an-example">An Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-instructions">Installation Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-get-support">How to Get Support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html">User’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speciesrules.html">The Westergaard Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speciesguide.html">A Brief Introduction to Westergaardian Species Counterpoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="corpus.html">The WesterParse Corpus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modulesdoc.html">Module Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="userguide.html" title="User’s Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="The WesterParse Project"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">WesterParse 2020.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Getting Started</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Robert Snarrenberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.1.
+    </div>
+  </body>
+</html>

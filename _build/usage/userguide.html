@@ -1,0 +1,223 @@
+
+
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User’s Guide &#8212; WesterParse 2020.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Westergaard Rules" href="speciesrules.html" />
+    <link rel="prev" title="Getting Started" href="README.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="speciesrules.html" title="The Westergaard Rules"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="README.html" title="Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">WesterParse 2020.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">User’s Guide</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="user-s-guide">
+<h1>User’s Guide<a class="headerlink" href="#user-s-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basic-instructions">
+<h2>Basic Instructions<a class="headerlink" href="#basic-instructions" title="Permalink to this headline">¶</a></h2>
+<p>Start python in your terminal program.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python
+</pre></div>
+</div>
+<p>Then import WesterParse and choose a source file:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">westerparse</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;my_music.musicxml&#39;</span>
+</pre></div>
+</div>
+<p>To parse the lines in the source:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluateLines</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To check the voice leading:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluateCounterpoint</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="parser-options">
+<h2>Parser Options<a class="headerlink" href="#parser-options" title="Permalink to this headline">¶</a></h2>
+<p>When evaluating lines, there are several options that a user can select. These must be
+entered as keyword arguments.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">report</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partSelection</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">partLineType</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">knote</span></code> and <code class="docutils literal notranslate"><span class="pre">kmode</span></code></p></li>
+</ul>
+<p>The options for <code class="docutils literal notranslate"><span class="pre">show</span></code> determine how the parsing results will be displayed in musical
+notation. The valid options are: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">'show'</span></code>, <code class="docutils literal notranslate"><span class="pre">'writeToServer'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'writeToLocal'</span></code>, <code class="docutils literal notranslate"><span class="pre">writeToPng'</span></code>, and <code class="docutils literal notranslate"><span class="pre">'showWestergaardParse'</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code> is the default option. <code class="docutils literal notranslate"><span class="pre">None</span></code> will suppress notated
+output and generate a text report instead.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'show'</span></code> will send the output to the notation program that the user has configured for use
+with music21. The parse is shown using a modified Schenkerian notation.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluateLines</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="s1">&#39;show&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">'writeToServer'</span></code> is used by the web site to write parses to musicxml files, which are then
+displayed in the browser window.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'writeToLocal'</span></code> can be used to write parses to a local directory. [The user can select
+a directory by editing the configuration.py file.] By default, the files are written to
+‘parses_from_context/’. The name for each file consists of the prefix ‘parser_output_’,
+a timestamp, and the suffix ‘.musicxml’.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'writeToPng'</span></code> uses the application MuseScore to produce png files, which can then
+be used as illustrations. In the process, MuseScore first generates an xml file and
+from that derives the png file. These are named with the prefix ‘parser_output_’,
+a timestamp, and the appropriate suffix. note that Musescore inserts ‘-1’ before
+adding the ‘.png’ suffix. The default directory for these files is ‘tempimages/’.
+[This, too, can be changed by editing the configuration.py file.]</p>
+<p><code class="docutils literal notranslate"><span class="pre">'showWestergaardParse'</span></code> can be used if the source consists of only one line. It will
+display the layered representation of a parse line that Westergaard used in his book.
+[This option is not yet functional.]</p>
+<p>If one or more lines in the source cannot be parsed (i.e., if there are syntax errors),
+the program will automatically generate a text report. If the user also wants to see a
+report on successful parses, the <code class="docutils literal notranslate"><span class="pre">report</span></code> option can be set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+However, if <code class="docutils literal notranslate"><span class="pre">show=None</span></code>, then a report will be generated automatically regardless
+of the option set for the report.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">partSelection</span></code>, a user can designate a line of the composition to parse.
+The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which in effect selects all of the lines for parsing.
+Following the conventions of music21, lines are numbered from top to bottom, starting with
+0. Since parts are a list, Python conventions are followed. So to select the bass line,
+a user can set the option as follows:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluateLines</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">partSelection</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The option <code class="docutils literal notranslate"><span class="pre">partLineType</span></code> can only be used if the composition is a single line or if
+the user has used the partSelection option. The options are as follows: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">'primary'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'bass'</span></code>, and <code class="docutils literal notranslate"><span class="pre">'generic'</span></code>.</p>
+<p>The default option is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which has different meanings depending on the source.
+If the source is a single line or the user has selected a part, the parser will
+try to evaluate the line as each of the three types. If the composition has two lines, the
+parser will evaluate the upper line as a primary line and the lower line as a bass line.
+And if there are more than three parts, the parser will evaluate the upper lines as either
+primary or generic (with the stipulation that at least one must be a primary line), and will
+evaluate the lower line as a bass line.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluateLines</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">partSelection</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">partLineType</span><span class="o">=</span><span class="s1">&#39;primary&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The program automatically attempts to infer the key of the composition using a custom
+algorithm. There may be cases where a composition is ambiguous, in which case, the
+user may override the program’s inference by specifying a keynote and mode. The program will
+then validate the user’s selection and, if valid, will attempt to parse the composition
+in the given key. The options are:</p>
+<p><code class="docutils literal notranslate"><span class="pre">knote</span></code> must be a capital letter in the set A, B, …, G followed by either a hyphen (-)
+to represent a flat or a hash (#) to represent a sharp. This must be a string,
+enclosed in quotation marks.
+<code class="docutils literal notranslate"><span class="pre">kmode</span></code> must be either <code class="docutils literal notranslate"><span class="pre">'major'</span></code> or <code class="docutils literal notranslate"><span class="pre">'minor'</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">evaluateLines</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">knote</span><span class="o">=</span><span class="s1">&#39;G-&#39;</span><span class="p">,</span> <span class="n">kmode</span><span class="o">=</span><span class="s1">&#39;major)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="voice-leading-checker-options">
+<h2>Voice-Leading Checker Options<a class="headerlink" href="#voice-leading-checker-options" title="Permalink to this headline">¶</a></h2>
+<p>At present, there are no user-selectable options. In a future release, the user will have
+the option of checking the counterpoint for compliance with Westergaard’s preference
+rules for sonority.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/WesterParseLogo.png" alt="Logo"/>
+            </a></p>
+<h3><a href="../index.html">Table of Contents</a></h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User’s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-instructions">Basic Instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parser-options">Parser Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#voice-leading-checker-options">Voice-Leading Checker Options</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="speciesrules.html">The Westergaard Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speciesguide.html">A Brief Introduction to Westergaardian Species Counterpoint</a></li>
+<li class="toctree-l1"><a class="reference internal" href="corpus.html">The WesterParse Corpus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modulesdoc.html">Module Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="speciesrules.html" title="The Westergaard Rules"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="README.html" title="Getting Started"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">WesterParse 2020.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">User’s Guide</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, Robert Snarrenberg.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.1.
+    </div>
+  </body>
+</html>
