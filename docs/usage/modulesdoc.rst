@@ -1,13 +1,13 @@
 Module Documentation
 ====================
 
-.. automodule:: westerparse
+.. automodule:: ./westerparse
    :members:
-.. automodule:: context
+.. automodule:: ./context
    :members:
-.. automodule:: keyFinder
+.. automodule:: ./keyFinder
    :members:
-.. automodule:: parser
+.. automodule:: ./parser
    :members:
 .. automodule:: vlChecker
    :members:
