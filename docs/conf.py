@@ -12,14 +12,13 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-#sys.path.insert(0, os.path.abspath('./../WesterParse'))
+sys.path.insert(0, os.path.abspath('./'))
 
 # -- Project information -----------------------------------------------------
 
 project = 'WesterParse'
-copyright = '2020, Robert Snarrenberg'
-author = 'Robert Snarrenberg'
+copyright = u'2020, Robert Snarrenberg'
+author = u'Robert Snarrenberg'
 version = release =  '2020.1.0-alpha'
 
 # -- General configuration ---------------------------------------------------
