@@ -23,6 +23,4 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
-    - method: pip
-      path: https://github.com/cuthbertLab/music21
   system_packages: true
