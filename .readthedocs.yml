@@ -23,5 +23,6 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
-#    - method: setuptools
-#      path: music21
+    - method: pip
+      path: music21
+   system_packages: true
