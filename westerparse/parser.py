@@ -2,7 +2,7 @@
 # Name:         parser.py
 # Purpose:      Framework for analyzing the Westergaardian structure of simple tonal lines
 #
-# Author:       Robert Snarrenberg
+# Author:       Robert Snarrenberg 
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      LGPL or BSD, see license.txt
 #-------------------------------------------------------------------------------
