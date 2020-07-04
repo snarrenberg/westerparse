@@ -16,12 +16,12 @@ transition-based dependency parser.
 The parser consists of a buffer, a stack, and a scanner that shift notes from the buffer
 to the stack. At initialization, the notes of the line are read into the buffer.
 The scanner then shifts notes onto the stack one by one. With each shift, the transition 
-is evaluated and syntax dependencies are evaluated. At each  to assemble a list of 
-syntactic units. The parser maintains lists of open heads and open transitions. The lists
+is evaluated and syntax dependencies are evaluated. The parser maintains lists of 
+open heads and open transitions. The lists
 shrink and grow as the interpretive process unfolds. When a syntactic
 unit (arc) is formed (e.g., a passing or neighboring motion), a representation of 
 the unit is placed in the list of arcs as a tuple of note positions.
-Meanwhile, dependent elements are removed from the stack and the list of open transitions,
+Meanwhile, dependent elements are removed from both the stack and the list of open transitions,
 leaving structural heads for subsequent attachment. The first stage of parsing ends 
 when the buffer is empty and the stack is cleared. The parser has a limited ability to 
 backtrack and reinterpret segments of a line. 
