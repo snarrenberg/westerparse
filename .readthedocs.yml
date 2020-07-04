@@ -25,4 +25,4 @@ python:
     - requirements: docs/requirements.txt
     - method: pip
       path: music21
-   system_packages: true
+  system_packages: true
