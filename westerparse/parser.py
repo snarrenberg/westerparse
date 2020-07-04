@@ -10,28 +10,33 @@
 Parser
 ======
 
-The Parser (parser.py) analyzes the syntax of a melodic line. The parser is designed as a
-transition-based dependency parser. 
-
-The parser consists of a buffer, a stack, and a scanner that shift notes from the buffer
-to the stack. At initialization, the notes of the line are read into the buffer.
-The scanner then shifts notes onto the stack one by one. With each shift, the transition 
-is evaluated and syntax dependencies are evaluated. The parser maintains lists of 
-open heads and open transitions. The lists
-shrink and grow as the interpretive process unfolds. When a syntactic
-unit (arc) is formed (e.g., a passing or neighboring motion), a representation of 
-the unit is placed in the list of arcs as a tuple of note positions.
-Meanwhile, dependent elements are removed from both the stack and the list of open transitions,
-leaving structural heads for subsequent attachment. The first stage of parsing ends 
-when the buffer is empty and the stack is cleared. The parser has a limited ability to 
-backtrack and reinterpret segments of a line. 
-
-[Interpretation continues by line type]. The parser gathers all of the valid interpretations
-into lists. The parser also records errors that arise.
+Designed as a transition-based dependency parser, the WesterParse parser 
+analyzes the syntax of a melodic line and produces a set of valid interpretations. 
 
 Procedure: (1) accept a part from a Context, (2) infer the possible lineTypes if not 
 given in advance, (3) parse the part for each possible lineType, (4) return 
 a set of parses and errors.
+
+The machinery consists of a buffer, a stack, and a scanner. 
+At initialization, the notes of the line are read into the buffer.
+The scanner then shifts notes onto the stack one by one. With each shift, 
+the transition is evaluated in light of the previously analyzed line. 
+As the scanning proceeds, the parser maintains lists of 
+open heads, open transitions, and syntactic units (arcs). These lists
+shrink and grow as the interpretive process unfolds. When an arc is formed 
+(e.g., a passing or neighboring motion), a tuple of note positions is placed
+in the list of arcs. Meanwhile, dependent elements within the arc are removed 
+from both the stack and the list of open transitions,
+leaving structural heads in place for subsequent attachment. 
+The parser has a limited ability to 
+backtrack and reinterpret segments of a line. 
+
+The first stage of parsing ends when the end of the buffer is reached. 
+Interpretation then continues by line type. 
+
+The parser gathers all of the valid interpretations into lists. 
+The parser also records errors that arise.
+
 '''
 
 from music21 import *
