@@ -889,37 +889,38 @@
 		<dict>
 			<key>BookmarkData</key>
 			<data>
-			Ym9va4gDAAAAAAQQMAAAAAToEX4w5IiDVWHhq4QLcSsJXdQxAx/y
-			r6Xz+Mm7jr8JeAIAAAQAAAADAwAAAAgAKAUAAAABAQAAVXNlcnMA
+			Ym9va7QDAAAAAAQQMAAAAJXe+p9d+4TbTvpJG3ERe/ot3I6ntSHW
+			RW3LbS4oGlT6pAIAAAQAAAADAwAAAAgAKAUAAAABAQAAVXNlcnMA
 			AAALAAAAAQEAAHNuYXJyZW5iZXJnAAcAAAABAQAARHJvcGJveAAU
 			AAAAAQEAAERvY3VtZW50cyBpbiBEcm9wYm94CwAAAAEBAABXZXN0
-			ZXJQYXJzZQAQAAAAAQEAAFdlc3RlclBhcnNlIDIwMjAJAAAAAQEA
-			AHBhcnNlci5weQAAABwAAAABBgAAEAAAACAAAAA0AAAARAAAAGAA
-			AAB0AAAAjAAAAAgAAAAEAwAAGZgCAAAAAAAIAAAABAMAAHffBgAA
-			AAAACAAAAAQDAAAJoAcAAAAAAAgAAAAEAwAAhyzIDwIAAAAIAAAA
-			BAMAAAEAdgECAAAACAAAAAQDAABNXYEmAgAAAAgAAAAEAwAAEF+B
-			JgIAAAAcAAAAAQYAAMQAAADUAAAA5AAAAPQAAAAEAQAAFAEAACQB
-			AAAIAAAAAAQAAEHBtIG+QS5hGAAAAAECAAABAAAAAAAAAA8AAAAA
-			AAAAAAAAAAAAAAAIAAAABAMAAAUAAAAAAAAABAAAAAMDAAD3AQAA
-			CAAAAAEJAABmaWxlOi8vLwwAAAABAQAATWFjaW50b3NoIEhECAAA
-			AAQDAAAAsCffrgAAAAgAAAAABAAAQcGmZubHwmMkAAAAAQEAADQz
-			QjU2MzY2LUI2MzUtMzM1NS1BODU3LUYyNEJENzZGRUE5MxgAAAAB
-			AgAAgQAAAAEAAADvEwAAAQAAAAAAAAAAAAAAAQAAAAEBAAAvAAAA
-			AAAAAAEFAAAaAAAAAQEAAE5TVVJMRG9jdW1lbnRJZGVudGlmaWVy
-			S2V5AAAEAAAAAwMAAJwZAADYAAAA/v///wEAAAAAAAAAEQAAAAQQ
-			AACgAAAAAAAAAAUQAAA0AQAAAAAAABAQAABoAQAAAAAAAEAQAABY
-			AQAAAAAAAAIgAAA0AgAAAAAAAAUgAACkAQAAAAAAABAgAAC0AQAA
-			AAAAABEgAADoAQAAAAAAABIgAADIAQAAAAAAABMgAADYAQAAAAAA
-			ACAgAAAUAgAAAAAAADAgAABAAgAAAAAAAAHAAACIAQAAAAAAABHA
-			AAAgAAAAAAAAABLAAACYAQAAAAAAABDQAAAEAAAAAAAAAEgCAIBs
-			AgAAAAAAAA==
+			ZXJQYXJzZQAQAAAAAQEAAFdlc3RlclBhcnNlIDIwMjALAAAAAQEA
+			AHdlc3RlcnBhcnNlAAkAAAABAQAAcGFyc2VyLnB5AAAAIAAAAAEG
+			AAAQAAAAIAAAADQAAABEAAAAYAAAAHQAAACMAAAAoAAAAAgAAAAE
+			AwAAGZgCAAAAAAAIAAAABAMAAHffBgAAAAAACAAAAAQDAAAJoAcA
+			AAAAAAgAAAAEAwAAhyzIDwIAAAAIAAAABAMAAAEAdgECAAAACAAA
+			AAQDAABNXYEmAgAAAAgAAAAEAwAADuBqJwIAAAAIAAAABAMAABBf
+			gSYCAAAAIAAAAAEGAADcAAAA7AAAAPwAAAAMAQAAHAEAACwBAAA8
+			AQAATAEAAAgAAAAABAAAQcG0gb5BLmEYAAAAAQIAAAEAAAAAAAAA
+			DwAAAAAAAAAAAAAAAAAAAAgAAAAEAwAABgAAAAAAAAAEAAAAAwMA
+			APcBAAAIAAAAAQkAAGZpbGU6Ly8vDAAAAAEBAABNYWNpbnRvc2gg
+			SEQIAAAABAMAAACwJ9+uAAAACAAAAAAEAABBwaZm5sfCYyQAAAAB
+			AQAANDNCNTYzNjYtQjYzNS0zMzU1LUE4NTctRjI0QkQ3NkZFQTkz
+			GAAAAAECAACBAAAAAQAAAO8TAAABAAAAAAAAAAAAAAABAAAAAQEA
+			AC8AAAAAAAAAAQUAABoAAAABAQAATlNVUkxEb2N1bWVudElkZW50
+			aWZpZXJLZXkAAAQAAAADAwAAnBkAANgAAAD+////AQAAAAAAAAAR
+			AAAABBAAALQAAAAAAAAABRAAAFwBAAAAAAAAEBAAAJQBAAAAAAAA
+			QBAAAIQBAAAAAAAAAiAAAGACAAAAAAAABSAAANABAAAAAAAAECAA
+			AOABAAAAAAAAESAAABQCAAAAAAAAEiAAAPQBAAAAAAAAEyAAAAQC
+			AAAAAAAAICAAAEACAAAAAAAAMCAAAGwCAAAAAAAAAcAAALQBAAAA
+			AAAAEcAAACAAAAAAAAAAEsAAAMQBAAAAAAAAENAAAAQAAAAAAAAA
+			dAIAgJgCAAAAAAAA
 			</data>
 			<key>FileURL</key>
-			<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/parser.py</string>
+			<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/parser.py</string>
 			<key>HasSecurityScope</key>
 			<true/>
 			<key>RelativePath</key>
-			<string>./parser.py</string>
+			<string>./westerparse/parser.py</string>
 			<key>TypeID</key>
 			<string>_CFileLocator</string>
 			<key>Version</key>
@@ -1181,7 +1182,7 @@
 	<array>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1227,7 +1228,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1273,7 +1274,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1321,7 +1322,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1367,7 +1368,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1415,7 +1416,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1461,7 +1462,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1507,7 +1508,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1553,7 +1554,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1599,7 +1600,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1645,7 +1646,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1691,7 +1692,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1737,7 +1738,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1783,7 +1784,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
@@ -1829,7 +1830,7 @@
 		</dict>
 		<dict>
 			<key>Date</key>
-			<date>2020-07-04T00:48:53Z</date>
+			<date>2020-07-04T00:50:53Z</date>
 			<key>Location</key>
 			<dict>
 				<key>BookmarkData</key>
