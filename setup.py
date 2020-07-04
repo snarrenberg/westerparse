@@ -8,7 +8,7 @@ setuptools.setup(
     version="1.0.1-alpha",
     author="Robert Snarrenberg",
     author_email="snarrenberg@wustl.edu",
-    description="A package for evaluating Westergaardian species counterpoint",
+    description="An application for evaluating Westergaardian species counterpoint",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/snarrenberg/WesterParse",
