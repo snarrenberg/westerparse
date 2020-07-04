@@ -13,6 +13,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../westerparse/'))
+
 # -- Project information -----------------------------------------------------
 
 project = 'WesterParse'
@@ -45,8 +46,8 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-#html_theme = 'bizstyle'
-html_style = '/default.css'
+html_theme = 'bizstyle'
+#html_style = '/default.css'
 html_logo = './usage/WesterParseLogo.png'
 html_theme_options = {
 }
