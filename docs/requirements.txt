@@ -1,1 +1,2 @@
 sphinx-autodoc-annotation
+autodoc_mock_imports = ["music21"]
