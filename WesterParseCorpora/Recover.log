@@ -1,5 +1,0 @@
-﻿Timestamp	Filename	Error	Message
-2020-06-30 13:44:11.067 -0500	WesterParseFileDatabase.fmp12	0	*** Started consistency check of improperly closed file, total of 75 block(s) to check
-2020-06-30 13:44:11.083 -0500	WesterParseFileDatabase.fmp12	8432	Page 75 marked free but not in free list
-2020-06-30 13:44:11.083 -0500	WesterParseFileDatabase.fmp12	0	Reset maximum block sequence number to 22229
-2020-06-30 13:44:11.083 -0500	WesterParseFileDatabase.fmp12	0	*** Completed consistency check, checked 75 block(s)
