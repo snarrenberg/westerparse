@@ -1,3 +1,4 @@
+#-------------------------------------------------------------------------------
 # Name:         westerparse.py
 # Purpose:      An application for evaluating Westergaardian species counterpoint
 #
