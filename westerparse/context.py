@@ -108,13 +108,13 @@ class GlobalContext(Context):
     #. For each part:
         
         * A name is assigned.
-        * The rhythmic species of is identified.
-        * A referential tonic scale degree is selected.
+        * The rhythmic species is identified.
+        * A referential tonic scale degree (csd.value = 0) is selected.
         * A list is created to collect errors.
     
     #. For each note in the part: 
     
-        * A position indexes is assigned.
+        * A position index is assigned. The is the primary note reference used during parsing.
         * A concrete scale degree is determined.
         * A rule object is attached.
         * A dependency object is attached.
@@ -195,12 +195,12 @@ class GlobalContext(Context):
             getConsecutions(part)
             # set up note properties used in parsing
             for idx, note in enumerate(part.recurse().notes):
+                # get the order position of the note in the line
+                note.index = idx
                 # assigns a Rule object to each Note
                 note.rule = Rule()
                 # assigns a Dependency object to each Note
                 note.dependency = Dependency()
-                # get the order position of the note in the line
-                note.index = idx
 
     def setupTonalityGeneral(self, **kwargs):
         # setup key, using information provided by user or inferred from parts
