@@ -11,15 +11,7 @@ Context
 =======
 
 The Context module includes classes to represent both global and local contexts. 
-
-When a global context is created, a key for the context is automatically validated 
-or inferred; parts are assigned names, their rhythmic species is identified, 
-a concrete tonic scale degree is selected, and list is created to collect errors; 
-notes are assigned position indexes, scale degrees, placeholders for rules 
-and dependency relationships, and consecutions.
-
-Measure-long local harmonic contexts are also created, 
-for use in parsing events in third species.'''
+'''
 
 #from music21 import *
 import itertools
@@ -105,7 +97,18 @@ class LocalContext(Context):
 
 class GlobalContext(Context):
     '''An object for representing a tonally unified span of a composition 
-    and for storing objects that represent local spans within the global context.'''
+    and for storing objects that represent local spans within the global context.
+    
+    A global context consists of a music21 Stream and its constituent Parts.
+    
+    When a global context is created, a key for the context is automatically validated 
+    or inferred; parts are assigned names, their rhythmic species is identified, 
+    a concrete tonic scale degree is selected, and list is created to collect errors; 
+    notes are assigned position indexes, scale degrees, placeholders for rules 
+    and dependency relationships, and consecutions.
+
+    Measure-long local harmonic contexts are also created, 
+    for use in parsing events in third species.'''
 
     def __init__(self, score, **kwargs):
         self.score = score

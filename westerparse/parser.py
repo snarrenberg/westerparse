@@ -13,7 +13,7 @@ Parser
 Designed as a transition-based dependency parser, the WesterParse parser 
 analyzes the syntax of a melodic line and produces a set of valid interpretations. 
 
-Procedure: (1) accept a part from a Context, (2) infer the possible lineTypes if not 
+Procedure: (1) accept a part from a context, (2) infer the possible lineTypes if not 
 given in advance, (3) parse the part for each possible lineType, (4) return 
 a set of parses and errors.
 
@@ -400,7 +400,7 @@ class Parser():
         '''The parser asks a series of questions at the transition from note I to note J. 
         What is their relation to the harmony of the context (tonic, in the case of global contexts)? 
         What is their intervallic relation (step or skip)?
-        How does J connect, if at all, with notes in the dynamic lists of open heads and transitions.  
+        And how does J connect, if at all, with notes in the dynamic lists of open heads and transitions?  
         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
         or returns error messages if the line is syntactically malformed.'''
 
