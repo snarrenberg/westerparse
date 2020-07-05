@@ -99,16 +99,28 @@ class GlobalContext(Context):
     '''An object for representing a tonally unified span of a composition 
     and for storing objects that represent local spans within the global context.
     
-    A global context consists of a music21 Stream and its constituent Parts.
+    A global context consists of a music21 Score and its constituent Parts.
     
-    When a global context is created, a key for the context is automatically validated 
-    or inferred; parts are assigned names, their rhythmic species is identified, 
-    a concrete tonic scale degree is selected, and list is created to collect errors; 
-    notes are assigned position indexes, scale degrees, placeholders for rules 
-    and dependency relationships, and consecutions.
+    When a global context is created, several things happen automatically to prepare
+    the score for evaluation.
+    
+    #. A key for the context is automatically validated or inferred using the Key Finder (keyFinder.py).
+    #. For each part:
+        
+        * A name is assigned.
+        * The rhythmic species of is identified.
+        * A referential tonic scale degree is selected.
+        * A list is created to collect errors.
+    
+    #. For each note in the part: 
+    
+        * A position indexes is assigned.
+        * A concrete scale degree is determined.
+        * A rule object is attached.
+        * A dependency object is attached.
+        * The manner or approach and departure (consecutions) for the note are determined.
 
-    Measure-long local harmonic contexts are also created, 
-    for use in parsing events in third species.'''
+    #. Measure-long local harmonic contexts are created, for use in parsing events in third species.'''
 
     def __init__(self, score, **kwargs):
         self.score = score
