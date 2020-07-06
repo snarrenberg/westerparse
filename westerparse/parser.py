@@ -65,6 +65,20 @@ class Parser():
 
 
     def __init__(self, part, context, **keywords):
+        '''
+        Upon initialization, the Parser automatically parses the line, in the following
+        steps:
+        
+           * prepares placeholders for parses and errors
+           * accepts a linetype if provided, otherwise it infers the set of possible types.
+           * operates the preliminary parser: :py:func:`self.preParseLine`
+           * interrupts the parser if preliminary parsing is unsuccessful and reports errors
+           * determines the set of possible basic structures and parses for each possibility: :py:func:`self.prepareParses`
+           * gathers all the valid interpretations of the part by lineType: :py:func:`self.collectParses`
+           * reduces the set of interpretations using preference rules: :py:func:`self.selectPreferredParses`
+        
+        
+        '''
         # set up base content
         self.part = part
         self.context = context

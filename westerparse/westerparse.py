@@ -26,12 +26,9 @@ from context import *
 from utilities import pairwise
 import time
 
-
-
 # -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
 # -----------------------------------------------------------------------------
-
 
 
 # -----------------------------------------------------------------------------
@@ -85,7 +82,10 @@ def evaluateCounterpoint(source, report=True, sonorityCheck=False, **keywords):
 # -----------------------------------------------------------------------------
 
 def makeGlobalContext(source, **keywords):
-    # import a musicxml file and convert to music21 Stream
+    '''
+    Import a musicxml file and convert to music21 Stream.
+    Then create a :py:class:`~context.GlobalContext`.
+    '''
     s = converter.parse(source)
     # create a global context object and prep for evaluation
     # if errors encountered, script will exit and report
@@ -93,7 +93,11 @@ def makeGlobalContext(source, **keywords):
     return gxt
 
 def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
-    # create a context given a start and stop offset in an enclosing Context
+    '''
+    Create a local context given a start and stop offset in an enclosing Context.
+    [Not functional.]
+    '''
+    # 
     locCxt = cxt.getElementsByOffset(cxtOn, cxtOff, includeEndBoundary=True, 
         mustFinishInSpan=False, mustBeginInSpan=True, includeElementsThatEndAtStart=False, 
         classList=None)
@@ -101,6 +105,9 @@ def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
     return locCxt
 
 def displaySourceAsPng(source):
+    '''
+    Use MuseScore to create a .png image of a musicxml source file.
+    '''
     cxt = converter.parse(source)
     timestamp = str(time.time())
     filename = 'tempimages/' + 'display_output_' + timestamp + '.xml'
@@ -108,7 +115,7 @@ def displaySourceAsPng(source):
 
 def parseContext(context, show=None, partSelection=None, partLineType=None, report=False):
     '''
-    This function runs the parse on each line of a context. 
+    This function runs the parse on each line of a context using :py:func:`parsePart`. 
     A dictionary is used to collect error reports from the parser; this is used
     to produce an error report.
     A separate report is created for successful parses.
@@ -348,6 +355,12 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
                 showInterpretations(context, show, partSelection, partLineType)
 
 def parsePart(part, context):
+    '''
+    Given a part, create a parser (:py:class:`~parser.Parser`) for it and 
+    collect the results. Determine whether the line is generable as a primary, bass, or 
+    generic line. Compile a list of ways the line can be generated for each line 
+    type, if at all. Collect a list of parsing errors. 
+    '''
     # run the Parser
     partParser = parser.Parser(part, context)
     # sort out the interpretations of the part
@@ -363,13 +376,13 @@ def parsePart(part, context):
     part.typeErrorsDict = partParser.typeErrorsDict
 
 def selectedPreferredParseSets(context, show):
-    '''After parsing the individual parses, select contrapuntal sets of parses 
-    based on Westergaard preference rules'''
+    '''After parsing the individual parts, select sets of parses 
+    based on Westergaard preference rules, trying to negotiate best match 
+    between global structures in the parts. [This currently works
+    only for two-part counterpoint.]'''
     
     # TODO currently only works for two-part counterpoint
     
-    # negotiate best match between global structures in two parts
-        
     # TODO need to refine the preferences substantially
     if len(context.parts) > 1:
         # select uppermost part that isPrimary as the primaryPart
@@ -379,19 +392,8 @@ def selectedPreferredParseSets(context, show):
             if part.isPrimary:
                 primaryPart = part
                 break
-#2020-06-30 Removed this block after revising parseContext to catch errors
-        # TODO lack of a primary upper line or bass line has already been checked in 
-        # parseContext, so it's redundant here
-#        if primaryPart == None:
-#            error = 'Failed to find a primary upper line.'
-#            context.errors.append(error)
-#            context.reportEvaluationExceptions()
         # select lowest part as the bassPart
         bassPart = context.parts[-1]
-#        if not bassPart.isBass:
-#            error = 'The lowest line is not a bass line.'
-#            context.errors.append(error)
-#            context.reportEvaluationExceptions()
 
         primaryS3Finals = [interp.S3Final for interp in primaryPart.interpretations['primary']]
         bassS3s = [interp.S3Index for interp in bassPart.interpretations['bass']]
@@ -418,7 +420,7 @@ def selectedPreferredParseSets(context, show):
                 
 def showInterpretations(context, show, partSelection=None, partLineType=None):
     '''
-    This function builds interpretations for the context, gathering information from 
+    Build interpretations for the context, gathering information from 
     the parses of each line.
     '''
 
@@ -547,6 +549,10 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
 ##################################################################
 
 def gatherArcs(source, arcs):
+    '''
+    Given a fully parsed line (an interpretation), sort through the arcs and 
+    create a music21 spanner (tie/slur) to represent each arc.
+    '''
     # source is a Part in the input Score
     # sort through the arcs and create a spanner(tie/slur) for each
     tempArcs = []
@@ -561,6 +567,9 @@ def gatherArcs(source, arcs):
     # TODO set up separate function for the basic arc 
 
 def arcBuild(source, arc):
+    '''
+    The function that actually convers an arc into a slur. 
+    '''
     # source is a Part in the input Score
     if len(arc) == 2:
         slurStyle = 'dashed'
@@ -573,6 +582,11 @@ def arcBuild(source, arc):
         thisSlur.addSpannedElements(obj)
           
 def assignRules(source, rules):
+    '''
+    Given a fully parsed line (an interpretation), add a lyric to each 
+    note to show the syntactic rule that generates the note. Also assigns the color
+    blue to notes generated by a rule of basic structure.
+    '''
     # source is a Part in the input Score
     ruleLabels = rules
     for index,elem in enumerate(source.recurse().notes):
@@ -586,6 +600,12 @@ def assignRules(source, rules):
                 pass
 
 def assignParentheses(source, parentheses):
+    '''
+    Adds parentheses around notes generated as insertions. [This aspect of syntax 
+    representation cannot be fully implemented at this time, because musicxml only 
+    allows parentheses to be assigned in pairs, whereas syntax coding requires
+    the ability to assign left and right parentheses separately.]
+    '''
     # source is a Part in the input Score
     parentheses = parentheses
     for index,elem in enumerate(source.recurse().notes):
