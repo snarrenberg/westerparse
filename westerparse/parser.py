@@ -57,6 +57,8 @@ class Parser():
     by :py:func:`~parseTransition`. After a preliminary parse of the line,
     the parser decides on a set of possible structural interpretations and creates
     a :py:class:`~Parser.Parse` object to store each interpretation.'''
+    _DOC_ORDER = ['inferLineTypes', 'preParseLine', 'parseTransition', 'prepareParses', 
+        'buildParse', 'collectParses', 'selectPreferredParses', 'Parse']
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
 #    and the most recent Arc is popped into a failed list 
