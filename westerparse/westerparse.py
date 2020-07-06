@@ -28,17 +28,17 @@ import time
 
 
 
-##################################################################
+# -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
-##################################################################
+# -----------------------------------------------------------------------------
 
 
 
-##################################################################
+# -----------------------------------------------------------------------------
 # MAIN SCRIPTS
-##################################################################
+# -----------------------------------------------------------------------------
 
-def evaluateLines(source, show=None, partSelection=None, partLineType=None, report=False, **kwargs):
+def evaluateLines(source, show=None, partSelection=None, partLineType=None, report=False, **keywords):
     '''
     Determines whether a line is generable using Westergaard's rules.
     '''
@@ -46,7 +46,7 @@ def evaluateLines(source, show=None, partSelection=None, partLineType=None, repo
     if partLineType == 'any' or '':
         partLineType = None
     try:    
-        cxt = makeGlobalContext(source, **kwargs)
+        cxt = makeGlobalContext(source, **keywords)
     except EvaluationException as fce:
         fce.show()
         return
@@ -57,13 +57,13 @@ def evaluateLines(source, show=None, partSelection=None, partLineType=None, repo
     except EvaluationException as fce:
         fce.show()
         
-def evaluateCounterpoint(source, report=True, sonorityCheck=False, **kwargs):
+def evaluateCounterpoint(source, report=True, sonorityCheck=False, **keywords):
     '''
     Determines whether the voice leading conforms to Westergaard's rules.
     '''
     clearLogfile('logfile.txt')
     try:    
-        cxt = makeGlobalContext(source, **kwargs)
+        cxt = makeGlobalContext(source, **keywords)
     except EvaluationException as fce:
         fce.show()
         return
@@ -80,16 +80,16 @@ def evaluateCounterpoint(source, report=True, sonorityCheck=False, **kwargs):
     else:
         vlChecker.checkCounterpoint(cxt, report=True)
 
-##################################################################
+# -----------------------------------------------------------------------------
 # HELPER SCRIPTS
-##################################################################
+# -----------------------------------------------------------------------------
 
-def makeGlobalContext(source, **kwargs):
+def makeGlobalContext(source, **keywords):
     # import a musicxml file and convert to music21 Stream
     s = converter.parse(source)
     # create a global context object and prep for evaluation
     # if errors encountered, script will exit and report
-    gxt = GlobalContext(s, **kwargs)
+    gxt = GlobalContext(s, **keywords)
     return gxt
 
 def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
@@ -596,10 +596,13 @@ def assignParentheses(source, parentheses):
                 pass
 
 
-##################################################################
+# -----------------------------------------------------------------------------
 
 if __name__ == "__main__":
     pass
 
     source = '../TestScoresXML/Primary06.musicxml'
     evaluateLines(source)
+    
+# -----------------------------------------------------------------------------
+# eof

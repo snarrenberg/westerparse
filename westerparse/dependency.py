@@ -28,9 +28,9 @@ from music21 import *
 class DependencyException(Exception):
     pass
 
-##################################################################
-# MAIN CLASSES
-##################################################################
+# -----------------------------------------------------------------------------
+# MAIN CLASS
+# -----------------------------------------------------------------------------
 
 class Dependency():
     '''An object for storing the dependencies of a note in a line'''
@@ -197,6 +197,9 @@ class Dependency():
                 raise DependencyException('not a valid dependency object: %s' % n)
         self._dependents = n
 
+# -----------------------------------------------------------------------------
 if __name__ == "__main__":
     # self_test code
     pass
+# -----------------------------------------------------------------------------
+# eof    

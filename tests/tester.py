@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # user inputs
     # accept a source file (score) from the user
-#    source = 'TestScoresXML/Bass01.musicxml' # Fux Dorian
+    source = 'TestScoresXML/Bass01.musicxml' # Fux Dorian
 #    source = 'TestScoresXML/Bass02.musicxml' # Krumhansl-Schmuckler gives wrong key
 #    source = 'TestScoresXML/Bass03.musicxml'
 #    source = 'TestScoresXML/Bass04.musicxml' # Krumhansl-Schmuckler gives wrong key
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
 #    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
-    source = 'TestScoresXML/FirstSpecies03.musicxml'
+#    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
 #    source = 'TestScoresXML/FirstSpecies05.musicxml'
 #    source = 'TestScoresXML/FirstSpecies10a.musicxml'

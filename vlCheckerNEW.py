@@ -30,6 +30,9 @@ paceUnit = 4.0 # pace unit for first-species notes, in quarter-note lengths
 
 vlErrors = []
 
+# -----------------------------------------------------------------------------
+# MAIN FUNCTIONS
+# -----------------------------------------------------------------------------
 def voiceLeadingAnalyzer(context):
     '''A function for processing and reporting on voice leading 
     in species counterpoint, in both simple and mixed species 
@@ -90,7 +93,10 @@ def getAllPartNumPairs(score):
     
 
 
+# -----------------------------------------------------------------------------
 # METHODS FOR EVALUATING VOICE LEADING, BY SPECIES
+# -----------------------------------------------------------------------------
+
 def species(note):
     if note.quarterLength == paceUnit:
         return 'first'
@@ -102,7 +108,6 @@ def species(note):
         return 'third'                    
     if note.quarterLength == paceUnit/2 and note.isNote and note.tie:
         return 'fourth'
-
 
 def checkConsecutions(score):
     for part in score.parts:
@@ -1811,6 +1816,7 @@ def stopWeight(score, note):
         pass      
 
 
+# -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
     # self_test code
@@ -1831,3 +1837,6 @@ if __name__ == '__main__':
 
     cxt = context.makeGlobalContext(source)
     voiceLeadingAnalyzer(cxt)
+    
+# -----------------------------------------------------------------------------
+# eof

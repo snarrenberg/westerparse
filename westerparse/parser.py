@@ -40,17 +40,13 @@ The parser also records errors that arise.
 '''
 
 from music21 import *
-#from rule import *
-#from dependency import *
 from utilities import pairwise
-
 import itertools
 import copy
-#import context
 
-##################################################################
+# -----------------------------------------------------------------------------
 # MAIN CLASSES
-##################################################################
+# -----------------------------------------------------------------------------
 
 class Parser():
     '''The Parser class is the engine of the parse. The bulk of the work is done
@@ -58,8 +54,8 @@ class Parser():
     the parser decides on a set of possible structural interpretations and creates
     a :py:class:`~Parser.Parse` object to store each interpretation.'''
     # define order to present names in documentation; use strings
-    _DOC_ORDER = ['inferLineTypes', 'preParseLine', 'parseTransition', 'prepareParses', 
-        'buildParse', 'collectParses', 'selectPreferredParses', 'Parse']
+#    _DOC_ORDER = ['inferLineTypes', 'preParseLine', 'parseTransition', 'prepareParses', 
+#        'buildParse', 'collectParses', 'selectPreferredParses', 'Parse']
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
 #    and the most recent Arc is popped into a failed list 
@@ -2399,9 +2395,9 @@ class Parser():
 
         return self
 
-##################################################################
+# -----------------------------------------------------------------------------
 # UTILITY SCRIPTS
-##################################################################
+# -----------------------------------------------------------------------------
 
 def shiftBuffer(stack, buffer):
     nextnote = buffer[0]
@@ -2729,8 +2725,8 @@ def arcLength(arc):
     length = arc[-1] - arc[0]
     return length
     
-_DOC_ORDER = [Parser, Parse]
-
-##########################################################################################
+# -----------------------------------------------------------------------------
 if __name__ == "__main__":
     pass
+# -----------------------------------------------------------------------------
+# eof

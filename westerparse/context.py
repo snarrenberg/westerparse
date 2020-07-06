@@ -13,20 +13,20 @@ Context
 The Context module includes classes to represent both global and local contexts. 
 '''
 
-#from music21 import *
+from music21 import *
 import itertools
 #import time
 
 import keyFinder
-from csd import *
-from rule import *
-from dependency import *
-from consecutions import *
+import csd
+import rule
+import dependency
+import consecutions
 from utilities import pairwise
 
-##################################################################
+# -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
-##################################################################
+# -----------------------------------------------------------------------------
 
 logfile = 'logfile.txt'
 
@@ -60,9 +60,9 @@ class EvaluationException(Exception):
 
 # TODO: figure out how to accommodate tonal ambiguity: make a global context for each option?
 
-##################################################################
+# -----------------------------------------------------------------------------
 # MAIN CLASSES
-##################################################################
+# -----------------------------------------------------------------------------
 
 class Context():
     '''An object for representing a span of a composition 
@@ -192,15 +192,15 @@ class GlobalContext(Context):
             # part rhythmic species
             part.species = assignSpecies(part)
             # set up note consecution relations, from consecutions.py
-            getConsecutions(part)
+            consecutions.getConsecutions(part)
             # set up note properties used in parsing
             for idx, note in enumerate(part.recurse().notes):
                 # get the order position of the note in the line
                 note.index = idx
                 # assigns a Rule object to each Note
-                note.rule = Rule()
+                note.rule = rule.Rule()
                 # assigns a Dependency object to each Note
-                note.dependency = Dependency()
+                note.dependency = dependency.Dependency()
 
     def setupTonalityGeneral(self, **keywords):
         # setup key, using information provided by user or inferred from parts
@@ -274,7 +274,7 @@ class GlobalContext(Context):
             # assign scale degrees to notes
             for indx, note in enumerate(part.recurse().notes):
                 # create a ConcreteScaleDegree object for each note
-                note.csd = ConcreteScaleDegree(note.pitch, part.scale)
+                note.csd = csd.ConcreteScaleDegree(note.pitch, part.scale)
                 # 2020-06-29 by this point, it's probably already been established that all of the 
                 # pitches belong to the scale, so this exception is probably not necessary
                 if note.csd == False:
@@ -371,9 +371,9 @@ class GlobalContext(Context):
 #                newpart.openTransitions = []
             self.localContexts[cxt.offset] = cxt
 
-##################################################################
+# -----------------------------------------------------------------------------
 # HELPER SCRIPTS
-##################################################################
+# -----------------------------------------------------------------------------
 
 def validateParts(score):
     if len(score.parts) < 1:
@@ -418,8 +418,12 @@ def assignSpecies(part):
     else:
         return None
 
-##################################################################
+# -----------------------------------------------------------------------------
+
 if __name__ == "__main__":
     pass
 
     source = 'TestScoresXML/ChromaTest.musicxml'
+
+# -----------------------------------------------------------------------------
+# eof

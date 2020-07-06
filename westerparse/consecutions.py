@@ -19,6 +19,10 @@ This should be converted to a method.'''
 
 from music21 import *
 
+# -----------------------------------------------------------------------------
+# MAIN CLASS
+# -----------------------------------------------------------------------------
+
 class Consecutions():
     '''An object holding the generic types of melodic consecution for a note to the 
     left and right (approach and departure): the interval, its direction, and the consecution type
@@ -83,6 +87,10 @@ class Consecutions():
     leftType = property(get_leftType)
     rightType = property(get_rightType)
         
+# -----------------------------------------------------------------------------
+# FUNCTIONS
+# -----------------------------------------------------------------------------
+
 def getConsecutions(part):
     idx = 0
     for n in part.recurse().notes:
@@ -96,3 +104,12 @@ def getConsecutions(part):
             nRight = part.recurse().notes[idx+1]
         n.consecutions = Consecutions(n, nLeft, nRight)
         idx += 1        
+
+# -----------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    # self_test code
+    pass
+        
+# -----------------------------------------------------------------------------
+# eof

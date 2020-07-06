@@ -24,6 +24,10 @@ class CSDError(Exception):
         log = open(self.logfile, 'a')
         print('CSD Error:', self.desc, file=log)
 
+# -----------------------------------------------------------------------------
+#MAIN CLASS
+# -----------------------------------------------------------------------------
+
 class ConcreteScaleDegree:
     '''A scale degree value based on an actual pitch object. 
     Tonic = 0. Leading tone = -1. The upper octave = 7. The fifth above = 4. 
@@ -90,6 +94,10 @@ class ConcreteScaleDegree:
         csd = self.value
         return '<' + self.name + ': scale degree ' + self.dir + self.degree + ' direction=' + self.direction + '>'
 
+# -----------------------------------------------------------------------------
+
 if __name__ == '__main__':
     # self_test code
     pass
+# -----------------------------------------------------------------------------
+# eof

@@ -32,9 +32,9 @@ allowSecondSpeciesBreak = True
 # create lists to collect errors, for reporting to user
 vlErrors = []
 
-##################################################################
+# -----------------------------------------------------------------------------
 # MAIN SCRIPT
-##################################################################
+# -----------------------------------------------------------------------------
 
 def checkCounterpoint(context, report=True, sonorityCheck=False, **keywords):
     # extract relevant information from the score, if contrapuntal
@@ -257,9 +257,9 @@ def isSyncopated(score, note):
     else:
         return False
     
-##################################################################
+# -----------------------------------------------------------------------------
 # SCRIPTS FOR EVALUATING VOICE LEADING, BY SPECIES
-##################################################################
+# -----------------------------------------------------------------------------
 
 def checkPartPairs(score, analyzer):
     partNumPairs = getAllPartNumPairs(score)
@@ -1257,9 +1257,9 @@ def checkFourthLeapsInBass(score, analyzer):
             vlErrors.append(error)
 #        return impliedSixFour
 
-##################################################################
+# -----------------------------------------------------------------------------
 # UTILITY SCRIPTS
-##################################################################
+# -----------------------------------------------------------------------------
 
 # utility function for finding pairs of parts    
 def getAllPartNumPairs(score):
@@ -1302,7 +1302,7 @@ def makeVLQsFromVertPair(vertPair, partNumPairs):
             vlqList.append((numPair, voiceLeading.VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2)))
     return vlqList        
 
-##################################################################
+# -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
     # self_test code
@@ -1311,3 +1311,5 @@ if __name__ == '__main__':
     source='TestScoresXML/FirstSpecies10.musicxml'
     cxt = context.makeGlobalContext(source)
     checkCounterpoint(cxt, report=True)
+# -----------------------------------------------------------------------------
+# eof
