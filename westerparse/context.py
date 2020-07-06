@@ -116,7 +116,7 @@ class GlobalContext(Context):
     
         * A position index is assigned. The is the primary note reference used during parsing.
         * A concrete scale degree is determined.
-        * A :class:`~westerparse.rule.Rule` object is attached.
+        * A :class:`westerparse.rule.Rule` object is attached.
         * A dependency object is attached.
         * The manner or approach and departure (consecutions) for the note are determined.
 
