@@ -1,7 +1,7 @@
 WesterParse Web Site
 ====================
 
-.. image:: WesterParseWebFlow.png
+.. image:: images/WesterParseWebFlow.png
   :width: 400
   :alt: WesterParse Web Flow Chart
 
