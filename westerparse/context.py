@@ -104,7 +104,7 @@ class GlobalContext(Context):
     When a global context is created, several things happen automatically to prepare
     the score for evaluation.
     
-    #. A key for the context is automatically validated or inferred using the Key Finder (:py:module:`keyFinder`).
+    #. A key for the context is automatically validated or inferred using the Key Finder (:py:module:`~keyFinder`).
     #. For each part:
         
         * A part number is assigned.
