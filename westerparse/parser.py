@@ -54,9 +54,9 @@ import copy
 
 class Parser():
     '''The Parser class is the engine of the parse. The bulk of the work is done
-    by parseTransition(). After a preliminary parse of the line,
+    by :py:func:`~parseTransition`. After a preliminary parse of the line,
     the parser decides on a set of possible structural interpretations and creates
-    a Parse object to store each interpretation.'''
+    a :py:class:`~Parser.Parse` object to store each interpretation.'''
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
 #    and the most recent Arc is popped into a failed list 
@@ -65,7 +65,7 @@ class Parser():
 #    and instead shift more elements onto the Stack
 
 
-    def __init__(self, part, context, **kwargs):
+    def __init__(self, part, context, **keywords):
         # set up base content
         self.part = part
         self.context = context

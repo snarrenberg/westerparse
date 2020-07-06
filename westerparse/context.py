@@ -122,7 +122,7 @@ class GlobalContext(Context):
 
     #. Measure-long local harmonic contexts are created, for use in parsing events in third species.'''
 
-    def __init__(self, score, **kwargs):
+    def __init__(self, score, **keywords):
         self.score = score
         self.parts = self.score.parts
         self.score.measures = len(self.parts[0].getElementsByClass('Measure'))
@@ -143,7 +143,7 @@ class GlobalContext(Context):
         
         # (3) accept key from user if provided, else infer one from the parts
         # exit if errors are encountered
-        self.setupTonalityGeneral(**kwargs)
+        self.setupTonalityGeneral(**keywords)
 
         # (4) specific set up for notes and parts
         # to parts: assign tonic, mode, scale
@@ -155,14 +155,14 @@ class GlobalContext(Context):
 
 
 # TODO move harmonic species span stuff to a different place
-        if kwargs.get('harmonicSpecies'):
-            self.harmonicSpecies = kwargs['harmonicSpecies']
+        if keywords.get('harmonicSpecies'):
+            self.harmonicSpecies = keywords['harmonicSpecies']
         else:
             self.harmonicSpecies = False
-        if kwargs.get('harmonicSpecies') == True:
-            offPre = kwargs['offsetPredominant']
-            offDom = kwargs['offsetDominant']
-            offClosTon = kwargs['offsetClosingTonic']
+        if keywords.get('harmonicSpecies') == True:
+            offPre = keywords['offsetPredominant']
+            offDom = keywords['offsetDominant']
+            offClosTon = keywords['offsetClosingTonic']
             if offPre == None:
                 initialTonicSpan = makeLocalContext(cxt.score, 0.0, offPre, 'initial tonic')
                 predominantSpan = makeLocalContext(cxt.score, offPre, offDom, 'predominant')
@@ -202,10 +202,10 @@ class GlobalContext(Context):
                 # assigns a Dependency object to each Note
                 note.dependency = Dependency()
 
-    def setupTonalityGeneral(self, **kwargs):
+    def setupTonalityGeneral(self, **keywords):
         # setup key, using information provided by user or inferred from parts
-        knote = kwargs.get('keynote')
-        kmode = kwargs.get('mode')
+        knote = keywords.get('keynote')
+        kmode = keywords.get('mode')
         # (1a) if user provides key, validate and test
         if knote and kmode:
             self.key = keyFinder.testKey(self.score, knote, kmode)
