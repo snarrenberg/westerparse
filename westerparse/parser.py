@@ -59,14 +59,14 @@ class Parser():
         
        * prepares placeholders for parses and errors
        * accepts a linetype if provided, otherwise it infers the set of possible types.
-       * operates the preliminary parser: :py:func:`~self.preParseLine`
+       * operates the preliminary parser: :py:func:`~preParseLine`
        * interrupts the parser if preliminary parsing is unsuccessful and reports errors
-       * determines the set of possible basic structures and parses for each possibility: :py:func:`~self.prepareParses`
-       * gathers all the valid interpretations of the part by lineType: :py:func:`~self.collectParses`
-       * reduces the set of interpretations using preference rules: :py:func:`~self.selectPreferredParses`
+       * determines the set of possible basic structures and parses for each possibility: :py:func:`~prepareParses`
+       * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
+       * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
 
     The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
-    by :py:func:`~self.prepareParses`.
+    by :py:func:`~prepareParses`.
     
     '''
     # define order to present names in documentation; use strings
@@ -1116,7 +1116,7 @@ class Parser():
         If the line type is 'bass', the function verifies that the line begins and ends
         on a tonic degree (rules S1 and S2) and then assembles a list of notes that
         could complete the basic arpeggiation (rule S3) and builds a :py:class:`~Parser.Parse`
-        for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`) 
+        for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`.) 
         
         If the line type is 'primary', the function verifies that the line ends
         on a tonic degree (rule S1) and then assembles a list of notes that
@@ -1742,6 +1742,7 @@ class Parser():
                 # TODO: try to attach repetitions of S3 sd5 or sd3
         
         def parseBass(self):
+            '''Test whether a specific dominant pitch can function as S3.''' 
             # once all preliminary parsing is done, prepare for assigning basic structure
             self.arcs.sort()# = sorted(self.arcList)
             self.arcBasic = [0, self.S3Index, self.S1Index]        
@@ -1783,6 +1784,9 @@ class Parser():
                         self.arcs.remove(arc)
 
         def parseGeneric(self):
+            '''The line has already passed the generic test, so all that is to be 
+            done is determine whether there is a basic step motion connecting
+            the first and last notes.''' 
             # once preliminary parsing is done, prepare for assigning basic structure
             # see whether a basic step motion is absent, ascending, or descending
             self.arcs.sort()# = sorted(self.arcList)
