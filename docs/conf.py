@@ -32,7 +32,7 @@ extensions = ['sphinx.ext.autodoc']
 autodoc_mock_imports = ["music21"]
 autodoc_default_options = {
 #    'members': 'var1, var2',
-    'member-order': 'groupwise',
+    'member-order': 'bysource',
 #    'special-members': '__init__',
 #    'undoc-members': True,
 #    'exclude-members': '__weakref__'
