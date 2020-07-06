@@ -3,14 +3,16 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 
 from music21 import *
-from westerparse
-#import context
 import signal
 import time
 import os
 import glob
 import sys, io
 #import strip_xml_metadata
+
+sys.path.insert(0, os.path.abspath('westerparse'))
+
+import westerparse
 
 
 def convertImage(image, *args):

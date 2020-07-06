@@ -36,7 +36,7 @@ vlErrors = []
 # MAIN SCRIPT
 ##################################################################
 
-def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
+def checkCounterpoint(context, report=True, sonorityCheck=False, **keywords):
     # extract relevant information from the score, if contrapuntal
     # use revised versions of music21 theory analyzer module
     analytics = theoryAnalyzerWP.Analyzer()

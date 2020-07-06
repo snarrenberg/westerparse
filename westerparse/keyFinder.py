@@ -72,7 +72,7 @@ class KeyFinderError(Exception):
 ##################################################################
 
 def testKey(score, knote=None, kmode=None):
-    '''Validate and test a key provided by the user'''
+    '''Validate and test a key provided by the user.'''
     # (1) validate the user selected key
     try: 
         userKey = validateKeySelection(knote, kmode)
@@ -89,7 +89,7 @@ def testKey(score, knote=None, kmode=None):
         return userKey
 
 def inferKey(score):
-    '''Infer a key from the parts'''
+    '''Infer a key from the parts.'''
     # (1)find the keys of each part
     try:
         allPartKeys = findPartKeys(score)

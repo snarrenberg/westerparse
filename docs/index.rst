@@ -21,7 +21,7 @@ counterpoint was the formulation of a syntax for contrapuntal lines and an expli
 of the cognitive issues involved in how listeners parse the syntax of such lines. 
 Hence the name of this program, **WesterParse**.
 
-.. figure:: usage/ITTfigures.png
+.. figure:: images/ITTfigures.png
    :width: 300
    :alt: Westergaard stick figures p. 9
    :align: center
@@ -35,14 +35,14 @@ Hence the name of this program, **WesterParse**.
    :maxdepth: 2
    :caption: Contents:
 
-   usage/README
-   usage/userguide
-   usage/website
-   usage/speciesrules
-   usage/speciesguide
-   usage/corpus
-   usage/modulesdoc
-   usage/license
+   README
+   userguide
+   website
+   speciesrules
+   speciesguide
+   corpus
+   modulesdoc
+   license
    
    
 

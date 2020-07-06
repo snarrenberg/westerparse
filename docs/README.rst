@@ -1,8 +1,6 @@
 Getting Started
 ===============
 
-
-
   
 First Questions
 ---------------
@@ -46,7 +44,7 @@ the results displayed in musical notation. Otherwise you will see a text report.
 Let's say you notate Fux's well-known Dorian cantus firmus using your favorite
 notation software:
 
-.. image:: FuxDorian.png
+.. image:: images/FuxDorian.png
   :width: 600
   :alt: Fux Dorian cF
 
@@ -55,7 +53,7 @@ You can then ask WesterParse to parse the line:
 .. code-block:: python
 
     >>> from westerparse import *
-    >>> source = 'usage/sampledocs/FuxDorian.musicxml'
+    >>> source = 'sampledocs/FuxDorian.musicxml'
     >>> evaluateLines(source, 
     ...               show='show', 
     ...               partLineType='primary', 
@@ -77,11 +75,11 @@ The result could take the form of a text report:
 But since the keyword show was set to 'show', the program will display the 
 interpretations in a notation program.
 
-.. image:: FuxDorianP1.png
+.. image:: images/FuxDorianP1.png
   :width: 600
   :alt: Fux Dorian cF, as PL1
 
-.. image:: FuxDorianP2.png
+.. image:: images/FuxDorianP2.png
   :width: 600
   :alt: Fux Dorian cF, as PL2
   
