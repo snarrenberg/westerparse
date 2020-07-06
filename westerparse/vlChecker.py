@@ -163,7 +163,7 @@ def isTriadicConsonance(n1, n2):
     '''Input two notes, from any context, and determine whether the pair forms a 
     triadic interval in a consonant triad (major or minor). The test determines whether the simple interval 
     equivalent of the actual interval is in the list: 
-    'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6''''
+    'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'.'''
     int = interval.Interval(n1, n2)
     if int.simpleName in {'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'}:
         return True
@@ -174,7 +174,7 @@ def isTriadicInterval(n1, n2):
     triadic interval in any type of triad (major, minor, diminished, augmented). 
     The test determines whether the simple interval 
     equivalent of the actual interval is in the list: 
-    'P1', 'm3', 'M3', 'P4', 'A4', 'd5', 'P5', 'm6', 'M6''''
+    'P1', 'm3', 'M3', 'P4', 'A4', 'd5', 'P5', 'm6', 'M6'.'''
     ivl = interval.Interval(n1, n2)
     if ivl.simpleName in {'P1', 'm3', 'M3', 'P4', 'A4', 'd5', 'P5', 'm6', 'M6'}:
         return True
@@ -211,30 +211,40 @@ def isVerticalDissonance(n1, n2):
     else: return False
 
 def isDiatonicStep(n1, n2):
-    '''docstring'''
+    '''Input two notes with pitch and determine whether 
+    the pair forms a diatonic step. The test determines whether 
+    the actual interval is in the list: 
+    'm2', 'M2'.''' 
     lin_ivl = interval.Interval(n1, n2)
     if lin_ivl.name in {'m2', 'M2'}:
         return True
     else: return False
     
 def isUnison(n1, n2):
-    '''docstring'''
+    '''Input two notes with pitch and determine whether 
+    the pair forms a diatonic step. The test determines whether 
+    the actual interval is in the list: 
+    'P1'.''' 
     lin_ivl = interval.Interval(n1, n2)
     if lin_ivl.name in {'P1'}:
         return True
     else: return False
 
 def isOctave(n1, n2):
-    '''docstring'''
+    '''Input two notes with pitch and determine whether 
+    the pair forms a diatonic step. The test determines whether 
+    the actual interval is in the list: 
+    'P8', 'P15', 'P22'.''' 
     lin_ivl = interval.Interval(n1, n2)
-    if lin_ivl.name in {'P8', 'P15'}:
+    if lin_ivl.name in {'P8', 'P15', 'P22'}:
         return True
     else: return False
         
 # Methods for voice-leading quartets
 
 def isSimilarUnison(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    there is similar motion to a unison.''' 
     rules = [vlq.similarMotion() == True,
             vlq.vIntervals[1] != vlq.vIntervals[0],
             vlq.vIntervals[1].name == 'P1']
@@ -243,7 +253,8 @@ def isSimilarUnison(vlq):
     else: return False
 
 def isSimilarFromUnison(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    there is similar motion from a unison.''' 
     rules = [vlq.similarMotion() == True,
             vlq.vIntervals[1] != vlq.vIntervals[0],
             vlq.vIntervals[0].name == 'P1']
@@ -252,7 +263,8 @@ def isSimilarFromUnison(vlq):
     else: return False
 
 def isSimilarFifth(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    there is similar motion to a perfect fifth (simple or compound).''' 
     rules = [vlq.similarMotion() == True,
             vlq.vIntervals[1] != vlq.vIntervals[0],
             vlq.vIntervals[1].simpleName == 'P5']
@@ -261,7 +273,8 @@ def isSimilarFifth(vlq):
     else: return False
                 
 def isSimilarOctave(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    there is similar motion to an octave (simple or compound).''' 
     rules = [vlq.similarMotion() == True,
             vlq.vIntervals[1] != vlq.vIntervals[0],
             vlq.vIntervals[1].name in ['P8', 'P15', 'P22']]
@@ -270,7 +283,8 @@ def isSimilarOctave(vlq):
     else: return False
     
 def isParallelUnison(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    there is parallel motion from one unison to another.''' 
     rules = [vlq.parallelMotion() == True,
             vlq.vIntervals[1].name in ['P1']]
     if all(rules):
@@ -278,7 +292,9 @@ def isParallelUnison(vlq):
     else: return False
 
 def isParallelFifth(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    there is parallel motion to a perfect fifth 
+    (the first fifth need not be perfect).''' 
     rules = [vlq.parallelMotion() == True,
             vlq.vIntervals[1].simpleName == 'P5']
     if all(rules):
@@ -286,7 +302,8 @@ def isParallelFifth(vlq):
     else: return False
 
 def isParallelOctave(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    there is parallel motion from one octave (simple or compound) to another.''' 
     rules = [vlq.parallelMotion() == True,
             vlq.vIntervals[1].name in ['P8', 'P15', 'P22']]
     if all(rules):
@@ -294,7 +311,8 @@ def isParallelOctave(vlq):
     else: return False
 
 def isVoiceOverlap(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    the voices overlap: either v1n2 < v2n1 or v2n2 > v1n1.''' 
     rules = [vlq.v1n2.pitch < vlq.v2n1.pitch,
             vlq.v2n2.pitch > vlq.v1n1.pitch]
     if any(rules):
@@ -302,7 +320,8 @@ def isVoiceOverlap(vlq):
     else: return False
 
 def isVoiceCrossing(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    the voices cross: v1n1 > v2n1 and v1n2 < v2n2.''' 
     rules = [vlq.v1n1.pitch > vlq.v2n1.pitch,
             vlq.v1n2.pitch < vlq.v2n2.pitch]
     if all(rules):
@@ -310,7 +329,8 @@ def isVoiceCrossing(vlq):
     else: return False
 
 def isCrossRelation(vlq):
-    '''docstring'''
+    '''Input a VLQ and determine whether 
+    the there is a cross relation.''' 
     rules = [interval.Interval(vlq.v1n1, vlq.v2n2).simpleName in ['d1', 'A1'],
             interval.Interval(vlq.v2n1, vlq.v1n2).simpleName in ['d1', 'A1']]
     if any(rules):
