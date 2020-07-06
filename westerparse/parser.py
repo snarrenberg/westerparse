@@ -52,10 +52,27 @@ class Parser():
     '''The Parser class is the engine of the parse. The bulk of the work is done
     by :py:func:`~parseTransition`. After a preliminary parse of the line,
     the parser decides on a set of possible structural interpretations and creates
-    a :py:class:`~Parser.Parse` object to store each interpretation.'''
+    a :py:class:`~Parser.Parse` object to store each interpretation.
+    
+    Upon initialization, the Parser automatically parses the line, in the following
+    steps:
+        
+       * prepares placeholders for parses and errors
+       * accepts a linetype if provided, otherwise it infers the set of possible types.
+       * operates the preliminary parser: :py:func:`self.preParseLine`
+       * interrupts the parser if preliminary parsing is unsuccessful and reports errors
+       * determines the set of possible basic structures and parses for each possibility: :py:func:`self.prepareParses`
+       * gathers all the valid interpretations of the part by lineType: :py:func:`self.collectParses`
+       * reduces the set of interpretations using preference rules: :py:func:`self.selectPreferredParses`
+
+    The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
+    by :py:func:`self.prepareParses`.
+    
+    '''
     # define order to present names in documentation; use strings
 #    _DOC_ORDER = ['inferLineTypes', 'preParseLine', 'parseTransition', 'prepareParses', 
 #        'buildParse', 'collectParses', 'selectPreferredParses', 'Parse']
+
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
 #    and the most recent Arc is popped into a failed list 
@@ -63,20 +80,7 @@ class Parser():
 #    the parser then must skip assigning a structure that matches the failed Arc 
 #    and instead shift more elements onto the Stack
 
-
     def __init__(self, part, context, **keywords):
-        '''
-        Upon initialization, the Parser automatically parses the line, in the following
-        steps:
-        
-           * prepares placeholders for parses and errors
-           * accepts a linetype if provided, otherwise it infers the set of possible types.
-           * operates the preliminary parser: :py:func:`self.preParseLine`
-           * interrupts the parser if preliminary parsing is unsuccessful and reports errors
-           * determines the set of possible basic structures and parses for each possibility: :py:func:`self.prepareParses`
-           * gathers all the valid interpretations of the part by lineType: :py:func:`self.collectParses`
-           * reduces the set of interpretations using preference rules: :py:func:`self.selectPreferredParses`
-        '''
         # set up base content
         self.part = part
         self.context = context
@@ -1107,7 +1111,27 @@ class Parser():
         '''After preliminary parsing is completed, determine possibiities
         for basic structures based on available line types and parse the line
         using each candidate for basic structure. The results will be collected
-        in self.parses.'''
+        in self.parses.
+        
+        If the line type is 'bass', the function verifies that the line begins and ends
+        on a tonic degree (rules S1 and S2) and then assembles a list of notes that
+        could complete the basic arpeggiation (rule S3) and builds a :py:class:`Parser.Parse`
+        for each S3 candidate. (See :py:func:`Parser.Parse.parseBass`) 
+        
+        If the line type is 'primary', the function verifies that the line ends
+        on a tonic degree (rule S1) and then assembles a list of notes that
+        could initiate a basic step motion (rule S2). The function uses eight different 
+        methods to determine whether a valid basic step motion exists for each S2 candidate
+        (see :py:func:`Parser.Parse.parsePrimary`) 
+        and attempts to build a :py:class:`Parser.Parse` using each method; not every
+        method yields a result.
+
+        If the line type is 'generic', the function verifies that the line begins and ends
+        on triad pitches (rules S1 and S2) and then looks for a possible step connection
+        between these terminal pitches
+        (see :py:func:`Parser.Parse.parseGeneric`).
+        
+        '''
 
         # prepare parses for every type of line if the context is only one part
         if self.part.lineTypes and len(self.context.parts) == 1:
@@ -1273,7 +1297,17 @@ class Parser():
             return self.label
 
         def performLineParse(self):
-            '''Construct an arc for the basic structure, given the line type.'''
+            '''
+            Create a complete interpretation of the line, in the following steps:
+            
+               * Construct an arc for the basic structure, given the line type and a specific option for the basic structure.
+               * Assign rules to notes in secondary structures.
+               * Test for resolution of local insertions in third species.
+               * Consolidate arcs into longer passing motions, if possible
+               * Assemble lists for rule labels and parentheses, to be used when generating representations of the interpretation.
+               * Set the dependency level of each note. [This function is currently disabled.]
+               
+            '''
             if self.lineType == 'primary':
                 self.parsePrimary()
             elif self.lineType == 'bass':
