@@ -57,6 +57,7 @@ class Parser():
     by :py:func:`~parseTransition`. After a preliminary parse of the line,
     the parser decides on a set of possible structural interpretations and creates
     a :py:class:`~Parser.Parse` object to store each interpretation.'''
+    # define order to present names in documentation; use strings
     _DOC_ORDER = ['inferLineTypes', 'preParseLine', 'parseTransition', 'prepareParses', 
         'buildParse', 'collectParses', 'selectPreferredParses', 'Parse']
 #    TODO: If the parse fails, the location is marked 
@@ -2728,6 +2729,7 @@ def arcLength(arc):
     length = arc[-1] - arc[0]
     return length
     
+_DOC_ORDER = [Parser, Parse]
 
 ##########################################################################################
 if __name__ == "__main__":
