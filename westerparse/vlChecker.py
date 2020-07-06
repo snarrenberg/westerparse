@@ -143,17 +143,18 @@ def isConsonanceBetweenUpper(u1, u2):
     '''Input two notes with pitch, two upper-line notes, and determine whether 
     the pair forms a vertical consonance. The test determines whether the simple interval 
     equivalent of the actual interval is in the list: 'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'. 
-    The intervals P4, A4, and d5 require additional test with bass: 
-    :py:func:`isPermittedDissonanceBetweenUpper`.'''
+    '''
     vert_int = interval.Interval(u1, u2)
     if vert_int.simpleName in {'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'}:
         return True
     else: return False
     
 def isPermittedDissonanceBetweenUpper(u1, u2):
-    '''docstring'''
-    # input two notes with pitch, two upper-line notes
-    # P4, A4, and d5 require additional test with bass
+    '''Input two notes with pitch, two upper-line notes, and determine whether 
+    the pair forms a permitted vertical dissonance. The test determines whether the simple interval 
+    equivalent of the actual interval is in the list: 'P4', 'A4', 'd5'. 
+    Each note requires additional test with bass: 
+    :py:func:`isThirdOrSixthAboveBass`.'''
     vert_int = interval.Interval(u1, u2)
     if vert_int.simpleName in {'P4', 'A4', 'd5'}:
         return True
@@ -330,7 +331,9 @@ def isVoiceCrossing(vlq):
 
 def isCrossRelation(vlq):
     '''Input a VLQ and determine whether 
-    the there is a cross relation.''' 
+    the there is a cross relation. The test determines whether 
+    the simple interval of either contiguous interval is in the list:
+    'd1', 'A1'.''' 
     rules = [interval.Interval(vlq.v1n1, vlq.v2n2).simpleName in ['d1', 'A1'],
             interval.Interval(vlq.v2n1, vlq.v1n2).simpleName in ['d1', 'A1']]
     if any(rules):
@@ -340,14 +343,14 @@ def isCrossRelation(vlq):
 # Methods for notes
 
 def isOnbeat(note):
-    '''docstring'''
+    '''Tests whether a note is initiated on the downbeat.'''
     rules = [note.beat == 1.0]
     if any(rules):
         return True
     else: return False
 
 def isSyncopated(score, note):
-    '''docstring'''
+    '''Test whether a note is syncopated. [Not yet functional]'''
     # TODO this is a first attempt at defining the syncopation property
     #    given a time signature and music21's default metric system for it
     # this works for duple simple meter, not sure about compound or triple
@@ -378,7 +381,9 @@ def isSyncopated(score, note):
 # -----------------------------------------------------------------------------
 
 def checkPartPairs(score, analyzer):
-    '''docstring'''
+    '''Find all of the pairwise combinations of parts and check the voice-leading of each pair, 
+    depending upon which simple species the pair represents (e.g., first, second, third, fourth).
+    The function is currently not able to evaluate combined species.'''
     partNumPairs = getAllPartNumPairs(score)
     for numPair in partNumPairs:
         if score.parts[numPair[0]].species == 'first' and score.parts[numPair[1]].species == 'first':
@@ -401,12 +406,14 @@ def checkPartPairs(score, analyzer):
     # third and fourth
 
 def checkFirstSpecies(score, analyzer, numPair):
-    '''docstring'''
+    '''Check a pair of parts, where one line is in first species 
+    and the other is also in first species.
+    Evaluate control of dissonance and forbidden forms of motion. 
+    Also check the final step for conformity with the global rule for upper lines.'''
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     firstSpeciesForbiddenMotions(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
-#
     checkControlOfDissonance(score, analyzer)
 #
 #    firstSpeciesControlOfDissonance(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
@@ -414,13 +421,17 @@ def checkFirstSpecies(score, analyzer, numPair):
 #    firstSpeciesSonority(score, analyzer)
     
 def checkSecondSpecies(score, analyzer, numPair):
-    '''docstring'''
+    '''Check a pair of parts, where one line is in first species 
+    and the other is in second species.
+    Check the intervals between consecutive notes (no local repetitions in the second species line).
+    Evaluate control of dissonance and forbidden forms of motion, including the rules 
+    for nonconsecutive unisons and octaves. 
+    Also check the final step for conformity with the global rule for upper lines.'''
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
     checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     secondSpeciesForbiddenMotions(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
-#
     checkControlOfDissonance(score, analyzer)
 #
 #    secondSpeciesControlOfDissonance(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
@@ -428,6 +439,11 @@ def checkSecondSpecies(score, analyzer, numPair):
     checkSecondSpeciesNonconsecutiveOctaves(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
 
 def checkThirdSpecies(score, analyzer, numPair):
+    '''Check a pair of parts, where one line is in first species 
+    and the other is in third species.
+    Check the intervals between consecutive notes (no local repetitions in the third species line).
+    Evaluate control of dissonance and forbidden forms of motion. 
+    Also check the final step for conformity with the global rule for upper lines.'''
     '''docstring'''
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
@@ -435,13 +451,16 @@ def checkThirdSpecies(score, analyzer, numPair):
     checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     partNumPairs = getAllPartNumPairs(score)
     thirdSpeciesForbiddenMotions(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
-#
     checkControlOfDissonance(score, analyzer)
 #
 #    thirdSpeciesControlOfDissonance(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
 
 def checkFourthSpecies(score, analyzer, numPair):
-    '''docstring'''
+    '''Check a pair of parts, where one line is in first species 
+    and the other is in fourth species.
+    Check the intervals between consecutive notes (no local repetitions in the fourth species line).
+    Evaluate control of dissonance and forbidden forms of motion. 
+    Also check the final step for conformity with the global rule for upper lines.'''
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
@@ -451,7 +470,11 @@ def checkFourthSpecies(score, analyzer, numPair):
     fourthSpeciesControlOfDissonance(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
 
 def checkConsecutions(score):
-    '''docstring'''
+    '''Check the intervals between consecutive notes. If the line is in second or third
+    species, confirm that there are no direct repetitions. If the line is in fourth species,
+    confirm that the pitches of tied-over notes match and that there are no direct 
+    repetitions.
+    '''
     for part in score.parts:
         if part.species in ['second', 'third']:
             for n in part.recurse().notes:
