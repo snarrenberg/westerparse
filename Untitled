@@ -1,0 +1,14 @@
+Bugs and other things to fix
+
+TODO
+make a get method for consecutions
+
+create a set of tests that can be run automatically to test 
+the two evaluate functions and their various options
+
+add option to check sonority along with voice leading
+
+add option to display structural level information
+
+
+perhaps rename vlChecker to cptEvaluator 
