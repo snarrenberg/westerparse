@@ -37,6 +37,7 @@ Hence the name of this program, **WesterParse**.
 
    usage/README
    usage/userguide
+   usage/webapp
    usage/speciesrules
    usage/speciesguide
    usage/corpus
