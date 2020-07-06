@@ -10,7 +10,7 @@
 WesterParse
 ===========
 
-WesterParse (westerparse.py) is the main program script. 
+This is the main program script. 
 
 WesterParse allows a user to test a species counterpoint exercise 
 for conformity with the rules of line construction and voice leading 
@@ -601,5 +601,5 @@ def assignParentheses(source, parentheses):
 if __name__ == "__main__":
     pass
 
-    source = './TestScoresXML/Primary06.musicxml'
+    source = '../TestScoresXML/Primary06.musicxml'
     evaluateLines(source)
