@@ -3,6 +3,7 @@ Module Documentation
 
 .. automodule:: westerparse
    :members:
+   'member-order': 'bysource',
 
 .. automodule:: context
    :members:
@@ -12,6 +13,7 @@ Module Documentation
 
 .. automodule:: parser
    :members:
+   'member-order': 'groupwise'
 
 .. automodule:: vlChecker
    :members:

@@ -1,7 +1,6 @@
 User's Guide
 ============
 
-
 Basic Instructions
 ------------------
 
