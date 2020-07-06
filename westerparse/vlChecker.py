@@ -87,7 +87,8 @@ vlErrors = []
 def checkCounterpoint(context, report=True, sonorityCheck=False, **keywords):
     '''This is the main script. It creates the analysis database and then
     checks every pair of parts in the score for conformity with the rules that control
-    dissonance and the rules that prohibit certain forms of motion.''''
+    dissonance and the rules that prohibit certain forms of motion.
+    A separate function checks for the rules that control leaps of a fourth in the bass.'''
     # extract relevant information from the score, if contrapuntal
     # use revised versions of music21 theory analyzer module
     analytics = theoryAnalyzerWP.Analyzer()
@@ -120,26 +121,30 @@ def checkCounterpoint(context, report=True, sonorityCheck=False, **keywords):
 # Methods for note pairs
 
 def isConsonanceAboveBass(b, u):
-    '''docstring'''
-    # equivalent to music21.Interval.isConsonant()
-    # input two notes with pitch, a bass note an upper note
+    '''Input two notes with pitch, a bass note and an upper note, and determine whether 
+    the pair forms a vertical consonance. The test determines whether the simple interval 
+    equivalent of the actual interval is in the list: 'P1', 'm3', 'M3', 'P5', 'm6', 'M6'. 
+    Equivalent to music21.Interval.isConsonant().'''
     vert_int = interval.Interval(b, u)
     if interval.getAbsoluteLowerNote(b, u) == b and vert_int.simpleName in {'P1', 'm3', 'M3', 'P5', 'm6', 'M6'}:
         return True
     else: return False
 
 def isThirdOrSixthAboveBass(b, u):
-    '''docstring'''
-    # input two notes with pitch, a bass note an upper note
+    '''Input two notes with pitch, a bass note and an upper note, and determine whether the
+    pair forms a vertical third or sixth. The test determines whether the simple interval 
+    equivalent of the actual interval is in the list: 'm3', 'M3', 'm6', 'M6'.'''
     vert_int = interval.Interval(b, u)
     if interval.getAbsoluteLowerNote(b, u) == b and vert_int.simpleName in {'m3', 'M3', 'm6', 'M6'}:
         return True
     else: return False
 
 def isConsonanceBetweenUpper(u1, u2):
-    '''docstring'''
-    # input two notes with pitch, two upper-line notes
-    # P4, A4, and d5 require additional test with bass: isPermittedDissonanceBetweenUpper()
+    '''Input two notes with pitch, two upper-line notes, and determine whether 
+    the pair forms a vertical consonance. The test determines whether the simple interval 
+    equivalent of the actual interval is in the list: 'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'. 
+    The intervals P4, A4, and d5 require additional test with bass: 
+    :py:func:`isPermittedDissonanceBetweenUpper`.'''
     vert_int = interval.Interval(u1, u2)
     if vert_int.simpleName in {'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'}:
         return True
@@ -155,35 +160,51 @@ def isPermittedDissonanceBetweenUpper(u1, u2):
     else: return False
     
 def isTriadicConsonance(n1, n2):
-    '''docstring'''
+    '''Input two notes, from any context, and determine whether the pair forms a 
+    triadic interval in a consonant triad (major or minor). The test determines whether the simple interval 
+    equivalent of the actual interval is in the list: 
+    'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6''''
     int = interval.Interval(n1, n2)
     if int.simpleName in {'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'}:
         return True
     else: return False
 
 def isTriadicInterval(n1, n2):
-    '''docstring'''
+    '''Input two notes, from any context, and determine whether the pair forms a 
+    triadic interval in any type of triad (major, minor, diminished, augmented). 
+    The test determines whether the simple interval 
+    equivalent of the actual interval is in the list: 
+    'P1', 'm3', 'M3', 'P4', 'A4', 'd5', 'P5', 'm6', 'M6''''
     ivl = interval.Interval(n1, n2)
     if ivl.simpleName in {'P1', 'm3', 'M3', 'P4', 'A4', 'd5', 'P5', 'm6', 'M6'}:
         return True
     else: return False
 
 def isPerfectVerticalConsonance(n1, n2):
-    '''docstring'''
+    '''Input two simultaneous notes with pitch and determine whether 
+    the pair forms a perfect vertical consonance. The test determines whether the simple interval 
+    equivalent of the actual interval is in the list: 'P1', 'P5', 'P8'. 
+    '''
     ivl = interval.Interval(n1, n2)
     if ivl.simpleName in {'P1', 'P5', 'P8'}:
         return True
     else: return False
 
 def isImperfectVerticalConsonance(n1, n2):
-    '''docstring'''
+    '''Input two simultaneous notes with pitch and determine whether 
+    the pair forms an imperfect vertical consonance. The test determines whether 
+    the simple interval equivalent of the actual interval is in the list: 
+    'm3', 'M3', 'm6', 'M6'.''' 
     ivl = interval.Interval(n1, n2)
     if ivl.simpleName in {'m3', 'M3', 'm6', 'M6'}:
         return True
     else: return False
 
 def isVerticalDissonance(n1, n2):
-    '''docstring'''
+    '''Input two simultaneous notes with pitch and determine whether 
+    the pair forms a vertical dissonance. The test determines whether 
+    the simple interval equivalent of the actual interval is not in the list: 
+    'P1', 'P5', 'P8', 'm3', 'M3', 'm6', 'M6'.''' 
     ivl = interval.Interval(n1, n2)
     if ivl.simpleName not in {'P1', 'P5', 'P8', 'm3', 'M3', 'm6', 'M6'}:
         return True
