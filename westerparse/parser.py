@@ -59,14 +59,14 @@ class Parser():
         
        * prepares placeholders for parses and errors
        * accepts a linetype if provided, otherwise it infers the set of possible types.
-       * operates the preliminary parser: :py:func:`self.preParseLine`
+       * operates the preliminary parser: :py:func:`~self.preParseLine`
        * interrupts the parser if preliminary parsing is unsuccessful and reports errors
-       * determines the set of possible basic structures and parses for each possibility: :py:func:`self.prepareParses`
-       * gathers all the valid interpretations of the part by lineType: :py:func:`self.collectParses`
-       * reduces the set of interpretations using preference rules: :py:func:`self.selectPreferredParses`
+       * determines the set of possible basic structures and parses for each possibility: :py:func:`~self.prepareParses`
+       * gathers all the valid interpretations of the part by lineType: :py:func:`~self.collectParses`
+       * reduces the set of interpretations using preference rules: :py:func:`~self.selectPreferredParses`
 
     The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
-    by :py:func:`self.prepareParses`.
+    by :py:func:`~self.prepareParses`.
     
     '''
     # define order to present names in documentation; use strings
@@ -1115,21 +1115,21 @@ class Parser():
         
         If the line type is 'bass', the function verifies that the line begins and ends
         on a tonic degree (rules S1 and S2) and then assembles a list of notes that
-        could complete the basic arpeggiation (rule S3) and builds a :py:class:`Parser.Parse`
-        for each S3 candidate. (See :py:func:`Parser.Parse.parseBass`) 
+        could complete the basic arpeggiation (rule S3) and builds a :py:class:`~Parser.Parse`
+        for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`) 
         
         If the line type is 'primary', the function verifies that the line ends
         on a tonic degree (rule S1) and then assembles a list of notes that
         could initiate a basic step motion (rule S2). The function uses eight different 
         methods to determine whether a valid basic step motion exists for each S2 candidate
-        (see :py:func:`Parser.Parse.parsePrimary`) 
-        and attempts to build a :py:class:`Parser.Parse` using each method; not every
+        (see :py:func:`~Parser.Parse.parsePrimary`) 
+        and attempts to build a :py:class:`~Parser.Parse` using each method; not every
         method yields a result.
 
         If the line type is 'generic', the function verifies that the line begins and ends
         on triad pitches (rules S1 and S2) and then looks for a possible step connection
         between these terminal pitches
-        (see :py:func:`Parser.Parse.parseGeneric`).
+        (see :py:func:`~Parser.Parse.parseGeneric`).
         
         '''
 
