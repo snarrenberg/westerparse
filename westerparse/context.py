@@ -104,10 +104,10 @@ class GlobalContext(Context):
     When a global context is created, several things happen automatically to prepare
     the score for evaluation.
     
-    #. A key for the context is automatically validated or inferred using the Key Finder (keyFinder.py).
+    #. A key for the context is automatically validated or inferred using the Key Finder (:py:module:`keyFinder`).
     #. For each part:
         
-        * A name is assigned.
+        * A part number is assigned.
         * The rhythmic species is identified.
         * A referential tonic scale degree (csd.value = 0) is selected.
         * A list is created to collect errors.
@@ -117,9 +117,8 @@ class GlobalContext(Context):
         * A position index is assigned. The is the primary note reference used during parsing.
         * A concrete scale degree is determined.
         * A :py:class:`~rule.Rule` object is attached.
-        * A :py:class:`~westerparse.rule.Rule` object is attached.
-        * A dependency object is attached.
-        * The manner or approach and departure (consecutions) for the note are determined.
+        * A :py:class:`~dependency.Dependency` object is attached.
+        * The manner or approach and departure (:py:class:`~consecutions.Consecutions`) for the note are determined.
 
     #. Measure-long local harmonic contexts are created, for use in parsing events in third species.'''
 
