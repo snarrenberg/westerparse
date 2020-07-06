@@ -50,7 +50,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 #html_theme = 'sphinx_rtd_theme'
 html_theme = 'bizstyle'
 #html_style = '/default.css'
-html_logo = './images/WesterParseLogo.png'
+html_logo = 'images/WesterParseLogo.png'
 html_theme_options = {
 }
 html_sidebars = {
