@@ -31,11 +31,11 @@ master_doc = 'index'
 extensions = ['sphinx.ext.autodoc']
 autodoc_mock_imports = ["music21"]
 autodoc_default_options = {
-    'members': 'var1, var2',
+#    'members': 'var1, var2',
     'member-order': 'groupwise',
-    'special-members': '__init__',
-    'undoc-members': True,
-    'exclude-members': '__weakref__'
+#    'special-members': '__init__',
+#    'undoc-members': True,
+#    'exclude-members': '__weakref__'
 }
 
 # The name of the Pygments (syntax highlighting) style to use.
