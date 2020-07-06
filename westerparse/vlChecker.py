@@ -11,7 +11,26 @@ Voice Leading Checker
 =====================
 
 The Voice Leading Checker module takes a score with two or more parts (lines)
-and examines the local voice leading for conformity with Westergaard's rules of species counterpoint.'''
+and examines the local voice leading for conformity with Westergaard's rules 
+of species counterpoint.
+
+The module uses music21's theoryAnalyzer module to parse the score into small bits
+for analysis, bits such as pairs of simultaneous notes, complete verticalities, 
+and voice-leading quartets. The voice-leading checker then analyzes these bits.
+The results are stored in the analyzer's analysisData dictionary.
+
+A voice-leading quartet (VLQ) consists of pairs of simultaneous notes in two parts:
+
+    v1n1, v1n2
+    v2n1, v2n2
+    
+[Note: Part-ordering in music21's definition VLQ is not fixed (i.e., voice 1 is not 
+always the top voice). Tony Li wrote a new method for getting
+VLQs that fixes this problem.]
+
+[Etc.]
+
+'''
 
 # NB: vlq parts and score Parts are numbered top to bottom
 # NB: vPair parts are numbered bottom to top
@@ -62,9 +81,9 @@ def checkCounterpoint(context, report=True, sonorityCheck=False, **keywords):
     else: 
         pass
 
-##################################################################
+# -----------------------------------------------------------------------------
 # LIBRARY OF METHODS FOR EVALUTING VOICE LEADING ATOMS
-##################################################################
+# -----------------------------------------------------------------------------
 
 # Methods for note pairs
 

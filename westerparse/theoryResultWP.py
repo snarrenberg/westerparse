@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 #-------------------------------------------------------------------------------
-# Name:         theoryResultRS.py
+# Name:         theoryResultWP.py
 # Purpose:      Result objects to store information gathered about a score
 #
 # Authors:      Lars Johnson and Beth Hadley
-#               EDITED BY ROBERT SNARRENBERG (2019)
+#               ??EDITED BY ROBERT SNARRENBERG (2019): ...
 #
 # Copyright:    (c) 2009-2012 The music21 Project
 # License:      LGPL or BSD, see license.txt
