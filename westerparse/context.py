@@ -17,6 +17,8 @@ from music21 import *
 import itertools
 #import time
 
+import vlChecker
+import parser
 import keyFinder
 import csd
 import rule

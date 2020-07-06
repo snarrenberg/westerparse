@@ -75,6 +75,7 @@ def evaluateCounterpoint(source, report=True, sonorityCheck=False, **keywords):
     except EvaluationException as ee:
         ee.show()
     else:
+        vlChecker.vlErrors = []
         vlChecker.checkCounterpoint(cxt, report=True)
 
 # -----------------------------------------------------------------------------
