@@ -76,8 +76,6 @@ class Parser():
            * determines the set of possible basic structures and parses for each possibility: :py:func:`self.prepareParses`
            * gathers all the valid interpretations of the part by lineType: :py:func:`self.collectParses`
            * reduces the set of interpretations using preference rules: :py:func:`self.selectPreferredParses`
-        
-        
         '''
         # set up base content
         self.part = part
