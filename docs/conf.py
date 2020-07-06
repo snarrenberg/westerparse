@@ -29,7 +29,6 @@ master_doc = 'index'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc']
-autodoc_mock_imports = ["music21"]
 autodoc_default_options = {
 #    'members': 'var1, var2',
     'member-order': 'bysource',
@@ -37,6 +36,7 @@ autodoc_default_options = {
 #    'undoc-members': True,
 #    'exclude-members': '__weakref__'
 }
+autodoc_mock_imports = ["music21"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
