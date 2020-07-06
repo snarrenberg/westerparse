@@ -115,7 +115,7 @@ class GlobalContext(Context):
     #. For each note in the part: 
     
         * A position index is assigned. The is the primary note reference used during parsing.
-        * A concrete scale degree is determined.
+        * A concrete scale degree (:py:class:`~csd.ConcreteScaleDegree`) is determined.
         * A :py:class:`~rule.Rule` object is attached.
         * A :py:class:`~dependency.Dependency` object is attached.
         * The manner or approach and departure (:py:class:`~consecutions.Consecutions`) for the note are determined.
