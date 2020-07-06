@@ -1,3 +1,7 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../westerparse'))
+
 from music21 import *
 import westerparse
 import signal
