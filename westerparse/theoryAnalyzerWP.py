@@ -7,7 +7,7 @@
 #               Lars Johnson
 #               Michael Scott Cuthbert
 #               EDITED BY ROBERT SNARRENBERG and TONY LI (2019): 
-#                   getVLQs, getVerticalPairs
+#                   getVLQs, getVerticalPairs, identifyFourthLeapsInBass
 #
 # Copyright:    Copyright © 2009-2015 Michael Scott Cuthbert and the music21 Project
 # License:      LGPL or BSD, see license.txt
