@@ -576,8 +576,14 @@ def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
         pass
    
 def checkControlOfDissonance(score, analyzer):
-    '''Check the score for conformity the rules that control dissonance in first,
-    second, or third species.'''
+    '''Check the score for conformity with the rules that control dissonance in first,
+    second, or third species. 
+    
+    On the beat: notes must be consonant.
+    
+    Off the beat: notes may be dissonant but only if approached and left by step.
+    
+    Off the beat: consecutive dissonances must be approached and left by step in the same direction.'''
     partNumPairs = getAllPartNumPairs(score)
     verts = analyzer.getVerticalities(score)
     bassPartNum = len(score.parts)-1
