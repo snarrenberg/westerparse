@@ -39,7 +39,6 @@ Hence the name of this program, **WesterParse**.
    userguide
    website
    speciesrules
-   speciesguide
    corpus
    modulesdoc
    license
