@@ -1399,21 +1399,16 @@ class Parser():
                     
         def parsePrimary(self):
             '''Uses eight different methods to find a basic step motion from a potential S2:
-            (a) Look for one existing basic step motion arc that starts from S2.
-            (b) Look for an existing basic step motion arc that can be attached to S2 
-            (repetition + passing)
-            (c) Look for two arcs that can fused into a basic step motion
-            (passing + neighbor/repetition). 
-            (d) Look for two arcs that can be merged into a basic step motion 
-            (passing + passing).
-            (e) Look for three arcs that can be merged into a basic step motion 
-            (passing + passing + passing).
-            (f) Take an existing 5-4-3 arc (the longest spanned, if more than one) and 
-            try to find a connection -2-1 to complete a basic arc.
-            (g) Look for a nonfinal arc from S2 whose terminus == S1.csd.value, and
-            extend the arc to end on S1Index if possible.
-            (h) Reinterpret the line, looking for a descending step motion from S2 and then
-            parsing the remaining notes. The least reliable method.
+            
+               #. Look for one existing basic step motion arc that starts from S2.
+               #. Look for an existing basic step motion arc that can be attached to S2 (repetition + passing)
+               #. Look for two arcs that can fused into a basic step motion (passing + neighbor/repetition). 
+               #. Look for two arcs that can be merged into a basic step motion (passing + passing).
+               #. Look for three arcs that can be merged into a basic step motion (passing + passing + passing).
+               #. Take an existing 5-4-3 arc (the longest spanned, if more than one) and try to find a connection -2-1 to complete a basic arc.
+               #. Look for a nonfinal arc from S2 whose terminus == S1.csd.value, and extend the arc to end on S1Index if possible.
+               #. Reinterpret the line, looking for a descending step motion from S2 and then parsing the remaining notes. The least reliable method.
+            
             '''
             # once all preliminary parsing is done, prepare for assigning basic structure
             self.arcs.sort()# = sorted(self.arcList)
@@ -2251,6 +2246,8 @@ class Parser():
             generationTable = [n.rule.level for n in self.notes]
 
         def displayFullParse(self):
+            '''Create a multileveled illustration of a parse of the sort used in 
+            Westergaard's book. [Under developement]'''
             # given a parsed part, with rule dependencies set
             illustration = stream.Score()
             notes = self.notes
@@ -2294,7 +2291,7 @@ class Parser():
  
     def testGenerabilityFromLevels(parse):
         '''Given a parse in which rule levels have been assigned (perhaps by the student),
-        determine whether the line is generable in that way.'''
+        determine whether the line is generable in that way. [Under development]'''
         if parse.lineType == 'bass':
             pass
         if parse.lineType == 'primary':
@@ -2347,7 +2344,19 @@ class Parser():
     
     def selectPreferredParses(self):
         '''Input a list of successful interpretations from Parser (self.parses)
-        and remove those that do not conform to cognitive preference rules'''
+        and remove those that do not conform to cognitive preference rules.
+        
+           * Primary line preferences
+
+              * for parses that share the same S2 scale degree, prefer the parse in which S2 occurs earliest
+           
+           * Bass Lines
+            
+              * prefer parses in which S3 occurs after the midpoint
+              * prefer parses in which S3 occurs on the beat
+              * if there are two candidates for S3 and the second can be interpreted as a direct repetition of the first, prefer the parse that interprets the first candidate as S3
+        
+        '''
 
         # primary upper lines
         # find those that have the same scale degree for S2 
