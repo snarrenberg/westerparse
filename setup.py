@@ -8,7 +8,7 @@ setup(
     description='An application for evaluating Westergaardian species counterpoint',
     long_description=long_description,
     long_description_content_type='text/x-rst', 
-    url='https://github.com/snarrenberg/westerparse,'
+    url='https://github.com/snarrenberg/westerparse',
     author='Robert Snarrenberg',
     author_email='snarrenberg@wustl.edu',
     classifiers = ['Programming Language :: Python :: 3',
