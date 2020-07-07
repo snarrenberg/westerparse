@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-long_description = (here / 'README.rst').read_text(encoding='utf-8')
+long_description = ('README.rst').read_text(encoding='utf-8')
 
 setup(
     name='westerparse-pkg-snarrenberg',
