@@ -96,8 +96,15 @@ import itertools
 from utilities import *
 
 
+# -----------------------------------------------------------------------------
+# MODULE VARIABLES
+# -----------------------------------------------------------------------------
+
 # variables set by instructor
 allowSecondSpeciesBreak = True
+allowThirdSpeciesInsertions = True
+
+
 
 # create lists to collect errors, for reporting to user
 vlErrors = []
