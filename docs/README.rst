@@ -18,7 +18,7 @@ There are two main components to WesterParse: a *parser* that evaluates the stru
 musical lines used in species counterpoint, and a *checker* that evaluates the
 voice leading of species counterpoint compositions. 
 
-  
+
 First Questions
 ---------------
 
@@ -29,8 +29,9 @@ counterpoint may only need to consult Westergaard's rules:
 
 If you are new to species counterpoint, you may find the following guide of use:
     
-   * :doc:`A Brief Introduction to Westergaardian Species Counterpoint <speciesguide>` [in preparation]
+..   * :doc:`A Brief Introduction to Westergaardian Species Counterpoint <speciesguide>` [in preparation]
 
+   :download:`Species Counterpoint in the Tradition of Fux, Schenker, and Westergaard <SpeciesText.pdf>` 
 
 What software do I need to install to run the project on my own system?
 

@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # user inputs
     # accept a source file (score) from the user
-    source = 'TestScoresXML/Bass01.musicxml' # Fux Dorian
+#    source = 'TestScoresXML/Bass01.musicxml' # Fux Dorian
 #    source = 'TestScoresXML/Bass02.musicxml' # Krumhansl-Schmuckler gives wrong key
 #    source = 'TestScoresXML/Bass03.musicxml'
 #    source = 'TestScoresXML/Bass04.musicxml' # Krumhansl-Schmuckler gives wrong key
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
 #    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
-#    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
+    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
 #    source = 'TestScoresXML/ThirdSpecies05.musicxml'    # completion of Westergaard p. 136 exercise 4
 #    source = 'TestScoresXML/ThirdSpecies06.musicxml'    
@@ -198,7 +198,7 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 2)
 #    context.evaluateLines(source, show=None, report=True)
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
