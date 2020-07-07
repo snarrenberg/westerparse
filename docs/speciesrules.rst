@@ -28,6 +28,7 @@ Monotriadic Lines
 
 * S1. The final pitch of the basic arpeggiation must be a tonic.
 * S2. The first pitch of the basic arpeggiation must be a tonic.
+* S2. If different, these two pitches may be connect by a diatonic step motion.
 
 
 **Rules of Elaboration**
@@ -207,8 +208,8 @@ Third Species: Two Lines
 
   * A leap of a fourth may occur off the beat to on the beat if either
 
-     #. one of the notes in the fourth forms a second or seventh with the contiguous whole note, or
-     #. the pitch of either the immediately preceding off-the-beat note or the preceding on-the-beat note lies a step away from the pitch of the second note of the fourth.
+      #. one of the notes in the fourth forms a second or seventh with the contiguous whole note, or
+      #. the pitch of either the immediately preceding off-the-beat note or the preceding on-the-beat note lies a step away from the pitch of the second note of the fourth.
 
 #. When the whole-note line occurs in the bass: 
 
