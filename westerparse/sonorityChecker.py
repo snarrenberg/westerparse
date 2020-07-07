@@ -16,11 +16,6 @@
 
 
 from music21 import *
-#import lyne
-#import csd
-# import dependency
-#import stufe
-# import parse
 from vlChecker import *
 import context
 import theoryAnalyzerWP
@@ -28,12 +23,18 @@ import theoryResultWP
 #import itertools
 #from music21 import tree
 
+# -----------------------------------------------------------------------------
+# MODULE VARIABLES
+# -----------------------------------------------------------------------------
+
 sonorityErrors = []
 # set preferences for sonorities
 onBeatImperfectMin = 75 # percentage
 onBeatUnisonMax = 5 # percentage
 tiedOverDissonanceMin = 50 # percentage
 # downbeatHarmonyDensity = 
+
+
 
 # implement interest rules 
     # look for narrow ambitus
@@ -94,6 +95,10 @@ tiedOverDissonanceMin = 50 # percentage
 #def firstSpeciesSonorities(score, analyzer, partNum1=None, partNum2=None):
 #    pass
 
+# -----------------------------------------------------------------------------
+# MAIN SCRIPTS
+# -----------------------------------------------------------------------------
+
 def sonorityImperfectionMeasure(score, analyzer, partNum1=None, partNum2=None):
     # evaluate all but first and last intervals
     # report percentage of imperfect intervals
@@ -141,9 +146,7 @@ def getAllSonorities(score):
         pitchClassDensity = getPitchClassDensity(vert)
         densities.append((pitchDensisty, pitchClassDensity))
         n += 1
-    print(densities)
-    
-    
+    print(densities)  
         
 def getPitchDensity(noteList):
     pitches = []
@@ -223,8 +226,7 @@ def getOnbeatDyads(score, analyzer, partNum1, partNum2):
             if isOnbeat(vPair[0]) and isOnbeat(vPair[1]):
                 onbeatDyads.append(vPair)
     return onbeatDyads
-    
-    
+      
 def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
     onbeatDyads = getOnbeatDyads(score, analyzer, partNum1, partNum2)
     # return lists of measure numbers

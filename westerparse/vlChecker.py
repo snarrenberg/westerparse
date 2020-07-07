@@ -103,6 +103,7 @@ from utilities import *
 # variables set by instructor
 allowSecondSpeciesBreak = True
 allowThirdSpeciesInsertions = True
+sonorityCheck = False
 
 
 
