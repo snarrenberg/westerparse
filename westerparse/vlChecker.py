@@ -1008,7 +1008,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None):
     '''Check the forbidden forms of motion for a pair of lines in third species.
     Uses :py:func:`forbiddenMotionsOntoBeatWithoutSyncope` to check motion across the
     barline and then checks motion from beat to beat, from off the beat to next but not 
-    immediately following on the beat, etc. [Function is not yet complete.]'''
+    immediately following on the beat'''
     # TODO: finish this script??
     
     def checkMotionsOntoBeat():
@@ -1110,14 +1110,10 @@ def thirdSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None):
                     error = 'Forbidden parallel octaves from an offbeat note in bar ' + \
                         str(vlq.v1n1.measureNumber) + ' to the downbeat of bar ' + str(vlq.v1n2.measureNumber)
                     vlErrors.append(error)
-    # check leaps of a fourth in the bass: function called in checkCounterpoint()
     
     checkMotionsOntoBeat()
     checkMotionsBeatToBeat()
     checkMotionsOffToOnBeat()
-
-#    print('NOTICE: Forbidden forms of motion in third species have not been thoroughly checked!')
-    pass
 
 def fourthSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None):
     '''Check the forbidden forms of motion for a pair of lines in fourth species. Mostly 

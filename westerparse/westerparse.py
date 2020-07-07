@@ -569,7 +569,7 @@ def gatherArcs(source, arcs):
 
 def arcBuild(source, arc):
     '''
-    The function that actually convers an arc into a slur. 
+    The function that actually converts an arc into a slur. 
     '''
     # source is a Part in the input Score
     if len(arc) == 2:

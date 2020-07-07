@@ -420,10 +420,12 @@ class Parser():
             n.style.color = 'black'
 
     def parseTransition(self, stack, buffer, part, i, j, harmonyStart, harmonyEnd, openHeads, openTransitions, arcs):
-        '''The parser asks a series of questions at the transition from note I to note J. 
-        What is their relation to the harmony of the context (tonic, in the case of global contexts)? 
-        What is their intervallic relation (step or skip)?
-        And how does J connect, if at all, with notes in the dynamic lists of open heads and transitions?  
+        '''The parser asks a series of questions at the transition from note I to note J.
+        
+           * What is their relation to the harmony of the context (tonic, in the case of global contexts)? 
+           * What is their intervallic relation (step or skip)?
+           * And how does J connect, if at all, with notes in the dynamic lists of open heads and transitions?  
+           
         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
         or returns error messages if the line is syntactically malformed.'''
 
