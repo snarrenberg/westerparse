@@ -14,7 +14,7 @@ setup(
     classifiers = ['Programming Language :: Python :: 3',
                    'Operating System :: OS Independent'
                    'License :: OSI Approved :: BSD-3-Clause or LGPL',
-    ]
+    ],
     package_dir={'': 'src'},
     packages=find_packages(where='src'), 
     python_requires='>=3.5, <4',
