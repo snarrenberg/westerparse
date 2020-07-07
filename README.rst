@@ -18,7 +18,11 @@ There are two main components to WesterParse: a *parser* that evaluates the stru
 musical lines used in species counterpoint, and a *checker* that evaluates the
 voice leading of species counterpoint compositions. 
 
-
+.. image:: https://readthedocs.org/projects/westerparse/badge/?version=latest
+   :target: https://westerparse.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+   
+   
 First Questions
 ---------------
 
