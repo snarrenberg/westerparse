@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# Name:         license.txt
+# Name:         LICENSE.txt
 # Purpose:      The following license applies to all Python files distributed
 #               with WesterParse and text and images in the documentation.
 #               This license does not apply to other content

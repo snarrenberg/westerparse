@@ -24,4 +24,4 @@ python:
   install:
     - requirements: requirements.txt
   system_packages: true
-#  setup_py_install: true
+  setup_py_install: true
