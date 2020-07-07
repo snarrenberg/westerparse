@@ -1,0 +1,5 @@
+PARSE REPORT
+Key inferred by program: C minor
+Line Parsing Errors
+	The following linear errors were found when attempting to interpret the line:
+			There are unclosed transitions in the line at the following positions: [3]

@@ -10,10 +10,25 @@ import glob
 import sys, io
 #import strip_xml_metadata
 
-sys.path.insert(0, os.path.abspath('westerparse'))
+sys.path.insert(0, os.path.abspath('../src'))
 
 import westerparse
 
+corpus = '' # set corpus selection to null
+
+wpcomplete = tuple(open('wpcomplete.txt').read().split('\n'))
+wplines = tuple(open('wplines.txt').read().split('\n'))
+wpcounterpoint = tuple(open('wpcounterpoint.txt').read().split('\n'))
+wpfragments = tuple(open('wpfrags.txt').read().split('\n'))
+
+def selectCorpus():
+    cps = str(corpus.get())
+    if cps == 'wplines':
+        WPfiles.set(wplines)
+    elif cps == 'wpcounterpoint':
+        WPfiles.set(wpcounterpoint)
+    elif cps == 'wpfragments':
+        WPfiles.set(wpcounterpoint)
 
 def convertImage(image, *args):
     img = Image.open(image)
@@ -55,11 +70,22 @@ def clearReportArea():
     # clear the report content
     reporttext.delete(1.0, END)
 
+def selectXmlFile(idx):
+    cps = str(corpus.get())
+    if cps == 'wplines':
+        WPfile = 'corpus/' + wplines[idx] + '.musicxml'
+    elif cps == 'wpcounterpoint':
+        WPfile = 'corpus/' + wpcounterpoint[idx] + '.musicxml'
+    elif cps == 'wplfragments':
+        WPfile = 'corpus/' + wplfragments[idx] + '.musicxml'
+    return WPfile
+    
+
 def displayFileSource(*args):
     idxs = fileList.curselection()
     if len(idxs) == 1:
         idx = int(idxs[0])
-        WPfile = 'WesterParseCorpora/WesterParseLineCorpus/' + WPfilenames[idx] + '.musicxml'
+        WPfile = selectXmlFile(idx)
         westerparse.displaySourceAsPng(WPfile)
         files = glob.glob('tempimages/*.png')
         if len(files) == 1:
@@ -98,7 +124,7 @@ def evaluateSyntax(*args):
     if len(idxs) == 1:
         # run WesterParse
         idx = int(idxs[0])
-        WPfile = 'WesterParseCorpora/WesterParseLineCorpus/' + WPfilenames[idx] + '.musicxml'
+        WPfile = selectXmlFile(idx)
         if linetype.get():
             lt = linetype.get()
         else:
@@ -109,8 +135,6 @@ def evaluateSyntax(*args):
         eval_report = sys.stdout.getvalue()
         temp_out.close()
         sys.stdout = sys.__stdout__
-        # clear metadata from temp files
-#        clearMetadataFromTempFiles()
 
         # select files to display
         files = glob.glob('tempimages/*.png')
@@ -150,18 +174,7 @@ def evaluateSyntax(*args):
         if len(files) >= 4:
             f3_converted = convertMuseScorePng(files[3])
             vertoffset = (imgcounter*150)+20
-            music_canvas.create_image(20,vertoffset, image=f3_converted, anchor='nw', tag='thumb3')
-        
-#        for f in files[0:4]:
-#            try:
-#                f_converted = convertMuseScorePng(f)
-#                thumbtag = 'thumb' + str(imgcounter)
-#                vertoffset = imgcounter*150
-#                music_canvas.create_image(0,vertoffset, image=f_converted, anchor='nw', tag=thumbtag)
-#                music_canvas.itemconfig(thumbtag, image=f_converted)
-#            except OSError as e:
-#                print("Error: %s : %s" % (f, e.strerror))
-#            imgcounter += 1
+            music_canvas.create_image(20,vertoffset, image=f3_converted, anchor='nw', tag='thumb3')        
         cleanUpTempFiles()
         music_canvas.mainloop()
         
@@ -170,7 +183,7 @@ def evaluateCounterpoint(*args):
     idxs = fileList.curselection()
     if len(idxs) == 1:
         idx = int(idxs[0])
-        WPfile = 'WesterParseCorpora/WesterParseLineCorpus/' + WPfilenames[idx] + '.musicxml'
+        WPfile = selectXmlFile(idx)
         temp_out = io.StringIO()
         sys.stdout = temp_out
         # run the vl checker
@@ -188,13 +201,13 @@ def playMIDI(*args):
     if len(idxs) == 1:
         # run WesterParse
         idx = int(idxs[0])
-        WPfile = 'WesterParseCorpora/WesterParseLineCorpus/' + WPfilenames[idx] + '.musicxml'
+        WPfile = 'corpus/' + wpcomplete[idx] + '.musicxml'
         WP21 = converter.parse(WPfile)
         mf = midi.translate.streamToMidiFile(WP21)
-        mf.open('WesterParseCorpora/WesterParseLineCorpus/midi.mid', 'wb')
+        mf.open('corpus/midi.mid', 'wb')
         mf.write()
         mf.close()
-        os.system('open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid')
+        os.system('open -a /Applications/MIDIPlayer\ X.app corpus/midi.mid')
         WP21.show('midi')
 
 
@@ -203,9 +216,7 @@ root = Tk()
 root.title('WesterParse Corpus Tester')
 
 
-WPfilenames = tuple(open('WesterParseCorpora/WPfilenameList.txt').read().split('\n'))
-WPfiles = StringVar(value=WPfilenames)
-
+WPfiles = StringVar()
 
 mainframe = ttk.Frame(root)
 mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
@@ -217,7 +228,7 @@ root.rowconfigure(0, weight=1)
 # APP LOGO
 logoframe = ttk.Frame(mainframe)
 logoframe.grid(column=1, row=1, sticky=(W))
-logo = Image.open('WesterParseLogo.jpg')
+logo = Image.open('../docs/images/WesterParseLogo.jpg')
 baseheight = 120
 wpercent = (baseheight/float(logo.size[1]))
 vsize = int((float(logo.size[0])*float(wpercent)))
@@ -231,31 +242,50 @@ logo_canvas.grid(column=1, row=1)
 apptext = Text(mainframe, width=50, height=9, wrap='word', relief='sunken')#, state='disabled')
 apptext.grid(column=2, row=1, sticky=(W))
 apptext.insert(INSERT, 'WesterParse Corpus Tester')
-apptext.insert(END, '\n\nWesterParse is a transition-based dependency parser for simple tonal melodies.')
-apptext.insert(END, '\n\nWesterParse is a core component of the Westergaardian Species Counterpoint Online Project, developed by Robert Snarrenberg at Washington University in St. Louis.')
+apptext.insert(END, '\n\nWesterParse consists of a transition-based dependency parser for simple tonal melodies and a voice-leading evaluator.')
+apptext.insert(END, '\n\nDeveloped by Robert Snarrenberg at Washington University in St. Louis.')
 
-# FILE LIST 
+# CORPUS SELECTION 
 listframe = ttk.Frame(mainframe)
 listframe.grid(column=3, row=1, sticky=(E))
-# instruction
-listlabel = ttk.Label(listframe, text='Select file name: ')
+
+cpsframe = ttk.Frame(listframe)
+cpsframe.grid(column=1, row=1, sticky=(E))
+# instruction 1
+cpslabel = ttk.Label(cpsframe, text='Select a corpus: ')
+cpslabel.grid(column=1, row=0, sticky=(W))
+# corpus options
+corpus = StringVar()
+cpsLines = ttk.Radiobutton(cpsframe, text='Lines', variable=corpus, value='wplines', command=selectCorpus)
+cpsLines.grid(column=1, row=1, sticky=(W))
+cpsCpt = ttk.Radiobutton(cpsframe, text='Counterpoint', variable=corpus, value='wpcounterpoint', command=selectCorpus)
+cpsCpt.grid(column=1, row=2, sticky=(W))
+cpsFrags = ttk.Radiobutton(cpsframe, text='Fragments', variable=corpus, value='wpfragments', command=selectCorpus)
+cpsFrags.grid(column=1, row=3, sticky=(W))
+
+cpslistframe = ttk.Frame(listframe)
+cpslistframe.grid(column=2, row=1, sticky=(E))
+# instruction 2
+listlabel = ttk.Label(cpslistframe, text='Select file name: ')
 listlabel.grid(column=1, row=1)
 # file list
-fileList = Listbox(listframe, height=5, listvariable=WPfiles)
+fileList = Listbox(cpslistframe, height=5, listvariable=WPfiles)
 fileList.grid(column=1, row=2)
 fileList.bind('<<ListboxSelect>>', onSelectFileSource)
 #fileList.bind('<Double-1>', evaluateSyntax)
-s = ttk.Scrollbar(listframe, orient=VERTICAL, command=fileList.yview)
+s = ttk.Scrollbar(cpslistframe, orient=VERTICAL, command=fileList.yview)
 s.grid(column=2, row=2, sticky=(N,S))
 fileList.configure(yscrollcommand=s.set)
 
+
 # EVALUATE BUTTONS
+# TODO gray out if lines not the corpus
 evaluateLine = ttk.Button(listframe, text='Display Linear Syntax', command=evaluateSyntax)
-evaluateLine.grid(column=1, row=3, stick=(S, W, E))
+evaluateLine.grid(column=2, row=3, stick=(S, W, E))
 evaluateCpt = ttk.Button(listframe, text='Evaluate Counterpoint', command=evaluateCounterpoint)
-evaluateCpt.grid(column=1, row=4, stick=(S, W, E))
+evaluateCpt.grid(column=2, row=4, stick=(S, W, E))
 playMIDI = ttk.Button(listframe, text='Play MIDI file', command=playMIDI)
-playMIDI.grid(column=1, row=5, stick=(S, W, E))
+playMIDI.grid(column=2, row=5, stick=(S, W, E))
 
 # LINETYPE SELECTION
 linetype = StringVar()
@@ -281,7 +311,7 @@ reporttext.grid(column=1, row=3, columnspan=4)
 musicframe = ttk.Frame(mainframe, padding='0 0 0 0', borderwidth='2')
 musicframe.grid(column=1, row=4, columnspan=4)
 # intro image
-imageSelected = 'WesterParseCorpora/FuxDorian.png'
+imageSelected = 'FuxDorian.png'
 music_canvas = Canvas(musicframe, width=800, height=800)
 music_converted = convertImage(imageSelected)
 music_canvas.create_image(0,0, image=music_converted, anchor='nw', tag='thumb0')
