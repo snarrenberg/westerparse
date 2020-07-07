@@ -22,5 +22,6 @@ setuptools.setup(
     install_requires=[
         'music21',
         ],
+    dependency_links=[
+        'https://github.com/cuthbertLab/music21']
 )
-
