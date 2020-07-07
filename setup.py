@@ -1,6 +1,9 @@
 from setuptools import setup, find_packages
+import pathlib
 
-long_description = ('README.rst').read_text(encoding='utf-8')
+here = pathlib.Path(__file__).parent.resolve()
+
+long_description = (here / 'README.rst').read_text(encoding='utf-8')
 
 setup(
     name='westerparse-pkg-snarrenberg',
