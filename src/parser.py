@@ -77,10 +77,6 @@ class Parser():
     by :py:func:`~prepareParses`.
     
     '''
-    # define order to present names in documentation; use strings
-#    _DOC_ORDER = ['inferLineTypes', 'preParseLine', 'parseTransition', 'prepareParses', 
-#        'buildParse', 'collectParses', 'selectPreferredParses', 'Parse']
-
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
 #    and the most recent Arc is popped into a failed list 

@@ -133,11 +133,13 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
     # determine which parts to parse
     if partSelection != None and partSelection < len(context.parts):
         partsParsed = context.parts[partSelection:partSelection+1]
+    elif len(context.parts) == 1:
+        partsParsed = context.parts[0:1]    
     else:
         partsParsed = context.parts
     
     # run the parser and collect errors
-    for part in partsParsed:  
+    for part in partsParsed: 
         # set the part's lineType if given by the user
         if partLineType:
             part.lineType = partLineType
