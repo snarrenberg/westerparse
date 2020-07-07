@@ -79,11 +79,11 @@
 				AAAAABDQAAAEAAAAAAAAAHgCAICcAgAAAAAAAA==
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/westerparse.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/westerparse.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/westerparse.py</string>
+				<string>../westerparse/westerparse/westerparse.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -131,11 +131,11 @@
 				BAAAAAAAAABwAgCAlAIAAAAAAAA=
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/rule.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/rule.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/rule.py</string>
+				<string>../westerparse/westerparse/rule.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -182,11 +182,11 @@
 				AAAAAAA=
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/theoryResultWP.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/theoryResultWP.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/theoryResultWP.py</string>
+				<string>../westerparse/westerparse/theoryResultWP.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -332,11 +332,11 @@
 				ENAAAAQAAAAAAAAAdAIAgJgCAAAAAAAA
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/parser.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/parser.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/parser.py</string>
+				<string>../westerparse/westerparse/parser.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -384,11 +384,11 @@
 				AAAAABDQAAAEAAAAAAAAAHgCAICcAgAAAAAAAA==
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/dependency.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/dependency.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/dependency.py</string>
+				<string>../westerparse/westerparse/dependency.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -487,11 +487,11 @@
 				ENAAAAQAAAAAAAAAdAIAgJgCAAAAAAAA
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/context.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/context.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/context.py</string>
+				<string>../westerparse/westerparse/context.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -539,11 +539,11 @@
 				BAAAAAAAAABwAgCAlAIAAAAAAAA=
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/csd.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/csd.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/csd.py</string>
+				<string>../westerparse/westerparse/csd.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -641,11 +641,11 @@
 				AAAAAAA=
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/theoryAnalyzerWP.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/theoryAnalyzerWP.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/theoryAnalyzerWP.py</string>
+				<string>../westerparse/westerparse/theoryAnalyzerWP.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -745,11 +745,11 @@
 				AAAAABDQAAAEAAAAAAAAAHgCAICcAgAAAAAAAA==
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/consecutions.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/consecutions.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/consecutions.py</string>
+				<string>../westerparse/westerparse/consecutions.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -894,11 +894,11 @@
 				AAAAAAA=
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/sonorityChecker.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/sonorityChecker.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/sonorityChecker.py</string>
+				<string>../westerparse/westerparse/sonorityChecker.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -1298,11 +1298,11 @@
 				ENAAAAQAAAAAAAAAdAIAgJgCAAAAAAAA
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/utilities.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/utilities.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/utilities.py</string>
+				<string>../westerparse/westerparse/utilities.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -1553,11 +1553,11 @@
 				ENAAAAQAAAAAAAAAdAIAgJgCAAAAAAAA
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/keyFinder.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/keyFinder.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/keyFinder.py</string>
+				<string>../westerparse/westerparse/keyFinder.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -1709,11 +1709,11 @@
 				ENAAAAQAAAAAAAAAdAIAgJgCAAAAAAAA
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/vlChecker.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/vlChecker.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/vlChecker.py</string>
+				<string>../westerparse/westerparse/vlChecker.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
@@ -1811,11 +1811,11 @@
 				AAAAAAAAEsAAAMQBAAAAAAAAENAAAAQAAAAAAAAA
 				</data>
 				<key>FileURL</key>
-				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/WesterParse%202020/westerparse/__init__.py</string>
+				<string>file:///Users/snarrenberg/Dropbox/Documents%20in%20Dropbox/WesterParse/westerparse/westerparse/__init__.py</string>
 				<key>HasSecurityScope</key>
 				<true/>
 				<key>RelativePath</key>
-				<string>./westerparse/__init__.py</string>
+				<string>../westerparse/westerparse/__init__.py</string>
 				<key>TypeID</key>
 				<string>_CFileLocator</string>
 				<key>Version</key>
