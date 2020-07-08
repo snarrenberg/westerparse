@@ -118,5 +118,4 @@ If you are having issues, please contact me at: snarrenberg@wustl.edu
 License
 -------
 
-The project is licensed under the LGPL or BSD license. 
-.. See :doc:`license`.
+The project is licensed under the BSD license.
