@@ -16,7 +16,7 @@ setup(
     author_email='snarrenberg@wustl.edu',
     classifiers = ['Programming Language :: Python :: 3',
                    'Operating System :: OS Independent',
-                   'License :: OSI Approved :: BSD-3-Clause',
+                   'License :: OSI Approved :: BSD License',
     ],
     package_dir={'': 'src'},
     packages=find_packages(where='src'), 
