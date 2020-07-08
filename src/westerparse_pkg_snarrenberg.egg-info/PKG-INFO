@@ -131,6 +131,6 @@ Description: Getting Started
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: OS Independent
-Classifier: License :: OSI Approved :: BSD-3-Clause
+Classifier: License :: OSI Approved :: BSD License
 Requires-Python: >=3.5, <4
 Description-Content-Type: text/x-rst

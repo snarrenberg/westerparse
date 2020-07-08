@@ -28,9 +28,9 @@ Hence the name of this program, **WesterParse**.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+#   :caption: Contents:
 
-   ../README
+   README
    speciesrules
    userguide
    website
