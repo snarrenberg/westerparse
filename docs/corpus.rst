@@ -6,7 +6,12 @@ drawn from Westergaard's book.]
 
 Requires Tkinter, PIL, and MuseScore.
 
->>> viewer.py
+Locate the corpus viewer module in the examples folder 
+and then run the program from the terminal.
+
+.. code-block:: ..
+   
+   $ python3 viewer.py
 
 Select a corpus to view: either lines or counterpoint.
 
