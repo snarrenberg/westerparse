@@ -35,10 +35,10 @@ Hence the name of this program, **WesterParse**.
    :maxdepth: 2
    :caption: Contents:
 
-   ./README
+   ../README
+   speciesrules
    userguide
    website
-   speciesrules
    corpus
    modulesdoc
    license
