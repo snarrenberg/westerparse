@@ -29,6 +29,7 @@ Hence the name of this program, **WesterParse**.
    :maxdepth: 2
 
    readme_link
+   start
    speciesrules
    userguide
    website

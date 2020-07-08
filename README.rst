@@ -1,5 +1,5 @@
-Getting Started
-===============
+WesterParse Readme
+==================
 
 WesterParse implements the theory of tonal music presented in chapters 4-6 of 
 *An Introduction to Tonal Theory* (New York: Norton, 1975) by Peter Westergaard. 

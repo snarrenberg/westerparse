@@ -126,8 +126,7 @@ Description: Getting Started
         License
         -------
         
-        The project is licensed under the LGPL or BSD license. 
-        .. See :doc:`license`.
+        The project is licensed under the BSD license.
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: OS Independent

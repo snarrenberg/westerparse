@@ -9,6 +9,7 @@ docs/corpus.rst
 docs/index.rst
 docs/license.rst
 docs/modulesdoc.rst
+docs/readme_link.rst
 docs/speciesrules.rst
 docs/userguide.rst
 docs/website.rst
