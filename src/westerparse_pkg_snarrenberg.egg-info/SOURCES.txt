@@ -11,6 +11,7 @@ docs/license.rst
 docs/modulesdoc.rst
 docs/readme_link.rst
 docs/speciesrules.rst
+docs/start.rst
 docs/userguide.rst
 docs/website.rst
 docs/images/FuxDorian.png
