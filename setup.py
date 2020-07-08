@@ -15,7 +15,7 @@ setup(
     author='Robert Snarrenberg',
     author_email='snarrenberg@wustl.edu',
     classifiers = ['Programming Language :: Python :: 3',
-                   'Operating System :: OS Independent'
+                   'Operating System :: OS Independent',
                    'License :: OSI Approved :: BSD-3-Clause',
     ],
     package_dir={'': 'src'},
