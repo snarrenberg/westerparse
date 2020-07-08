@@ -430,7 +430,7 @@ class Parser():
         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
         or returns error messages if the line is syntactically malformed.
         
-        The cases are as follows:
+        The cases are as follows: 
 
         #. *Both pitches are harmonic* 
         
@@ -458,10 +458,10 @@ class Parser():
            
         #. *Step from nonharmonic to nonharmonic* 
         
-           * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending:
-           * if *i* is ascending and *j* is descending:
-           * if *i* is ascending and *j* is bidirectional:
-           * if *i* is bidirectional and *j* is descending:
+           * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending
+           * if *i* is ascending and *j* is descending
+           * if *i* is ascending and *j* is bidirectional
+           * if *i* is bidirectional and *j* is descending
         
         #. *Consonant skip from nonharmonic to nonharmonic*
         
@@ -472,7 +472,7 @@ class Parser():
            * if there are open transitions: 
            
               * see whether *j* continues a transition in progress
-              * if not, see whether j connects to a head that precedes the open transitions
+              * if not, see whether *j* connects to a head that precedes the open transitions
               * if neither of these works, return an error: *j* appears out of the blue and cannot be generated
               
            * if there are open heads:
@@ -488,19 +488,19 @@ class Parser():
         
         #. *Consonant skip from nonharmonic to nonharmonic*
         
-           * Return an error
+           * return an error
         
         #. *Linear unison between nonharmonic pitches*
         
-           * Return an error 
+           * return an error 
            
-        #. Dissonant skip
+        #. *Dissonant skip*
         
-           * Return an error 
+           * return an error 
 
-        #. Skip larger than an octave
+        #. *Skip larger than an octave*
            
-           * Return an error 
+           * return an error 
                    
         '''
 
