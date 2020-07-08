@@ -16,10 +16,10 @@ import westerparse
 
 corpus = '' # set corpus selection to null
 
-wpcomplete = tuple(open('wpcomplete.txt').read().split('\n'))
+#wpcomplete = tuple(open('wpcomplete.txt').read().split('\n'))
 wplines = tuple(open('wplines.txt').read().split('\n'))
 wpcounterpoint = tuple(open('wpcounterpoint.txt').read().split('\n'))
-wpfragments = tuple(open('wpfrags.txt').read().split('\n'))
+#wpfragments = tuple(open('wpfrags.txt').read().split('\n'))
 
 def selectCorpus():
     cps = str(corpus.get())

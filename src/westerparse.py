@@ -17,7 +17,15 @@ for conformity with the rules of line construction and voice leading
 laid out in Peter Westergaard's book, *An Introduction to Tonal Theory* (New York, 1975).
 
 WesterParse imports a musicxml file, converts it to a music21 stream, determines a 
-key (unless specified by the user), and then evaluates the linear syntax or the counterpoint.'''
+key (unless specified by the user), and then evaluates the linear syntax or the counterpoint.
+
+The main scripts are:
+    
+>>> evaluateLines(source)
+>>> evaluateCounterpoint(source)
+
+For more information on how to use these scripts, see the User's Guide.
+'''
 
 from music21 import *
 import parser
@@ -122,6 +130,7 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
     A separate report is created for successful parses.
     If the user has elected to display the results, the function selects the preferred
     interpretations and displays them.
+    
     '''
     # dictionary for collecting error reports
     # primary keys: part names
