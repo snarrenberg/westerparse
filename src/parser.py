@@ -429,80 +429,81 @@ class Parser():
            
         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
         or returns error messages if the line is syntactically malformed.
-        
-        The cases are as follows: 
-
-        #. *Both pitches are harmonic* 
-        
-           * if *i* = *j*, generate a repetition
-           * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
-           
-        #. *Step from the harmony of this bar to the harmony of the next*
-        
-           * if *i* is an open transition, end the transition at *j*
-        
-        #. *Step from harmonic to nonharmonic pitch*
-        
-           * if there are open transitions, see whether *j* continues a transition, starting with the most recent 
-           * if there are no open transitions but there are open heads, try to attach *j* to an open head, starting with the most recent (*i*)
-        
-        #. *Step from nonharmonic to harmonic pitch*
-        
-           * in third species, add *j* to the local harmony if needed
-           * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
-              
-                 * if so, make *i* the lefthead of *j*
-                 * otherwise, add *i* to the list of open transitions [?]
-            
-           * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
-           
-        #. *Step from nonharmonic to nonharmonic* 
-        
-           * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending
-           * if *i* is ascending and *j* is descending
-           * if *i* is ascending and *j* is bidirectional
-           * if *i* is bidirectional and *j* is descending
-        
-        #. *Consonant skip from nonharmonic to nonharmonic*
-        
-           * if *i* and *j* are linearly consonant
-           
-        #. *Consonant skip from harmonic to nonharmonic*
-        
-           * if there are open transitions: 
-           
-              * see whether *j* continues a transition in progress
-              * if not, see whether *j* connects to a head that precedes the open transitions
-              * if neither of these works, return an error: *j* appears out of the blue and cannot be generated
-              
-           * if there are open heads:
-           
-              * look for an open head to attach to *j*
-              * if that fails, search for possible step-related antecedent (head or transition) 
-              
-                 * look in reverse at the terminals of current arcs and select the most recent that is step-related
-                 * look for possible step-related transition that was previously integrated into a neighbor arc
-                 * look for possible step-related insertion that was embedded in another arc
-                 
-              * if neither of these works, return an error: *j* appears out of the blue and cannot be generated 
-        
-        #. *Consonant skip from nonharmonic to nonharmonic*
-        
-           * return an error
-        
-        #. *Linear unison between nonharmonic pitches*
-        
-           * return an error 
-           
-        #. *Dissonant skip*
-        
-           * return an error 
-
-        #. *Skip larger than an octave*
-           
-           * return an error 
-                   
         '''
+        
+#         The cases are as follows: 
+# 
+#         #. *Both pitches are harmonic* 
+#         
+#            * if *i* = *j*, generate a repetition
+#            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
+#            
+#         #. *Step from the harmony of this bar to the harmony of the next*
+#         
+#            * if *i* is an open transition, end the transition at *j*
+#         
+#         #. *Step from harmonic to nonharmonic pitch*
+#         
+#            * if there are open transitions, see whether *j* continues a transition, starting with the most recent 
+#            * if there are no open transitions but there are open heads, try to attach *j* to an open head, starting with the most recent (*i*)
+#         
+#         #. *Step from nonharmonic to harmonic pitch*
+#         
+#            * in third species, add *j* to the local harmony if needed
+#            * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
+#               
+#                  * if so, make *i* the lefthead of *j*
+#                  * otherwise, add *i* to the list of open transitions [?]
+#             
+#            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
+#            
+#         #. *Step from nonharmonic to nonharmonic* 
+#         
+#            * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending
+#            * if *i* is ascending and *j* is descending
+#            * if *i* is ascending and *j* is bidirectional
+#            * if *i* is bidirectional and *j* is descending
+#         
+#         #. *Consonant skip from nonharmonic to nonharmonic*
+#         
+#            * if *i* and *j* are linearly consonant
+#            
+#         #. *Consonant skip from harmonic to nonharmonic*
+#         
+#            * if there are open transitions: 
+#            
+#               * see whether *j* continues a transition in progress
+#               * if not, see whether *j* connects to a head that precedes the open transitions
+#               * if neither of these works, return an error: *j* appears out of the blue and cannot be generated
+#               
+#            * if there are open heads:
+#            
+#               * look for an open head to attach to *j*
+#               * if that fails, search for possible step-related antecedent (head or transition) 
+#               
+#                  * look in reverse at the terminals of current arcs and select the most recent that is step-related
+#                  * look for possible step-related transition that was previously integrated into a neighbor arc
+#                  * look for possible step-related insertion that was embedded in another arc
+#                  
+#               * if neither of these works, return an error: *j* appears out of the blue and cannot be generated 
+#         
+#         #. *Consonant skip from nonharmonic to nonharmonic*
+#         
+#            * return an error
+#         
+#         #. *Linear unison between nonharmonic pitches*
+#         
+#            * return an error 
+#            
+#         #. *Dissonant skip*
+#         
+#            * return an error 
+# 
+#         #. *Skip larger than an octave*
+#            
+#            * return an error 
+#                    
+#        '''
 
         ### CASE ONE: both pitches are harmonic
         if (isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart)) and (isLinearConsonance(i, j) or isLinearUnison(i, j)):
