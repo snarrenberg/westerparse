@@ -34,7 +34,7 @@ leaving structural heads in place for subsequent attachment.
 The parser has a limited ability to 
 backtrack and reinterpret segments of a line. 
 
-The first stage of parsing ends when the end of the buffer is reached. 
+The first stage of parsing ends when the buffer is exhausted. 
 Interpretation then continues by line type. 
 
 The parser gathers all of the valid interpretations into lists. 
@@ -2382,7 +2382,7 @@ class Parser():
         pass
         
     def collectParses(self):
-        '''Collect all the attempted parses of a line in the :py:class:`Parser` 
+        '''Collect all the attempted parses of a line in the :py:class:`~Parser` 
         and discard any that have errors and thus failed. 
         Also remove parses of primary lines if the same basic arc was 
         produced by a more reliable method.'''
@@ -2425,7 +2425,7 @@ class Parser():
         else: self.isGeneric = False
     
     def selectPreferredParses(self):
-        '''Input a list of successful interpretations from :py:class:`Parser`
+        '''Input a list of successful interpretations from :py:class:`~Parser`
         and remove those that do not conform to cognitive preference rules.
         
            * Primary line preferences
