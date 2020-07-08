@@ -6,40 +6,40 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 #-------------------------------------------------------------------------------
-'''
-Parser
-======
-
-Designed as a transition-based dependency parser, the WesterParse parser 
-analyzes the syntax of a melodic line and produces a set of valid interpretations. 
-
-Procedure: 
-
-   #. accept a part from a context
-   #. infer the possible lineTypes if not given in advance
-   #. parse the part for each possible lineType
-   #. return a set of parses and errors
-
-The machinery consists of a buffer, a stack, and a scanner. 
-At initialization, the notes of the line are read into the buffer.
-The scanner then shifts notes onto the stack one by one. With each shift, 
-the transition is evaluated in light of the previously analyzed line. 
-As the scanning proceeds, the parser maintains lists of 
-open heads, open transitions, and syntactic units (arcs). These lists
-shrink and grow as the interpretive process unfolds. When an arc is formed 
-(e.g., a passing or neighboring motion), a tuple of note positions is placed
-in the list of arcs. Meanwhile, dependent elements within the arc are removed 
-from both the stack and the list of open transitions,
-leaving structural heads in place for subsequent attachment. 
-The parser has a limited ability to 
-backtrack and reinterpret segments of a line. 
-
-The first stage of parsing ends when the buffer is exhausted. 
-Interpretation then continues by line type. 
-
-The parser gathers all of the valid interpretations into lists. 
-The parser also records errors that arise.
-'''
+# '''
+# Parser
+# ======
+# 
+# Designed as a transition-based dependency parser, the WesterParse parser 
+# analyzes the syntax of a melodic line and produces a set of valid interpretations. 
+# 
+# Procedure: 
+# 
+#    #. accept a part from a context
+#    #. infer the possible lineTypes if not given in advance
+#    #. parse the part for each possible lineType
+#    #. return a set of parses and errors
+# 
+# The machinery consists of a buffer, a stack, and a scanner. 
+# At initialization, the notes of the line are read into the buffer.
+# The scanner then shifts notes onto the stack one by one. With each shift, 
+# the transition is evaluated in light of the previously analyzed line. 
+# As the scanning proceeds, the parser maintains lists of 
+# open heads, open transitions, and syntactic units (arcs). These lists
+# shrink and grow as the interpretive process unfolds. When an arc is formed 
+# (e.g., a passing or neighboring motion), a tuple of note positions is placed
+# in the list of arcs. Meanwhile, dependent elements within the arc are removed 
+# from both the stack and the list of open transitions,
+# leaving structural heads in place for subsequent attachment. 
+# The parser has a limited ability to 
+# backtrack and reinterpret segments of a line. 
+# 
+# The first stage of parsing ends when the buffer is exhausted. 
+# Interpretation then continues by line type. 
+# 
+# The parser gathers all of the valid interpretations into lists. 
+# The parser also records errors that arise.
+# '''
 
 from music21 import *
 from utilities import pairwise
@@ -64,26 +64,26 @@ selectPreferredParses = True
 # -----------------------------------------------------------------------------
 
 class Parser():
-    '''
-    The Parser class is the engine of the parse. The bulk of the work is done
-    by :py:func:`~parseTransition`. After a preliminary parse of the line,
-    the parser decides on a set of possible structural interpretations and creates
-    a :py:class:`~Parser.Parse` object to store each interpretation.
-    
-    Upon initialization, the Parser automatically parses the line, in the following
-    steps:
-        
-       * prepares placeholders for parses and errors
-       * accepts a linetype if provided, otherwise it infers the set of possible types.
-       * operates the preliminary parser: :py:func:`~preParseLine`
-       * interrupts the parser if preliminary parsing is unsuccessful and reports errors
-       * determines the set of possible basic structures and parses for each possibility: :py:func:`~prepareParses`
-       * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
-       * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
-
-    The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
-    by :py:func:`~prepareParses`.
-    '''
+#     '''
+#     The Parser class is the engine of the parse. The bulk of the work is done
+#     by :py:func:`~parseTransition`. After a preliminary parse of the line,
+#     the parser decides on a set of possible structural interpretations and creates
+#     a :py:class:`~Parser.Parse` object to store each interpretation.
+#     
+#     Upon initialization, the Parser automatically parses the line, in the following
+#     steps:
+#         
+#        * prepares placeholders for parses and errors
+#        * accepts a linetype if provided, otherwise it infers the set of possible types.
+#        * operates the preliminary parser: :py:func:`~preParseLine`
+#        * interrupts the parser if preliminary parsing is unsuccessful and reports errors
+#        * determines the set of possible basic structures and parses for each possibility: :py:func:`~prepareParses`
+#        * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
+#        * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
+# 
+#     The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
+#     by :py:func:`~prepareParses`.
+#     '''
 
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
@@ -143,7 +143,7 @@ class Parser():
         self.selectPreferredParses()
 
     def inferLineTypes(self):
-        '''If the line type is not specified, infer a set of possibilities.'''
+#        '''If the line type is not specified, infer a set of possibilities.'''
         if self.notes[0].csd.value % 7 not in [0, 2, 4] and self.notes[-1].csd.value % 7 not in [0, 2, 4]:
             error = 'Generic structure error: The line is not bounded by tonic-triad pitches and hence not a valid tonic line.'
             self.errors.append(error)
@@ -161,12 +161,12 @@ class Parser():
                     self.part.lineTypes.append('primary')
                       
     def preParseLine(self):
-        '''Conduct a preliminary parse of the line. 
-        Initialize the buffer, stack, and arcs. 
-        Initialize the lists of open heads and transitions. 
-        Set the global harmonic referents.
-        Run the scanner, parsing each transition.
-        '''
+#         '''Conduct a preliminary parse of the line. 
+#         Initialize the buffer, stack, and arcs. 
+#         Initialize the lists of open heads and transitions. 
+#         Set the global harmonic referents.
+#         Run the scanner, parsing each transition.
+#         '''
         # Initialize the buffer, stack, and arcs
         lineBuffer = [n for n in self.notes if not n.tie or n.tie.type == 'start'] 
         lineStack = []
@@ -424,89 +424,89 @@ class Parser():
             n.style.color = 'black'
 
     def parseTransition(self, stack, buffer, part, i, j, harmonyStart, harmonyEnd, openHeads, openTransitions, arcs):
-        '''
-        The parser asks a series of questions at the transition from note *i* to note *j*.
-        
-           * What is their relation to the harmony of the context (tonic, in the case of global contexts)? 
-           * What is their intervallic relation (step or skip)?
-           * And how does *j* connect, if at all, with notes in the dynamic lists of open heads and transitions?  
-           
-        Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
-        or returns error messages if the line is syntactically malformed.
-        
-        The cases are as follows: 
-
-        #. *Both pitches are harmonic* 
-        
-           * if *i* and *j* are the same pitch, generate a repetition
-           * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
-           
-        #. *Step from the harmony of this bar to the harmony of the next*
-        
-           * if *i* is an open transition, end the transition at *j*
-        
-        #. *Step from harmonic to nonharmonic pitch*
-        
-           * if there are open transitions, see whether *j* continues a transition, starting with the most recent 
-           * if there are no open transitions but there are open heads, try to attach *j* to an open head, starting with the most recent (*i*)
-        
-        #. *Step from nonharmonic to harmonic pitch*
-        
-           * in third species, add *j* to the local harmony if needed
-           * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
-              
-                 * if so, make *i* the lefthead of *j*
-                 * otherwise, add *i* to the list of open transitions
-            
-           * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
-           
-        #. *Step from nonharmonic to nonharmonic* 
-        
-           * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending
-           * if *i* is ascending and *j* is descending
-           * if *i* is ascending and *j* is bidirectional
-           * if *i* is bidirectional and *j* is descending
-        
-        #. *Consonant skip from nonharmonic to nonharmonic*
-        
-           * if *i* and *j* are linearly consonant ...
-           
-        #. *Consonant skip from harmonic to nonharmonic*
-        
-           * if there are open transitions: 
-           
-              * see whether *j* continues a transition in progress
-              * if not, see whether *j* connects to a head that precedes the open transitions
-              * if neither of these works, return an error: *j* appears out of the blue and cannot be generated
-              
-           * if there are open heads:
-           
-              * look for an open head to attach to *j*
-              * if that fails, search for possible step-related antecedent (head or transition) 
-              
-                 * look in reverse at the terminals of current arcs and select the most recent that is step-related
-                 * look for possible step-related transition that was previously integrated into a neighbor arc
-                 * look for possible step-related insertion that was embedded in another arc
-                 
-              * if neither of these works, return an error: *j* appears out of the blue and cannot be generated 
-        
-        #. *Consonant skip from nonharmonic to nonharmonic*
-        
-           * return an error
-        
-        #. *Linear unison between nonharmonic pitches*
-        
-           * return an error 
-           
-        #. *Dissonant skip*
-        
-           * return an error 
-
-        #. *Skip larger than an octave*
-           
-           * return an error 
-                   
-        '''
+#         '''
+#         The parser asks a series of questions at the transition from note *i* to note *j*.
+#         
+#            * What is their relation to the harmony of the context (tonic, in the case of global contexts)? 
+#            * What is their intervallic relation (step or skip)?
+#            * And how does *j* connect, if at all, with notes in the dynamic lists of open heads and transitions?  
+#            
+#         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
+#         or returns error messages if the line is syntactically malformed.
+#         
+#         The cases are as follows: 
+# 
+#         #. *Both pitches are harmonic* 
+#         
+#            * if *i* and *j* are the same pitch, generate a repetition
+#            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
+#            
+#         #. *Step from the harmony of this bar to the harmony of the next*
+#         
+#            * if *i* is an open transition, end the transition at *j*
+#         
+#         #. *Step from harmonic to nonharmonic pitch*
+#         
+#            * if there are open transitions, see whether *j* continues a transition, starting with the most recent 
+#            * if there are no open transitions but there are open heads, try to attach *j* to an open head, starting with the most recent (*i*)
+#         
+#         #. *Step from nonharmonic to harmonic pitch*
+#         
+#            * in third species, add *j* to the local harmony if needed
+#            * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
+#               
+#                  * if so, make *i* the lefthead of *j*
+#                  * otherwise, add *i* to the list of open transitions
+#             
+#            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
+#            
+#         #. *Step from nonharmonic to nonharmonic* 
+#         
+#            * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending
+#            * if *i* is ascending and *j* is descending
+#            * if *i* is ascending and *j* is bidirectional
+#            * if *i* is bidirectional and *j* is descending
+#         
+#         #. *Consonant skip from nonharmonic to nonharmonic*
+#         
+#            * if *i* and *j* are linearly consonant ...
+#            
+#         #. *Consonant skip from harmonic to nonharmonic*
+#         
+#            * if there are open transitions: 
+#            
+#               * see whether *j* continues a transition in progress
+#               * if not, see whether *j* connects to a head that precedes the open transitions
+#               * if neither of these works, return an error: *j* appears out of the blue and cannot be generated
+#               
+#            * if there are open heads:
+#            
+#               * look for an open head to attach to *j*
+#               * if that fails, search for possible step-related antecedent (head or transition) 
+#               
+#                  * look in reverse at the terminals of current arcs and select the most recent that is step-related
+#                  * look for possible step-related transition that was previously integrated into a neighbor arc
+#                  * look for possible step-related insertion that was embedded in another arc
+#                  
+#               * if neither of these works, return an error: *j* appears out of the blue and cannot be generated 
+#         
+#         #. *Consonant skip from nonharmonic to nonharmonic*
+#         
+#            * return an error
+#         
+#         #. *Linear unison between nonharmonic pitches*
+#         
+#            * return an error 
+#            
+#         #. *Dissonant skip*
+#         
+#            * return an error 
+# 
+#         #. *Skip larger than an octave*
+#            
+#            * return an error 
+#                    
+#         '''
 
         ### CASE ONE: both pitches are harmonic
         if (isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart)) and (isLinearConsonance(i, j) or isLinearUnison(i, j)):
