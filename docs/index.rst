@@ -1,5 +1,4 @@
-.. WesterParse documentation master file, created by
-   sphinx-quickstart on Wed Jul  1 12:38:32 2020.
+.. WesterParse documentation master file
 
 The WesterParse Project
 =======================
@@ -29,7 +28,7 @@ Hence the name of this program, **WesterParse**.
 .. toctree::
    :maxdepth: 2
 
-   ../README
+   readme_link
    speciesrules
    userguide
    website
