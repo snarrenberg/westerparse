@@ -2,6 +2,7 @@ logfile.txt
 Untitled.txt
 vlCheckerNEW.py
 __pycache__/
+tests/
 
 # Packages
 *.egg

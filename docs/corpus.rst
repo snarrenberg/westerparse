@@ -1,8 +1,10 @@
 The WesterParse Corpus
 ======================
 
-[Instructions for using the corpus of examples, including many examples 
-drawn from Westergaard's book.]
+To test for compliance with Westergaard's rules, I have assembled a small 
+corpus of examples, including many from Westergaard's book (these are identified by
+page number in the filename). There are over 60 single lines and over 50 examples of two-part 
+counterpoint, some with errors and others without. 
 
 Requires Tkinter, PIL, and MuseScore.
 
@@ -12,6 +14,8 @@ and then run the program from the terminal.
 .. code-block:: ..
    
    $ python3 viewer.py
+
+This will open a GUI.
 
 Select a corpus to view: either lines or counterpoint.
 

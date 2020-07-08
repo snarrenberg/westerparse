@@ -25,8 +25,19 @@ def selectCorpus():
     cps = str(corpus.get())
     if cps == 'wplines':
         WPfiles.set(wplines)
+        rad1.config(state='normal')
+        rad2.config(state='normal')
+        rad3.config(state='normal')
+        rad4.config(state='normal')
+        evaluateCpt.config(state='disabled')
+        linetype.set('any')
     elif cps == 'wpcounterpoint':
         WPfiles.set(wpcounterpoint)
+        rad1.config(state='disabled')
+        rad2.config(state='disabled')
+        rad3.config(state='disabled')
+        rad4.config(state='disabled')
+        evaluateCpt.config(state='normal')
     elif cps == 'wpfragments':
         WPfiles.set(wpcounterpoint)
 
@@ -78,8 +89,7 @@ def selectXmlFile(idx):
         WPfile = 'corpus/' + wpcounterpoint[idx] + '.musicxml'
     elif cps == 'wplfragments':
         WPfile = 'corpus/' + wplfragments[idx] + '.musicxml'
-    return WPfile
-    
+    return WPfile    
 
 def displayFileSource(*args):
     idxs = fileList.curselection()
@@ -245,28 +255,30 @@ apptext.insert(INSERT, 'WesterParse Corpus Tester')
 apptext.insert(END, '\n\nWesterParse consists of a transition-based dependency parser for simple tonal melodies and a voice-leading evaluator.')
 apptext.insert(END, '\n\nDeveloped by Robert Snarrenberg at Washington University in St. Louis.')
 
-# CORPUS SELECTION 
+# SELECTION FRAME
 listframe = ttk.Frame(mainframe)
 listframe.grid(column=3, row=1, sticky=(E))
 
+# corpus selection
 cpsframe = ttk.Frame(listframe)
-cpsframe.grid(column=1, row=1, sticky=(E))
+cpsframe.grid(column=1, row=1, sticky=(N, W))
 # instruction 1
 cpslabel = ttk.Label(cpsframe, text='Select a corpus: ')
-cpslabel.grid(column=1, row=0, sticky=(W))
+cpslabel.grid(column=1, row=1, sticky=(W), padx=10)
 # corpus options
 corpus = StringVar()
-cpsLines = ttk.Radiobutton(cpsframe, text='Lines', variable=corpus, value='wplines', command=selectCorpus)
-cpsLines.grid(column=1, row=1, sticky=(W))
-cpsCpt = ttk.Radiobutton(cpsframe, text='Counterpoint', variable=corpus, value='wpcounterpoint', command=selectCorpus)
-cpsCpt.grid(column=1, row=2, sticky=(W))
-cpsFrags = ttk.Radiobutton(cpsframe, text='Fragments', variable=corpus, value='wpfragments', command=selectCorpus)
-cpsFrags.grid(column=1, row=3, sticky=(W))
+cps1 = ttk.Radiobutton(cpsframe, text='Lines', variable=corpus, value='wplines', command=selectCorpus)
+cps1.grid(column=1, row=2, sticky=(W))
+cps2 = ttk.Radiobutton(cpsframe, text='Counterpoint', variable=corpus, value='wpcounterpoint', command=selectCorpus)
+cps2.grid(column=1, row=3, sticky=(W))
+#cps3 = ttk.Radiobutton(cpsframe, text='Fragments', variable=corpus, value='wpfragments', command=selectCorpus)
+#cps3.grid(column=1, row=3, sticky=(W))
 
+# file selection
 cpslistframe = ttk.Frame(listframe)
-cpslistframe.grid(column=2, row=1, sticky=(E))
+cpslistframe.grid(column=2, row=1, sticky=(N, W))
 # instruction 2
-listlabel = ttk.Label(cpslistframe, text='Select file name: ')
+listlabel = ttk.Label(cpslistframe, text='Select a file: ')
 listlabel.grid(column=1, row=1)
 # file list
 fileList = Listbox(cpslistframe, height=5, listvariable=WPfiles)
@@ -278,32 +290,38 @@ s.grid(column=2, row=2, sticky=(N,S))
 fileList.configure(yscrollcommand=s.set)
 
 
-# EVALUATE BUTTONS
-# TODO gray out if lines not the corpus
-evaluateLine = ttk.Button(listframe, text='Display Linear Syntax', command=evaluateSyntax)
-evaluateLine.grid(column=2, row=3, stick=(S, W, E))
-evaluateCpt = ttk.Button(listframe, text='Evaluate Counterpoint', command=evaluateCounterpoint)
-evaluateCpt.grid(column=2, row=4, stick=(S, W, E))
-#playMIDI = ttk.Button(listframe, text='Play MIDI file', command=playMIDI)
-#playMIDI.grid(column=2, row=5, stick=(S, W, E))
-
-# LINETYPE SELECTION
+# linetype selection
 linetype = StringVar()
 linetype.set('any')
-selectframe = ttk.Frame(mainframe)
-selectframe.grid(column=4, row=1, sticky=(W))
+selectframe = ttk.Frame(listframe)
+selectframe.grid(column=3, row=1, sticky=(N, W))
+# instruction 3
+cpslabel = ttk.Label(selectframe, text='Select a line type: ')
+cpslabel.grid(column=1, row=0, sticky=(W))
 rad1 = Radiobutton(selectframe,text='primary', value='primary', variable=linetype)
 rad2 = Radiobutton(selectframe,text='bass', value='bass', variable=linetype)
 rad3 = Radiobutton(selectframe,text='generic', value='generic', variable=linetype)
 rad4 = Radiobutton(selectframe,text='any', value='any', variable=linetype)
-rad1.grid(column=0, row=0, sticky=(W))
-rad2.grid(column=0, row=1, sticky=(W))
-rad3.grid(column=0, row=2, sticky=(W))
-rad4.grid(column=0, row=3, sticky=(W))
+rad1.grid(column=1, row=1, sticky=(W))
+rad2.grid(column=1, row=2, sticky=(W))
+rad3.grid(column=1, row=3, sticky=(W))
+rad4.grid(column=1, row=4, sticky=(W))
+
+# evaluate options
+evalframe = ttk.Frame(listframe)
+evalframe.grid(column=1, row=2, columnspan=3, sticky=(W, E))
+evaluateLine = ttk.Button(evalframe, text='Display Linear Syntax', command=evaluateSyntax)
+evaluateLine.grid(column=1, row=1, sticky=(W), padx=10)
+evaluateCpt = ttk.Button(evalframe, text='Evaluate Counterpoint', command=evaluateCounterpoint)
+evaluateCpt.grid(column=2, row=1, sticky=(E), padx=10)
+#playMIDI = ttk.Button(listframe, text='Play MIDI file', command=playMIDI)
+#playMIDI.grid(column=2, row=5, stick=(S, W, E))
+
+
 
 # REPORT AREA
 #parse_report = StringVar()
-reporttext = Text(mainframe, width=114, height=10, wrap='word')
+reporttext = Text(mainframe, width=143, height=10, wrap='word')
 reporttext.grid(column=1, row=3, columnspan=4)
 
 
@@ -312,7 +330,7 @@ musicframe = ttk.Frame(mainframe, padding='0 0 0 0', borderwidth='2')
 musicframe.grid(column=1, row=4, columnspan=4)
 # intro image
 imageSelected = 'FuxDorian.png'
-music_canvas = Canvas(musicframe, width=800, height=800)
+music_canvas = Canvas(musicframe, width=1000, height=700)
 music_converted = convertImage(imageSelected)
 music_canvas.create_image(0,0, image=music_converted, anchor='nw', tag='thumb0')
 music_canvas.create_image(0,150, image=None, anchor='nw', tag='thumb1')
