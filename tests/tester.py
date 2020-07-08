@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/WP017.musicxml'
 
-    source = '../examples/corpus/Westergaard057b.musicxml'
+#    source = '../examples/corpus/Westergaard057b.musicxml'
 
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
