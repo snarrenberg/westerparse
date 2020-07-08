@@ -1,5 +1,5 @@
-The WesterParse Corpus
-======================
+Viewing the WesterParse Corpus
+==============================
 
 To test for compliance with Westergaard's rules, I have assembled a small 
 corpus of examples, including many from Westergaard's book (these are identified by
@@ -7,6 +7,9 @@ page number in the filename). There are over 60 single lines and over 50 example
 counterpoint, some with errors and others without. 
 
 Requires Tkinter, PIL, and MuseScore.
+
+Using the Corpus Viewer
+-----------------------
 
 Locate the corpus viewer module in the examples folder 
 and then run the program from the terminal.

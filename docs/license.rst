@@ -7,12 +7,6 @@ This license does not apply to other content
 distributed with this package, particularly any music21 files
 which have their own copyrights and licenses.
 
-Copyright: WesterParse is "Copyright (c) 2020 Robert Snarrenberg" and is 
-freely licensed under the BSD 3-Clause License.
-
-WesterParse may be distributed according to the terms the
-BSD license, described below:
-
 BSD License
 -----------
 
