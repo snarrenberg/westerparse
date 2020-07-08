@@ -23,7 +23,10 @@ What software do I need to install to run the project on my own system?
 I just want to play around with it. Is there a website I can use instead of 
 installing all this stuff? Yes.
 
-   * Westegaardian Species Counterpoint Online: https://talus.artsci.wustl.edu/counterpoint_tester/
+   * Westegaardian Species Counterpoint Online: 
+      
+      * https://talus.artsci.wustl.edu/line_tester/
+      * https://talus.artsci.wustl.edu/counterpoint_tester/
 
 Where can I find more information about using the program?
  
