@@ -6,40 +6,40 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 #-------------------------------------------------------------------------------
-# '''
-# Parser
-# ======
-# 
-# Designed as a transition-based dependency parser, the WesterParse parser 
-# analyzes the syntax of a melodic line and produces a set of valid interpretations. 
-# 
-# Procedure: 
-# 
-#    #. accept a part from a context
-#    #. infer the possible lineTypes if not given in advance
-#    #. parse the part for each possible lineType
-#    #. return a set of parses and errors
-# 
-# The machinery consists of a buffer, a stack, and a scanner. 
-# At initialization, the notes of the line are read into the buffer.
-# The scanner then shifts notes onto the stack one by one. With each shift, 
-# the transition is evaluated in light of the previously analyzed line. 
-# As the scanning proceeds, the parser maintains lists of 
-# open heads, open transitions, and syntactic units (arcs). These lists
-# shrink and grow as the interpretive process unfolds. When an arc is formed 
-# (e.g., a passing or neighboring motion), a tuple of note positions is placed
-# in the list of arcs. Meanwhile, dependent elements within the arc are removed 
-# from both the stack and the list of open transitions,
-# leaving structural heads in place for subsequent attachment. 
-# The parser has a limited ability to 
-# backtrack and reinterpret segments of a line. 
-# 
-# The first stage of parsing ends when the buffer is exhausted. 
-# Interpretation then continues by line type. 
-# 
-# The parser gathers all of the valid interpretations into lists. 
-# The parser also records errors that arise.
-# '''
+'''
+Parser
+======
+
+Designed as a transition-based dependency parser, the WesterParse parser 
+analyzes the syntax of a melodic line and produces a set of valid interpretations. 
+
+Procedure: 
+
+   #. accept a part from a context
+   #. infer the possible lineTypes if not given in advance
+   #. parse the part for each possible lineType
+   #. return a set of parses and errors
+
+The machinery consists of a buffer, a stack, and a scanner. 
+At initialization, the notes of the line are read into the buffer.
+The scanner then shifts notes onto the stack one by one. With each shift, 
+the transition is evaluated in light of the previously analyzed line. 
+As the scanning proceeds, the parser maintains lists of 
+open heads, open transitions, and syntactic units (arcs). These lists
+shrink and grow as the interpretive process unfolds. When an arc is formed 
+(e.g., a passing or neighboring motion), a tuple of note positions is placed
+in the list of arcs. Meanwhile, dependent elements within the arc are removed 
+from both the stack and the list of open transitions,
+leaving structural heads in place for subsequent attachment. 
+The parser has a limited ability to 
+backtrack and reinterpret segments of a line. 
+
+The first stage of parsing ends when the buffer is exhausted. 
+Interpretation then continues by line type. 
+
+The parser gathers all of the valid interpretations into lists. 
+The parser also records errors that arise.
+'''
 
 from music21 import *
 from utilities import pairwise
@@ -1198,29 +1198,29 @@ class Parser():
 #        openHeads = pruneOpenHeads(self.notes, openHeads)
 
     def prepareParses(self):
-#         '''
-#         After preliminary parsing is completed, determine possibiities
-#         for basic structures based on available line types and parse the line
-#         using each candidate for basic structure. The results will be collected
-#         in self.parses.
-#         
-#         If the line type is :literal:`bass`, the function verifies that the line begins and ends
-#         on a tonic degree (rules S1 and S2) and then assembles a list of notes that
-#         could complete the basic arpeggiation (rule S3) and builds a :py:class:`~Parser.Parse`
-#         for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`.) 
-#         
-#         If the line type is :literal:`primary`, the function verifies that the line ends
-#         on a tonic degree (rule S1) and then assembles a list of notes that
-#         could initiate a basic step motion (rule S2). The function uses eight different 
-#         methods to determine whether a valid basic step motion exists for each S2 candidate
-#         (see :py:func:`~Parser.Parse.parsePrimary`) 
-#         and attempts to build a :py:class:`~Parser.Parse` using each method; not every
-#         method yields a result.
-# 
-#         If the line type is :literal:`generic`, the function verifies that the line begins and ends
-#         on triad pitches (rules S1 and S2) and then looks for a possible step connection
-#         between these terminal pitches (see :py:func:`~Parser.Parse.parseGeneric`).
-#         '''
+        '''
+        After preliminary parsing is completed, determine possibiities
+        for basic structures based on available line types and parse the line
+        using each candidate for basic structure. The results will be collected
+        in self.parses.
+        
+        If the line type is :literal:`bass`, the function verifies that the line begins and ends
+        on a tonic degree (rules S1 and S2) and then assembles a list of notes that
+        could complete the basic arpeggiation (rule S3) and builds a :py:class:`~Parser.Parse`
+        for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`.) 
+        
+        If the line type is :literal:`primary`, the function verifies that the line ends
+        on a tonic degree (rule S1) and then assembles a list of notes that
+        could initiate a basic step motion (rule S2). The function uses eight different 
+        methods to determine whether a valid basic step motion exists for each S2 candidate
+        (see :py:func:`~Parser.Parse.parsePrimary`) 
+        and attempts to build a :py:class:`~Parser.Parse` using each method; not every
+        method yields a result.
+
+        If the line type is :literal:`generic`, the function verifies that the line begins and ends
+        on triad pitches (rules S1 and S2) and then looks for a possible step connection
+        between these terminal pitches (see :py:func:`~Parser.Parse.parseGeneric`).
+        '''
 
         # prepare parses for every type of line if the context is only one part
         if self.part.lineTypes and len(self.context.parts) == 1:
@@ -2371,8 +2371,8 @@ class Parser():
             exit()
  
     def testGenerabilityFromLevels(parse):
-#         '''Given a parse in which rule levels have been assigned (perhaps by the student),
-#         determine whether the line is generable in that way. [Under development]'''
+        '''Given a parse in which rule levels have been assigned (perhaps by the student),
+        determine whether the line is generable in that way. [Under development]'''
         if parse.lineType == 'bass':
             pass
         if parse.lineType == 'primary':
@@ -2382,10 +2382,10 @@ class Parser():
         pass
         
     def collectParses(self):
-#         '''Collect all the attempted parses of a line in the :py:class:`~Parser` 
-#         and discard any that have errors and thus failed. 
-#         Also remove parses of primary lines if the same basic arc was 
-#         produced by a more reliable method.'''
+        '''Collect all the attempted parses of a line in the :py:class:`~Parser` 
+        and discard any that have errors and thus failed. 
+        Also remove parses of primary lines if the same basic arc was 
+        produced by a more reliable method.'''
         failedParses = []
         for key in self.parseErrorsDict:
             if self.parseErrorsDict[key] != []:
@@ -2425,20 +2425,20 @@ class Parser():
         else: self.isGeneric = False
     
     def selectPreferredParses(self):
-#         '''Input a list of successful interpretations from :py:class:`~Parser`
-#         and remove those that do not conform to cognitive preference rules.
-#         
-#            * Primary line preferences
-# 
-#               * for parses that share the same S2 scale degree, prefer the parse in which S2 occurs earliest
-#            
-#            * Bass Lines
-#             
-#               * prefer parses in which S3 occurs after the midpoint
-#               * prefer parses in which S3 occurs on the beat
-#               * if there are two candidates for S3 and the second can be interpreted as a direct repetition of the first, prefer the parse that interprets the first candidate as S3
-#         
-#         '''
+        '''Input a list of successful interpretations from :py:class:`~Parser`
+        and remove those that do not conform to cognitive preference rules.
+        
+           * Primary line preferences
+
+              * for parses that share the same S2 scale degree, prefer the parse in which S2 occurs earliest
+           
+           * Bass Lines
+            
+              * prefer parses in which S3 occurs after the midpoint
+              * prefer parses in which S3 occurs on the beat
+              * if there are two candidates for S3 and the second can be interpreted as a direct repetition of the first, prefer the parse that interprets the first candidate as S3
+        
+        '''
 
         # primary upper lines
         # find those that have the same scale degree for S2 
