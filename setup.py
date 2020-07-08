@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 # read the contents of your README file
 from os import path
 this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
@@ -11,7 +11,7 @@ setup(
     version='1.0.1-alpha',
     description='An application for evaluating Westergaardian species counterpoint',
     long_description=long_description,
-    long_description_content_type='text/x-rst', 
+    long_description_content_type='text/md', 
     url='https://github.com/snarrenberg/westerparse',
     author='Robert Snarrenberg',
     author_email='snarrenberg@wustl.edu',

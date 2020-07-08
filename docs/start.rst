@@ -15,7 +15,7 @@ If you are new to species counterpoint, you may find the following guide of use:
 
 What software do I need to install to run the project on my own system?
 
-   * Python
+   * Python 3
    * `the music21 toolkit <http://web.mit.edu/music21/>`_
    * WesterParse
    * a music notation program like MuseScore
