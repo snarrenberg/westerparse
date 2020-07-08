@@ -11,7 +11,7 @@ setup(
     version='1.0.1-alpha',
     description='An application for evaluating Westergaardian species counterpoint',
     long_description=long_description,
-    long_description_content_type='text/md', 
+    long_description_content_type='text/markdown', 
     url='https://github.com/snarrenberg/westerparse',
     author='Robert Snarrenberg',
     author_email='snarrenberg@wustl.edu',
