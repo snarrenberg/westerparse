@@ -310,7 +310,7 @@ rad4.grid(column=1, row=4, sticky=(W))
 # evaluate options
 evalframe = ttk.Frame(listframe)
 evalframe.grid(column=1, row=2, columnspan=3, sticky=(W, E))
-evaluateLine = ttk.Button(evalframe, text='Display Linear Syntax', command=evaluateSyntax)
+evaluateLine = ttk.Button(evalframe, text='Display Parses', command=evaluateSyntax)
 evaluateLine.grid(column=1, row=1, sticky=(W), padx=10)
 evaluateCpt = ttk.Button(evalframe, text='Evaluate Counterpoint', command=evaluateCounterpoint)
 evaluateCpt.grid(column=2, row=1, sticky=(E), padx=10)
