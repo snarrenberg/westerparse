@@ -4,7 +4,7 @@
 #
 # Author:       Robert Snarrenberg
 # Copyright:    (c) 2020 by Robert Snarrenberg
-# License:      LGPL or BSD, see license.txt
+# License:      BSD, see license.txt
 #-------------------------------------------------------------------------------
 '''
 Concrete Scale Degree (CSD)

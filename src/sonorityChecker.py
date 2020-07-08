@@ -4,7 +4,7 @@
 #
 # Authors:      Robert Snarrenberg, Tony Li
 # Copyright:    (c) 2020 by Robert Snarrenberg
-# License:      LGPL or BSD, see license.txt
+# License:      BSD, see license.txt
 #-------------------------------------------------------------------------------
 
 # takes a score (source) with two or more parts (lines)

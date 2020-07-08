@@ -4,7 +4,7 @@
 #
 # Author:       Robert Snarrenberg 
 # Copyright:    (c) 2020 by Robert Snarrenberg
-# License:      LGPL or BSD, see license.txt
+# License:      BSD, see license.txt
 #-------------------------------------------------------------------------------
 '''
 Parser
@@ -64,7 +64,8 @@ selectPreferredParses = True
 # -----------------------------------------------------------------------------
 
 class Parser():
-    '''The Parser class is the engine of the parse. The bulk of the work is done
+    '''
+    The Parser class is the engine of the parse. The bulk of the work is done
     by :py:func:`~parseTransition`. After a preliminary parse of the line,
     the parser decides on a set of possible structural interpretations and creates
     a :py:class:`~Parser.Parse` object to store each interpretation.
@@ -82,8 +83,8 @@ class Parser():
 
     The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
     by :py:func:`~prepareParses`.
-    
     '''
+
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
 #    and the most recent Arc is popped into a failed list 
@@ -423,7 +424,8 @@ class Parser():
             n.style.color = 'black'
 
     def parseTransition(self, stack, buffer, part, i, j, harmonyStart, harmonyEnd, openHeads, openTransitions, arcs):
-        '''The parser asks a series of questions at the transition from note *i* to note *j*.
+        '''
+        The parser asks a series of questions at the transition from note *i* to note *j*.
         
            * What is their relation to the harmony of the context (tonic, in the case of global contexts)? 
            * What is their intervallic relation (step or skip)?
@@ -1196,7 +1198,8 @@ class Parser():
 #        openHeads = pruneOpenHeads(self.notes, openHeads)
 
     def prepareParses(self):
-        '''After preliminary parsing is completed, determine possibiities
+        '''
+        After preliminary parsing is completed, determine possibiities
         for basic structures based on available line types and parse the line
         using each candidate for basic structure. The results will be collected
         in self.parses.
@@ -2379,9 +2382,10 @@ class Parser():
         pass
         
     def collectParses(self):
-        '''Collect all the attempted parses of a line from Parser (self.parses) 
+        '''Collect all the attempted parses of a line in the :py:class:`Parser` 
         and discard any that have errors and thus failed. 
-        Also remove parses if their basic arc was produced by a more reliable method.'''
+        Also remove parses of primary lines if the same basic arc was 
+        produced by a more reliable method.'''
         failedParses = []
         for key in self.parseErrorsDict:
             if self.parseErrorsDict[key] != []:
@@ -2421,7 +2425,7 @@ class Parser():
         else: self.isGeneric = False
     
     def selectPreferredParses(self):
-        '''Input a list of successful interpretations from Parser (self.parses)
+        '''Input a list of successful interpretations from :py:class:`Parser`
         and remove those that do not conform to cognitive preference rules.
         
            * Primary line preferences
