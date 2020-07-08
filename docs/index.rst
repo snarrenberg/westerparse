@@ -3,12 +3,8 @@
 The WesterParse Project
 =======================
 
-This project implements the theory of tonal music presented in chapters 4-6 of 
-*An Introduction to Tonal Theory* (New York: Norton, 1975) by Peter Westergaard.
+.. include:: ../README.rst
 
-There are two main components: a *parser* that evaluates the structure of 
-musical lines used in species counterpoint, and a *checker* that evaluates the
-voice leading of species counterpoint compositions. 
 
 Westergaard's innovative contribution to the pedagogical discipline of species 
 counterpoint was the formulation of a syntax for contrapuntal lines and an explication 

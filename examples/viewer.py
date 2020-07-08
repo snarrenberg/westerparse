@@ -284,8 +284,8 @@ evaluateLine = ttk.Button(listframe, text='Display Linear Syntax', command=evalu
 evaluateLine.grid(column=2, row=3, stick=(S, W, E))
 evaluateCpt = ttk.Button(listframe, text='Evaluate Counterpoint', command=evaluateCounterpoint)
 evaluateCpt.grid(column=2, row=4, stick=(S, W, E))
-playMIDI = ttk.Button(listframe, text='Play MIDI file', command=playMIDI)
-playMIDI.grid(column=2, row=5, stick=(S, W, E))
+#playMIDI = ttk.Button(listframe, text='Play MIDI file', command=playMIDI)
+#playMIDI.grid(column=2, row=5, stick=(S, W, E))
 
 # LINETYPE SELECTION
 linetype = StringVar()
