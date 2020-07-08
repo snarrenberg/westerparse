@@ -1,11 +1,6 @@
 .. WesterParse documentation master file, created by
    sphinx-quickstart on Wed Jul  1 12:38:32 2020.
 
-.. instructions: https://www.sphinx-doc.org/en/master/index.html
-.. commands to build html and pdf/latex files
-   sphinx-build -b html . _build
-   make latexpdf
-
 The WesterParse Project
 =======================
 
