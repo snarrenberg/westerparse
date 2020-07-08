@@ -6,7 +6,7 @@ Basic Instructions
 
 Start python in your terminal program.
 
-.. code-block:: ..
+.. code-block:: shell
    
    $ python
 

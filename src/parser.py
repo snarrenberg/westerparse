@@ -436,7 +436,7 @@ class Parser():
 
         #. *Both pitches are harmonic* 
         
-           * if *i* = *j*, generate a repetition
+           * if *i* and *j* are the same pitch, generate a repetition
            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
            
         #. *Step from the harmony of this bar to the harmony of the next*
@@ -454,7 +454,7 @@ class Parser():
            * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
               
                  * if so, make *i* the lefthead of *j*
-                 * otherwise, add *i* to the list of open transitions [?]
+                 * otherwise, add *i* to the list of open transitions
             
            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
            
@@ -467,7 +467,7 @@ class Parser():
         
         #. *Consonant skip from nonharmonic to nonharmonic*
         
-           * if *i* and *j* are linearly consonant
+           * if *i* and *j* are linearly consonant ...
            
         #. *Consonant skip from harmonic to nonharmonic*
         
@@ -1201,12 +1201,12 @@ class Parser():
         using each candidate for basic structure. The results will be collected
         in self.parses.
         
-        If the line type is 'bass', the function verifies that the line begins and ends
+        If the line type is :literal:`bass`, the function verifies that the line begins and ends
         on a tonic degree (rules S1 and S2) and then assembles a list of notes that
         could complete the basic arpeggiation (rule S3) and builds a :py:class:`~Parser.Parse`
         for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`.) 
         
-        If the line type is 'primary', the function verifies that the line ends
+        If the line type is :literal:`primary`, the function verifies that the line ends
         on a tonic degree (rule S1) and then assembles a list of notes that
         could initiate a basic step motion (rule S2). The function uses eight different 
         methods to determine whether a valid basic step motion exists for each S2 candidate
@@ -1214,10 +1214,9 @@ class Parser():
         and attempts to build a :py:class:`~Parser.Parse` using each method; not every
         method yields a result.
 
-        If the line type is 'generic', the function verifies that the line begins and ends
+        If the line type is :literal:`generic`, the function verifies that the line begins and ends
         on triad pitches (rules S1 and S2) and then looks for a possible step connection
-        between these terminal pitches
-        (see :py:func:`~Parser.Parse.parseGeneric`).
+        between these terminal pitches (see :py:func:`~Parser.Parse.parseGeneric`).
         '''
 
         # prepare parses for every type of line if the context is only one part
@@ -2111,7 +2110,7 @@ class Parser():
             return
         
         def setDependencyLevels(self):
-            '''Review a completed parse and determine the structural level of each note'''
+            '''Review a completed parse and determine the structural level of each note.'''
             # this works for now, but is not optimal
             # does not work for this line: BL in major: 1 5 4 3 1 -7 -5 1 6 5 4 3 2 1
             # arcs = [[0, 1, 13], [1, 2, 3], [1, 8, 9], [1, 10, 11, 12, 13], [4, 5, 7]]

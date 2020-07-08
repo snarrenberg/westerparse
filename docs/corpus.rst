@@ -14,7 +14,7 @@ Using the Corpus Viewer
 Locate the corpus viewer module in the examples folder 
 and then run the program from the terminal.
 
-.. code-block:: ..
+.. code-block:: shell
    
    $ python3 viewer.py
 
