@@ -17,7 +17,7 @@ from . import consecutions
 from . import context
 from . import csd
 from . import keyFinder
-from westergard import parser
+from . import parser
 from . import rule
 from . import theoryAnalyzerWP
 from . import theoryResultWP
