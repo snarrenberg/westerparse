@@ -51,7 +51,7 @@ import copy
 # -----------------------------------------------------------------------------
 
 # variables set by user
-#selectPreferredParses = True
+selectPreferredParses = True
 
 # for third species
 #localNeighborsOnly=False
