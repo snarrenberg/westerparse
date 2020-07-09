@@ -6,40 +6,40 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 #-------------------------------------------------------------------------------
-# '''
-# Parser
-# ======
-# 
-# Designed as a transition-based dependency parser, the WesterParse parser 
-# analyzes the syntax of a melodic line and produces a set of valid interpretations. 
-# 
-# Procedure: 
-# 
-#    #. accept a part from a context
-#    #. infer the possible lineTypes if not given in advance
-#    #. parse the part for each possible lineType
-#    #. return a set of parses and errors
-# 
-# The machinery consists of a buffer, a stack, and a scanner. 
-# At initialization, the notes of the line are read into the buffer.
-# The scanner then shifts notes onto the stack one by one. With each shift, 
-# the transition is evaluated in light of the previously analyzed line. 
-# As the scanning proceeds, the parser maintains lists of 
-# open heads, open transitions, and syntactic units (arcs). These lists
-# shrink and grow as the interpretive process unfolds. When an arc is formed 
-# (e.g., a passing or neighboring motion), a tuple of note positions is placed
-# in the list of arcs. Meanwhile, dependent elements within the arc are removed 
-# from both the stack and the list of open transitions,
-# leaving structural heads in place for subsequent attachment. 
-# The parser has a limited ability to 
-# backtrack and reinterpret segments of a line. 
-# 
-# The first stage of parsing ends when the buffer is exhausted. 
-# Interpretation then continues by line type. 
-# 
-# The parser gathers all of the valid interpretations into lists. 
-# The parser also records errors that arise.
-# '''
+'''
+Parser
+======
+
+Designed as a transition-based dependency parser, the WesterParse parser 
+analyzes the syntax of a melodic line and produces a set of valid interpretations. 
+
+Procedure: 
+
+   #. accept a part from a context
+   #. infer the possible lineTypes if not given in advance
+   #. parse the part for each possible lineType
+   #. return a set of parses and errors
+
+The machinery consists of a buffer, a stack, and a scanner. 
+At initialization, the notes of the line are read into the buffer.
+The scanner then shifts notes onto the stack one by one. With each shift, 
+the transition is evaluated in light of the previously analyzed line. 
+As the scanning proceeds, the parser maintains lists of 
+open heads, open transitions, and syntactic units (arcs). These lists
+shrink and grow as the interpretive process unfolds. When an arc is formed 
+(e.g., a passing or neighboring motion), a tuple of note positions is placed
+in the list of arcs. Meanwhile, dependent elements within the arc are removed 
+from both the stack and the list of open transitions,
+leaving structural heads in place for subsequent attachment. 
+The parser has a limited ability to 
+backtrack and reinterpret segments of a line. 
+
+The first stage of parsing ends when the buffer is exhausted. 
+Interpretation then continues by line type. 
+
+The parser gathers all of the valid interpretations into lists. 
+The parser also records errors that arise.
+'''
 
 from music21 import *
 from utilities import pairwise
@@ -64,27 +64,27 @@ selectPreferredParses = True
 # -----------------------------------------------------------------------------
 
 class Parser():
-#     '''
-#     The Parser class is the engine of the parser. The bulk of the work is done
-#     by :py:func:`~parseTransition`. After a preliminary parse of the line,
-#     the parser decides on a set of possible structural interpretations and creates
-#     a :py:class:`~Parser.Parse` object to store each interpretation.
-#     
-#     Upon initialization, the Parser automatically parses the line, in the following
-#     steps:
-#         
-#        * prepares placeholders for parses and errors
-#        * accepts a linetype if provided, otherwise it infers the set of possible types.
-#        * operates the preliminary parser: :py:func:`~preParseLine`
-#        * interrupts the parser if preliminary parsing is unsuccessful and reports errors
-#        * determines the set of possible basic structures and parses 
-#          for each possibility: :py:func:`~prepareParses`
-#        * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
-#        * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
-# 
-#     The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
-#     by :py:func:`~prepareParses`.
-#     '''
+    '''
+    The Parser class is the engine of the parser. The bulk of the work is done
+    by :py:func:`~parseTransition`. After a preliminary parse of the line,
+    the parser decides on a set of possible structural interpretations and creates
+    a :py:class:`~Parser.Parse` object to store each interpretation.
+    
+    Upon initialization, the Parser automatically parses the line, in the following
+    steps:
+        
+       * prepares placeholders for parses and errors
+       * accepts a linetype if provided, otherwise it infers the set of possible types.
+       * operates the preliminary parser: :py:func:`~preParseLine`
+       * interrupts the parser if preliminary parsing is unsuccessful and reports errors
+       * determines the set of possible basic structures and parses 
+         for each possibility: :py:func:`~prepareParses`
+       * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
+       * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
+
+    The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
+    by :py:func:`~prepareParses`.
+    '''
 
 #    TODO: If the parse fails, the location is marked 
 #    (with relevant elements marked "NG"? = nongenerable, color=Red) 
@@ -144,7 +144,7 @@ class Parser():
         self.selectPreferredParses()
 
     def inferLineTypes(self):
-#         '''If the line type is not specified, infers a set of possibilities.'''
+        '''If the line type is not specified, infers a set of possibilities.'''
         if self.notes[0].csd.value % 7 not in [0, 2, 4] and self.notes[-1].csd.value % 7 not in [0, 2, 4]:
             error = 'Generic structure error: The line is not bounded by tonic-triad pitches and hence not a valid tonic line.'
             self.errors.append(error)
@@ -162,13 +162,13 @@ class Parser():
                     self.part.lineTypes.append('primary')
                       
     def preParseLine(self):
-#         '''
-#         Conducts a preliminary parse of the line. 
-#         Initializes the buffer, stack, and arcs. 
-#         Initializes the lists of open heads and transitions. 
-#         Sets the global harmonic referents.
-#         Runs the scanner, parsing each transition.
-#         '''
+        '''
+        Conducts a preliminary parse of the line. 
+        Initializes the buffer, stack, and arcs. 
+        Initializes the lists of open heads and transitions. 
+        Sets the global harmonic referents.
+        Runs the scanner, parsing each transition.
+        '''
         # Initialize the buffer, stack, and arcs
         lineBuffer = [n for n in self.notes if not n.tie or n.tie.type == 'start'] 
         lineStack = []
@@ -426,89 +426,89 @@ class Parser():
             n.style.color = 'black'
 
     def parseTransition(self, stack, buffer, part, i, j, harmonyStart, harmonyEnd, openHeads, openTransitions, arcs):
-#         '''
-#         Asks a series of questions at the transition from note *i* to note *j*.
-#         
-#            * Do *i* and *j* belong to the harmony of the context (tonic, in the case of global contexts)? 
-#            * What is the intervallic relation between *i* and *j* (step or skip)?
-#            * How does *j* connect, if at all, with notes in the dynamic lists of open heads and transitions?  
-#            
-#         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
-#         or returns error messages if the line is syntactically malformed.
-#         
-#         The specific cases are as follows: 
-# 
-#         #. *Both pitches are harmonic* 
-#         
-#            * if *i* and *j* are the same pitch, generate a repetition
-#            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
-#            
-#         #. *Step from the harmony of this bar to the harmony of the next*
-#         
-#            * if *i* is an open transition, end the transition at *j*
-#         
-#         #. *Step from harmonic to nonharmonic pitch*
-#         
-#            * if there are open transitions, see whether *j* continues a transition, starting with the most recent 
-#            * if there are no open transitions but there are open heads, try to attach *j* to an open head, starting with the most recent (*i*)
-#         
-#         #. *Step from nonharmonic to harmonic pitch*
-#         
-#            * in third species, add *j* to the local harmony if needed
-#            * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
-#               
-#               * if so, make *i* the lefthead of *j*
-#               * otherwise, add *i* to the list of open transitions
-#             
-#            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
-#            
-#         #. *Step from nonharmonic to nonharmonic* 
-#         
-#            * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending
-#            * if *i* is ascending and *j* is descending
-#            * if *i* is ascending and *j* is bidirectional
-#            * if *i* is bidirectional and *j* is descending
-#         
-#         #. *Consonant skip from nonharmonic to nonharmonic*
-#         
-#            * if *i* and *j* are linearly consonant ...
-#            
-#         #. *Consonant skip from harmonic to nonharmonic*
-#         
-#            * if there are open transitions: 
-#            
-#               * see whether *j* continues a transition in progress
-#               * if not, see whether *j* connects to a head that precedes the open transitions
-#               * if neither of these works, return an error: *j* appears out of the blue and cannot be generated
-#               
-#            * if there are open heads:
-#            
-#               * look for an open head to attach to *j*
-#               * if that fails, search for possible step-related antecedent (head or transition) 
-#               
-#                  * look in reverse at the terminals of current arcs and select the most recent that is step-related
-#                  * look for possible step-related transition that was previously integrated into a neighbor arc
-#                  * look for possible step-related insertion that was embedded in another arc
-#                  
-#               * if neither of these works, return an error: *j* appears out of the blue and cannot be generated 
-#         
-#         #. *Consonant skip from nonharmonic to nonharmonic*
-#         
-#            * return an error
-#         
-#         #. *Linear unison between nonharmonic pitches*
-#         
-#            * return an error 
-#            
-#         #. *Dissonant skip*
-#         
-#            * return an error 
-# 
-#         #. *Skip larger than an octave*
-#            
-#            * return an error 
-#                    
-#         '''
+        '''
+        Asks a series of questions at the transition from note *i* to note *j*.
+        
+           * Do *i* and *j* belong to the harmony of the context (tonic, in the case of global contexts)? 
+           * What is the intervallic relation between *i* and *j* (step or skip)?
+           * How does *j* connect, if at all, with notes in the dynamic lists of open heads and transitions?  
+           
+        Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
+        or returns error messages if the line is syntactically malformed.
+        
+        The specific cases are as follows: 
+
+        #. *Both pitches are harmonic* 
+        
+           * if *i* and *j* are the same pitch, generate a repetition
+           * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
+           
+        #. *Step from the harmony of this bar to the harmony of the next*
+        
+           * if *i* is an open transition, end the transition at *j*
+        
+        #. *Step from harmonic to nonharmonic pitch*
+        
+           * if there are open transitions, see whether *j* continues a transition, starting with the most recent 
+           * if there are no open transitions but there are open heads, try to attach *j* to an open head, starting with the most recent (*i*)
+        
+        #. *Step from nonharmonic to harmonic pitch*
+        
+           * in third species, add *j* to the local harmony if needed
+           * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
+              
+              * if so, make *i* the lefthead of *j*
+              * otherwise, add *i* to the list of open transitions
+            
+           * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
+           
+        #. *Step from nonharmonic to nonharmonic* 
+        
+           * if the directionality of *i* and *j* match or *i* is bidirectional and *j* is ascending
+           * if *i* is ascending and *j* is descending
+           * if *i* is ascending and *j* is bidirectional
+           * if *i* is bidirectional and *j* is descending
+        
+        #. *Consonant skip from nonharmonic to nonharmonic*
+        
+           * if *i* and *j* are linearly consonant ...
+           
+        #. *Consonant skip from harmonic to nonharmonic*
+        
+           * if there are open transitions: 
+           
+              * see whether *j* continues a transition in progress
+              * if not, see whether *j* connects to a head that precedes the open transitions
+              * if neither of these works, return an error: *j* appears out of the blue and cannot be generated
+              
+           * if there are open heads:
+           
+              * look for an open head to attach to *j*
+              * if that fails, search for possible step-related antecedent (head or transition) 
+              
+                 * look in reverse at the terminals of current arcs and select the most recent that is step-related
+                 * look for possible step-related transition that was previously integrated into a neighbor arc
+                 * look for possible step-related insertion that was embedded in another arc
+                 
+              * if neither of these works, return an error: *j* appears out of the blue and cannot be generated 
+        
+        #. *Consonant skip from nonharmonic to nonharmonic*
+        
+           * return an error
+        
+        #. *Linear unison between nonharmonic pitches*
+        
+           * return an error 
+           
+        #. *Dissonant skip*
+        
+           * return an error 
+
+        #. *Skip larger than an octave*
+           
+           * return an error 
+                   
+        '''
 
         ### CASE ONE: both pitches are harmonic
         if (isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart)) and (isLinearConsonance(i, j) or isLinearUnison(i, j)):
@@ -1200,29 +1200,29 @@ class Parser():
 #        openHeads = pruneOpenHeads(self.notes, openHeads)
 
     def prepareParses(self):
-#         '''
-#         After preliminary parsing is completed, determines possibiities
-#         for basic structures based on available line types and parse the line
-#         using each candidate for basic structure. The results are collected
-#         in self.parses.
-#         
-#         If the line type is :literal:`bass`, the function verifies that the line begins and ends
-#         on a tonic degree (rules S1 and S2) and then assembles a list of notes that
-#         could complete the basic arpeggiation (rule S3) and builds a :py:class:`~Parser.Parse`
-#         for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`.) 
-#         
-#         If the line type is :literal:`primary`, the function verifies that the line ends
-#         on a tonic degree (rule S1) and then assembles a list of notes that
-#         could initiate a basic step motion (rule S2). The function uses eight different 
-#         methods to determine whether a valid basic step motion exists for each S2 candidate
-#         (see :py:func:`~Parser.Parse.parsePrimary`) 
-#         and attempts to build a :py:class:`~Parser.Parse` using each method; not every
-#         method yields a result.
-# 
-#         If the line type is :literal:`generic`, the function verifies that the line begins and ends
-#         on triad pitches (rules S1 and S2) and then looks for a possible step connection
-#         between these terminal pitches (see :py:func:`~Parser.Parse.parseGeneric`).
-#         '''
+        '''
+        After preliminary parsing is completed, determines possibiities
+        for basic structures based on available line types and parse the line
+        using each candidate for basic structure. The results are collected
+        in self.parses.
+        
+        If the line type is :literal:`bass`, the function verifies that the line begins and ends
+        on a tonic degree (rules S1 and S2) and then assembles a list of notes that
+        could complete the basic arpeggiation (rule S3) and builds a :py:class:`~Parser.Parse`
+        for each S3 candidate. (See :py:func:`~Parser.Parse.parseBass`.) 
+        
+        If the line type is :literal:`primary`, the function verifies that the line ends
+        on a tonic degree (rule S1) and then assembles a list of notes that
+        could initiate a basic step motion (rule S2). The function uses eight different 
+        methods to determine whether a valid basic step motion exists for each S2 candidate
+        (see :py:func:`~Parser.Parse.parsePrimary`) 
+        and attempts to build a :py:class:`~Parser.Parse` using each method; not every
+        method yields a result.
+
+        If the line type is :literal:`generic`, the function verifies that the line begins and ends
+        on triad pitches (rules S1 and S2) and then looks for a possible step connection
+        between these terminal pitches (see :py:func:`~Parser.Parse.parseGeneric`).
+        '''
 
         # prepare parses for every type of line if the context is only one part
         if self.part.lineTypes and len(self.context.parts) == 1:
@@ -1316,10 +1316,10 @@ class Parser():
                 self.buildParse(s2cand, lineType, parsecounter, stack, buildErrors=[])
             
     def buildParse(self, cand, lineType, parsecounter, stack, buildErrors, method=None):
-#         '''Sets up the basic features of the parse object
-#         and then executes the parsing process.
-#         Uses deep copies of the arcs and notes, as the list of arcs and the
-#         properties of notes will be altered during the process.'''
+        '''Sets up the basic features of the parse object
+        and then executes the parsing process.
+        Uses deep copies of the arcs and notes, as the list of arcs and the
+        properties of notes will be altered during the process.'''
         # create the Parse object
         newParse = Parser.Parse()
         # copy information
@@ -1367,7 +1367,7 @@ class Parser():
 #        newParse.displayFullParse()
 
     class Parse():
-#        '''An object for holding one interpretation of a line's syntactic structure.'''
+        '''An object for holding one interpretation of a line's syntactic structure.'''
         def __init__(self):
             self.stackremnant = []
             self.buffer = []
@@ -1388,20 +1388,20 @@ class Parser():
             return self.label
 
         def performLineParse(self):
-#             '''
-#             Creates a complete interpretation of the line, in the following steps:
-#             
-#                * Constructs an arc for the basic structure, given the line type and 
-#                  a specific option for the basic structure.
-#                * Assigns rules to notes in secondary structures.
-#                * Tests for resolution of local insertions in third species.
-#                * Consolidates arcs into longer passing motions, if possible
-#                * Assembles lists for rule labels and parentheses, to be used when 
-#                  generating representations of the interpretation.
-#                * Sets the dependency level of each note. [This function is 
-#                  currently disabled.]
-#                
-#             '''
+            '''
+            Creates a complete interpretation of the line, in the following steps:
+            
+               * Constructs an arc for the basic structure, given the line type and 
+                 a specific option for the basic structure.
+               * Assigns rules to notes in secondary structures.
+               * Tests for resolution of local insertions in third species.
+               * Consolidates arcs into longer passing motions, if possible
+               * Assembles lists for rule labels and parentheses, to be used when 
+                 generating representations of the interpretation.
+               * Sets the dependency level of each note. [This function is 
+                 currently disabled.]
+               
+            '''
             if self.lineType == 'primary':
                 self.parsePrimary()
             elif self.lineType == 'bass':
@@ -1432,7 +1432,7 @@ class Parser():
 #            self.setDependencyLevels()
 
         def arcMerge(self, arc1, arc2):
-#            '''A function for combining two passing motions that share an inner node and direction.'''
+            '''A function for combining two passing motions that share an inner node and direction.'''
             # merges elements into first arc and empties the second
             # revises dependencies
             leftouter = self.notes[arc1[0]]
@@ -1461,7 +1461,7 @@ class Parser():
                 addDependenciesFromArc(self.notes, arc1)
 
         def arcEmbed(self, arc1, arc2):
-#            '''A function for for embedding a repetition inside a passing motion.'''
+            '''A function for for embedding a repetition inside a passing motion.'''
             # in either order
             # start with repetition linked to passing, then embed
             leftouter = self.notes[arc1[0]]
@@ -1484,26 +1484,26 @@ class Parser():
                 addDependenciesFromArc(self.notes, arc1)
                     
         def parsePrimary(self):
-#             '''
-#             Uses eight different methods to find a basic step motion from a potential S2:
-#             
-#                #. Look for one existing basic step motion arc that starts from S2.
-#                #. Look for an existing basic step motion arc that can be attached 
-#                   to S2 (repetition + passing)
-#                #. Look for two arcs that can fused into a basic step motion (passing + 
-#                   neighbor/repetition). 
-#                #. Look for two arcs that can be merged into a basic step motion 
-#                   (passing + passing).
-#                #. Look for three arcs that can be merged into a basic step motion 
-#                   (passing + passing + passing).
-#                #. Take an existing 5-4-3 arc (the longest spanned, if more than one) 
-#                   and try to find a connection -2-1 to complete a basic arc.
-#                #. Look for a nonfinal arc from S2 whose terminus == S1.csd.value, 
-#                   and extend the arc to end on S1Index if possible.
-#                #. Reinterpret the line, looking for a descending step motion from S2 
-#                   and then parsing the remaining notes. The least reliable method.
-#             
-#             '''
+            '''
+            Uses eight different methods to find a basic step motion from a potential S2:
+            
+               #. Look for one existing basic step motion arc that starts from S2.
+               #. Look for an existing basic step motion arc that can be attached 
+                  to S2 (repetition + passing)
+               #. Look for two arcs that can fused into a basic step motion (passing + 
+                  neighbor/repetition). 
+               #. Look for two arcs that can be merged into a basic step motion 
+                  (passing + passing).
+               #. Look for three arcs that can be merged into a basic step motion 
+                  (passing + passing + passing).
+               #. Take an existing 5-4-3 arc (the longest spanned, if more than one) 
+                  and try to find a connection -2-1 to complete a basic arc.
+               #. Look for a nonfinal arc from S2 whose terminus == S1.csd.value, 
+                  and extend the arc to end on S1Index if possible.
+               #. Reinterpret the line, looking for a descending step motion from S2 
+                  and then parsing the remaining notes. The least reliable method.
+            
+            '''
             # once all preliminary parsing is done, prepare for assigning basic structure
             self.arcs.sort()# = sorted(self.arcList)
             self.arcBasic = None
@@ -1839,7 +1839,7 @@ class Parser():
                 # TODO: try to attach repetitions of S3 sd5 or sd3
         
         def parseBass(self):
-#            '''Tests whether a specific dominant pitch can function as S3.''' 
+            '''Tests whether a specific dominant pitch can function as S3.''' 
             # once all preliminary parsing is done, prepare for assigning basic structure
             self.arcs.sort()# = sorted(self.arcList)
             self.arcBasic = [0, self.S3Index, self.S1Index]        
@@ -1881,9 +1881,9 @@ class Parser():
                         self.arcs.remove(arc)
 
         def parseGeneric(self):
-#             '''The line has already passed the generic test, so all that is to be 
-#             done is determine whether there is a basic step motion connecting
-#             the first and last notes.''' 
+            '''The line has already passed the generic test, so all that is to be 
+            done is determine whether there is a basic step motion connecting
+            the first and last notes.''' 
             # once preliminary parsing is done, prepare for assigning basic structure
             # see whether a basic step motion is absent, ascending, or descending
             self.arcs.sort()# = sorted(self.arcList)
@@ -1954,10 +1954,10 @@ class Parser():
                 self.arcBasic = [self.S2Index, self.S1Index]
 
         def attachOpenheadsToStructuralLefthead(self, structuralLefthead, rightLimit):
-#             '''Examines the span between a structural lefthead and a righthand limit,
-#             looking for notes that are either head of an arc (left or right) or not embedded in an arc,
-#             and can be taken as a repetition of the structural lefthead.
-#             This function increases the coherence of a parse.'''
+            '''Examines the span between a structural lefthead and a righthand limit,
+            looking for notes that are either head of an arc (left or right) or not embedded in an arc,
+            and can be taken as a repetition of the structural lefthead.
+            This function increases the coherence of a parse.'''
             # structuralLefthead = index, rightLimit = index
             self.buffer = [n for n in self.stackremnant if structuralLefthead < n.index < rightLimit]
             self.stack = []
@@ -1989,8 +1989,8 @@ class Parser():
                         pass
         
         def integrateSecondaryWithPrimary(self):
-#             '''Revises an intepretation to make it tighter, more efficient, more coherent. 
-#             Connect secondary structures to elements of the basic structure where possible.'''
+            '''Revises an intepretation to make it tighter, more efficient, more coherent. 
+            Connect secondary structures to elements of the basic structure where possible.'''
             # TODO Implement Westergaard preferences for coherent interpretations, pp. 63ff.
             pass
     
@@ -2126,7 +2126,7 @@ class Parser():
             return
         
         def setDependencyLevels(self):
-#            '''Reviews a completed parse and determine the structural level of each note.'''
+            '''Reviews a completed parse and determine the structural level of each note.'''
             # this works for now, but is not optimal
             # does not work for this line: BL in major: 1 5 4 3 1 -7 -5 1 6 5 4 3 2 1
             # arcs = [[0, 1, 13], [1, 2, 3], [1, 8, 9], [1, 10, 11, 12, 13], [4, 5, 7]]
@@ -2340,8 +2340,8 @@ class Parser():
             generationTable = [n.rule.level for n in self.notes]
 
         def displayFullParse(self):
-#             '''Creates a multileveled illustration of a parse of the sort used in 
-#             Westergaard's book. [Under developement]'''
+            '''Creates a multileveled illustration of a parse of the sort used in 
+            Westergaard's book. [Under developement]'''
             # given a parsed part, with rule dependencies set
             illustration = stream.Score()
             notes = self.notes
@@ -2384,8 +2384,8 @@ class Parser():
             exit()
  
     def testGenerabilityFromLevels(parse):
-#         '''Given a parse in which rule levels have been assigned (perhaps by the student),
-#         determines whether the line is generable in that way. [Under development]'''
+        '''Given a parse in which rule levels have been assigned (perhaps by the student),
+        determines whether the line is generable in that way. [Under development]'''
         if parse.lineType == 'bass':
             pass
         if parse.lineType == 'primary':
@@ -2395,10 +2395,10 @@ class Parser():
         pass
         
     def collectParses(self):
-#         '''Collects all the attempted parses of a line in the :py:class:`~Parser` 
-#         and discard any that have errors and thus failed. 
-#         Also removes parses of primary lines if the same basic arc was 
-#         produced by a more reliable method.'''
+        '''Collects all the attempted parses of a line in the :py:class:`~Parser` 
+        and discard any that have errors and thus failed. 
+        Also removes parses of primary lines if the same basic arc was 
+        produced by a more reliable method.'''
         failedParses = []
         for key in self.parseErrorsDict:
             if self.parseErrorsDict[key] != []:
@@ -2438,20 +2438,20 @@ class Parser():
         else: self.isGeneric = False
     
     def selectPreferredParses(self):
-#         '''Given a list of successful interpretations from :py:class:`~Parser`,
-#         removes those that do not conform to cognitive preference rules.
-#         
-#            * Primary line preferences
-# 
-#               * for parses that share the same S2 scale degree, prefer the parse in which S2 occurs earliest
-#            
-#            * Bass Lines
-#             
-#               * prefer parses in which S3 occurs after the midpoint
-#               * prefer parses in which S3 occurs on the beat
-#               * if there are two candidates for S3 and the second can be interpreted as a direct repetition of the first, prefer the parse that interprets the first candidate as S3
-#         
-#         '''
+        '''Given a list of successful interpretations from :py:class:`~Parser`,
+        removes those that do not conform to cognitive preference rules.
+        
+           * Primary line preferences
+
+              * for parses that share the same S2 scale degree, prefer the parse in which S2 occurs earliest
+           
+           * Bass Lines
+            
+              * prefer parses in which S3 occurs after the midpoint
+              * prefer parses in which S3 occurs on the beat
+              * if there are two candidates for S3 and the second can be interpreted as a direct repetition of the first, prefer the parse that interprets the first candidate as S3
+        
+        '''
 
         # primary upper lines
         # find those that have the same scale degree for S2 
