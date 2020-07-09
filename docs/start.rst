@@ -91,7 +91,6 @@ Installation Instructions
 Python 3 can be obtained from: http://www.python.org.
 
 WesterParse is available on GitHub: https://github.com/snarrenberg/westerparse.
-Download the latest .tar.gz file from the dist/ directory and open it in your favorite local directory.
 
 How to Get Support
 ------------------
