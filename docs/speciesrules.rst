@@ -74,20 +74,28 @@ First Species in Two Parts
 *Forbidden Forms of Motion*
 
 #. No parallel unisons, octaves, or fifths between consecutive simultaneities.
-#. No non-consecutive parallel unisons or octaves that result from parallel structures in their lines, unless the intervening simultaneity includes a pitch dissonant with the first unison or octave.
+#. No non-consecutive parallel unisons or octaves that result from parallel structures 
+   in their lines, unless the intervening simultaneity includes a pitch dissonant with 
+   the first unison or octave.
 #. No similar motion to or from a unison.
-#. No similar motion to an octave unless both notes forming the octave are the final tonics in their respective basic structures and the upper note is approached by step.
-#. No similar motion to a fifth unless the upper note is approached by step and is either the fifth or second scale degree.
+#. No similar motion to an octave unless both notes forming the octave are the final 
+   tonics in their respective basic structures and the upper note is approached by step.
+#. No similar motion to a fifth unless the upper note is approached by step and is either 
+   the fifth or second scale degree.
 #. No voice crossing, overlapping, or cross relations.
 
 *Bass Leaps of a Fourth*
 
-#. If the bass leaps a fourth, one of the two notes in the upper line that coincides with the two notes forming the fourth must form a second or a seventh with the contiguous (non-simultaneous) bass note.
+#. If the bass leaps a fourth, one of the two notes in the upper line that coincides with 
+   the two notes forming the fourth must form a second or a seventh with the contiguous 
+   (non-simultaneous) bass note.
 
 *Sonority*
 
 #. Prefer imperfect consonances.
-#. Prefer to use a fifth or octave in the midst of the composition only where the emphasis provided by that interval will help to stress a pitch that belongs to the background structure.
+#. Prefer to use a fifth or octave in the midst of the composition only where the 
+   emphasis provided by that interval will help to stress a pitch that belongs 
+   to the background structure.
 #. Avoid unisons except in the first and last measures.
 #. Avoid intervals larger than a tenth.
 
@@ -98,37 +106,50 @@ Second Species in Two Parts
 
 **Rules for Constructing the Half-Note Line**
 
-#. The half-note line may begin either on or off the beat, that is, it may begin with a half rest.
-#. The last note in the line is a whole note initiated with the last note of the whole-note line.
+#. The half-note line may begin either on or off the beat, that is, it may begin 
+   with a half rest.
+#. The last note in the line is a whole note initiated with the last note of 
+   the whole-note line.
 #. The half-note line must not include any immediate repetitions.
-#. Modification of the global rule for final step in a primary upper line. If the half-note line is a primary upper line with basic step motion, at least one note in the penul- timate bar of the line must be consonant and must lie a step away from the final tonic. If the step-related note is the first note in the penultimate bar, the second note must not displace it by step.
+#. Modification of the global rule for final step in a primary upper line. If the 
+   half-note line is a primary upper line with basic step motion, at least one note 
+   in the penultimate bar of the line must be consonant and must lie a step away from 
+   the final tonic. If the step-related note is the first note in the penultimate bar, 
+   the second note must not displace it by step.
 
 **Rules for Combining Lines**
 
 *Control of Dissonance*
 
 #. On the beat: all intervals must be consonant, as in first species.
-#. Off the beat: the interval may be dissonant if the half note is approached and left by step, that is if it is a dissonant passing tone or a dissonant neighbor.
+#. Off the beat: the interval may be dissonant if the half note is approached and left 
+   by step, that is if it is a dissonant passing tone or a dissonant neighbor.
 
 *Forbidden Forms of Motion*
 
-#. On the beat to off the beat: since all motion is oblique, the only restriction is against the bass crossing the upper voice.
-#. Off the beat to on the beat: as in first species, except that cross relations are permitted if the half notes form steps.
+#. On the beat to off the beat: since all motion is oblique, the only restriction is 
+   against the bass crossing the upper voice.
+#. Off the beat to on the beat: as in first species, except that cross relations are 
+   permitted if the half notes form steps.
 #. On the beat to on the beat
 
    * No parallel unisons or octaves.
-   * No parallel motion to a perfect fifth except where the half note forming the second fifth is approached and left by a step motion in the op- posite direction from the parallel fifths.
+   * No parallel motion to a perfect fifth except where the half note forming the 
+     second fifth is approached and left by a step motion in the opposite 
+     direction from the parallel fifths.
 
 #. Off the beat to off the beat
 
    * No parallel unisons.
-   * Parallel octaves related by seconds may occur, but only if the two off-the-beat half notes are approached from opposite directions.
+   * Parallel octaves related by seconds may occur, but only if the two off-the-beat 
+     half notes are approached from opposite directions.
    * Parallel octaves related by any other interval may occur if either
 
       #. the two off-the-beat half notes are ap- proached from opposite directions, or
       #. the first off-the-beat half note is left by step.
 
-#. No noncontiguous cross relations between an on-the-beat half note and the whole note in the next measure unless the half note moves by step.
+#. No noncontiguous cross relations between an on-the-beat half note and the whole note 
+   in the next measure unless the half note moves by step.
 
 *Bass Leaps of a Fourth*
 
@@ -137,8 +158,10 @@ Second Species in Two Parts
    * A leap of a fourth may not occur within a measure.
    * A leap of a fourth may occur off the beat to on the beat if either
 
-      #. one of the half notes in the fourth forms a second or seventh with the contiguous whole note, or
-      #. the pitch of the preceding on-the-beat half note lies a step away from the pitch of the second note of the fourth.
+      #. one of the half notes in the fourth forms a second or seventh with the 
+         contiguous whole note, or
+      #. the pitch of the preceding on-the-beat half note lies a step away from 
+         the pitch of the second note of the fourth.
 
 #. When the whole-note line occurs in the bass: 
 
@@ -165,15 +188,25 @@ Third Species: Two Lines
 **Constructing Lines in Third Species**
 
 #. The species line may begin on any part of the first measure.
-#. The last note in the species line is a whole note initiated with the last note of the whole-note line.
-#. Localized rule E1 (L1). In this line (but not the whole-note line) any consonant pitch may be repeated within a measure.
-#. No immediate repetitions may remain in the com- pleted line. If rule E1 is applied, then some other rule must be applied subsequently to insert a note between the pitch and its repetition.
-#. Localized rule E2 (L2).A neighbor may be inserted between a locally consonant pitch and its repetition. In minor, the lower neighbor to the diatonic or raised seventh degree, is the raised sixth degree; and the upper neighbor to the diatonic or raised sixth degree is the lowered seventh degree.
-#. Localized rule E3 (L3). [#f1]_ A non–tonic-triad pitch may be inserted within a measure if
+#. The last note in the species line is a whole note initiated with the last note of 
+   the whole-note line.
+#. Localized rule E1 (L1). In this line (but not the whole-note line) any consonant pitch 
+   may be repeated within a measure.
+#. No immediate repetitions may remain in the com- pleted line. If rule E1 is applied, 
+   then some other rule must be applied subsequently to insert a note between the 
+   pitch and its repetition.
+#. Localized rule E2 (L2).A neighbor may be inserted between a locally consonant pitch 
+   and its repetition. In minor, the lower neighbor to the diatonic or raised seventh 
+   degree, is the raised sixth degree; and the upper neighbor to the diatonic or raised 
+   sixth degree is the lowered seventh degree.
+#. Localized rule E3 (L3). [#f1]_ A non–tonic-triad pitch may be inserted within a 
+   measure if
 
    * the inserted pitch is consonant with the whole note,
-   * another note in the measure is consonant with the whole note and generated by the global rules,
-   * the inserted pitch is linearly consonant with this globally generated note and with every other locally consonant pitch that is approached or left by leap, and
+   * another note in the measure is consonant with the whole note and generated 
+     by the global rules,
+   * the inserted pitch is linearly consonant with this globally generated note 
+     and with every other locally consonant pitch that is approached or left by leap, and
    * the inserted pitch is eventually displaced (scale-wise) by a tonic-triad pitch.
     
 #. Localized rule E4 (L4). Two locally consonant pitches may be may be joined by a step motion.
@@ -186,11 +219,13 @@ Third Species: Two Lines
 #. Off the beat:
 
    * Any interval may be dissonant as long as it is approached and left by step.
-   * If two consecutive intervals are dissonant, they must be approached and left in the same direction.
+   * If two consecutive intervals are dissonant, they must be approached and left 
+     in the same direction.
 
 *Forbidden Forms of Motion*
 
-#. On the beat to immediately following off the beat, or off the beat to immediately following off the beat:
+#. On the beat to immediately following off the beat, or off the beat to immediately 
+   following off the beat:
 
    * The bass may not cross the upper voice.
 
@@ -201,34 +236,46 @@ Third Species: Two Lines
 #. On the beat to on the beat:
 
    * No parallel unisons.
-   * No parallel octaves or fifths except where either the half or quarter note forming the second octave or fifth is approached and left by a step motion moving in the opposite direction to the parallel motion, or the pitch of the second octave or fifth appears as a consonance in the preceding measure.
+   * No parallel octaves or fifths except where either the half or quarter note forming 
+     the second octave or fifth is approached and left by a step motion moving in the 
+     opposite direction to the parallel motion, or the pitch of the second octave or 
+     fifth appears as a consonance in the preceding measure.
 
 #. Off the beat to next (but not immediately following) on the beat (in the next measure):
 
    * No parallel unisons.
-   * No parallel octaves except where either the note forming the second octave is approached and left by a step motion moving in the opposite direction to the parallel motion, or the pitch of the second octave appears as a consonance in the preceding measure.
+   * No parallel octaves except where either the note forming the second octave is 
+     approached and left by a step motion moving in the opposite direction to the 
+     parallel motion, or the pitch of the second octave appears as a consonance 
+     in the preceding measure.
 
 *Bass Leaps of a Fourth*
 
 #. When the triplet-half- or quarter-note line occurs in the bass:
 
-  * A leap or a fourth may not occur within a measure unless the same measure includes a lower pitch that is consonant with both pitches forming the fourth and
+  * A leap or a fourth may not occur within a measure unless the same measure includes 
+    a lower pitch that is consonant with both pitches forming the fourth and
 
   * A leap of a fourth may occur off the beat to on the beat if either
 
-      #. one of the notes in the fourth forms a second or seventh with the contiguous whole note, or
-      #. the pitch of either the immediately preceding off-the-beat note or the preceding on-the-beat note lies a step away from the pitch of the second note of the fourth.
+      #. one of the notes in the fourth forms a second or seventh with the contiguous 
+         whole note, or
+      #. the pitch of either the immediately preceding off-the-beat note or the 
+         preceding on-the-beat note lies a step away from the pitch of the 
+         second note of the fourth.
 
 #. When the whole-note line occurs in the bass: 
 
    * A fourth is permitted in the bass if there is a note in the upper line that either
 
-      #. sounds during and is consonant with the first of the notes forming the fourth, forms a second or seventh with the second of the notes forming the fourth, and either
+      #. sounds during and is consonant with the first of the notes forming the fourth, 
+         forms a second or seventh with the second of the notes forming the fourth, and either
 
          * comes at the beginning of the measure or end of the measure, or
          * is not followed in that measure by a note a step away that is consonant;
 
-      #. or sounds during and is consonant with the second of the notes forming the fourth, forms a second or seventh with the first of the notes forming the fourth, and either
+      #. or sounds during and is consonant with the second of the notes forming the fourth, 
+         forms a second or seventh with the first of the notes forming the fourth, and either
 
          * comes at the beginning of the measure, or
          * is not preceded in that measure by a note a step away that is consonant.
@@ -236,7 +283,8 @@ Third Species: Two Lines
 *Sonority*
 
 #. On the beat: as in first species.
-#. Off the beat: any interval is permitted, but dissonant intervals are preferred, especially for the final off-the-beat note.
+#. Off the beat: any interval is permitted, but dissonant intervals are preferred, 
+   especially for the final off-the-beat note.
 
 
 Fourth Species: Two Lines
@@ -245,24 +293,31 @@ Fourth Species: Two Lines
 **Rules for Constructing the Syncopated Line**
 
 #. The syncopated line must begin off the beat, following a half rest.
-#. The last note in the line is a breve initiated with the last breve of the whole-note line.
+#. The last note in the line is a breve initiated with the last breve of the 
+   whole-note line.
 #. The syncopated line must not include any immediate repetitions.
-#. The syncopated line may switch to second species once in the middle of the composition, but the line must begin with at least three syncopes and must im- mediately return to fourth species. [#f2]_
+#. The syncopated line may switch to second species once in the middle of the 
+   composition, but the line must begin with at least three syncopes and must 
+   immediately return to fourth species. [#f2]_
 
 **Rules for Combining Lines**
 
 *Control of Dissonance*
 
 #. Off the beat: all notes must be consonant.
-#. On the beat: a note may be consonant or dissonant. If it forms a dissonance, it must move down by step to form one of the following successions of intervals against the whole note:
+#. On the beat: a note may be consonant or dissonant. If it forms a dissonance, 
+   it must move down by step to form one of the following successions of intervals 
+   against the whole note:
 
    * 7–6, 9–8, and 4–3 for suspensions in the upper line, and
-   * 2–3, augmented 4–5, (but not perfect 4–5), and augmented or diminished 5–6 for suspensions in the lower line.
+   * 2–3, augmented 4–5, (but not perfect 4–5), and augmented or diminished 5–6 for 
+     suspensions in the lower line.
 
 *Forbidden Forms of Motion*
 
 #. End of the piece: as in second species.
-#. Off the beat to the next off the beat: no parallel unisons; parallel octaves may occur only if the intervening interval is consonant.
+#. Off the beat to the next off the beat: no parallel unisons; parallel octaves may 
+   occur only if the intervening interval is consonant.
 #. On the beat to the next on the beat: no parallel unisons.
 
 *Bass Leaps of a Fourth*
@@ -294,25 +349,41 @@ First Species: Three Lines
 
 *Control of Dissonance*
 
-#. No dissonance may be formed between simultaneous notes. (Though the fourth is a harmonic dissonance when formed between an upper voice and the bass, fourths between upper voices are considered consonant.) Exception: An augmented fourth or diminished fifth is allowed between the upper voices if the bass forms a sixth with one upper voice and a third with the other.
+#. No dissonance may be formed between simultaneous notes. (Though the fourth is a 
+   harmonic dissonance when formed between an upper voice and the bass, fourths 
+   between upper voices are considered consonant.) Exception: An augmented fourth 
+   or diminished fifth is allowed between the upper voices if the bass forms a sixth 
+   with one upper voice and a third with the other.
 
 *Forbidden Forms of Motion*
 
 #. No parallel unisons, octaves or fifths between consec- utive notes in any pair of lines.
-#. No non-consecutive parallel unisons or octaves unless the intervening simultaneity includes either (a) a pitch forming a second or seventh with the first unison or octave or (b) a member of the same pitch class as the pitches of the second unison or octave.
+#. No non-consecutive parallel unisons or octaves unless the intervening simultaneity 
+   includes either (a) a pitch forming a second or seventh with the first unison or 
+   octave or (b) a member of the same pitch class as the pitches of the second unison 
+   or octave.
 #. No similar motion to or from a unison.
-#. No similar motion to an octave unless the upper note is approached by step and both notes forming the octave are the final tonics in their respective basic structures.
-#. No similar motion to a fifth unless the upper note is approached by step and either the upper note is the fifth or second scale degree or the fifth is in the upper two voices and the bass note is a member of a different pitch class.
-#. No voice crossing or overlapping between the bass and either upper line. The upper voices may cross or overlap so long as the structure of each line is clear.
-#. No cross relations unless the third line moves by step at the same time that the second note of the cross relation occurs.
+#. No similar motion to an octave unless the upper note is approached by step and both 
+   notes forming the octave are the final tonics in their respective basic structures.
+#. No similar motion to a fifth unless the upper note is approached by step and either 
+   the upper note is the fifth or second scale degree or the fifth is in the upper two 
+   voices and the bass note is a member of a different pitch class.
+#. No voice crossing or overlapping between the bass and either upper line. The upper 
+   voices may cross or overlap so long as the structure of each line is clear.
+#. No cross relations unless the third line moves by step at the same time that the 
+   second note of the cross relation occurs.
 
 *Bass Leaps of a Fourth*
 
-#. Leaps of a fourth in the bass: there must be a note in one of the upper lines that sounds simultaneously with one of the notes forming the fourth and creates a second or seventh with the other note forming the four th.
+#. Leaps of a fourth in the bass: there must be a note in one of the upper lines that 
+   sounds simultaneously with one of the notes forming the fourth and creates a second 
+   or seventh with the other note forming the fourth.
 
 *Sonority*
 
-#. A sonority of three different pitch classes in each measure is most satisfactory. Where impossible or undesirable, use the next fullest sonority (two notes of one pitch class and a third forming an imperfect consonance with the other two).
+#. A sonority of three different pitch classes in each measure is most satisfactory. 
+   Where impossible or undesirable, use the next fullest sonority (two notes of one 
+   pitch class and a third forming an imperfect consonance with the other two).
 #. Avoid simultaneities that form only perfect intervals except at the beginning and end.
 #. The upper two voices should rarely be further than an octave apart.
 
