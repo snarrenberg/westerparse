@@ -51,7 +51,7 @@ import copy
 # -----------------------------------------------------------------------------
 
 # variables set by user
-selectPreferredParses = True
+#selectPreferredParses = True
 
 # for third species
 #localNeighborsOnly=False
@@ -65,7 +65,7 @@ selectPreferredParses = True
 
 class Parser():
     '''
-    The Parser class is the engine of the parse. The bulk of the work is done
+    The Parser class is the engine of the parser. The bulk of the work is done
     by :py:func:`~parseTransition`. After a preliminary parse of the line,
     the parser decides on a set of possible structural interpretations and creates
     a :py:class:`~Parser.Parse` object to store each interpretation.

@@ -46,11 +46,7 @@ Hence the name of this program, **WesterParse**.
    corpus
    modulesdoc
    license
-   
-.. image:: https://readthedocs.org/projects/westerparse/badge/?version=latest
-   :target: https://westerparse.readthedocs.io/en/latest/?badge=latest
-   :alt: Documentation Status
-   
+      
 
 Indices and tables
 ==================
