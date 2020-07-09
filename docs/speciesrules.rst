@@ -253,10 +253,10 @@ Third Species: Two Lines
 
 #. When the triplet-half- or quarter-note line occurs in the bass:
 
-  * A leap or a fourth may not occur within a measure unless the same measure includes 
-    a lower pitch that is consonant with both pitches forming the fourth and
+   * A leap or a fourth may not occur within a measure unless the same measure includes 
+     a lower pitch that is consonant with both pitches forming the fourth and
 
-  * A leap of a fourth may occur off the beat to on the beat if either
+   * A leap of a fourth may occur off the beat to on the beat if either
 
       #. one of the notes in the fourth forms a second or seventh with the contiguous 
          whole note, or
