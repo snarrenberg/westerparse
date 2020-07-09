@@ -144,7 +144,7 @@ class Parser():
         self.selectPreferredParses()
 
     def inferLineTypes(self):
-        '''If the line type is not specified, infer a set of possibilities.'''
+        '''If the line type is not specified, infers a set of possibilities.'''
         if self.notes[0].csd.value % 7 not in [0, 2, 4] and self.notes[-1].csd.value % 7 not in [0, 2, 4]:
             error = 'Generic structure error: The line is not bounded by tonic-triad pitches and hence not a valid tonic line.'
             self.errors.append(error)
@@ -163,11 +163,11 @@ class Parser():
                       
     def preParseLine(self):
         '''
-        Conduct a preliminary parse of the line. 
-        Initialize the buffer, stack, and arcs. 
-        Initialize the lists of open heads and transitions. 
-        Set the global harmonic referents.
-        Run the scanner, parsing each transition.
+        Conducts a preliminary parse of the line. 
+        Initializes the buffer, stack, and arcs. 
+        Initializes the lists of open heads and transitions. 
+        Sets the global harmonic referents.
+        Runs the scanner, parsing each transition.
         '''
         # Initialize the buffer, stack, and arcs
         lineBuffer = [n for n in self.notes if not n.tie or n.tie.type == 'start'] 
@@ -1201,9 +1201,9 @@ class Parser():
 
     def prepareParses(self):
         '''
-        After preliminary parsing is completed, determine possibiities
+        After preliminary parsing is completed, determines possibiities
         for basic structures based on available line types and parse the line
-        using each candidate for basic structure. The results will be collected
+        using each candidate for basic structure. The results are collected
         in self.parses.
         
         If the line type is :literal:`bass`, the function verifies that the line begins and ends
@@ -1316,9 +1316,9 @@ class Parser():
                 self.buildParse(s2cand, lineType, parsecounter, stack, buildErrors=[])
             
     def buildParse(self, cand, lineType, parsecounter, stack, buildErrors, method=None):
-        '''Set up the basic features of the parse object
-        and then execute the parsing process.
-        Use deep copies of the arcs and notes, as the list of arcs and the
+        '''Sets up the basic features of the parse object
+        and then executes the parsing process.
+        Uses deep copies of the arcs and notes, as the list of arcs and the
         properties of notes will be altered during the process.'''
         # create the Parse object
         newParse = Parser.Parse()
@@ -1389,16 +1389,16 @@ class Parser():
 
         def performLineParse(self):
             '''
-            Create a complete interpretation of the line, in the following steps:
+            Creates a complete interpretation of the line, in the following steps:
             
-               * Construct an arc for the basic structure, given the line type and 
+               * Constructs an arc for the basic structure, given the line type and 
                  a specific option for the basic structure.
-               * Assign rules to notes in secondary structures.
-               * Test for resolution of local insertions in third species.
-               * Consolidate arcs into longer passing motions, if possible
-               * Assemble lists for rule labels and parentheses, to be used when 
+               * Assigns rules to notes in secondary structures.
+               * Tests for resolution of local insertions in third species.
+               * Consolidates arcs into longer passing motions, if possible
+               * Assembles lists for rule labels and parentheses, to be used when 
                  generating representations of the interpretation.
-               * Set the dependency level of each note. [This function is 
+               * Sets the dependency level of each note. [This function is 
                  currently disabled.]
                
             '''
