@@ -11,7 +11,7 @@ Module Documentation
    :members:
 
 .. automodule:: parser
-   :members: Parser, Parse, parseTransition
+   :members:
 
 .. automodule:: vlChecker
    :members:

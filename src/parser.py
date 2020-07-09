@@ -161,7 +161,8 @@ class Parser():
                     self.part.lineTypes.append('primary')
                       
     def preParseLine(self):
-        '''Conduct a preliminary parse of the line. 
+        '''
+        Conduct a preliminary parse of the line. 
         Initialize the buffer, stack, and arcs. 
         Initialize the lists of open heads and transitions. 
         Set the global harmonic referents.
@@ -427,14 +428,14 @@ class Parser():
         '''
         The parser asks a series of questions at the transition from note *i* to note *j*.
         
-           * What is their relation to the harmony of the context (tonic, in the case of global contexts)? 
-           * What is their intervallic relation (step or skip)?
+           * Do *i* and *j* belong to the harmony of the context (tonic, in the case of global contexts)? 
+           * What is the intervallic relation between *i* and *j* (step or skip)?
            * And how does *j* connect, if at all, with notes in the dynamic lists of open heads and transitions?  
            
         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
         or returns error messages if the line is syntactically malformed.
         
-        The cases are as follows: 
+        The specific cases are as follows: 
 
         #. *Both pitches are harmonic* 
         
@@ -455,8 +456,8 @@ class Parser():
            * in third species, add *j* to the local harmony if needed
            * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
               
-                 * if so, make *i* the lefthead of *j*
-                 * otherwise, add *i* to the list of open transitions
+                * if so, make *i* the lefthead of *j*
+                * otherwise, add *i* to the list of open transitions
             
            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
            
