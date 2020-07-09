@@ -77,7 +77,8 @@ class Parser():
        * accepts a linetype if provided, otherwise it infers the set of possible types.
        * operates the preliminary parser: :py:func:`~preParseLine`
        * interrupts the parser if preliminary parsing is unsuccessful and reports errors
-       * determines the set of possible basic structures and parses for each possibility: :py:func:`~prepareParses`
+       * determines the set of possible basic structures and parses 
+         for each possibility: :py:func:`~prepareParses`
        * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
        * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
 
@@ -1390,12 +1391,15 @@ class Parser():
             '''
             Create a complete interpretation of the line, in the following steps:
             
-               * Construct an arc for the basic structure, given the line type and a specific option for the basic structure.
+               * Construct an arc for the basic structure, given the line type and 
+                 a specific option for the basic structure.
                * Assign rules to notes in secondary structures.
                * Test for resolution of local insertions in third species.
                * Consolidate arcs into longer passing motions, if possible
-               * Assemble lists for rule labels and parentheses, to be used when generating representations of the interpretation.
-               * Set the dependency level of each note. [This function is currently disabled.]
+               * Assemble lists for rule labels and parentheses, to be used when 
+                 generating representations of the interpretation.
+               * Set the dependency level of each note. [This function is 
+                 currently disabled.]
                
             '''
             if self.lineType == 'primary':
@@ -1484,13 +1488,20 @@ class Parser():
             Uses eight different methods to find a basic step motion from a potential S2:
             
                #. Look for one existing basic step motion arc that starts from S2.
-               #. Look for an existing basic step motion arc that can be attached to S2 (repetition + passing)
-               #. Look for two arcs that can fused into a basic step motion (passing + neighbor/repetition). 
-               #. Look for two arcs that can be merged into a basic step motion (passing + passing).
-               #. Look for three arcs that can be merged into a basic step motion (passing + passing + passing).
-               #. Take an existing 5-4-3 arc (the longest spanned, if more than one) and try to find a connection -2-1 to complete a basic arc.
-               #. Look for a nonfinal arc from S2 whose terminus == S1.csd.value, and extend the arc to end on S1Index if possible.
-               #. Reinterpret the line, looking for a descending step motion from S2 and then parsing the remaining notes. The least reliable method.
+               #. Look for an existing basic step motion arc that can be attached 
+                  to S2 (repetition + passing)
+               #. Look for two arcs that can fused into a basic step motion (passing + 
+                  neighbor/repetition). 
+               #. Look for two arcs that can be merged into a basic step motion 
+                  (passing + passing).
+               #. Look for three arcs that can be merged into a basic step motion 
+                  (passing + passing + passing).
+               #. Take an existing 5-4-3 arc (the longest spanned, if more than one) 
+                  and try to find a connection -2-1 to complete a basic arc.
+               #. Look for a nonfinal arc from S2 whose terminus == S1.csd.value, 
+                  and extend the arc to end on S1Index if possible.
+               #. Reinterpret the line, looking for a descending step motion from S2 
+                  and then parsing the remaining notes. The least reliable method.
             
             '''
             # once all preliminary parsing is done, prepare for assigning basic structure
