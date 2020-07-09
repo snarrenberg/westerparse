@@ -456,8 +456,8 @@ class Parser():
            * in third species, add *j* to the local harmony if needed
            * if there are no open transitions, see whether the directionality of *i* matches the direction of the step
               
-                * if so, make *i* the lefthead of *j*
-                * otherwise, add *i* to the list of open transitions
+              * if so, make *i* the lefthead of *j*
+              * otherwise, add *i* to the list of open transitions
             
            * if there are open transitions, see whether *j* resolves a transition, starting with the most recent
            
