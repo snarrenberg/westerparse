@@ -1366,7 +1366,7 @@ class Parser():
 #        newParse.displayFullParse()
 
     class Parse():
-        '''An object for holding a parsed interpretation'''
+        '''An object for holding one interpretation of a line's syntactic structure.'''
         def __init__(self):
             self.stackremnant = []
             self.buffer = []
@@ -1480,7 +1480,8 @@ class Parser():
                 addDependenciesFromArc(self.notes, arc1)
                     
         def parsePrimary(self):
-            '''Uses eight different methods to find a basic step motion from a potential S2:
+            '''
+            Uses eight different methods to find a basic step motion from a potential S2:
             
                #. Look for one existing basic step motion arc that starts from S2.
                #. Look for an existing basic step motion arc that can be attached to S2 (repetition + passing)
@@ -1827,7 +1828,7 @@ class Parser():
                 # TODO: try to attach repetitions of S3 sd5 or sd3
         
         def parseBass(self):
-            '''Test whether a specific dominant pitch can function as S3.''' 
+            '''Tests whether a specific dominant pitch can function as S3.''' 
             # once all preliminary parsing is done, prepare for assigning basic structure
             self.arcs.sort()# = sorted(self.arcList)
             self.arcBasic = [0, self.S3Index, self.S1Index]        
@@ -1977,7 +1978,7 @@ class Parser():
                         pass
         
         def integrateSecondaryWithPrimary(self):
-            '''Revise an intepretation to make it tighter, more efficient, more coherent. 
+            '''Revises an intepretation to make it tighter, more efficient, more coherent. 
             Connect secondary structures to elements of the basic structure where possible.'''
             # TODO Implement Westergaard preferences for coherent interpretations, pp. 63ff.
             pass
@@ -2114,7 +2115,7 @@ class Parser():
             return
         
         def setDependencyLevels(self):
-            '''Review a completed parse and determine the structural level of each note.'''
+            '''Reviews a completed parse and determine the structural level of each note.'''
             # this works for now, but is not optimal
             # does not work for this line: BL in major: 1 5 4 3 1 -7 -5 1 6 5 4 3 2 1
             # arcs = [[0, 1, 13], [1, 2, 3], [1, 8, 9], [1, 10, 11, 12, 13], [4, 5, 7]]
@@ -2328,7 +2329,7 @@ class Parser():
             generationTable = [n.rule.level for n in self.notes]
 
         def displayFullParse(self):
-            '''Create a multileveled illustration of a parse of the sort used in 
+            '''Creates a multileveled illustration of a parse of the sort used in 
             Westergaard's book. [Under developement]'''
             # given a parsed part, with rule dependencies set
             illustration = stream.Score()
@@ -2373,7 +2374,7 @@ class Parser():
  
     def testGenerabilityFromLevels(parse):
         '''Given a parse in which rule levels have been assigned (perhaps by the student),
-        determine whether the line is generable in that way. [Under development]'''
+        determines whether the line is generable in that way. [Under development]'''
         if parse.lineType == 'bass':
             pass
         if parse.lineType == 'primary':
@@ -2383,9 +2384,9 @@ class Parser():
         pass
         
     def collectParses(self):
-        '''Collect all the attempted parses of a line in the :py:class:`~Parser` 
+        '''Collects all the attempted parses of a line in the :py:class:`~Parser` 
         and discard any that have errors and thus failed. 
-        Also remove parses of primary lines if the same basic arc was 
+        Also removes parses of primary lines if the same basic arc was 
         produced by a more reliable method.'''
         failedParses = []
         for key in self.parseErrorsDict:
@@ -2426,8 +2427,8 @@ class Parser():
         else: self.isGeneric = False
     
     def selectPreferredParses(self):
-        '''Input a list of successful interpretations from :py:class:`~Parser`
-        and remove those that do not conform to cognitive preference rules.
+        '''Given a list of successful interpretations from :py:class:`~Parser`,
+        removes those that do not conform to cognitive preference rules.
         
            * Primary line preferences
 
