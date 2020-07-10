@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='westerparse-pkg-snarrenberg',
+    name='westerparse',
     version='1.0.3-alpha',
     description='An application for evaluating Westergaardian species counterpoint',
     long_description=long_description,
