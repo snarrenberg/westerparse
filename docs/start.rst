@@ -98,9 +98,9 @@ Python 3 can be obtained from: http://www.python.org.
    $ pip install music21
    
 And then configure ``music21`` to use a musicxml viewer like MuseScore. 
-See the instructions on the `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`.
+See the instructions on the `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
-2. Download the latest westerparse release from `GitHub <https://github.com/snarrenberg/westerparse/releases>`.
+2. Download the latest westerparse release from `GitHub <https://github.com/snarrenberg/westerparse/releases>`_.
 and unzip it. For example:
 
 .. code-block:: shell
