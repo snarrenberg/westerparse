@@ -54,7 +54,7 @@ You can then ask WesterParse to parse the line:
 .. code-block:: python
 
    >>> from westerparse import *
-   >>> source = 'sampledocs/FuxDorian.musicxml'
+   >>> source = '../docs/samplefiles/FuxDorian.musicxml'
    >>> evaluateLines(source, 
    ...               show='show', 
    ...               partLineType='primary', 
@@ -92,6 +92,40 @@ Python 3 can be obtained from: http://www.python.org.
 
 WesterParse is available on GitHub: https://github.com/snarrenberg/westerparse.
 
+#. Install music21.
+
+.. code-block:: shell
+
+   $ pip install music21
+   
+And then configure music21 to use a musicxml viewer like MuseScore. 
+See the instructions on the `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`.
+
+#. Download the latest westerparse package and unzip it. For example:
+
+.. code-block:: shell
+
+   $ tar -xvf westerparse-1.0.3-alpha.tar.gz
+
+#. Go to the src folder.
+
+.. code-block:: shell
+
+   $ cd westerparse-1.0.3-alpha/src/
+   
+#. Start python.
+
+.. code-block:: shell
+
+   $ python
+   
+#. Then begin using westerparse:
+
+>>> from westerparse import *
+>>> source = '../docs/samplefiles/FuxDorian.musicxml'
+>>> evaluateLines(source, show='show', partLineType='primary', report=True)
+
+            
 How to Get Support
 ------------------
 
