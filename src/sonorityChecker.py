@@ -287,6 +287,7 @@ def getOnbeatDyads(score, analyzer, partNum1, partNum2):
     vPairList = analyzer.getVerticalPairs(score, partNum1, partNum2)
     for vPair in vPairList:
         if vPair != None:
+            # use isOnbeat(note) from vlChecker
             if isOnbeat(vPair[0]) and isOnbeat(vPair[1]):
                 onbeatDyads.append(vPair)
     return onbeatDyads
