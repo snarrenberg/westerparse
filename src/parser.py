@@ -15,10 +15,10 @@ analyzes the syntax of a melodic line and produces a set of valid interpretation
 
 Procedure: 
 
-   #. accept a part from a context
-   #. infer the possible lineTypes if not given in advance
-   #. parse the part for each possible lineType
-   #. return a set of parses and errors
+#. accept a part from a context
+#. infer the possible lineTypes if not given in advance
+#. parse the part for each possible lineType
+#. return a set of parses and errors
 
 The machinery consists of a buffer, a stack, and a scanner. 
 At initialization, the notes of the line are read into the buffer.
@@ -73,14 +73,14 @@ class Parser():
     Upon initialization, the Parser automatically parses the line, in the following
     steps:
         
-       * prepares placeholders for parses and errors
-       * accepts a linetype if provided, otherwise it infers the set of possible types.
-       * operates the preliminary parser: :py:func:`~preParseLine`
-       * interrupts the parser if preliminary parsing is unsuccessful and reports errors
-       * determines the set of possible basic structures and parses 
-         for each possibility: :py:func:`~prepareParses`
-       * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
-       * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
+    * prepares placeholders for parses and errors
+    * accepts a linetype if provided, otherwise it infers the set of possible types.
+    * operates the preliminary parser: :py:func:`~preParseLine`
+    * interrupts the parser if preliminary parsing is unsuccessful and reports errors
+    * determines the set of possible basic structures and parses 
+      for each possibility: :py:func:`~prepareParses`
+    * gathers all the valid interpretations of the part by lineType: :py:func:`~collectParses`
+    * reduces the set of interpretations using preference rules: :py:func:`~selectPreferredParses`
 
     The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
     by :py:func:`~prepareParses`.
@@ -429,9 +429,9 @@ class Parser():
         '''
         Asks a series of questions at the transition from note *i* to note *j*.
         
-           * Do *i* and *j* belong to the harmony of the context (tonic, in the case of global contexts)? 
-           * What is the intervallic relation between *i* and *j* (step or skip)?
-           * How does *j* connect, if at all, with notes in the dynamic lists of open heads and transitions?  
+        * Do *i* and *j* belong to the harmony of the context (tonic, in the case of global contexts)? 
+        * What is the intervallic relation between *i* and *j* (step or skip)?
+        * How does *j* connect, if at all, with notes in the dynamic lists of open heads and transitions?  
            
         Based on the answers, the parser assigns dependency relations, creates arcs where warranted, 
         or returns error messages if the line is syntactically malformed.
@@ -1391,15 +1391,15 @@ class Parser():
             '''
             Creates a complete interpretation of the line, in the following steps:
             
-               * Constructs an arc for the basic structure, given the line type and 
-                 a specific option for the basic structure.
-               * Assigns rules to notes in secondary structures.
-               * Tests for resolution of local insertions in third species.
-               * Consolidates arcs into longer passing motions, if possible
-               * Assembles lists for rule labels and parentheses, to be used when 
-                 generating representations of the interpretation.
-               * Sets the dependency level of each note. [This function is 
-                 currently disabled.]
+            * Constructs an arc for the basic structure, given the line type and 
+              a specific option for the basic structure.
+            * Assigns rules to notes in secondary structures.
+            * Tests for resolution of local insertions in third species.
+            * Consolidates arcs into longer passing motions, if possible
+            * Assembles lists for rule labels and parentheses, to be used when 
+              generating representations of the interpretation.
+            * Sets the dependency level of each note. [This function is 
+              currently disabled.]
                
             '''
             if self.lineType == 'primary':
@@ -1487,21 +1487,21 @@ class Parser():
             '''
             Uses eight different methods to find a basic step motion from a potential S2:
             
-               #. Look for one existing basic step motion arc that starts from S2.
-               #. Look for an existing basic step motion arc that can be attached 
-                  to S2 (repetition + passing)
-               #. Look for two arcs that can fused into a basic step motion (passing + 
-                  neighbor/repetition). 
-               #. Look for two arcs that can be merged into a basic step motion 
-                  (passing + passing).
-               #. Look for three arcs that can be merged into a basic step motion 
-                  (passing + passing + passing).
-               #. Take an existing 5-4-3 arc (the longest spanned, if more than one) 
-                  and try to find a connection -2-1 to complete a basic arc.
-               #. Look for a nonfinal arc from S2 whose terminus == S1.csd.value, 
-                  and extend the arc to end on S1Index if possible.
-               #. Reinterpret the line, looking for a descending step motion from S2 
-                  and then parsing the remaining notes. The least reliable method.
+            #. Look for one existing basic step motion arc that starts from S2.
+            #. Look for an existing basic step motion arc that can be attached 
+               to S2 (repetition + passing)
+            #. Look for two arcs that can fused into a basic step motion (passing + 
+               neighbor/repetition). 
+            #. Look for two arcs that can be merged into a basic step motion 
+               (passing + passing).
+            #. Look for three arcs that can be merged into a basic step motion 
+               (passing + passing + passing).
+            #. Take an existing 5-4-3 arc (the longest spanned, if more than one) 
+               and try to find a connection -2-1 to complete a basic arc.
+            #. Look for a nonfinal arc from S2 whose terminus == S1.csd.value, 
+               and extend the arc to end on S1Index if possible.
+            #. Reinterpret the line, looking for a descending step motion from S2 
+               and then parsing the remaining notes. The least reliable method.
             
             '''
             # once all preliminary parsing is done, prepare for assigning basic structure
@@ -2441,15 +2441,15 @@ class Parser():
         '''Given a list of successful interpretations from :py:class:`~Parser`,
         removes those that do not conform to cognitive preference rules.
         
-           * Primary line preferences
+        * Primary line preferences
 
-              * for parses that share the same S2 scale degree, prefer the parse in which S2 occurs earliest
+           * for parses that share the same S2 scale degree, prefer the parse in which S2 occurs earliest
            
-           * Bass Lines
+        * Bass Lines
             
-              * prefer parses in which S3 occurs after the midpoint
-              * prefer parses in which S3 occurs on the beat
-              * if there are two candidates for S3 and the second can be interpreted as a direct repetition of the first, prefer the parse that interprets the first candidate as S3
+           * prefer parses in which S3 occurs after the midpoint
+           * prefer parses in which S3 occurs on the beat
+           * if there are two candidates for S3 and the second can be interpreted as a direct repetition of the first, prefer the parse that interprets the first candidate as S3
         
         '''
 

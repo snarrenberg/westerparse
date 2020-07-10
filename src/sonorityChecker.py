@@ -27,11 +27,14 @@ import theoryResultWP
 # MODULE VARIABLES
 # -----------------------------------------------------------------------------
 
+sonorityReport = ''
+
 sonorityErrors = []
 # set preferences for sonorities
 onBeatImperfectMin = 75 # percentage
 onBeatUnisonMax = 5 # percentage
 tiedOverDissonanceMin = 50 # percentage
+offbeatDissonanceMin = 50 # percentage
 # downbeatHarmonyDensity = 
 
 
@@ -104,49 +107,110 @@ def sonorityImperfectionMeasure(score, analyzer, partNum1=None, partNum2=None):
     # report percentage of imperfect intervals
     pass
 
-def getAllSonorities(score):
+def evaluateSonorities(score):
+    # create the theory analyzer object
     analyzer = theoryAnalyzerWP.Analyzer()
     analyzer.addAnalysisData(score)
-    # make a list of voiceLeading.verticalities
-    vertList = analyzer.getVerticalities(score, classFilterList=('Note', 'Rest'))
+    # make a list of voiceLeading.verticalities that have notes
+    vertList = analyzer.getVerticalities(score, classFilterList=('Note'))#, 'Rest'))
+        # the contents are accessible with the following method:
+        # verticality.getObjectsByPart(classFilterList, partNums=None)
+    return vertList
+    
+
+def getSonorityList(vertList):
+    '''Assemble an explicit figured-bass description for each sonority that has a bass note.'''
     # get list of voice pairings with the bass
     bassUpperPartPairs = getBassUpperPairs(score)
-    # use getObjectsByClass('Note') to access lists of notes in each verticality
-    # lists are sorted top part to bottom part
-#    print(vertList[0].getObjectsByClass('Note'))
+    
     sonorityList = []
     n = 0
     while n < len(vertList):
-        vert = vertList[n].getObjectsByClass('Note')
-        print(getSonorityClass(vert), isOpen(vert))
+        vert = vertList[n]
         sonority = []
         for partPair in bassUpperPartPairs:
-            bassPart = vert[partPair[0]]
-            upperPart = vert[partPair[1]]
-#            print(vert[partPair[0]], vert[partPair[1]])
-#            print(interval.notesToGeneric(vert[partPair[0]], vert[partPair[1]]).undirected)
-            intv = interval.notesToGeneric(bassPart, upperPart).undirected
-            if 1 < intv < 10:
-                sonority.append(intv)
-            elif intv == 15:
-                sonority.append(8)
+            bassPart = vert.getObjectsByPart(partPair[0])
+            upperPart = vert.getObjectsByPart(partPair[1])
+            # if parts are notes, get the interval
+            if bassPart and upperPart:
+                intv = interval.notesToGeneric(bassPart, upperPart).undirected
+                if 1 < intv < 10:
+                    sonority.append(intv)
+                elif intv == 15:
+                    sonority.append(8)
+                else:
+                    sonority.append(intv % 7)
+            # if the upper part is not a note, use a hyphen
+            elif bassPart and not upperPart:
+                sonority.append('-')
+            # if the bass is not a note, use x
             else:
-                sonority.append(intv % 7)
-#            sonority.append(interval.notesToGeneric(vert[partPair[0]], vert[partPair[1]]).undirected)
-#        print(sonority)
-        sonorityList.append((sonority, isOpen(vert)))
-        n += 1
-    print(sonorityList)
+                sonority.append('x')
+            sonorityList.append(sonority)
+        n += 1    
+    return sonorityList
 
-    densities = []
+def getOnbeatVertList(score, vertList):
+
+    # TODO see method in getOnbeatDyads, vert.isOnBeat()
+    # verify that vert.isOnBeat actually returns the correct result (leftAlign=False)
+    vosTuples = []
+    for vert in vertList:
+        vo = vert.offset(leftAlign=False)
+        vosTuples.append((vo, vert))
+    bmvTuples = []
+    for offset,vert in vosTuples:
+        bmvTuples.append((score.beatAndMeasureFromOffset(offset), vert))
+    onbeatVertList = [bmvt[1] for bmvt in bmvTuples if bmvt[0][0] == 1.0]
+    return onbeatVertList
+        
+
+
+def printSonorityList(sonorityList):
+    '''
+    For each sonority, the intervals above the bass are listed from lowest to highest.
+    '''
+    # get the number of parts in the texture
+    texture = len(sonorityList[0])
+    # start with the highest part
+    t = texture - 1
+    print('figured bass progression')
+    while t > -1:
+        fb = ''
+        for son in sonorityList:
+            s = son[t]
+            if len(str(s)) == 1: 
+                fb = fb + ' ' + str(s) + '  '
+            else:
+                fb = fb + str(s) + '  '
+        print(fb)
+        t -= 1
+
+def getDensityList(vertList):
+    densityList = []
     n = 0
     while n < len(vertList):
         vert = vertList[n].getObjectsByClass('Note')
         pitchDensisty = getPitchDensity(vert)
         pitchClassDensity = getPitchClassDensity(vert)
-        densities.append((pitchDensisty, pitchClassDensity))
+        densityList.append((pitchDensisty, pitchClassDensity))
         n += 1
-    print(densities)  
+    return(densityList)
+
+
+    
+def printDensityReport(densityList):
+    l = len(densityList)
+    pdensity = 0
+    pcdensity = 0
+    for d in densityList:
+        pdensity = pdensity + d[0]
+        pcdensity = pcdensity + d[1]
+    pitchDensityRating = pdensity/l
+    pitchClassDensityRating = pcdensity/l    
+    print('p den rating', pitchDensityRating)
+    print('pc den rating', pitchClassDensityRating)
+
         
 def getPitchDensity(noteList):
     pitches = []
@@ -273,20 +337,32 @@ def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
 if __name__ == '__main__':
     # self_test code
 #    pass
-    source='TestScoresXML/FirstSpecies01.musicxml'
-#    source='TestScoresXML/FirstSpecies10.musicxml'
-#    source='TestScoresXML/SecondSpecies20.musicxml'
-#    source='TestScoresXML/SecondSpecies21.musicxml'
-#    source='TestScoresXML/SecondSpecies22.musicxml'
-#    source='TestScoresXML/ThirdSpecies01.musicxml'
-#    source='TestScoresXML/FourthSpecies01.musicxml'
-#    source='TestScoresXML/FourthSpecies20.musicxml'
-#    source='TestScoresXML/FourthSpecies21.musicxml'
-#    source='TestScoresXML/FourthSpecies22.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies10.musicxml'
+    source='../tests/TestScoresXML/SecondSpecies10.musicxml'
+#    source='../tests/TestScoresXML/SecondSpecies20.musicxml'
+#    source='../tests/TestScoresXML/SecondSpecies21.musicxml'
+#    source='../tests/TestScoresXML/SecondSpecies22.musicxml'
+#    source='../tests/TestScoresXML/ThirdSpecies01.musicxml'
+#    source='../tests/TestScoresXML/FourthSpecies01.musicxml'
+#    source='../tests/TestScoresXML/FourthSpecies20.musicxml'
+#    source='../tests/TestScoresXML/FourthSpecies21.musicxml'
+#    source='../tests/TestScoresXML/FourthSpecies22.musicxml'
 
 
     score = converter.parse(source)
     
-    getAllSonorities(score)
+    vl = evaluateSonorities(score)
+    sl = getSonorityList(vl)
+    obvl = getOnbeatVertList(score, vl)
+
+    dl = getDensityList(vl)
+    print('overall density') 
+    printDensityReport(dl)
+
+    print('onbeat density') 
+    obdl = getDensityList(obvl) 
+    printDensityReport(obdl)
+
 #-------------------------------------------------------------------------------
 # eof
