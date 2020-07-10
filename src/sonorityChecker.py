@@ -33,6 +33,7 @@ sonorityErrors = []
 # set preferences for sonorities
 onBeatImperfectMin = 75 # percentage
 onBeatUnisonMax = 5 # percentage
+onBeatPerfectMax = 20 # percentage
 tiedOverDissonanceMin = 50 # percentage
 offbeatDissonanceMin = 50 # percentage
 # downbeatHarmonyDensity = 
@@ -102,12 +103,7 @@ offbeatDissonanceMin = 50 # percentage
 # MAIN SCRIPTS
 # -----------------------------------------------------------------------------
 
-def sonorityImperfectionMeasure(score, analyzer, partNum1=None, partNum2=None):
-    # evaluate all but first and last intervals
-    # report percentage of imperfect intervals
-    pass
-
-def evaluateSonorities(score):
+def getAllSonorities(score):
     # create the theory analyzer object
     analyzer = theoryAnalyzerWP.Analyzer()
     analyzer.addAnalysisData(score)
@@ -115,8 +111,7 @@ def evaluateSonorities(score):
     vertList = analyzer.getVerticalities(score, classFilterList=('Note'))#, 'Rest'))
         # the contents are accessible with the following method:
         # verticality.getObjectsByPart(classFilterList, partNums=None)
-    return vertList
-    
+    return vertList   
 
 def getSonorityList(vertList):
     '''Assemble an explicit figured-bass description for each sonority that has a bass note.'''
@@ -149,6 +144,14 @@ def getSonorityList(vertList):
             sonorityList.append(sonority)
         n += 1    
     return sonorityList
+
+def getFullSonorities(vertList):
+    '''Given a list of all the verticalities, 
+    select only those that have a note in every part'''
+    texture = len(vertList[-1].objects)
+    vertList = [vert for vert in vertList if len(vert.objects) == texture]
+    return vertList
+    
 
 def getOnbeatVertList(vertList):
     onbeatVertList = [vert for vert in vertList if vert.beat(leftAlign=False) == 1.0]
@@ -331,62 +334,67 @@ def assignSpeciesToParts(score):
     for part in score.parts:
         if not part.species:
             assignSpecies(part)
+       
+def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOnly=True, includeTerminals=False):
+    '''
+    Report the percentage of a given sonority type in the list of full-voiced verticalities.
+    Valid options:
+        beatPosition: ['on', 'off', None]
+        sonorityType: ['imperfect', 'perfect', 'dissonant', 'unison', 'octave', None]
+        outerVoicesOnly: [True, False]
+        includeTerminals: [True, False]
+    '''
+    vertList = getFullSonorities(getAllSonorities(score))
     
-def onbeatImperfectScore(vertList):
-    onvl = getOnbeatVertList(vl)
-    l = len(onvl)
+    if beatPosition == 'on':
+        vl = getOnbeatVertList(vertList)
+    elif beatPosition == 'off':
+        vl = getOffbeatVertList(vertList)
+    else:
+        vl = vertList
+        
+    # trim list if terminals excluded 
+    if includeTerminals == False:
+        vl = vl[1:-1]
+        
+    # count the number of parts in the final verticality, as a reliable measure of the basic texture
     texture = len(vertList[-1].objects)
-    bassPartNum = texture-1
-    topPartNum = 0
-    onbeatImperfect = 0
-    for vert in onvl:
-        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
-        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
-        if isImperfectVerticalConsonance(bassPart, topPart):
-            onbeatImperfect += 1
-    return '{:.1%}'.format(onbeatImperfect/l)
-   
-def onbeatPerfectScore(vertList):
-    onvl = getOnbeatVertList(vl)
-    l = len(onvl)
-    texture = len(vertList[-1].objects)
-    bassPartNum = texture-1
-    topPartNum = 0
-    onbeatPerfect = 0
-    for vert in onvl:
-        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
-        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
-        if isPerfectVerticalConsonance(bassPart, topPart):
-            onbeatPerfect += 1
-    return '{:.1%}'.format(onbeatPerfect/l)
     
-def onbeatDissonanceScore(vertList):
-    onvl = getOnbeatVertList(vl)
-    l = len(onvl)
-    texture = len(vertList[-1].objects)
-    bassPartNum = texture-1
-    topPartNum = 0
-    onbeatDiss = 0
-    for vert in onvl:
-        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
-        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
-        if isVerticalDissonance(bassPart, topPart):
-            onbeatDiss += 1
-    return '{:.1%}'.format(onbeatDiss/l)
+    # select part pairs based on outer voice parameter
+    if outerVoicesOnly == False:
+        partPairs = getBassUpperPairs(score)
+    elif outerVoicesOnly == True:
+        partPairs =[[texture-1,0]] # [bass, top]
     
-def offbeatDissonanceScore(vertList):
-    ofvl = getOffbeatVertList(vl)
-    l = len(ofvl)
-    texture = len(vertList[-1].objects)
-    bassPartNum = texture-1
-    topPartNum = 0
-    offbeatDiss = 0
-    for vert in ofvl:
-        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
-        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
-        if isVerticalDissonance(bassPart, topPart):
-            offbeatDiss += 1
-    return '{:.1%}'.format(offbeatDiss/l)
+    # now count all the relevant sonorities if the match the given type
+    if sonorityType == None:
+        print('cannot evaluate for all sonority types at once, so choose one and try again')
+        return
+    # initialize the counter and divisor
+    sonorityCount = 0
+    # set list length to nonzero number 
+    totl = len(vl) * len(partPairs)
+    if totl == 0:
+        totl = 1
+    # count the relevant sonorites    
+    for pair in partPairs:
+        bassPartNum = pair[0]
+        topPartNum = pair[1]
+        for vert in vl:
+            bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
+            topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
+            if sonorityType == 'imperfect' and isImperfectVerticalConsonance(bassPart, topPart):
+                sonorityCount += 1
+            elif sonorityType == 'perfect' and isPerfectVerticalConsonance(bassPart, topPart):
+                sonorityCount += 1
+            elif sonorityType == 'dissonant' and isVerticalDissonance(bassPart, topPart):
+                sonorityCount += 1
+            elif sonorityType == 'unison' and isUnison(bassPart, topPart):
+                sonorityCount += 1
+            elif sonorityType == 'octave' and isOctave(bassPart, topPart):
+                sonorityCount += 1
+    return '{:.1%}'.format(sonorityCount/totl)
+
     
     
 #     for vPair in vPairList:
@@ -403,7 +411,10 @@ def offbeatDissonanceScore(vertList):
 if __name__ == '__main__':
     # self_test code
 #    pass
-#    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
+    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies02.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies03.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies04.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies10.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies10.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies20.musicxml'
@@ -418,25 +429,27 @@ if __name__ == '__main__':
 
     score = converter.parse(source)
     
-    vl = evaluateSonorities(score)
+    vl = getAllSonorities(score)
+    fl = getFullSonorities(vl)
     sl = getSonorityList(vl)
-    onvl = getOnbeatVertList(vl)
+    
+    onvl = getOnbeatVertList(fl)
     ofvl = getOffbeatVertList(vl)
     print(len(vl), len(onvl), len(ofvl))
 
-    dl = getDensityList(vl)
-    print('overall density') 
-    printDensityReport(dl)
+#    dl = getDensityList(vl)
+#    print('overall density') 
+#    printDensityReport(dl)
 
-    print('onbeat density') 
-    ondl = getDensityList(onvl) 
-    printDensityReport(ondl)
+#    print('onbeat density') 
+#    ondl = getDensityList(onvl) 
+#    printDensityReport(ondl)
 
 #    assignSpeciesToParts(score)
-    print('onbeat imperfect consonance score', onbeatImperfectScore(vl))
-    print('onbeat perfect consonance score', onbeatPerfectScore(vl))
-    print('onbeat dissonance score', onbeatDissonanceScore(vl))
-    print('offbeat dissonance score', offbeatDissonanceScore(vl))
-    
+
+    sonorityTypes = ['perfect', 'imperfect', 'dissonant']
+    for st in sonorityTypes:
+        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=True, includeTerminals=False)
+        print('rating for', st, 'sonorities on the beat, terminals excluded:', rating)    
 #-------------------------------------------------------------------------------
 # eof
