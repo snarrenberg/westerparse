@@ -242,6 +242,35 @@ def getBassUpperPairs(score):
 #    bassUpperPartPairs = bassUpperPartPairs.sort(key = lambda x: x[1])
     return sorted(bassUpperPartPairs)
         
+def getAdjacentPartPairs(score):
+    n = len(score.parts) - 1
+    adjacentPairs = []
+    while n > 0:
+        adjacentPairs.append((n, n-1))
+        n -= 1
+    return adjacentPairs
+
+def getAdjacencyRatings(score):
+    vertList = getAllSonorities(score)
+    adjPairs = getAdjacentPartPairs(score)
+    adjacencyReport = ''
+    for pair in adjPairs:
+        # initialize counter for intervals an octave or smaller
+        # initialize counter for all intervals
+        pairReport = 'Adjacency rating for parts ' + str(pair[1]+1) + ' and ' + str(pair[0]+1) + ': '
+        simpleCount = 0
+        fullCount = 0 
+        for vert in vertList:
+            if vert.getObjectsByPart(pair[0], classFilterList='Note') and vert.getObjectsByPart(pair[1], classFilterList='Note'):
+                n1 = vert.getObjectsByPart(pair[0], classFilterList='Note')
+                n2 = vert.getObjectsByPart(pair[1], classFilterList='Note')
+                if interval.Interval(n1, n2).name == interval.Interval(n1, n2).semiSimpleName:
+                    simpleCount += 1
+                fullCount += 1
+        pairReport = pairReport + '{:.1%}'.format(simpleCount/fullCount)
+        adjacencyReport = adjacencyReport + '\n' + pairReport
+    return adjacencyReport
+
 def getBassUpperPair(noteList):
     # accepts a noteList ordered high to low, bass at end of list
     bassPartNum = len(noteList)-1
@@ -411,11 +440,11 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOn
 if __name__ == '__main__':
     # self_test code
 #    pass
-    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies02.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies03.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies04.musicxml'
-#    source='../tests/TestScoresXML/FirstSpecies10.musicxml'
+    source='../tests/TestScoresXML/FirstSpecies10.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies10.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies20.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies21.musicxml'
@@ -447,9 +476,12 @@ if __name__ == '__main__':
 
 #    assignSpeciesToParts(score)
 
+    
+    print(getAdjacencyRatings(score))
+    
     sonorityTypes = ['perfect', 'imperfect', 'dissonant']
-    for st in sonorityTypes:
-        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=True, includeTerminals=False)
-        print('rating for', st, 'sonorities on the beat, terminals excluded:', rating)    
+#    for st in sonorityTypes:
+#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=True, includeTerminals=False)
+#        print('rating for', st, 'sonorities on the beat, terminals excluded:', rating)    
 #-------------------------------------------------------------------------------
 # eof
