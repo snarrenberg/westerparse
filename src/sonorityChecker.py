@@ -198,8 +198,8 @@ def printDensityReport(densityList):
         pcdensity = pcdensity + d[1]
     pitchDensityRating = pdensity/l
     pitchClassDensityRating = pcdensity/l    
-    print('p den rating', pitchDensityRating)
-    print('pc den rating', pitchClassDensityRating)
+    print('p den rating', '{:.1%}'.format(pitchDensityRating))
+    print('pc den rating', '{:.1%}'.format(pitchClassDensityRating))
         
 def getPitchDensity(noteList):
     pitches = []
@@ -332,8 +332,62 @@ def assignSpeciesToParts(score):
         if not part.species:
             assignSpecies(part)
     
-def onbeatImperfectCount(vertList):
-    pass    
+def onbeatImperfectScore(vertList):
+    onvl = getOnbeatVertList(vl)
+    l = len(onvl)
+    texture = len(vertList[-1].objects)
+    bassPartNum = texture-1
+    topPartNum = 0
+    onbeatImperfect = 0
+    for vert in onvl:
+        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
+        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
+        if isImperfectVerticalConsonance(bassPart, topPart):
+            onbeatImperfect += 1
+    return '{:.1%}'.format(onbeatImperfect/l)
+   
+def onbeatPerfectScore(vertList):
+    onvl = getOnbeatVertList(vl)
+    l = len(onvl)
+    texture = len(vertList[-1].objects)
+    bassPartNum = texture-1
+    topPartNum = 0
+    onbeatPerfect = 0
+    for vert in onvl:
+        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
+        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
+        if isPerfectVerticalConsonance(bassPart, topPart):
+            onbeatPerfect += 1
+    return '{:.1%}'.format(onbeatPerfect/l)
+    
+def onbeatDissonanceScore(vertList):
+    onvl = getOnbeatVertList(vl)
+    l = len(onvl)
+    texture = len(vertList[-1].objects)
+    bassPartNum = texture-1
+    topPartNum = 0
+    onbeatDiss = 0
+    for vert in onvl:
+        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
+        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
+        if isVerticalDissonance(bassPart, topPart):
+            onbeatDiss += 1
+    return '{:.1%}'.format(onbeatDiss/l)
+    
+def offbeatDissonanceScore(vertList):
+    ofvl = getOffbeatVertList(vl)
+    l = len(ofvl)
+    texture = len(vertList[-1].objects)
+    bassPartNum = texture-1
+    topPartNum = 0
+    offbeatDiss = 0
+    for vert in ofvl:
+        bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
+        topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
+        if isVerticalDissonance(bassPart, topPart):
+            offbeatDiss += 1
+    return '{:.1%}'.format(offbeatDiss/l)
+    
     
 #     for vPair in vPairList:
 #         if vPair != None:
@@ -351,7 +405,7 @@ if __name__ == '__main__':
 #    pass
 #    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies10.musicxml'
-    source='../tests/TestScoresXML/SecondSpecies10.musicxml'
+#    source='../tests/TestScoresXML/SecondSpecies10.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies20.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies21.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies22.musicxml'
@@ -366,20 +420,23 @@ if __name__ == '__main__':
     
     vl = evaluateSonorities(score)
     sl = getSonorityList(vl)
-    obvl = getOnbeatVertList(vl)
+    onvl = getOnbeatVertList(vl)
     ofvl = getOffbeatVertList(vl)
-    print(len(vl), len(obvl), len(ofvl))
+    print(len(vl), len(onvl), len(ofvl))
 
     dl = getDensityList(vl)
     print('overall density') 
     printDensityReport(dl)
 
     print('onbeat density') 
-    obdl = getDensityList(obvl) 
-    printDensityReport(obdl)
+    ondl = getDensityList(onvl) 
+    printDensityReport(ondl)
 
-    assignSpeciesToParts(score)
-    
+#    assignSpeciesToParts(score)
+    print('onbeat imperfect consonance score', onbeatImperfectScore(vl))
+    print('onbeat perfect consonance score', onbeatPerfectScore(vl))
+    print('onbeat dissonance score', onbeatDissonanceScore(vl))
+    print('offbeat dissonance score', offbeatDissonanceScore(vl))
     
 #-------------------------------------------------------------------------------
 # eof

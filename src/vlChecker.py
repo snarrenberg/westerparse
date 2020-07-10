@@ -266,6 +266,7 @@ def isOctave(n1, n2):
     the pair forms a diatonic step. The test determines whether 
     the actual interval is in the list: 
     'P8', 'P15', 'P22'.''' 
+    # TODO perhaps change this to lin_ivl.semiSimpleName == 'P8'
     lin_ivl = interval.Interval(n1, n2)
     if lin_ivl.name in {'P8', 'P15', 'P22'}:
         return True
