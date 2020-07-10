@@ -150,21 +150,13 @@ def getSonorityList(vertList):
         n += 1    
     return sonorityList
 
-def getOnbeatVertList(score, vertList):
-
-    # TODO see method in getOnbeatDyads, vert.isOnBeat()
-    # verify that vert.isOnBeat actually returns the correct result (leftAlign=False)
-    vosTuples = []
-    for vert in vertList:
-        vo = vert.offset(leftAlign=False)
-        vosTuples.append((vo, vert))
-    bmvTuples = []
-    for offset,vert in vosTuples:
-        bmvTuples.append((score.beatAndMeasureFromOffset(offset), vert))
-    onbeatVertList = [bmvt[1] for bmvt in bmvTuples if bmvt[0][0] == 1.0]
+def getOnbeatVertList(vertList):
+    onbeatVertList = [vert for vert in vertList if vert.beat(leftAlign=False) == 1.0]
     return onbeatVertList
-        
-
+    
+def getOffbeatVertList(vertList):
+    offbeatVertList = [vert for vert in vertList if vert.beat(leftAlign=False) != 1.0]
+    return offbeatVertList
 
 def printSonorityList(sonorityList):
     '''
@@ -196,9 +188,7 @@ def getDensityList(vertList):
         densityList.append((pitchDensisty, pitchClassDensity))
         n += 1
     return(densityList)
-
-
-    
+   
 def printDensityReport(densityList):
     l = len(densityList)
     pdensity = 0
@@ -210,7 +200,6 @@ def printDensityReport(densityList):
     pitchClassDensityRating = pcdensity/l    
     print('p den rating', pitchDensityRating)
     print('pc den rating', pitchClassDensityRating)
-
         
 def getPitchDensity(noteList):
     pitches = []
@@ -251,7 +240,7 @@ def getBassUpperPairs(score):
     return sorted(bassUpperPartPairs)
         
 def getBassUpperPair(noteList):
-    # accepts an noteList ordered high to low, bass at end of list
+    # accepts a noteList ordered high to low, bass at end of list
     bassPartNum = len(noteList)-1
     upperPartNums = []
     n = len(noteList) - 2
@@ -264,6 +253,7 @@ def getBassUpperPair(noteList):
 #    bassUpperPartPairs = bassUpperPartPairs.sort(key = lambda x: x[1])
     return sorted(bassUpperPartPair)
 
+# this script not in use
 def getSonorityClass(noteList):
     bassUpperPartPair = getBassUpperPair(noteList)
     sonority = []
@@ -280,7 +270,6 @@ def getSonorityClass(noteList):
         else:
             sonority.append(intv % 7)
     return sonority
-#    pass
     
 def getOnbeatDyads(score, analyzer, partNum1, partNum2):
     onbeatDyads = []
@@ -324,6 +313,28 @@ def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
     print('on-beat perfect intervals count:', len(onbeatPerfect))
     print('on-beat imperfect intervals count:', len(onbeatImperfect))
             
+def isOnbeatVerticality(verticality):
+    '''Tests whether a verticality is initiated on the downbeat.'''
+    # does not work!!!
+    vnotes = verticality.getObjectsByClass('Note')
+    isOnbeat = True
+    print(vert.offset)
+    for note in vnotes:
+        print(note)
+        if note.beat != 1.0:
+            vOnbeat = False
+            break
+    return isOnbeat
+
+# based on context.assignSpecies(part)
+def assignSpeciesToParts(score):
+    for part in score.parts:
+        if not part.species:
+            assignSpecies(part)
+    
+def onbeatImperfectCount(vertList):
+    pass    
+    
 #     for vPair in vPairList:
 #         if vPair != None:
 #             if isUnison(vPair[0],vPair[1]):
@@ -331,7 +342,7 @@ def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
 #     if uCount > unisonLimit:
 #         error='The number of unisons is '+ str(uCount) + ', which exceeds the limit of ' +\
 #                 str(unisonLimit) + '.'
-#         pferrors.append(error)
+#         prefErrors.append(error)
 
 #-------------------------------------------------------------------------------
 
@@ -355,7 +366,9 @@ if __name__ == '__main__':
     
     vl = evaluateSonorities(score)
     sl = getSonorityList(vl)
-    obvl = getOnbeatVertList(score, vl)
+    obvl = getOnbeatVertList(vl)
+    ofvl = getOffbeatVertList(vl)
+    print(len(vl), len(obvl), len(ofvl))
 
     dl = getDensityList(vl)
     print('overall density') 
@@ -365,5 +378,8 @@ if __name__ == '__main__':
     obdl = getDensityList(obvl) 
     printDensityReport(obdl)
 
+    assignSpeciesToParts(score)
+    
+    
 #-------------------------------------------------------------------------------
 # eof
