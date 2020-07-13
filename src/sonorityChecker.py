@@ -150,8 +150,7 @@ def getFullSonorities(vertList):
     select only those that have a note in every part'''
     texture = len(vertList[-1].objects)
     vertList = [vert for vert in vertList if len(vert.objects) == texture]
-    return vertList
-    
+    return vertList   
 
 def getOnbeatVertList(vertList):
     onbeatVertList = [vert for vert in vertList if vert.beat(leftAlign=False) == 1.0]
@@ -181,29 +180,22 @@ def printSonorityList(sonorityList):
         print(fb)
         t -= 1
 
-def getDensityList(vertList):
+def getDensityList(vertList, densityType=None):
     densityList = []
+    if densityType not in ['pitch', 'pitch class']:
+        print('User must select a density type to report: use \'pitch\' or \'pitch class\'.')
+        return
     n = 0
     while n < len(vertList):
         vert = vertList[n].getObjectsByClass('Note')
-        pitchDensisty = getPitchDensity(vert)
-        pitchClassDensity = getPitchClassDensity(vert)
-        densityList.append((pitchDensisty, pitchClassDensity))
+        if densityType == 'pitch': 
+            density = getPitchDensity(vert)
+        elif densityType == 'pitch class': 
+            density = getPitchClassDensity(vert)
+        densityList.append(density)
         n += 1
     return(densityList)
    
-def printDensityReport(densityList):
-    l = len(densityList)
-    pdensity = 0
-    pcdensity = 0
-    for d in densityList:
-        pdensity = pdensity + d[0]
-        pcdensity = pcdensity + d[1]
-    pitchDensityRating = pdensity/l
-    pitchClassDensityRating = pcdensity/l    
-    print('p den rating', '{:.1%}'.format(pitchDensityRating))
-    print('pc den rating', '{:.1%}'.format(pitchClassDensityRating))
-        
 def getPitchDensity(noteList):
     pitches = []
     for note in noteList:
@@ -375,6 +367,7 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOn
     '''
     vertList = getFullSonorities(getAllSonorities(score))
     
+    # get verts by beat position
     if beatPosition == 'on':
         vl = getOnbeatVertList(vertList)
     elif beatPosition == 'off':
@@ -424,6 +417,38 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOn
                 sonorityCount += 1
     return '{:.1%}'.format(sonorityCount/totl)
 
+def getDensityRating(score, beatPosition=None, densityType=None, includeTerminals=False):
+    '''
+    Report the percentage of a given density type in the list of full-voiced verticalities.
+    Valid options:
+        beatPosition: ['on', 'off', None]
+        densityType: ['pitch', 'pitch class', None]
+        includeTerminals: [True, False]
+    '''
+    vertList = getFullSonorities(getAllSonorities(score))
+
+    # get verts by beat position
+    if beatPosition == 'on':
+        vl = getOnbeatVertList(vertList)
+    elif beatPosition == 'off':
+        vl = getOffbeatVertList(vertList)
+    else:
+        vl = vertList
+
+    # trim list if terminals excluded 
+    if includeTerminals == False:
+        vl = vl[1:-1]
+
+    # get the appropriate density list
+    dl = getDensityList(vl, densityType=densityType)
+    totl = len(dl)
+    if totl == 0:
+        totl = 1
+    density = 0
+    for d in dl:
+        density = density + d
+    return '{:.1%}'.format(density/totl)
+        
     
     
 #     for vPair in vPairList:
@@ -444,16 +469,21 @@ if __name__ == '__main__':
 #    source='../tests/TestScoresXML/FirstSpecies02.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies03.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies04.musicxml'
-    source='../tests/TestScoresXML/FirstSpecies10.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies10.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies10.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies20.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies21.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies22.musicxml'
-#    source='../tests/TestScoresXML/ThirdSpecies01.musicxml'
+    source='../tests/TestScoresXML/ThirdSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies20.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies21.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies22.musicxml'
+
+#    source='../examples/corpus/Westergaard075f.musicxml'
+#    source='../examples/corpus/Westergaard075g.musicxml'
+#    source='../examples/corpus/Westergaard121a.musicxml'
+
 
 
     score = converter.parse(source)
@@ -466,22 +496,27 @@ if __name__ == '__main__':
     ofvl = getOffbeatVertList(vl)
     print(len(vl), len(onvl), len(ofvl))
 
-#    dl = getDensityList(vl)
-#    print('overall density') 
-#    printDensityReport(dl)
-
-#    print('onbeat density') 
-#    ondl = getDensityList(onvl) 
-#    printDensityReport(ondl)
 
 #    assignSpeciesToParts(score)
 
+    print(getDensityRating(score, beatPosition='on', densityType='pitch'))    
+    print(getDensityRating(score, beatPosition='on', densityType='pitch class'))    
+#    print(getAdjacencyRatings(score))
+
+#    [c.beat for c in s.chordify().recurse().getElementsByClass('NotRest')]
+
+    onbeatchords = [c for c in score.chordify().recurse().getElementsByClass('NotRest') if len(c) > 1]
+#    print(onbeatchords)
+#    for ch in onbeatchords: print(ch.notes[1].beat)
     
-    print(getAdjacencyRatings(score))
-    
-    sonorityTypes = ['perfect', 'imperfect', 'dissonant']
+#    sonorityTypes = ['perfect', 'imperfect']
 #    for st in sonorityTypes:
-#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=True, includeTerminals=False)
+#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=False, includeTerminals=False)
 #        print('rating for', st, 'sonorities on the beat, terminals excluded:', rating)    
+#    sonorityTypes = ['dissonant']
+#    for st in sonorityTypes:
+#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=False, includeTerminals=False)
+#        print('rating for', st, 'sonorities on the beat, terminals excluded:', rating)    
+
 #-------------------------------------------------------------------------------
 # eof
