@@ -19,8 +19,8 @@ setup(
                    'Operating System :: OS Independent',
                    'License :: OSI Approved :: BSD License',
     ],
-    package_dir={'': 'src'},
-    packages=find_packages(where='src'), 
+    package_dir={'westerparse': 'src'},
+    packages=['westerparse'], 
     python_requires='>=3.5, <4',
     install_requires=['music21'],
     #dependency_links['https://github.com/cuthbertLab/music21']
