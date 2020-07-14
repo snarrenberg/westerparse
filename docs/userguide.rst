@@ -12,16 +12,16 @@ Start python in your terminal program.
 
 Then import WesterParse and choose a source file:
 
->>> from westerparse import *
->>> source = 'my_music.musicxml'
+>>> import westerparse
+>>> source = 'PATH/my_music.musicxml'
 
 To parse the lines in the source:
 
->>> evaluateLines(source)
+>>> westerparse.evaluateLines(source)
 
 To check the voice leading:
 
->>> evaluateCounterpoint(source)
+>>> westerparse.evaluateCounterpoint(source)
 
 Parser Options
 --------------

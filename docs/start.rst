@@ -114,9 +114,9 @@ Python 3 can be obtained from: http://www.python.org.
    
 4. Then begin using westerparse:
 
->>> from westerparse import *
+>>> import westerparse
 >>> source = '../docs/samplefiles/FuxDorian.musicxml'
->>> evaluateLines(source, show='show', partLineType='primary', report=True)
+>>> westerparse.evaluateLines(source, show='show', partLineType='primary', report=True)
 
 
             
