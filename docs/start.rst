@@ -100,30 +100,24 @@ Python 3 can be obtained from: http://www.python.org.
    And then configure ``music21`` to use a musicxml viewer like MuseScore. 
    See the instructions on the `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
-2. Download the latest WesterParse release from `GitHub <https://github.com/snarrenberg/westerparse/releases>`_. 
-   and unzip it. For example:
+2. Install the latest WesterParse release from `GitHub <https://github.com/snarrenberg/westerparse/releases>`_:
 
 .. code-block:: shell
 
-   $ tar -xvf westerparse-1.0.3-alpha.tar.gz
+   $ pip install git+git://github.com/snarrenberg/westerparse.git
 
-3. Navigate to the ``src`` folder.
-
-.. code-block:: shell
-
-   $ cd westerparse-1.0.3-alpha/src/
-   
-4. Start python.
+3. Start python.
 
 .. code-block:: shell
 
    $ python
    
-5. Then begin using westerparse:
+4. Then begin using westerparse:
 
 >>> from westerparse import *
 >>> source = '../docs/samplefiles/FuxDorian.musicxml'
 >>> evaluateLines(source, show='show', partLineType='primary', report=True)
+
 
             
 How to Get Support
