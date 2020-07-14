@@ -39,14 +39,14 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Generic01.musicxml'
 #    source = 'TestScoresXML/Generic02.musicxml'
 
-    source = 'TestScoresXML/FirstSpecies01.musicxml'
+#    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
 #    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
 #    source = 'TestScoresXML/FirstSpecies05.musicxml'
 #    source = 'TestScoresXML/FirstSpecies10a.musicxml'
 #    source = 'TestScoresXML/FirstSpecies20.musicxml'
-#    source = 'TestScoresXML/WP141.musicxml'
+    source = 'TestScoresXML/WP141.musicxml'
 
 #    source = 'TestScoresXML/SecondSpecies01.musicxml'
 #    source = 'TestScoresXML/SecondSpecies02.musicxml'
