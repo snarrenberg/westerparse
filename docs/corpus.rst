@@ -11,12 +11,12 @@ Requires Tkinter, PIL (pillow), and MuseScore.
 Using the Corpus Viewer
 -----------------------
 
-Locate the corpus viewer module in the examples folder 
-and then run the program from the terminal.
+Navigate to the examples folder
+and then run the corpus viewer from the terminal.
 
 .. code-block:: shell
    
-   $ python3 viewer.py
+   $ python viewer.py
 
 This will open a GUI.
 
