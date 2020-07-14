@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from os import path
 this_directory = path.abspath(path.dirname(__file__))
@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='westerparse',
-    version='1.0.4a',
+    version='1.0.4a2',
     description='An application for evaluating Westergaardian species counterpoint',
     long_description=long_description,
     long_description_content_type='text/markdown', 
@@ -20,6 +20,7 @@ setup(
     ],
     package_dir={'westerparse': 'src'},
     packages=['westerparse'], 
+    include_package_data=True
     python_requires='>=3.5, <4',
     install_requires=['music21'],
 )
