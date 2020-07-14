@@ -6,7 +6,7 @@ corpus of examples, including many from Westergaard's book (these are identified
 page number in the filename). There are over 60 single lines and over 50 examples of two-part 
 counterpoint, some with errors and others without. 
 
-Requires Tkinter, PIL, and MuseScore.
+Requires Tkinter, PIL (pillow), and MuseScore.
 
 Using the Corpus Viewer
 -----------------------
