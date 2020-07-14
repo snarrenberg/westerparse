@@ -1,3 +1,5 @@
+#!/Users/snarrenberg/opt/anaconda3/envs/westerparse/bin/python
+
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../src'))
@@ -37,7 +39,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Generic01.musicxml'
 #    source = 'TestScoresXML/Generic02.musicxml'
 
-#    source = 'TestScoresXML/FirstSpecies01.musicxml'
+    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
 #    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
@@ -63,7 +65,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'    
 
-    source = 'TestScoresXML/FourthSpecies01.musicxml'
+#    source = 'TestScoresXML/FourthSpecies01.musicxml'
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
