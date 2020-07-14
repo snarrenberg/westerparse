@@ -20,7 +20,7 @@ setup(
     ],
     package_dir={'westerparse': 'src'},
     packages=['westerparse'], 
-    include_package_data=True
+    include_package_data=True,
     python_requires='>=3.5, <4',
     install_requires=['music21'],
 )
