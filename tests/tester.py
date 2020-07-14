@@ -63,7 +63,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'    
 
-#    source = 'TestScoresXML/FourthSpecies01.musicxml'
+    source = 'TestScoresXML/FourthSpecies01.musicxml'
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 2)
 #    context.evaluateLines(source, show=None, report=True)
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)

@@ -1,6 +1,5 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-# read the contents of your README file
 from os import path
 this_directory = path.abspath(path.dirname(__file__))
 with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
@@ -8,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='westerparse',
-    version='1.0.3-alpha',
+    version='1.0.4a',
     description='An application for evaluating Westergaardian species counterpoint',
     long_description=long_description,
     long_description_content_type='text/markdown', 
@@ -20,9 +19,7 @@ setup(
                    'License :: OSI Approved :: BSD License',
     ],
     package_dir={'westerparse': 'src'},
-    #packages=find_packages(where='src'), 
     packages=['westerparse'], 
     python_requires='>=3.5, <4',
     install_requires=['music21'],
-    #dependency_links['https://github.com/cuthbertLab/music21']
 )

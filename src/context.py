@@ -15,7 +15,6 @@ The Context module includes classes to represent both global and local contexts.
 
 from music21 import *
 import itertools
-#import time
 
 import vlChecker
 import parser
