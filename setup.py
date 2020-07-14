@@ -18,7 +18,7 @@ setup(
                    'Operating System :: OS Independent',
                    'License :: OSI Approved :: BSD License',
     ],
-    package_dir={'westerparse': 'src', 'docs', 'examples', 'tests'},
+    package_dir={'westerparse': 'src'},
     packages=['westerparse'], 
     python_requires='>=3.5, <4',
     install_requires=['music21'],
