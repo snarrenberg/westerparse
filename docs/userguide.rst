@@ -45,7 +45,7 @@ output and generate a text report instead.
 :literal:`'show'` will send the output to the notation program that the user has configured for use
 with music21. The parse is shown using a modified Schenkerian notation.
 
->>> evaluateLines(source, show='show')
+>>> westerparse.evaluateLines(source, show='show')
 
 :literal:`'writeToServer'` is used by the web site to write parses to musicxml files, which are then 
 displayed in the browser window. 
@@ -78,7 +78,7 @@ Following the conventions of music21, lines are numbered from top to bottom, sta
 0. Since parts are a list, Python conventions are followed. So to select the bass line, 
 a user can set the option as follows:
 
->>> evaluateLines(source, partSelection=-1)
+>>> westerparse.evaluateLines(source, partSelection=-1)
 
 The option :literal:`partLineType` can only be used if the composition is a single line or if
 the user has used the partSelection option. The options are as follows: :literal:`None`, :literal:`'primary'`, 
@@ -92,7 +92,7 @@ And if there are more than three parts, the parser will evaluate the upper lines
 primary or generic (with the stipulation that at least one must be a primary line), and will
 evaluate the lower line as a bass line.
 
->>> evaluateLines(source, partSelection=0, partLineType='primary')
+>>> westerparse.evaluateLines(source, partSelection=0, partLineType='primary')
 
 The program automatically attempts to infer the key of the composition using a custom
 algorithm. There may be cases where a composition is ambiguous, in which case, the 
@@ -105,7 +105,7 @@ to represent a flat or a hash (#) to represent a sharp. This must be a string,
 enclosed in quotation marks.
 :literal:`kmode` must be either :literal:`'major'` or :literal:`'minor'`. 
 
->>> evaluateLines(source, knote='G-', kmode='major)
+>>> westerparse.evaluateLines(source, knote='G-', kmode='major)
 
 Voice-Leading Checker Options
 -----------------------------
