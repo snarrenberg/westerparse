@@ -103,7 +103,7 @@ offbeatDissonanceMin = 50 # percentage
 # MAIN SCRIPTS
 # -----------------------------------------------------------------------------
 
-def getAllSonorities(score):
+def getAllVerticalities(score):
     # create the theory analyzer object
     analyzer = theoryAnalyzerWP.Analyzer()
     analyzer.addAnalysisData(score)
@@ -243,7 +243,7 @@ def getAdjacentPartPairs(score):
     return adjacentPairs
 
 def getAdjacencyRatings(score):
-    vertList = getAllSonorities(score)
+    vertList = getAllVerticalities(score)
     adjPairs = getAdjacentPartPairs(score)
     adjacencyReport = ''
     for pair in adjPairs:
@@ -365,7 +365,7 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOn
         outerVoicesOnly: [True, False]
         includeTerminals: [True, False]
     '''
-    vertList = getFullSonorities(getAllSonorities(score))
+    vertList = getFullSonorities(getAllVerticalities(score))
     
     # get verts by beat position
     if beatPosition == 'on':
@@ -425,7 +425,7 @@ def getDensityRating(score, beatPosition=None, densityType=None, includeTerminal
         densityType: ['pitch', 'pitch class', None]
         includeTerminals: [True, False]
     '''
-    vertList = getFullSonorities(getAllSonorities(score))
+    vertList = getFullSonorities(getAllVerticalities(score))
 
     # get verts by beat position
     if beatPosition == 'on':
@@ -488,7 +488,7 @@ if __name__ == '__main__':
 
     score = converter.parse(source)
     
-    vl = getAllSonorities(score)
+    vl = getAllVerticalities(score)
     fl = getFullSonorities(vl)
     sl = getSonorityList(vl)
     

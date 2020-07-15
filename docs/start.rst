@@ -99,20 +99,20 @@ Install ``music21``.
 And then configure ``music21`` to use a musicxml viewer like MuseScore. 
 See the instructions on the `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
-#. Download the latest WesterParse release from `GitHub <https://github.com/snarrenberg/westerparse/releases>`_ 
-   and unzip it in a directory of your choice. For example:
+Download the latest WesterParse release from `GitHub <https://github.com/snarrenberg/westerparse/releases>`_,
+place it in a directory of your choice, and unzip it. For example:
 
 .. code-block:: shell
 
-   $  tar -xvf westerparse-1.0.3-alpha.tar.gz
+   $  tar -xvf westerparse-1.0.4alpha.tar.gz
 
-#. Navigate to the src directory and start python.
+Navigate to the src directory inside westerparse and start python.
 
 .. code-block:: shell
 
    $ python
    
-#. Then begin using westerparse:
+Then begin using westerparse:
 
 >>> import westerparse
 >>> source = '../docs/samplefiles/FuxDorian.musicxml'
