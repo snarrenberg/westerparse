@@ -22,7 +22,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Bass01.musicxml' # Fux Dorian
 #    source = 'TestScoresXML/Bass02.musicxml' # Krumhansl-Schmuckler gives wrong key
 #    source = 'TestScoresXML/Bass03.musicxml'
-#    source = 'TestScoresXML/Bass04.musicxml' # Krumhansl-Schmuckler gives wrong key
+    source = 'TestScoresXML/Bass04.musicxml' # Krumhansl-Schmuckler gives wrong key
 #    source = 'TestScoresXML/Bass05.musicxml'
 #    source = 'TestScoresXML/Bass06.musicxml'
 #    source = 'TestScoresXML/Bass21.musicxml'
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies05.musicxml'    # completion of Westergaard p. 136 exercise 4
 #    source = 'TestScoresXML/ThirdSpecies06.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies07.musicxml'    # vl errors
-    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
+#    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'    
 
 #    source = 'TestScoresXML/FourthSpecies01.musicxml'

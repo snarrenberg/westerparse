@@ -96,6 +96,8 @@ Python 3 can be obtained from: http://www.python.org.
 
    $ pip install music21
    
+   ..
+   
    And then configure ``music21`` to use a musicxml viewer like MuseScore. 
    See the instructions on the `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
