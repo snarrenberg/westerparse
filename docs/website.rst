@@ -12,5 +12,8 @@ Westegaardian Species Counterpoint Online
 
 https://talus.artsci.wustl.edu/counterpoint_tester/
 
-The web interface was written by Stephen Pentecost, Senior Digital Humanities Specialist at Washington University in St. Louis. 
+[NOTE from July 15, 2020: A new, redesigned website will be available soon.]
+
+The web interface was written by Stephen Pentecost, Senior Digital 
+Humanities Specialist at Washington University in St. Louis. 
 
