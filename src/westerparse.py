@@ -1,26 +1,28 @@
-#-------------------------------------------------------------------------------
-# Name:         westerparse.py
-# Purpose:      An application for evaluating Westergaardian species counterpoint
+# ------------------------------------------------------------------------------
+# Name:        westerparse.py
+# Purpose:     Evaluating Westergaardian species counterpoint
 #
-# Author:       Robert Snarrenberg
-# Copyright:    (c) 2020 by Robert Snarrenberg
-# License:      BSD, see license.txt
-#-------------------------------------------------------------------------------
+# Author:      Robert Snarrenberg
+# Copyright:   (c) 2020 by Robert Snarrenberg
+# License:     BSD, see license.txt
+# ------------------------------------------------------------------------------
 '''
 WesterParse
 ===========
 
-This is the main program script. 
+This is the main program script.
 
-WesterParse allows a user to test a species counterpoint exercise 
-for conformity with the rules of line construction and voice leading 
-laid out in Peter Westergaard's book, *An Introduction to Tonal Theory* (New York, 1975).
+WesterParse allows a user to test a species counterpoint exercise
+for conformity with the rules of line construction and voice leading
+laid out in Peter Westergaard's book, *An Introduction to Tonal Theory*
+(New York, 1975).
 
-WesterParse imports a musicxml file, converts it to a music21 stream, determines a 
-key (unless specified by the user), and then evaluates the linear syntax or the counterpoint.
+WesterParse imports a musicxml file, converts it to a music21 stream,
+determines a key (unless specified by the user), and then evaluates
+the linear syntax or the counterpoint.
 
 The main scripts are:
-    
+
 >>> evaluateLines(source)
 >>> evaluateCounterpoint(source)
 
@@ -43,38 +45,49 @@ import time
 # MAIN SCRIPTS
 # -----------------------------------------------------------------------------
 
-def evaluateLines(source, show=None, partSelection=None, partLineType=None, report=False, **keywords):
+def evaluateLines(source,
+                  show=None,
+                  partSelection=None,
+                  partLineType=None,
+                  report=False,
+                  **keywords):
     '''
     Determines whether a line is generable using Westergaard's rules.
     '''
     clearLogfile('logfile.txt')
     if partLineType == 'any' or '':
         partLineType = None
-    try:    
+    try:
         cxt = makeGlobalContext(source, **keywords)
     except EvaluationException as fce:
         fce.show()
         return
     try:
         parseContext(cxt, show, partSelection, partLineType)
-        if show == None or report == True:
+        if show is None or report is True:
             print(cxt.parseReport)
     except EvaluationException as fce:
         fce.show()
-        
-def evaluateCounterpoint(source, report=True, sonorityCheck=False, **keywords):
+
+
+def evaluateCounterpoint(source,
+                         report=True,
+                         sonorityCheck=False,
+                         **keywords):
     '''
     Determines whether the voice leading conforms to Westergaard's rules.
     '''
     clearLogfile('logfile.txt')
-    try:    
+    try:
         cxt = makeGlobalContext(source, **keywords)
     except EvaluationException as fce:
         fce.show()
         return
     try:
         if len(cxt.parts) == 1:
-            raise ContextError('Context Error: The composition is only a single line. There is no voice-leading to check.')
+            raise ContextError(
+                  'Context Error: The composition is only a single line. '
+                  'There is no voice-leading to check.')
     except ContextError as ce:
         ce.logerror()
     try:
@@ -90,6 +103,7 @@ def evaluateCounterpoint(source, report=True, sonorityCheck=False, **keywords):
 # HELPER SCRIPTS
 # -----------------------------------------------------------------------------
 
+
 def makeGlobalContext(source, **keywords):
     '''
     Import a musicxml file and convert to music21 Stream.
@@ -101,17 +115,23 @@ def makeGlobalContext(source, **keywords):
     gxt = GlobalContext(s, **keywords)
     return gxt
 
+
 def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
     '''
-    Create a local context given a start and stop offset in an enclosing Context.
+    Create a local context given a start and stop offset
+    in an enclosing Context.
     [Not functional.]
     '''
-    # 
-    locCxt = cxt.getElementsByOffset(cxtOn, cxtOff, includeEndBoundary=True, 
-        mustFinishInSpan=False, mustBeginInSpan=True, includeElementsThatEndAtStart=False, 
-        classList=None)
+    locCxt = cxt.getElementsByOffset(cxtOn,
+                                     cxtOff,
+                                     includeEndBoundary=True,
+                                     mustFinishInSpan=False,
+                                     mustBeginInSpan=True,
+                                     includeElementsThatEndAtStart=False,
+                                     classList=None)
     locCxt.harmony = cxtHarmony
     return locCxt
+
 
 def displaySourceAsPng(source):
     '''
@@ -122,15 +142,20 @@ def displaySourceAsPng(source):
     filename = 'tempimages/' + 'display_output_' + timestamp + '.xml'
     cxt.write('musicxml.png', fp=filename)
 
-def parseContext(context, show=None, partSelection=None, partLineType=None, report=False):
+
+def parseContext(context,
+                 show=None,
+                 partSelection=None,
+                 partLineType=None,
+                 report=False):
     '''
-    This function runs the parse on each line of a context using :py:func:`parsePart`. 
-    A dictionary is used to collect error reports from the parser; this is used
-    to produce an error report.
+    This function runs the parse on each line of a
+    context using :py:func:`parsePart`.
+    A dictionary is used to collect error reports from the parser;
+    this is used to produce an error report.
     A separate report is created for successful parses.
-    If the user has elected to display the results, the function selects the preferred
-    interpretations and displays them.
-    
+    If the user has elected to display the results, the function selects
+    the preferred interpretations and displays them.
     '''
     # dictionary for collecting error reports
     # primary keys: part names
@@ -138,21 +163,21 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
     context.errorsDict = {}
     for part in context.parts:
         context.errorsDict[part.name] = {}
-    
+
     # determine which parts to parse
-    if partSelection != None and partSelection < len(context.parts):
+    if partSelection is not None and partSelection < len(context.parts):
         partsParsed = context.parts[partSelection:partSelection+1]
     elif len(context.parts) == 1:
-        partsParsed = context.parts[0:1]    
+        partsParsed = context.parts[0:1]
     else:
         partsParsed = context.parts
-    
+
     # run the parser and collect errors
-    for part in partsParsed: 
+    for part in partsParsed:
         # set the part's lineType if given by the user
         if partLineType:
             part.lineType = partLineType
-        else: 
+        else:
             part.lineType = None
         # parse the selected part
         parsePart(part, context)
@@ -165,55 +190,64 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
     # continue and report/show results
     generableParts = 0
     generableContext = False
-    if partSelection == None:
+    if partSelection is None:
         for part in context.parts:
             if part.isPrimary or part.isBass or part.isGeneric:
                 generableParts += 1
         if generableParts == len(context.parts):
             generableContext = True
-    elif partSelection != None:
-        if context.parts[partSelection].isPrimary or context.parts[partSelection].isBass or context.parts[partSelection].isGeneric:
+    elif partSelection is not None:
+        rules = [context.parts[partSelection].isPrimary,
+                 context.parts[partSelection].isBass,
+                 context.parts[partSelection].isGeneric]
+        if any(rules):
             generableContext = True
 
-    # create optional parse report for user and required error report if errors arise
+    # create optional parse report for user
+    # and required error report if errors arise
     def createParseReport():
         # base string for reporting parse results
         context.parseReport = 'PARSE REPORT'
-   
+
         # gather information on the key to report to the user
         if context.keyFromUser == True:
-            result = 'Key supplied by user: ' + context.key.nameString
+            result = ('Key supplied by user: ' + context.key.nameString)
             context.parseReport = context.parseReport + '\n' + result
         else:
-            result = 'Key inferred by program: ' + context.key.nameString
+            result = ('Key inferred by program: ' + context.key.nameString)
             context.parseReport = context.parseReport + '\n' + result
 
-        if generableContext == True:
-            if partSelection != None or len(context.parts) == 1:
-                if partSelection != None:
+        if generableContext is True:
+            if partSelection is not None or len(context.parts) == 1:
+                if partSelection is not None:
                     part = context.parts[partSelection]
                 else:
                     part = context.parts[0]
-                if partLineType == None:
-                    if part.isPrimary == True and part.isBass == True:
-                        result = 'The line is generable as both a primary line and a bass line.'
-                    elif part.isPrimary == False and part.isBass == True:
-                        result = 'The line is generable as a bass line but not as a primary line.'
-                    elif part.isPrimary == True and part.isBass == False:
-                        result = 'The line is generable as a primary line but not as a bass line.'
-                    if part.isPrimary == False and part.isBass == False and part.isGeneric == True:
-                        result = 'The line is generable only as a generic line.'
-                elif partLineType != None:
-                    if partLineType == 'primary' and part.isPrimary == True:
-                        result = 'The line is generable as a primary line.'
-                    elif partLineType == 'bass' and part.isBass == True:
-                        result = 'The line is generable as a bass line.'
-                    elif partLineType == 'generic' and part.isGeneric == True:
-                        result = 'The line is generable as a generic line.'
+                if partLineType is None:
+                    if part.isPrimary and part.isBass:
+                        result = ('The line is generable as both '
+                                  'a primary line and a bass line.')
+                    elif not part.isPrimary and part.isBass:
+                        result = ('The line is generable as a bass '
+                                  'line but not as a primary line.')
+                    elif part.isPrimary and not part.isBass:
+                        result = ('The line is generable as a primary '
+                                  'line but not as a bass line.')
+                    if not part.isPrimary and not part.isBass and part.isGeneric:
+                        result = ('The line is generable only as a generic line.')
+                elif partLineType is not None:
+                    if partLineType == 'primary' and part.isPrimary:
+                        result = ('The line is generable as a primary line.')
+                    elif partLineType == 'bass' and part.isBass:
+                        result = ('The line is generable as a bass line.')
+                    elif partLineType == 'generic' and part.isGeneric:
+                        result = ('The line is generable as a generic line.')
                     # ERRORS
                     else:
-                        error = 'The line is not generable as the selected type: ' + partLineType
-                        error = error + '\nThe following linear errors were found:'
+                        error = ('The line is not generable as the '
+                                 'selected type: ' + partLineType)
+                        error = (error + '\nThe following linear '
+                                 'errors were found:')
                         if context.errorsDict[part.name][partLineType]:
                             for err in context.errorsDict[part.name][partLineType]:
                                 error = error + '\n\t\t' + str(err)
@@ -221,70 +255,91 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
                 # update parse report if no errors found
                 context.parseReport = context.parseReport + '\n' + result
 
-            elif partSelection == None and len(context.parts) > 1:
+            elif partSelection is None and len(context.parts) > 1:
                 upperPrimary = False
-                subsidiaryUpperLines = [] # by part name
+                subsidiaryUpperLines = []  # by part name
                 lowerBass = False
                 for part in context.parts[0:-1]:
-                    if part.isPrimary == True:
+                    if part.isPrimary:
                         upperPrimary = True
                     else:
                         subsidiaryUpperLines.append(part.name)
-                if context.parts[-1].isBass == True:
+                if context.parts[-1].isBass:
                     lowerBass = True
                 if upperPrimary and lowerBass:
                     if len(context.parts) == 2:
-                        result = 'The upper line is generable as a primary line. \nThe lower line is generable as a bass line.'
+                        result = ('The upper line is generable as a '
+                                  'primary line. \nThe lower line '
+                                  'is generable as a bass line.')
                     else:
-                        result = 'At least one upper line is generable as a primary line. \nThe lower line is generable as a bass line.'
+                        result = ('At least one upper line is generable '
+                                  'as a primary line. \nThe lower line '
+                                  'is generable as a bass line.')
                 # ERRORS
                 elif not upperPrimary and lowerBass:
                     if len(context.parts) == 2:
-                        error = '\tThe upper line is not generable as a primary line. \nBut the lower line is generable as a bass line.'
+                        error = ('\tThe upper line is not generable '
+                                 'as a primary line. \nBut the lower '
+                                 'line is generable as a bass line.')
                     else:
-                        error = '\tNo upper line is generable as a primary line. \nBut the lower line is generable as a bass line.'
+                        error = ('\tNo upper line is generable as a '
+                                 'primary line. \nBut the lower line '
+                                 'is generable as a bass line.')
                     for sul in subsidiaryUpperLines:
                         if context.errorsDict[sul]:
-                            error = error + '\n\tThe following linear errors were found in ' + sul + ':'
+                            error = (error + '\n\tThe following linear '
+                                     'errors were found in ' + sul + ':')
                             for err in context.errorsDict[sul]['primary']:
                                 error = error + '\n\t\t\t' + str(err)
                     raise ContextError(error)
                 elif upperPrimary and not lowerBass:
                     if len(context.parts) == 2:
-                        error = '\tThe upper line is generable as a primary line. \nBut the lower line is not generable as a bass line.'
+                        error = ('\tThe upper line is generable as a '
+                                 'primary line. \nBut the lower line '
+                                 'is not generable as a bass line.')
                     else:
-                        error = '\tAt least one upper line is generable as a primary line. \nBut the lower line is not generable as a bass line.'
+                        error = ('\tAt least one upper line is generable '
+                                 'as a primary line. \nBut the lower line '
+                                 'is not generable as a bass line.')
                     bln = context.parts[-1].name
                     if context.errorsDict[bln]:
-                        error = error + '\n\tThe following linear errors were found in the bass line:'
+                        error = (error + '\n\tThe following linear '
+                                 'errors were found in the bass line:')
                         for err in context.errorsDict[bln]['bass']:
                             error = error + '\n\t\t\t' + str(err)
                     raise ContextError(error)
                 elif not upperPrimary and not lowerBass:
                     if len(context.parts) == 2:
-                        error = '\tThe upper line is not generable as a primary line. \nNor is the lower line generable as a bass line.'
+                        error = ('\tThe upper line is not generable as a '
+                                 'primary line. \nNor is the lower line '
+                                 'generable as a bass line.')
                     else:
-                        error = '\tNo upper line is generable as a primary line. \nNor is the lower line generable as a bass line.'
+                        error = ('\tNo upper line is generable as '
+                                 'a primary line. \nNor is the lower '
+                                 'line generable as a bass line.')
                     for part in context.parts[:-1]:
                         if context.errorsDict[part.name]:
-                            error = error + '\n\tThe following linear errors were found in ' + part.name + ':'
+                            error = (error + '\n\tThe following linear '
+                                     'errors were found in ' + part.name + ':')
                             for err in context.errorsDict[sul]['primary']:
                                 error = error + '\n\t\t\t' + str(err)
                     bln = context.parts[-1].name
                     if context.errorsDict[bln]:
-                        error = error + '\n\tThe following linear errors were found in the bass line:'
+                        error = (error + '\n\tThe following linear errors '
+                                 'were found in the bass line:')
                         for err in context.errorsDict[bln]['bass']:
                             error = error + '\n\t\t\t' + str(err)
                     raise ContextError(error)
                 # update parse report if no errors found
                 context.parseReport = context.parseReport + '\n' + result
 
-        elif generableContext == False:
+        elif generableContext is False:
             # get header and key information from parse report
             error = context.parseReport + '\n' + 'Line Parsing Errors'
             if len(partsParsed) == 1:
                 part = partsParsed[0]
-                error = error + '\n\tThe following linear errors were found when attempting to interpret the line:'
+                error = (error + '\n\tThe following linear errors were '
+                         'found when attempting to interpret the line:')
                 try:
                     context.errorsDict[part.name]['parser errors']
                 except KeyError:
@@ -310,11 +365,16 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
             else:
                 for part in context.parts[:-1]:
                     if context.errorsDict[part.name] == {} and part.isPrimary:
-                        error = error + '\n\t' + part.name + ' is generable as a primary line.'
-                    elif context.errorsDict[part.name] == {} and not part.isPrimary and part.isGeneric:
-                        error = error + '\n\t' + part.name + ' is generable as a generic line.'
+                        error = (error + '\n\t' + part.name +
+                                 ' is generable as a primary line.')
+                    elif (context.errorsDict[part.name] == {}
+                          and not part.isPrimary and part.isGeneric):
+                        error = (error + '\n\t' + part.name +
+                                 ' is generable as a generic line.')
                     else:
-                        error = error + '\n\t' + part.name + ' is not generable. The following errors were found:'
+                        error = (error + '\n\t' + part.name +
+                                 ' is not generable. '
+                                 'The following errors were found:')
                     try:
                         context.errorsDict[part.name]['parser errors']
                     except KeyError:
@@ -331,9 +391,12 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
                             error = error + '\n\t\t\t' + str(err)
                 for part in context.parts[-1:]:
                     if context.errorsDict[part.name] == {} and part.isBass:
-                        error = error + '\n\t' + part.name + ' is generable as a bass line.'
+                        error = (error + '\n\t' + part.name +
+                                 ' is generable as a bass line.')
                     else:
-                        error = error + '\n\t' + part.name + ' is not generable. The following errors were found:'
+                        error = (error + '\n\t' + part.name +
+                                 ' is not generable. '
+                                 'The following errors were found:')
                     try:
                         context.errorsDict[part.name]['parser errors']
                     except KeyError:
@@ -359,19 +422,20 @@ def parseContext(context, show=None, partSelection=None, partLineType=None, repo
     else:
         pass
 
-        if show != None:
+        if show is not None:
             # preferences currently only work for two-part counterpoint
             if 1 < len(context.parts) < 3:
                 selectedPreferredParseSets(context, show)
             else:
                 showInterpretations(context, show, partSelection, partLineType)
 
+
 def parsePart(part, context):
     '''
-    Given a part, create a parser (:py:class:`~parser.Parser`) for it and 
-    collect the results. Determine whether the line is generable as a primary, bass, or 
-    generic line. Compile a list of ways the line can be generated for each line 
-    type, if at all. Collect a list of parsing errors. 
+    Given a part, create a parser (:py:class:`~parser.Parser`) for it and
+    collect the results. Determine whether the line is generable as a primary,
+    bass, or generic line. Compile a list of ways the line can be generated
+    for each line type, if at all. Collect a list of parsing errors.
     '''
     # run the Parser
     partParser = parser.Parser(part, context)
@@ -387,52 +451,54 @@ def parsePart(part, context):
     part.errors = partParser.errors
     part.typeErrorsDict = partParser.typeErrorsDict
 
+
 def selectedPreferredParseSets(context, show):
-    '''After parsing the individual parts, select sets of parses 
-    based on Westergaard preference rules, trying to negotiate best match 
+    '''After parsing the individual parts, select sets of parses
+    based on Westergaard preference rules, trying to negotiate best match
     between global structures in the parts. [This currently works
     only for two-part counterpoint.]'''
-    
+
     # TODO currently only works for two-part counterpoint
-    
+
     # TODO need to refine the preferences substantially
     if len(context.parts) > 1:
         # select uppermost part that isPrimary as the primaryPart
         # this is arbitrary
-        primaryPart = None
+        primPart = None
         for part in context.parts[:-1]:
             if part.isPrimary:
-                primaryPart = part
+                primPart = part
                 break
         # select lowest part as the bassPart
         bassPart = context.parts[-1]
 
-        primaryS3Finals = [interp.S3Final for interp in primaryPart.interpretations['primary']]
-        bassS3s = [interp.S3Index for interp in bassPart.interpretations['bass']]
+        primaryS3Finals = [i.S3Final for i in primPart.interpretations['primary']]
+        bassS3s = [i.S3Index for i in bassPart.interpretations['bass']]
         preferredGlobals = []
-        structuralDominantOffsetDifferencesList = []
+        domOffsetDiffList = []  # structural Dominant Offset Differences List
         lowestDifference = 100
-        for interpPrimary in primaryPart.interpretations['primary']:
+        for interpPrimary in primPart.interpretations['primary']:
             for interpBass in bassPart.interpretations['bass']:
-                structuralDominantOffsetDifference = (primaryPart.recurse().flat.notes[interpPrimary.S3Final].offset - bassPart.recurse().flat.notes[interpBass.S3Index].offset)
-                if abs(structuralDominantOffsetDifference) < lowestDifference:
-                    lowestDifference = structuralDominantOffsetDifference
-                structuralDominantOffsetDifferencesList.append((structuralDominantOffsetDifference,(interpPrimary, interpBass)))
+                domOffsetDiff = (primPart.recurse().flat.notes[interpPrimary.S3Final].offset - bassPart.recurse().flat.notes[interpBass.S3Index].offset)
+                if abs(domOffsetDiff) < lowestDifference:
+                    lowestDifference = domOffsetDiff
+                domOffsetDiffList.append((domOffsetDiff, (interpPrimary, interpBass)))
 #                    if interpBass.S3Index == interpPrimary.S3Final:
 #                        preferredGlobals.append((interpPrimary, interpBass))
-        for pair in structuralDominantOffsetDifferencesList:
+        for pair in domOffsetDiffList:
             if abs(pair[0]) == abs(lowestDifference):
                 preferredGlobals.append(pair[1])
         for pair in preferredGlobals:
-            primaryPart.Pinterps = [pair[0]]
+            primPart.Pinterps = [pair[0]]
             bassPart.Binterps = [pair[1]]
             showInterpretations(context, show)
     elif len(context.parts) == 1:
         showInterpretations(context, show)
-                
+
+
 def showInterpretations(context, show, partSelection=None, partLineType=None):
     '''
-    Build interpretations for the context, gathering information from 
+    Build interpretations for the context, gathering information from
     the parses of each line.
     '''
 
@@ -443,110 +509,113 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
             context.parts[parse.partNum].remove(slur)
         # TODO remove not only slurs but also parentheses and colors
 
-        # BUILD the interpretation 
-        # arcs, rules, and parens are tied to note indexes in the line 
+        # BUILD the interpretation
+        # arcs, rules, and parens are tied to note indexes in the line
         # and these are then attached to notes in the source part
         gatherArcs(context.parts[parse.partNum], parse.arcs)
         assignRules(context.parts[parse.partNum], parse.ruleLabels)
-        assignParentheses(context.parts[parse.partNum], parse.parentheses)    
-
+        assignParentheses(context.parts[parse.partNum], parse.parentheses)
 
     def selectOutput(content, show):
         if show == 'show':
             content.show()
         elif show == 'writeToServer':
             timestamp = str(time.time())
-            filename = '/home/spenteco/1/snarrenberg/parses_from_context/' + 'parser_output_' + timestamp + '.musicxml'
+            filename = ('/home/spenteco/1/snarrenberg/parses_from_context/'
+                        + 'parser_output_' + timestamp + '.musicxml')
             content.write('musicxml', filename)
             print(filename)
         elif show == 'writeToLocal':
             timestamp = str(time.time())
-            filename = 'parses_from_context/' + 'parser_output_' + timestamp + '.musicxml'
+            filename = ('parses_from_context/'
+                        + 'parser_output_' + timestamp + '.musicxml')
             content.write('musicxml', filename)
             print(filename)
         elif show == 'writeToPng':
             timestamp = str(time.time())
-            filename = 'tempimages/' + 'parser_output_' + timestamp + '.xml'
+            filename = ('tempimages/'
+                        + 'parser_output_' + timestamp + '.xml')
             content.write('musicxml.png', fp=filename)
         elif show == 'showWestergaardParse':
             pass
-            # create a function for displaying layered representation of a parsed line, for one line only
-            
-    if partSelection != None:
+            # create a function for displaying layered representation of
+            # a parsed line, for one line only
+
+    if partSelection is not None:
         part = context.parts[partSelection]
-        if partLineType == 'primary' and context.parts[partSelection].isPrimary:
+        if partLineType == 'primary' and part.isPrimary:
             for P in part.Pinterps:
                 buildInterpretation(P)
                 selectOutput(part, show)
-        elif partLineType == 'bass' and context.parts[partSelection].isBass:
+        elif partLineType == 'bass' and part.isBass:
             for B in part.Binterps:
                 buildInterpretation(B)
                 selectOutput(part, show)
-        elif partLineType == 'generic' and context.parts[partSelection].isGeneric:
+        elif partLineType == 'generic' and part.isGeneric:
             for G in part.Ginterps:
                 buildInterpretation(G)
                 selectOutput(part, show)
-         
-    elif len(context.parts) == 1 and partLineType==None:
+
+    elif len(context.parts) == 1 and partLineType is None:
         part = context.parts[0]
-        if part.Pinterps: 
+        if part.Pinterps:
             for P in part.Pinterps:
                 buildInterpretation(P)
                 selectOutput(part, show)
         if part.Binterps:
-            for B in part.Binterps: 
+            for B in part.Binterps:
                 buildInterpretation(B)
                 selectOutput(part, show)
         if part.Ginterps:
-            for G in part.Ginterps: 
+            for G in part.Ginterps:
                 buildInterpretation(G)
                 selectOutput(part, show)
 
     elif len(context.parts) == 1 and partLineType:
         part = context.parts[0]
-        if partLineType == 'primary' and part.Pinterps: 
+        if partLineType == 'primary' and part.Pinterps:
             for P in part.Pinterps:
                 buildInterpretation(P)
                 selectOutput(part, show)
         elif partLineType == 'bass' and part.Binterps:
-            for B in part.Binterps: 
+            for B in part.Binterps:
                 buildInterpretation(B)
                 selectOutput(part, show)
         elif partLineType == 'generic' and part.Ginterps:
-            for G in part.Ginterps: 
+            for G in part.Ginterps:
                 buildInterpretation(G)
                 selectOutput(part, show)
 
-    elif len(context.parts) == 2 and partSelection==None:
+    elif len(context.parts) == 2 and partSelection is None:
         # TODO transfer this testing to the verify function
         upperPart = context.parts[0]
         lowerPart = context.parts[1]
         for P in upperPart.Pinterps:
             buildInterpretation(P)
-            for B in lowerPart.Binterps: 
+            for B in lowerPart.Binterps:
                 buildInterpretation(B)
                 selectOutput(context.score, show)
-                time.sleep(2)        
+                time.sleep(2)
 
-    elif len(context.parts) == 3 and partSelection==None:
+    elif len(context.parts) == 3 and partSelection is None:
         upperPart = context.parts[0]
         innerPart = context.parts[1]
         lowerPart = context.parts[2]
 
         if upperPart.isPrimary:
             upperPartPreferredInterps = upperPart.Pinterps
-        else: 
+        else:
             upperPartPreferredInterps = upperPart.Ginterps
         if innerPart.isPrimary:
             innerPartPreferredInterps = innerPart.Pinterps
-        else: 
+        else:
             innerPartPreferredInterps = innerPart.Ginterps
 
         for U in upperPartPreferredInterps:
             buildInterpretation(U)
             for I in innerPartPreferredInterps:
                 buildInterpretation(I)
-                for B in lowerPart.Binterps: 
+                for B in lowerPart.Binterps:
                     buildInterpretation(B)
                     selectOutput(context.score, show)
                     time.sleep(2)
@@ -556,13 +625,14 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
         raise ContextError(error)
     return
 
-##################################################################
+# -----------------------------------------------------------------------------
 # OPERATIONAL SCRIPTS FOR PARSING DISPLAY
-##################################################################
+# -----------------------------------------------------------------------------
+
 
 def gatherArcs(source, arcs):
     '''
-    Given a fully parsed line (an interpretation), sort through the arcs and 
+    Given a fully parsed line (an interpretation), sort through the arcs and
     create a music21 spanner (tie/slur) to represent each arc.
     '''
     # source is a Part in the input Score
@@ -576,51 +646,58 @@ def gatherArcs(source, arcs):
     # build arcs
     for arc in arcs:
         arcBuild(source, arc)
-    # TODO set up separate function for the basic arc 
+    # TODO set up separate function for the basic arc
+
 
 def arcBuild(source, arc):
     '''
-    The function that actually converts an arc into a slur. 
+    The function that actually converts an arc into a slur.
     '''
     # source is a Part in the input Score
     if len(arc) == 2:
         slurStyle = 'dashed'
-    else: slurStyle = 'solid'
+    else:
+        slurStyle = 'solid'
     thisSlur = spanner.Slur()
     thisSlur.lineType = slurStyle
     source.insert(0, thisSlur)
     for ind in arc:
         obj = source.recurse().notes[ind]
         thisSlur.addSpannedElements(obj)
-          
+
+
 def assignRules(source, rules):
     '''
-    Given a fully parsed line (an interpretation), add a lyric to each 
-    note to show the syntactic rule that generates the note. Also assigns the color
+    Given a fully parsed line (an interpretation), add a lyric to each
+    note to show the syntactic rule that generates the note.
+    Also assigns the color
     blue to notes generated by a rule of basic structure.
     '''
     # source is a Part in the input Score
     ruleLabels = rules
-    for index,elem in enumerate(source.recurse().notes):
+    for index, elem in enumerate(source.recurse().notes):
         for rule in ruleLabels:
             if index == rule[0]:
                 elem.lyric = rule[1]
-                if elem.lyric !=None and elem.lyric[0] == 'S':
+                if elem.lyric is not None and elem.lyric[0] == 'S':
                     elem.style.color = 'blue'
-                else: elem.style.color = 'black'
+                else:
+                    elem.style.color = 'black'
             else:
                 pass
 
+
 def assignParentheses(source, parentheses):
     '''
-    Adds parentheses around notes generated as insertions. [This aspect of syntax 
-    representation cannot be fully implemented at this time, because musicxml only 
-    allows parentheses to be assigned in pairs, whereas syntax coding requires
+    Adds parentheses around notes generated as insertions. [This aspect
+    of syntax representation cannot be fully implemented at this time,
+    because musicxml only allows parentheses to be assigned in pairs,
+    whereas syntax coding requires
     the ability to assign left and right parentheses separately.]
     '''
     # source is a Part in the input Score
     parentheses = parentheses
-    for index,elem in enumerate(source.recurse().notes):
+    for index, elem in enumerate(source.recurse().notes):
         for parens in parentheses:
             if index == parens[0]:
                 elem.noteheadParenthesis = parens[1]
@@ -635,6 +712,6 @@ if __name__ == "__main__":
 
     source = '../TestScoresXML/Primary06.musicxml'
     evaluateLines(source)
-    
+
 # -----------------------------------------------------------------------------
 # eof

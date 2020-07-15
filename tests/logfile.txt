@@ -1,0 +1,6 @@
+PARSE REPORT
+Key inferred by program: D minor
+Line Parsing Errors
+	Part 1 is generable as a primary line.
+	Part 2 is not generable. The following errors were found:
+			The non-tonic-triad pitch B-3 in measure 6 cannot be generated.
