@@ -1,4 +1,4 @@
-# -------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Name:         parser.py
 # Purpose:      Framework for analyzing the Westergaardian structure
 #               of simple tonal lines
@@ -6,20 +6,21 @@
 # Author:       Robert Snarrenberg
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
-# -------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 '''
 Parser
 ======
 
 Designed as a transition-based dependency parser, the WesterParse parser
-analyzes the syntax of a melodic line and produces a set of valid interpretations.
+analyzes the syntax of a rhythmically simple melodic line
+and produces a set of valid interpretations.
 
 Procedure:
 
-#. accept a part from a context
-#. infer the possible lineTypes if not given in advance
-#. parse the part for each possible lineType
-#. return a set of parses and errors
+#. Accept a part from a context.
+#. Infer the possible line type(s) if not given in advance.
+#. Parse the part for each possible line type.
+#. Return a set of parses and errors.
 
 The machinery consists of a buffer, a stack, and a scanner.
 At initialization, the notes of the line are read into the buffer.
@@ -41,7 +42,6 @@ Interpretation then continues by line type.
 The parser gathers all of the valid interpretations into lists.
 The parser also records errors that arise.
 '''
-
 from music21 import *
 from utilities import pairwise
 import itertools
@@ -67,46 +67,37 @@ selectPreferredParses = True
 class Parser():
     '''
     The Parser class is the engine of the parser. The bulk of the work is done
-    by :py:func:`~parseTransition`. After a preliminary parse of the line,
-    the parser decides on a set of possible structural interpretations and creates
-    a :py:class:`~Parser.Parse` object to store each interpretation.
+    by :py:func:`~parseTransition`.  After a preliminary parse of the line,
+    the parser decides on a set of possible structural interpretations and
+    creates a :py:class:`~Parser.Parse` object to store each interpretation.
 
     Upon initialization, the Parser automatically parses the line,
-    in the following steps:
+    using the following procedure:
 
-    * prepares placeholders for parses and errors
-    * accepts a linetype if provided, otherwise it infers the set
+    * Prepare placeholders for parses and errors.
+    * Accept a line type if provided, otherwise infer the set
       of possible types.
-    * operates the preliminary parser: :py:func:`~preParseLine`
-    * interrupts the parser if preliminary parsing is unsuccessful
-      and reports errors
-    * determines the set of possible basic structures and parses
-      for each possibility: :py:func:`~prepareParses`
-    * gathers all the valid interpretations of the part by lineType:
-      :py:func:`~collectParses`
-    * reduces the set of interpretations using preference rules:
-      :py:func:`~selectPreferredParses`
+    * Operate the preliminary parser: :py:func:`~preParseLine`.
+    * Interrupt the parser if preliminary parsing is unsuccessful
+      and report errors.
+    * Determine the set of possible basic structures and parses
+      for each possibility: :py:func:`~prepareParses`.
+    * Gather all the valid interpretations of the part by line type:
+      :py:func:`~collectParses`.
+    * Reduce the set of interpretations using preference rules:
+      :py:func:`~selectPreferredParses`.
 
-    The individual parses are contained in a :py:class:`~Parser.Parse`. These are created
-    by :py:func:`~prepareParses`.
+    The individual parses are contained in a :py:class:`~Parser.Parse`.
+    These are created by :py:func:`~prepareParses`.
     '''
-
-#    TODO: If the parse fails, the location is marked
-#    (with relevant elements marked "NG"? = nongenerable, color=Red)
-#    and the most recent Arc is popped into a failed list
-#    and its elements replaced on the Stack;
-#    the parser then must skip assigning a structure
-#    that matches the failed Arc
-#    and instead shift more elements onto the Stack
-
     def __init__(self, part, context, **keywords):
-        # set up base content
+        # Set up base content.
         self.part = part
         self.context = context
         self.notes = self.part.flat.notes
 
-        # errors are collected by part, line type, and individual parse
-        # exceptions are then raised in context.py: parseContext
+        # Collect errors by part, line type, and individual parse.
+        # Raise exceptions in context.py: parseContext.
         self.errors = []  # syntax errors arising during pre-parse,
         #      by part
         #      results are collected for further evaluation
@@ -118,69 +109,83 @@ class Parser():
         #      by parseLabel
         #      used only internally to weed out specific failures
 
-        # the following lists will be returned to the Part at the end of the Parser
+        # The following lists will be returned
+        # to the Part at the end of the Parser.
         self.parses = []  # list of parseLabels
-        self.interpretations = {}  # syntax interpretations of the part in the context,
+        self.interpretations = {}  # syntax interpretations
+        #       of the part in the context,
         #       keyed by lineType, dictionary built parseLabels in self.parses
-        # lists of parseLabels for successful parses
+
+        # Lists of parseLabels for successful parses.
         self.Pinterps = []
         self.Binterps = []
         self.Ginterps = []
+        # Generability attributes.
         self.isPrimary = False
         self.isGeneric = False
         self.isBass = False
 
-        # accept line type if already selected, otherwise infer the set of possible types
+        # Accept line type if already selected,
+        # otherwise infer the set of possible types.
         if self.part.lineType is not None:
             self.part.lineTypes = [self.part.lineType]
         else:
             self.part.lineTypes = []
             self.inferLineTypes()
 
-        # STEP ONE: operate the preliminary parser
+        # STEP ONE: Operate the preliminary parser.
         self.preParseLine()
 
-        # interrupt parser if preliminary parsing is unsuccessful
+        # Interrupt parser if preliminary parsing is unsuccessful.
         # and report errors
         if self.errors:
             return
 
-        # STEP TWO: determine the set of possible basic structures
-        # and parse for each possibility
+        # STEP TWO: Determine the set of possible basic structures,
+        # and parse for each possibility.
         self.prepareParses()
 
-        # STEP THREE: gather all the valid interpretations
-        # of the part by lineType
+        # STEP THREE: Gather all the valid interpretations
+        # of the part by line type.
         self.collectParses()
 
-        # STEP FOUR: reduce the set of interpretations using preference rules
+        # STEP FOUR: Reduce the set of interpretations using preference rules.
         self.selectPreferredParses()
 
     def inferLineTypes(self):
-        '''If the line type is not specified, infers a set of possibilities.'''
-        if self.notes[0].csd.value % 7 not in [0, 2, 4] and self.notes[-1].csd.value % 7 not in [0, 2, 4]:
-            error = 'Generic structure error: The line is not bounded by tonic-triad pitches and hence not a valid tonic line.'
+        '''If the line type is not specified, infer a set of possibilities.'''
+        cond1 = self.notes[0].csd.value % 7 in [0, 2, 4]
+        cond2 = self.notes[-1].csd.value % 7 in [0, 2, 4]
+        cond3 = self.notes[0].csd.value % 7 == 0
+        cond4 = self.notes[-1].csd.value % 7 == 0
+        cond5 = self.notes[-1].csd.value == 0
+        if not cond1 and not cond2:
+            error = ('Generic structure error: The line is not bounded '
+                     'by tonic-triad pitches and hence not a valid tonic line.')
             self.errors.append(error)
             return
         else:
             self.part.lineTypes.append('generic')
-        # make some educated guesses as to whether the line can be a bass line or primary line
-        if self.notes[0].csd.value % 7 == 0 and self.notes[-1].csd.value % 7 == 0:
+        # Make some educated guesses as to whether
+        # the line can be a bass line or primary line.
+        if cond3 and cond4:
             for n in self.notes[1:-1]:
-                if n.csd.value % 7 == 4 and 'bass' not in self.part.lineTypes:
+                if n.csd.value % 7 == 4:
                     self.part.lineTypes.append('bass')
-        if self.notes[0].csd.value % 7 in [0, 2, 4] and self.notes[-1].csd.value == 0:
+                    break
+        if cond1 and cond5:
             for n in self.notes[:-1]:
-                if n.csd.value in [2, 4, 7] and 'primary' not in self.part.lineTypes:
+                if n.csd.value in [2, 4, 7]:
                     self.part.lineTypes.append('primary')
+                    break
 
     def preParseLine(self):
         '''
-        Conducts a preliminary parse of the line.
-        Initializes the buffer, stack, and arcs.
-        Initializes the lists of open heads and transitions.
-        Sets the global harmonic referents.
-        Runs the scanner, parsing each transition.
+        Conduct a preliminary parse of the line.
+        Initialize the buffer, stack, and arcs.
+        Initialize the lists of open heads and transitions.
+        Set the global harmonic referents.
+        Run the scanner, parsing each transition.
         '''
         # Initialize the buffer, stack, and arcs
         lineBuffer = [n for n in self.notes
@@ -196,34 +201,34 @@ class Parser():
 
         if (self.part.species in ['first', 'second', 'fourth'] and
            not self.context.harmonicSpecies):
-            # run the line scanner
+            # Run the line scanner.
             n = len(lineBuffer)
             while n > 1:
                 shiftBuffer(lineStack, lineBuffer)
                 n = len(lineBuffer)
                 i = lineStack[-1]
                 j = lineBuffer[0]
-                # parse the transition i-j
+                # Parse the transition i-j.
                 self.parseTransition(lineStack, lineBuffer, self.part, i, j,
                                      harmonyStart, harmonyEnd, openHeads,
                                      openTransitions, arcs)
-                # break upon finding errors
+                # Break upon finding errors.
                 if self.errors:
                     break
 
-        # TODO figure out how to parse harmonic species
+        # TODO Figure out how to parse harmonic species.
         elif self.context.harmonicSpecies:
             pass
 
         elif self.part.species in ['third', 'fifth']:
-            # set variable for whether to attempt extending local
-            # arcs outside local context
-            # use for testing
+            # Set variable for whether to attempt extending local arcs
+            # outside local context.
+            # Use for testing.
             localNeighborsOnly = False
             extendLocalArcs = True
             addLocalRepetitions = True
 
-            # scan the global context
+            # Scan the global context.
             n = len(lineBuffer)
             while n > 1:
                 shiftBuffer(lineStack, lineBuffer)
@@ -231,7 +236,8 @@ class Parser():
                 i = lineStack[-1]
                 j = lineBuffer[0]
 
-                # parse the local span whenever i falls at the start of the measure
+                # Parse the local span whenever i falls
+                # at the start of the measure.
                 closedLocalPitchIndexes = []
                 localStart = lineStack[-1].index
                 localEnd = 0
@@ -243,11 +249,11 @@ class Parser():
                     localOpenTransitions = []
                     if i.beat == 1.0 and i.index > 0:
                         localHarmonyStart = self.context.localHarmonyDict[i.offset]
-                    else:  # get tonic harmony for first measure
+                    else:  # Get tonic harmony for first measure.
                         localHarmonyStart = [p for p in self.part.tonicTriad.pitches]
 
-                    # fill the local buffer up to and including the next onbeat note
-                    # and set localHarmonyEnd by that note
+                    # Fill the local buffer up to and including the next onbeat
+                    # note and set localHarmonyEnd by that note.
                     for note in lineBuffer:
                         if note.beat == 1.0:
                             localBuffer.append(note)
@@ -256,13 +262,13 @@ class Parser():
                             break
                         else:
                             localBuffer.append(note)
-                    # now put i in the local buffer so i--j can be parsed
+                    # Now put i in the local buffer so i--j can be parsed.
                     localBuffer.insert(0, i)
 
-                    # add onbeat note to local heads
+                    # Add onbeat note to local heads.
                     localOpenHeads = [i.index]
 
-                    # scan local context
+                    # Scan local context.
                     ln = len(localBuffer)
                     while ln > 1:
                         shiftBuffer(localStack, localBuffer)
@@ -274,11 +280,11 @@ class Parser():
                                              localHarmonyStart, localHarmonyEnd,
                                              localOpenHeads,
                                              localOpenTransitions, localArcs)
-                    # break upon finding errors
+                    # Break upon finding errors.
                         if self.errors:
                             break
 
-                    # look for local repetitions
+                    # Look for local repetitions.
                     if addLocalRepetitions:
                         firstLocalHead = localOpenHeads[0]
                         for h in localOpenHeads[1:]:
@@ -286,27 +292,31 @@ class Parser():
                                 self.notes[h].dependency.lefthead = firstLocalHead
                                 self.notes[firstLocalHead].dependency.dependents.append(h)
                                 arcGenerateRepetition(h, self.part, localArcs, localStack)
-                                # remove any intervening local heads
+                                # Remove any intervening local heads.
                                 revisedHeads = [head for head in localOpenHeads[1:]
                                                 if head < h]
                                 localOpenHeads = [firstLocalHead] + revisedHeads
-                                # transfer dependencies to new lefthead
+                                # Transfer dependencies to new lefthead.
 #                                for d in self.notes[h].dependency.dependents:
 #                                    if self.notes[d].dependency.lefthead == h:
 #                                        self.notes[d].dependency.lefthead = firstLocalHead
 
-                    # if local insertions are not allowed, limit local arcs
-                    # to neighbors and repetitions
+                    # If local insertions are not allowed, limit local arcs
+                    # to neighbors and repetitions.
                     if localNeighborsOnly:
                         localArcs = [arc for arc in localArcs if
                                      (isNeighboring(arc, self.notes) or
                                       isRepetition(arc, self.notes))]
 
-                    # collect indexes of pitches that are embedded in local arcs
+                    # Collect indexes of pitches that are
+                    # embedded in local arcs.
                     for arc in localArcs:
                         if arc in localArcs:
-                            if ((len(arc) == 3 and isNeighboring(arc, self.notes)) or
-                                    (len(arc) == 2 and isRepetition(arc, self.notes))):
+                            cond1 = len(arc) == 3
+                            cond2 = len(arc) == 2
+                            cond3 = isNeighboring(arc, self.notes)
+                            cond4 = isRepetition(arc, self.notes)
+                            if (cond1 and cond3) or (cond2 and cond4):
                                 for idx in range(arc[0]+1, arc[-1]+1):
                                     if self.notes[idx].beat != 1.0:
                                         closedLocalPitchIndexes.append(idx)
@@ -315,25 +325,30 @@ class Parser():
                                     closedLocalPitchIndexes.append(idx)
                         clp = []
                         closedLocalPitchIndexes = list(set(closedLocalPitchIndexes))
-                        # copy local arcs to global arcs
+                        # Copy local arcs to global arcs.
                         arcs.append(arc)
 
-                    # try to extend local passing motions from or into bordering context
+                    # Try to extend local passing motions from
+                    # or into bordering context
                     if extendLocalArcs:
-                        # try to extend local arcs leftward if lefthead in openTransitions
+                        # Try to extend local arcs leftward
+                        # if lefthead in open transitions.
                         for arc in localArcs:
                             if arc[0] in openTransitions:
                                 lh = self.notes[arc[0]].dependency.lefthead
-                                # get all of the global notes connected to the open transition
+                                # Get all of the global notes connected to
+                                # the open transition.
                                 globalElems = [idx for idx in
                                                self.notes[arc[0]].dependency.dependents
                                                if self.notes[arc[0]].dependency.lefthead < idx < arc[0]]
                                 extensions = [lh] + globalElems
 
-                                # see whether the global lefthead is just a step away
+                                # See whether the global lefthead
+                                # is just a step away
                                 if isPassing(arc, self.notes):
                                     tempArc = extensions + arc
-                                    # see whether new arc passes through a consonant interval
+                                    # See whether new arc passes through
+                                    # a consonant interval
                                     rules = [isPassing(tempArc, self.notes),
                                              isLinearConsonance(self.notes[tempArc[0]],
                                              self.notes[tempArc[-1]])]
@@ -347,7 +362,7 @@ class Parser():
                                         arcs.append(tempArc)
                                         localArcs.append(tempArc)
 
-                        # try to extend local arcs rightward if ...
+                        # Try to extend local arcs rightward if ...
                         for arc in localArcs:
                             if arc[-1] == localEnd-1:
                                 tempArc = arc + [localEnd]
@@ -363,9 +378,11 @@ class Parser():
                                     arcs.append(tempArc)
                                     localArcs.append(tempArc)
 
-                        # TODO: try to extend leftward and rightward simultaneously?
+                        # TODO: Try to extend leftward and rightward
+                        # simultaneously?
 
-                        # and now see whether any local neighbors remain available
+                        # And now see whether any local neighbors
+                        # remain available
                         if len(localOpenHeads) > 1:
                             pairs = itertools.combinations(localOpenHeads, 2)
                             for pair in pairs:
@@ -378,7 +395,8 @@ class Parser():
                                 if all(rules):
                                     j.dependency.lefthead = i.index
                                     i.dependency.dependents.append(j.index)
-                                    arcGenerateRepetition(j.index, self.notes, localArcs, localStack)
+                                    arcGenerateRepetition(j.index, self.notes,
+                                                          localArcs, localStack)
                                     localOpenHeads.remove(j.index)
                                     closedLocalPitchIndexes.append(j.index)
                                     j.rule.name = 'L1'
@@ -388,24 +406,24 @@ class Parser():
                                             localOpenHeads.remove(h)
                                             closedLocalPitchIndexes.append(h)
 
-                # shift locals into lineStack if not locally closed
-                # ... start with the top of the stack, which is
-                # first in the local context
-                # remove top of stack if it is now closed
+                # Shift locals into line stack if not locally closed.
+                # Start with the top of the stack, which is
+                # first in the local context.
+                # Remove top of stack if it is now closed.
                 if lineStack[-1].index in closedLocalPitchIndexes:
                     lineStack.pop(-1)
-                # ... then proceed through the rest of the local context
+                # Then proceed through the rest of the local context.
                 while lineBuffer[0].index < localEnd:
                     shiftBuffer(lineStack, lineBuffer)
                     if lineStack[-1].index in closedLocalPitchIndexes:
                         lineStack.pop(-1)
 
-                # restore the open locals to the buffer
+                # Restore the open locals to the buffer.
                 while lineStack[-1].index > localStart:
                     shiftStack(lineStack, lineBuffer)
 
-                # reparse the open locals in the global context
-                # TODO this is problematical when there are several open locals
+                # Reparse the open locals in the global context.
+                # TODO This is problematical when there are several open locals.
                 harmonyStart = [p for p in self.part.tonicTriad.pitches]
                 harmonyEnd = [p for p in self.part.tonicTriad.pitches]
                 while lineBuffer[0].index < localEnd:
@@ -415,9 +433,8 @@ class Parser():
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
                     shiftBuffer(lineStack, lineBuffer)
-#                    self.showPartialParse(lineStack[-1], lineBuffer[0], arcs, openHeads, openTransitions)
 
-                # parse the transition into the next span
+                # Parse the transition into the next span.
                 if lineBuffer[0].index == localEnd:
                     i = lineStack[-1]
                     j = lineBuffer[0]
@@ -428,11 +445,11 @@ class Parser():
 
         if self.part.species in ['third', 'fifth'] and openTransitions:
             for idx in openTransitions:
-                # TODO first look for 'resolution'
+                # TODO First look for 'resolution'.
                 self.notes[idx].rule.name = 'L0'
         elif openTransitions:
-            # TODO convert to measures, note that indexes in fourth species
-            # are for each individual half note, not each tied combination
+            # TODO Convert to measures, note that indexes in fourth species
+            # are for each individual half note, not each tied combination.
             error = ('There are unclosed transitions in the line at '
                      'the following positions: ' + str(openTransitions))
             self.errors.append(error)
@@ -473,93 +490,95 @@ class Parser():
 
         #. *Both pitches are harmonic*
 
-           * if *i* and *j* are the same pitch, generate a repetition
-           * if there are open transitions, see whether *j*
-             resolves a transition, starting with the most recent
+           * If *i* and *j* are the same pitch, generate a repetition.
+           * If there are open transitions, see whether *j*
+             resolves a transition, starting with the most recent.
 
         #. *Step from the harmony of this bar to the harmony of the next*
 
-           * if *i* is an open transition, end the transition at *j*
+           * If *i* is an open transition, end the transition at *j*.
 
         #. *Step from harmonic to nonharmonic pitch*
 
-           * if there are open transitions, see whether *j* continues
-             a transition, starting with the most recent
-           * if there are no open transitions but there are open heads,
+           * If there are open transitions, see whether *j* continues
+             a transition, starting with the most recent.
+           * If there are no open transitions but there are open heads,
              try to attach *j* to an open head, starting with
-             the most recent (*i*)
+             the most recent (*i*).
 
         #. *Step from nonharmonic to harmonic pitch*
 
-           * in third species, add *j* to the local harmony if needed
-           * if there are no open transitions, see whether the
-             directionality of *i* matches the direction of the step
+           * In third species, add *j* to the local harmony if needed.
+           * If there are no open transitions, see whether the
+             directionality of *i* matches the direction of the step.
 
-              * if so, make *i* the lefthead of *j*
-              * otherwise, add *i* to the list of open transitions
+              * If so, make *i* the lefthead of *j*.
+              * Otherwise, add *i* to the list of open transitions.
 
-           * if there are open transitions, see whether *j* resolves
-             a transition, starting with the most recent
+           * If there are open transitions, see whether *j* resolves
+             a transition, starting with the most recent.
 
         #. *Step from nonharmonic to nonharmonic*
 
-           * if the directionality of *i* and *j* match or *i*
-             is bidirectional and *j* is ascending
-           * if *i* is ascending and *j* is descending
-           * if *i* is ascending and *j* is bidirectional
-           * if *i* is bidirectional and *j* is descending
+           * If the directionality of *i* and *j* match or *i*
+             is bidirectional and *j* is ascending, ...
+           * If *i* is ascending and *j* is descending, ...
+           * If *i* is ascending and *j* is bidirectional, ...
+           * If *i* is bidirectional and *j* is descending, ...
 
         #. *Consonant skip from nonharmonic to nonharmonic*
 
            * if *i* and *j* are linearly consonant ...
 
-        #. *Consonant skip from harmonic to nonharmonic*
+        #. *Consonant skip from harmonic to nonharmonic* 
 
-           * if there are open transitions:
+           * This is one of the more complex cases, often necessitating
+             revision of the interpretation in order to connect the new
+             nonharmonic pitch to a previous pitch.
 
-              * see whether *j* continues a transition in progress
-              * if not, see whether *j* connects to a head
-                that precedes the open transitions
-              * if neither of these works, return an error: *j* appears
-                out of the blue and cannot be generated
+           * If there are open transitions:
 
-           * if there are open heads:
+              * See whether *j* continues a transition in progress.
+              * If not, see whether *j* connects to a head
+                that precedes the open transitions.
+              * If neither of these works, return an error: *j* appears
+                out of the blue and cannot be generated.
 
-              * look for an open head to attach to *j*
-              * if that fails, search for possible step-related
-                antecedent (head or transition)
+           * If there are open heads:
 
-                 * look in reverse at the terminals of current arcs and
-                   select the most recent that is step-related
-                 * look for possible step-related transition that was
-                   previously integrated into a neighbor arc
-                 * look for possible step-related insertion that was
-                   embedded in another arc
+              * Look for an open head to attach to *j*.
+              * If that fails, search for possible step-related
+                antecedent (head or transition).
 
-              * if neither of these works, return an error:
-                *j* appears out of the blue and cannot be generated
+                 * Look in reverse at the terminals of current arcs and
+                   select the most recent that is step-related.
+                 * Look for possible step-related transition that was
+                   previously integrated into a neighbor arc.
+                 * Look for possible step-related insertion that was
+                   embedded in another arc.
+
+              * If neither of these works, return an error:
+                *j* appears out of the blue and cannot be generated.
 
         #. *Consonant skip from nonharmonic to nonharmonic*
 
-           * return an error
+           * Return an error.
 
         #. *Linear unison between nonharmonic pitches*
 
-           * return an error
+           * Return an error.
 
         #. *Dissonant skip*
 
-           * return an error
+           * Return an error.
 
         #. *Skip larger than an octave*
 
-           * return an error
+           * Return an error.
 
         '''
-
-        # CASE ONE: both pitches are harmonic
         case1 = [(isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart)),
-                (isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart))]
+                 (isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart))]
         case2 = [self.part.species in ['third', 'fifth'],
                  not isHarmonic(i, harmonyStart),
                  isHarmonic(j, harmonyEnd),
@@ -596,6 +615,8 @@ class Parser():
                   not isLinearUnison(i, j),
                   not isDiatonicStep(i, j)]
         case12 = [not isSemiSimpleInterval(i, j)]
+
+        # CASE ONE: Both pitches are harmonic.
         if all(case1):
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
@@ -605,7 +626,7 @@ class Parser():
                 i.dependency.dependents.append(j.index)
                 arcGenerateRepetition(j.index, part, arcs, stack)
             elif openTransitions:
-                # see if j resolves the most recent open transition
+                # See if j resolves the most recent open transition.
                 t = openTransitions[-1]
                 for t in reversed(openTransitions):
                     h = self.notes[t]
@@ -634,8 +655,8 @@ class Parser():
                     openHeads.append(i.index)
                 openHeads.append(j.index)
 
-        # CASE TWO: transition from the harmony of this bar
-        # to the harmony of the next
+        # CASE TWO: Transition from the harmony of this bar
+        # to the harmony of the next.
         elif all(case2):
             if i.index in openTransitions:
                 i.dependency.righthead = j.index
@@ -644,12 +665,12 @@ class Parser():
                 for d in i.dependency.dependents:
                     if i.dependency.lefthead is None:
                         i.dependency.lefthead = self.notes[d].dependency.lefthead
-                    # add righthead to codependents if they share lefthead
+                    # Add righthead to codependents if they share lefthead.
                     if self.notes[d].dependency.lefthead == i.dependency.lefthead:
                         self.notes[d].dependency.righthead = j.index
                 arcGenerateTransition(i.index, part, arcs, stack)
 
-        # CASE THREE: step from harmonic to nonharmonic pitch
+        # CASE THREE: Step from harmonic to nonharmonic pitch.
         elif all(case3):
             if openTransitions:
                 for t in reversed(openTransitions):
@@ -674,7 +695,7 @@ class Parser():
                     if openHeads:
                         for t in reversed(openHeads):
                             h = self.notes[t]
-                            # if i is the only open head
+                            # If i is the only open head, ...
                             if i.index == h.index:
                                 j.dependency.lefthead = i.index
                                 i.dependency.dependents.append(j.index)
@@ -700,12 +721,12 @@ class Parser():
                         openTransitions.append(j.index)
                         break
             elif not openTransitions:
-                # connect to an earlier head with the same
-                # pitch as i, if available
+                # Connect to an earlier head with the same
+                # pitch as i, if available.
                 if openHeads:
                     for t in reversed(openHeads):
                         h = self.notes[t]
-                        # if i is the only open head
+                        # If i is the only open head, ...
                         if i.index == h.index:
                             j.dependency.lefthead = i.index
                             i.dependency.dependents.append(j.index)
@@ -725,16 +746,16 @@ class Parser():
                 else:
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
-# 2020-06-09 should this be indented?
+                # TODO 2020-06-09 should this be indented?
                 openTransitions.append(j.index)
 
-        # CASE FOUR: step from nonharmonic to harmonic pitch
+        # CASE FOUR: Step from nonharmonic to harmonic pitch.
         elif all(case4):
-            # complete the local harmony if possible
+            # Complete the local harmony if possible
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
                     harmonyStart.append(j.pitch)
-# 2020-07-08: isn't i already on the list of open transitions?
+            # TODO 2020-07-08: isn't i already on the list of open transitions?
             if not openTransitions:
                 # if step up or down, i.csd.direction must match direction of step
                 if isStepUp(i, j) and i.csd.direction not in ['ascending', 'bidirectional']:
@@ -758,7 +779,8 @@ class Parser():
                             if self.notes[i.dependency.lefthead] != self.notes[i.dependency.righthead]:
                                 openHeads.append(j.index)
                             arcGenerateTransition(i.index, part, arcs, stack)
-                            # if lefthead of transition is not in triad, remove from openHeads
+                            # If lefthead of transition is not in triad,
+                            # remove from open heads.
                             if not(isHarmonic(self.notes[i.dependency.lefthead], harmonyStart)):
                                 openHeads.remove(i.dependency.lefthead)
                         elif isStepDown(i, j) and i.csd.direction in ['descending', 'bidirectional']:
@@ -814,8 +836,11 @@ class Parser():
                             for d in h.dependency.dependents:
                                 if d < h.index and isStepUp(self.notes[d], h):
                                     self.notes[d].dependency.righthead = j.index
-                                    # remove condition if there's no reason why d is not still in openTransitions
-                                    openTransitions[:] = [trans for trans in openTransitions if trans != d]
+                                    # TODO Remove condition if there's no reason
+                                    # why d is not still in openTransitions
+                                    openTransitions[:] = [trans for trans
+                                                          in openTransitions
+                                                          if trans != d]
                             openTransitions.remove(h.index)
                             arcGenerateTransition(h.index, part, arcs, stack)
                             openHeads[:] = [head for head in openHeads if head <= h.index]
@@ -827,13 +852,16 @@ class Parser():
                             for d in h.dependency.dependents:
                                 if d < h.index and isStepDown(self.notes[d], h):
                                     self.notes[d].dependency.righthead = j.index
-                                    # TODO: d was probably removed from openTransitions
-                                    # somewhere prior to this
-                                    # so this may be entirely unnecessary
-                                    openTransitions[:] = [trans for trans in openTransitions if trans != d]
+                                    # TODO: d was probably removed from open
+                                    # transitions somewhere prior to this
+                                    # so this may be entirely unnecessary.
+                                    openTransitions[:] = [trans for trans
+                                                          in openTransitions
+                                                          if trans != d]
                             openTransitions.remove(h.index)
                             arcGenerateTransition(h.index, part, arcs, stack)
-                            openHeads[:] = [head for head in openHeads if head <= h.index]
+                            openHeads[:] = [head for head in openHeads
+                                            if head <= h.index]
                             if j.index not in openHeads:
                                 openHeads.append(j.index)
                     elif i.index in openTransitions:
@@ -863,7 +891,7 @@ class Parser():
                         arcGenerateTransition(i.index, part, arcs, stack)
                     break
 
-        # CASE FIVE: step from nonharmonic to nonharmonic
+        # CASE FIVE: Step from nonharmonic to nonharmonic.
         elif all(case5):
             if (i.csd.direction == j.csd.direction or
                i.csd.direction == 'bidirectional' and
@@ -881,7 +909,7 @@ class Parser():
                             i.dependency.lefthead = h.index
                             j.dependency.lefthead = h.index
                             # TODO: I don't think i.index has in all cases
-                            # been added to openTransitions
+                            # been added to openTransitions.
                             if i.index in openTransitions:
                                 openTransitions.remove(i.index)
                             openTransitions.append(j.index)
@@ -907,14 +935,14 @@ class Parser():
                             openTransitions.remove(i.index)
                             openTransitions.append(j.index)
                         else:
-                            error = 'Non-generable succession: ' + i.nameWithOctave + ' to ' + j.nameWithOctave
+                            error = ('Non-generable succession: '
+                                     + i.nameWithOctave + ' to '
+                                     + j.nameWithOctave)
                             self.errors.append(error)
                             return
-# TODO verify that this new code handles reversals in passing motions
-
+# TODO verify that this new code handles reversals in passing motions:
 # allow for finding preceding as well as subsequent head
 # at the change of direction, close off an arc, then look backward for head or add i to openTransitions
-# TODO consider making consecutions a get method rather than an attribute lookup
                     else:
                         if i.consecutions.leftDirection == j.consecutions.leftDirection:
                             j.dependency.lefthead = i.dependency.lefthead
@@ -929,7 +957,8 @@ class Parser():
                                 if h != 0 and not isDiatonicStep(self.notes[h], i):
                                     pass
                                 elif isDiatonicStep(self.notes[h], i):
-                                    # generate a transition to i and then reassign i's lefthead etc
+                                    # Generate a transition to i and then
+                                    # reassign i's lefthead etc.
                                     connectsToHead = True
                                     self.notes[i.dependency.dependents[-1]].dependency.righthead = i.index
                                     arcGenerateTransition(i.dependency.dependents[-1], part, arcs, stack)
@@ -963,7 +992,7 @@ class Parser():
                 openTransitions.append(j.index)
                 arcGenerateTransition(i.index, part, arcs, stack)
             elif i.csd.direction == 'ascending' and j.csd.direction == 'bidirectional':
-                # added this if trap on 2020-06-05 to capture 8-#7-#6-5 in minor
+                # Added this if trap on 2020-06-05 to capture 8-#7-#6-5 in minor
                 if i.csd.value % 7 == 6 and j.csd.value % 7 == 5:
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
@@ -975,14 +1004,14 @@ class Parser():
                     self.notes[j.dependency.lefthead].dependency.dependents.append(j.index)
                     openTransitions.append(j.index)
             elif i.csd.direction == 'bidirectional' and j.csd.direction == 'descending':
-                # for catching 5-#6-b7 in minor, revised 2020-06-05
+                # For catching 5-#6-b7 in minor, revised 2020-06-05
                 i.dependency.righthead = j.index
                 j.dependency.dependents.append(i.index)
                 openTransitions.append(j.index)
                 openTransitions.remove(i.index)
                 arcGenerateTransition(i.index, part, arcs, stack)
                 openHeads.remove(i.dependency.lefthead)
-                # take lefthead off the stack, too
+                # Take lefthead off the stack, too.
                 stack = [n for n in stack if n.index != i.dependency.lefthead]
 #            elif i.csd.direction == 'bidirectional' and j.csd.direction == 'bidirectional':
 #                print('listening to', j.index, j.dependency.lefthead)
@@ -994,7 +1023,7 @@ class Parser():
                 openTransitions.remove(i.index)
                 openTransitions.append(j.index)
 
-        # CASE SIX: skip from nonharmonic to harmonic
+        # CASE SIX: Skip from nonharmonic to harmonic.
         elif all(case6):
             if i.dependency.lefthead is None:
                 for t in reversed(openHeads):
@@ -1009,7 +1038,7 @@ class Parser():
             else:
                 openHeads.append(j.index)
 
-        # CASE SEVEN: skip from harmonic to nonharmonic
+        # CASE SEVEN: Skip from harmonic to nonharmonic.
         elif all(case7):
             if openTransitions:
                 # A. See whether j continues a transition in progress
@@ -1023,7 +1052,7 @@ class Parser():
                         openTransitions.remove(h.index)
                         openTransitions.append(j.index)
                         continuesTransition = True
-                        # remove intervening open heads
+                        # Remove intervening open heads.
                         deletedHeads = []
                         for oh in reversed(openHeads):
                             if h.index < oh < j.index:
@@ -1031,15 +1060,17 @@ class Parser():
                         openHeads[:] = [head for head in openHeads
                                         if head not in deletedHeads]
                         break
-# 2020-06-09 I don't think two unrelated transitions can be in progress at the same time,
-# unless the lefthead of the second is later than (not earlier than!) the first open transition
-# so I rewrote the earlierHeads to get heads that intervene between the first and second transition
-                # B. If not, see whether j connects to a head that precedes the open transitions
+# 2020-06-09 I don't think two unrelated transitions can be in progress at the
+# same time, except when the lefthead of the second is later than
+# (not earlier than!) the first open transition, so I rewrote the earlierHeads
+# to get heads that intervene between the first and second transition
+                # B. If not, see whether j connects to a head that
+                # precedes the open transitions
                 if continuesTransition:
                     return
                 else:
-                    # get those open heads that are later
-                    # than the earliest open transition:
+                    # Get those open heads that are later
+                    # than the earliest open transition.
                     interveningHeads = [idx for idx in openHeads
                                         if idx > openTransitions[0]]
                     connectsToHead = False
@@ -1053,49 +1084,42 @@ class Parser():
                             openTransitions.append(j.index)
                             connectsToHead = True
                             break
-                # C. If neither of these works, return an error:
-                # j appears out of the blue and cannot be generated
+                # C. If neither of these works, return an error.
                     if not connectsToHead:
                         error = ('The non-tonic-triad pitch '
                                  + j.nameWithOctave + ' in measure '
                                  + str(j.measureNumber) + ' cannot be generated.')
                         self.errors.append(error)
             elif openHeads:
-#                print('listening to', j.index, openHeads, openTransitions)
                 skippedHeads = []
-                for h in reversed(openHeads):  # only open heads are currently on the stack
-                    # A. Look for an open head to attach to
+                for h in reversed(openHeads):
+                    # A. Look for an open head to attach to.
                     if h != 0 and not isDiatonicStep(self.notes[h], j):
                         skippedHeads.append(h)
                     elif isDiatonicStep(self.notes[h], j):
                         self.notes[h].dependency.dependents.append(j.index)
                         j.dependency.lefthead = h
                         openTransitions.append(j.index)
-                        # remove skipped heads from openHeads and stack
+                        # Remove skipped heads from open heads and stack.
                         openHeads[:] = [head for head in openHeads
                                         if head not in skippedHeads]
                         for s in reversed(stack):
                             if s.index in skippedHeads:
                                 stack.remove(s)
-                        break  # stop now that a lefthead was found
+                        break  # Stop now that a lefthead was found.
                     # B. If A was not successful, search for possible
                     # step-related antecedent (head or trans)
-                    #    that was previously deleted from the stack
-                    # TODO may need to turn off in third species
+                    # that was previously deleted from the stack.
+                    # TODO May need to turn off in third species.
                     elif h == 0 and i.dependency.lefthead is None and i.index != h:
-                        # solves problems for Westergaard100k, soprano, and Primary05
-                        #    Westergaard100k, PL:
-                        #        1 2 5 5 4 3 6 5 1 4 3 2 1, listening to 6
-                        #    Primary05, PL
-                        #        3 8 7 8 6 5 6 5 2 1, listening to 6
-
+                        # Test cases: Westergaard100k, soprano; Primary05.
                         # (Search 1) Look in reverse at the terminals of current
-                        # arcs and select the most recent that is step-related
-                        # return the note of that terminal to the stack and openHeads
-                        # remove any existing arcs that cross over
-                        # the new lefthead candidate
-                        # return their internal elements to openTransitions
-                        # remove righthand terminal from openHeads
+                        # arcs and select the most recent that is step-related;
+                        # return the note of that terminal to the stack and
+                        # open heads; remove any existing arcs that cross over
+                        # the new lefthead candidate;
+                        # return their internal elements to open transitions;
+                        # remove righthand terminal from open heads.
                         arcHeadsPrior = []
                         for arc in arcs:
                             if arc[0] in arcHeadsPrior:
@@ -1118,11 +1142,11 @@ class Parser():
                             j.dependency.lefthead = newLefthead
                             openTransitions.append(j.index)
                             self.notes[newLefthead].dependency.dependents.append(j.index)
-                            # look for arcs that cross over the new lefthead
-                            # and remove from arc list
-                            # and remove the righthead and reset its dependencies
+                            # Look for arcs that cross over the new lefthead
+                            # and remove from arc list;
+                            # remove the righthead and reset its dependencies;
                             # and return transitional elements to list
-                            # of open transitions
+                            # of open transitions.
                             for arc in arcs:
                                 if isEmbeddedInArc(newLefthead, arc):
                                     arcs.remove(arc)
@@ -1133,18 +1157,18 @@ class Parser():
                                     openHeads.remove(arc[-1])
                             openTransitions = sorted(openTransitions)
                             break
-                        # (Search 2) look for possible step-related transition that
-                        # was previously integrated into a neighbor arc
-                        # look for sd7 as lower neighbor or sd6 as upper neighbor,
-                        # bidirectional, prior to j.index
-                        # make sure there are no open trans between
-                        # that neighbor and j.index
+                        # (Search 2) Look for possible step-related transition
+                        # that was previously integrated into a neighbor arc;
+                        # look for sd7 as lower neighbor or sd6 as upper
+                        # neighbor, bidirectional, prior to j.index;
+                        # make sure there are no open transitions between
+                        # that neighbor and j.index.
                         if (j.csd.value % 7 == 6 or j.csd.value % 7 == 5 and
                            j.csd.direction == 'bidirectional'):
 # 2020-06-22 remove lefthead_found trap
 #                            lefthead_found = False
                             for arc in arcs:
-                                # look for 8-7-8 if j is 6, or 5-6-5 if j is 7
+                                # Look for 8-7-8 if j is 6, or 5-6-5 if j is 7.
                                 rules1 = [isNeighboring(arc, self.notes),
                                           isDiatonicStep(self.notes[arc[1]], j),
                                           self.notes[arc[0]].csd.value % 7 == 0,
@@ -1160,15 +1184,11 @@ class Parser():
                                 rules5 = [self.notes[arc[1]].csd.value % 7 == 6,
                                           self.notes[arc[1]].csd.direction == 'bidirectional']
                                 if (all(rules1) or all(rules2)) and all(rules3):
-# 2020-06-22 removed lefthead_found trap
-#                                    lefthead_found = True
                                     if all(rules4):
                                         arcs.remove(arc)
                                         openTransitions.append(j.index)
                                         openTransitions.append(arc[1])
                                         self.notes[arc[1]].dependency.righthead = None
-#                                        self.notes[arc[1]].dependency.lefthead = arc[0]
-#                                        self.notes[arc[0]].dependency.dependents.append(arc[1])
                                         self.notes[arc[-1]].dependency.dependents.remove(arc[1])
                                         j.dependency.lefthead = arc[1]
                                         return
@@ -1180,32 +1200,28 @@ class Parser():
                                         j.dependency.dependents.append(arc[1])
                                         j.dependency.lefthead = self.notes[arc[1]].dependency.lefthead
                                         return
-# 2020-06-22 removed lefthead_found trap
-#                            if lefthead_found == False:
-#                                error = 'The non-tonic-triad pitch ' + j.nameWithOctave + ' in measure ' + str(j.measureNumber) + ' cannot be generated.'
-#                                self.errors.append(error)
 
-
-# 2020-06-22 added a third path for reinterpretation
-                        # (Search 3) look for possible step-related insertion
-                        # that was embedded in another arc
-                        # gather independent notes prior to i
-                        # this will work out only if the demoted insertion
-                        # occurs was inserted between a transition
-                        # and its righthead: arc[-2] < h < arc[-1]
+                        # (Search 3) Look for possible step-related insertion
+                        # that was embedded in another arc'
+                        # gather independent notes prior to i.
+                        # This will work out only if the demoted insertion
+                        # occurs as an insertion between a transition
+                        # and its righthead: arc[-2] < h < arc[-1];
                         # the righthead will have to be removed,
                         # pending search for a suitable righthead,
                         # so arc[-2] will have to be restored
-                        # to the open transitions
+                        # to the open transitions.
                         demotedHeads = [note.index for note in self.notes
                                         if note.index < i.index and isIndependent(note)]
                         if demotedHeads:
                             for h in reversed(demotedHeads):
                                 if isDiatonicStep(self.notes[h], j):
-                                    # look for arcs that cross over h
+                                    # Look for arcs that cross over h.
                                     for arc in arcs:
                                         if arc[-2] < h < arc[-1]:
-                                            # restore arc[-2] to openTransitions and remove old righthead
+                                            # Restore arc[-2] to open
+                                            # transitions and
+                                            # remove old righthead
                                             openTransitions.append(arc[-2])
                                             for t in arc[1:-1]:
                                                 self.notes[t].dependency.righthead = None
@@ -1216,7 +1232,9 @@ class Parser():
                                             openTransitions.append(j.index)
                                             openHeads.append(h)
                                             newhead = True
-                                            # remove any open heads that intervene between the new lefhead and j
+                                            # Remove any open heads that
+                                            # intervene between the new lefhead
+                                            # and j
                                             for oh in openHeads:
                                                 if h < oh < j.index:
                                                     openHeads.remove(oh)
@@ -1241,21 +1259,14 @@ class Parser():
                                      + str(j.measureNumber) + ' cannot be generated.')
                             self.errors.append(error)
 
-                    # C. If neither of these works, return an error:
-                    # j appears out of the blue and cannot be generated
+                    # C. If neither of these works, return an error.
                     else:
                         error = ('The non-tonic-triad pitch '
                                  + j.nameWithOctave + ' in measure '
                                  + str(j.measureNumber) + ' cannot be generated.')
                         self.errors.append(error)
-# TODO, 2020-06-08 removed the next block, since i and j are a skip, j can never be the righthead of i
-#            else:
-#                i.dependency.righthead = j.index
-#                j.dependency.dependents.append(i.index)
-#               # openTransitions.remove(t)
-#                arcGenerateTransition(i.index, part, arcs, stack)
 
-        # CASE EIGHT: skip from nonharmonic to nonharmonic
+        # CASE EIGHT: Skip from nonharmonic to nonharmonic.
         elif all(case8):
             openNonTonicTriadPitches = []
             if self.part.species not in ['third', 'fifth']:
@@ -1271,22 +1282,22 @@ class Parser():
                              str(j.measureNumber) + '.')
                     self.errors.append(error)
             elif self.part.species in ['third', 'fifth']:
-                # TODO interpret local non-tonic insertions
+                # TODO Interpret local non-tonic insertions.
                 if i.index not in openNonTonicTriadPitches:
                     openNonTonicTriadPitches.append(i.index)
                 openNonTonicTriadPitches.append(j.index)
                 if openHeads:
-                    # TODO figure out how to connect at least one of
-                    # these open nttps to a global head
+                    # TODO Figure out how to connect at least one of
+                    # these open nttps to a global head.
                     for t in openHeads:
                         h = self.notes[t]
                         if isDiatonicStep(h, i):
                             pass
                 pass
 
-        # CASE NINE: linear unison between nonharmonic pitches
+        # CASE NINE: Linear unison between nonharmonic pitches.
         elif all(case9):
-            # TODO: double check this error, might be too simple
+            # TODO: Double check this error, might be too simple.
             if i.index == j.index - 1 or i.measureNumber != j.measureNumber:
                 error = ('Repetition of a non-tonic-triad pitch: '
                          + i.nameWithOctave + '.')
@@ -1294,7 +1305,7 @@ class Parser():
             else:
                 pass
 
-        # CASE TEN: dissonant skip between nonharmonic pitches
+        # CASE TEN: Dissonant skip between nonharmonic pitches.
         elif all(case10):
             if i.index == j.index-1:
                 error = ('Nongenerable dissonant leap between '
@@ -1308,22 +1319,21 @@ class Parser():
                          str(j.measureNumber) + '.')
                 self.errors.append(error)
 
-        # CASE ELEVEN: ??? nongenerable skip
+        # CASE ELEVEN: Nongenerable skip.
         elif all(case11):
             error = ('Nongenerable leap between ' + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
 
-        # CASE TWELVE: leap larger than an octave
+        # CASE TWELVE: Leap larger than an octave.
         elif all(case12):
             error = ('Leap larger than an octave between ' + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
 
-        # TODO prune the list open heads if a repetition has been added
-        # figure out the optimal time to prune direct repetitions from
-        # the list of open heads
-#        openHeads = pruneOpenHeads(self.notes, openHeads)
+        # TODO Prune the list open heads if a repetition has been added.
+        # TODO Figure out the optimal time to prune direct repetitions from
+        # the list of open heads.
 
     def prepareParses(self):
         '''
@@ -1354,31 +1364,17 @@ class Parser():
         (see :py:func:`~Parser.Parse.parseGeneric`).
         '''
 
-        # prepare parses for every type of line if the context is only one part
-        if self.part.lineTypes and len(self.context.parts) == 1:
-            pass
-        # otherwise omit generic type if another type is present
-        # and only use bass for bottom line if possible
-
-# 2020-06-16 removed this selection of linetypes, this should be handled during show preferences in context.py
-#        elif self.part.lineTypes and len(self.context.parts) > 1:
-#            if len(self.part.lineTypes) > 1:
-#                self.part.lineTypes = [type for type in self.part.lineTypes if type != 'generic']
-#            if len(self.part.lineTypes) > 1 and self.part == self.context.parts[-1]:
-#                self.part.lineTypes = [type for type in self.part.lineTypes if type != 'primary']
-
-        # move the uninterpreted stack of openHeads into a new Parse
-        # buffer at the end of this next process,
-        # the stack may still have some open heads
-        # the remnant of open heads will be re-parsed at the next stage
+        # The stack may still have some underinterpreted open heads.
+        # If so, the remnant of open heads will be placed in the Parse's
+        # buffer and re-parsed.
         for lineType in self.part.lineTypes:
-            # restock the buffer and initialize the empty stack
+            # Restock the buffer and initialize the empty stack.
             buffer = [self.notes[head] for head in self.openHeads]
             stack = []
 
-            # look for S2 or S3 candidate notes in the given lineType
-            # and build parse objects for each candidate
-            # assign a label and counter to each parse object
+            # Look for S2 or S3 candidate notes in the given line type
+            # and build parse objects for each candidate.
+            # Assign a label and counter to each parse object.
             parsecounter = 1
 
             if lineType == 'bass':
@@ -1410,8 +1406,8 @@ class Parser():
                     for cand in s3cands:
                         self.buildParse(cand, lineType,
                                         parsecounter, stack, buildErrors=[])
-                        parsecounter += 1  # update numbering of parses
-                # if the build as type fails, collect errors in linetype dictionary
+                        parsecounter += 1
+                # If the build as type fails, collect errors in dictionary.
                 else:
                     self.typeErrorsDict[lineType] = buildErrors
 
@@ -1427,7 +1423,6 @@ class Parser():
                     shiftBuffer(stack, buffer)
                     n = len(buffer)
                     i = stack[-1]
-                    # add this to get S2 as early as possible: and i not in s2cands:
                     if i.csd.value in {2, 4, 7}:
                         s2cands.append(i)
                 if not s2cands:
@@ -1435,9 +1430,9 @@ class Parser():
                                   'No candidate for S2 detected.')
                     buildErrors.append(buildError)
 
-                # generate a Parse object for each S2cand
+                # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
-                # using a series of methods to infer a basic step motion
+                # using a series of methods to infer a basic step motion.
                 methods = 9
                 if buildErrors == []:
                     for cand in s2cands:
@@ -1445,7 +1440,7 @@ class Parser():
                             self.buildParse(cand, lineType, parsecounter,
                                             stack, buildErrors=[], method=m)
                             parsecounter += 1  # update numbering of parses
-                # if the build as type fails, collect errors in linetype dictionary
+                # If the build as type fails, collect errors in dictionary.
                 else:
                     self.typeErrorsDict[lineType] = buildErrors
 
@@ -1459,7 +1454,8 @@ class Parser():
         '''Sets up the basic features of the parse object
         and then executes the parsing process.
         Uses deep copies of the arcs and notes, as the list of arcs and the
-        properties of notes will be altered during the process.'''
+        properties of notes will be altered during the process.
+        '''
         # create the Parse object
         newParse = Parser.Parse()
         # copy information
@@ -1474,7 +1470,7 @@ class Parser():
         newParse.errors = buildErrors
         newParse.notes[newParse.S1Index].rule.name = 'S1'
         newParse.method = method
-        # prepare the basic structure information
+        # Prepare the basic structure information.
         if lineType == 'bass':
             newParse.label = 'parse' + str(parsecounter) + '_BL'
             newParse.S2Index = 0
@@ -1495,55 +1491,49 @@ class Parser():
             newParse.S2Degree = cand.csd.degree
             newParse.S2Value = cand.csd.value
             newParse.notes[newParse.S2Index].rule.name = 'S2'
-        # copy the remnant of open heads from the stack
+        # Copy the remnant of open heads from the stack.
         newParse.stackremnant = stack
 
-        # now parse the line
+        # Now parse the line.
         newParse.performLineParse()
-        # and return the results to the Parser
+        # And return the results to the Parser.
         self.parses.append(newParse)
         self.parseErrorsDict.update({newParse.label: newParse.errors})
 
-#        newParse.displayFullParse()
-
     class Parse():
         '''An object for holding one interpretation of
-        a line's syntactic structure.'''
+        a line's syntactic structure.
+
+        The object's attributes include `S1Index`, `S2Degree`, `S2Index`,
+        `S2Value`, `S3Degree`, `S3Final`, `S3Index`, `S3Indexes`, `S3Initial`,
+        `S3PenultCands`, `S3Value`, `label`, `arcs`, `tonic`, `mode`, and
+        `arcBasic`.
+        '''
         def __init__(self):
             self.stackremnant = []
             self.buffer = []
             self.stack = []
             self.errors = []
 
-        # Parse attributes:
-            # S1Index
-            # S2Degree, S2Index, S2Value,
-            # S3Degree, S3Final, S3Index, S3Indexes, S3Initial, S3PenultCands, S3Value
-            # label
-            # arcs
-            # tonic
-            # mode
-            # arcBasic
 
         def __repr__(self):
             return self.label
 
         def performLineParse(self):
             '''
-            Creates a complete interpretation of the line,
-            in the following steps:
+            Create a complete interpretation of the line,
+            using the following procedure:
 
-            * Constructs an arc for the basic structure,
+            * Construct an arc for the basic structure,
               given the line type and
               a specific option for the basic structure.
-            * Assigns rules to notes in secondary structures.
-            * Tests for resolution of local insertions in third species.
-            * Consolidates arcs into longer passing motions, if possible
-            * Assembles lists for rule labels and parentheses, to be used when
+            * Assign rules to notes in secondary structures.
+            * Test for resolution of local insertions in third species.
+            * Consolidate arcs into longer passing motions, if possible
+            * Assemble lists for rule labels and parentheses, to be used when
               generating representations of the interpretation.
-            * Sets the dependency level of each note. [This function is
+            * Set the dependency level of each note. [This function is
               currently disabled.]
-
             '''
             if self.lineType == 'primary':
                 self.parsePrimary()
