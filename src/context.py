@@ -61,8 +61,8 @@ class EvaluationException(Exception):
     def show(self):
         printLogfile(self.logfile)
 
-# TODO: figure out how to accommodate tonal ambiguity:
-# make a global context for each option?
+# TODO: Figure out how to accommodate tonal ambiguity:
+# Make a global context for each option?
 
 # -----------------------------------------------------------------------------
 # MAIN CLASSES
@@ -71,7 +71,8 @@ class EvaluationException(Exception):
 
 class Context():
     '''An object for representing a span of a composition
-    and for storing objects that represent smaller spans.'''
+    and for storing objects that represent smaller spans.
+    '''
 
     def __init__(self, music21Stream):
         self.scale
@@ -133,8 +134,8 @@ class GlobalContext(Context):
           (:py:class:`~consecutions.Consecutions`) for the note are determined.
 
     #. Measure-long local harmonic contexts are created,
-       for use in parsing events in third species.'''
-
+       for use in parsing events in third species.
+    '''
     def __init__(self, score, **keywords):
         self.score = score
         self.parts = self.score.parts
@@ -142,31 +143,31 @@ class GlobalContext(Context):
         self.score.errors = []
         self.errors = []
 
-        # (1) verify that there are parts populated with notes
+        # (1) Verify that there are parts populated with notes.
         try:
             validateParts(self.score)
         except ContextError as ce:
             ce.logerror()
             raise EvaluationException
             return
-        # (2) general set up for notes and parts
-        # to parts: assign numbers, rhythmic species, error list
-        # to notes: assign consecutions, rules, dependencies, and indexes
+        # (2) General set up for notes and parts.
+        # To parts: assign numbers, rhythmic species, error list.
+        # To notes: assign consecutions, rules, dependencies, and indexes.
         self.setupPartsGeneral()
 
-        # (3) accept key from user if provided, else infer one from the parts
-        # exit if errors are encountered
+        # (3) Accept key from user if provided, else infer one from the parts.
+        # Exit if errors are encountered.
         self.setupTonalityGeneral(**keywords)
 
-        # (4) specific set up for notes and parts
-        # to parts: assign tonic, mode, scale
-        # to notes: assign csds
+        # (4) Specific set up for notes and parts.
+        # To parts: assign tonic, mode, scale.
+        # To notes: assign csds.
         self.setupPartsTonality()
 
-        # (5) prepare local contexts for harmonic analysis
+        # (5) Prepare local contexts for harmonic analysis.
         self.localContexts = {}
 
-        # TODO move harmonic species span stuff to a different place
+        # TODO Move harmonic species span stuff to a different place.
         if keywords.get('harmonicSpecies'):
             self.harmonicSpecies = keywords['harmonicSpecies']
         else:
@@ -184,41 +185,41 @@ class GlobalContext(Context):
             dominantSpan = makeLocalContext(cxt.score, offDom, offClosTon, 'dominant')
             closingTonicSpan = makeLocalContext(cxt.score, offClosTon, offClosTon+4.0, 'closing tonic')
 
-        # collect dictionary of local harmonies for use
-        # in parsing third species
+        # Collect dictionary of local harmonies for use
+        # in parsing third species.
         self.getLocalOnbeatHarmonies()
 
-        # TODO local contexts aren't yet used by the parser
+        # TODO Local contexts aren't yet used by the parser.
 #        self.setupLocalContexts()
 
     def __repr__(self):
         return('Global context')
 
     def setupPartsGeneral(self):
-        # set part properties: part number, rhythmic species
+        # Set part properties: part number, rhythmic species.
         for num, part in enumerate(self.parts):
-            # part number
+            # Part number.
             part.partNum = num
             part.name = 'Part ' + str(num+1)
             part.errors = []
-            # part rhythmic species
+            # Part rhythmic species.
             part.species = assignSpecies(part)
-            # set up note consecution relations, from consecutions.py
+            # Set up note consecution relations, from consecutions.py.
             consecutions.getConsecutions(part)
-            # set up note properties used in parsing
+            # Set up note properties used in parsing.
             for idx, note in enumerate(part.recurse().notes):
-                # get the order position of the note in the line
+                # Get the order position of the note in the line.
                 note.index = idx
-                # assigns a Rule object to each Note
+                # Assign a Rule object to each Note.
                 note.rule = rule.Rule()
-                # assigns a Dependency object to each Note
+                # Assign a Dependency object to each Note.
                 note.dependency = dependency.Dependency()
 
     def setupTonalityGeneral(self, **keywords):
-        # setup key, using information provided by user or inferred from parts
+        # Setup key, using information provided by user or inferred from parts.
         knote = keywords.get('keynote')
         kmode = keywords.get('mode')
-        # (1a) if user provides key, validate and test
+        # (1a) If user provides key, validate and test.
         if knote and kmode:
             self.key = keyFinder.testKey(self.score, knote, kmode)
             if not self.key:
@@ -226,7 +227,7 @@ class GlobalContext(Context):
                 return
             else:
                 self.keyFromUser = True
-        # (1b) else attempt to derive a key from the score
+        # (1b) Else attempt to derive a key from the score.
         else:
             self.key = keyFinder.inferKey(self.score)
             if not self.key:
@@ -234,7 +235,7 @@ class GlobalContext(Context):
                 return
             else:
                 self.keyFromUser = False
-        # (2) if successful, create a pretty name for the key
+        # (2) If successful, create a pretty name for the key.
         if self.key.getTonic().accidental is not None:
             keyAccidental = '-' + self.key.getTonic().accidental.name
         else:
@@ -242,15 +243,16 @@ class GlobalContext(Context):
         self.key.nameString = self.key.getTonic().step + keyAccidental + ' ' + self.key.mode
 
     def setupPartsTonality(self):
-        # set part properties: part number, tonic degree, rhythmic species, scale degrees
+        # Set part properties: part number, tonic degree,
+        # rhythmic species, scale degrees.
         for num, part in enumerate(self.parts):
-            # part tonic = lowest tonic degree in the line's register
-            # find tonic pitch class
+            # Part tonic = lowest tonic degree in the line's register.
+            # Find tonic pitch class.
             ton = self.key.getTonic()
             ton.octave = 0
             partAmb = analysis.discrete.Ambitus()
             pitchMin, pitchMax = partAmb.getPitchSpan(part)
-            # and search for the lowest representative within the line
+            # And search for the lowest representative within the line.
             part.tonic = None
             while ton.octave < 8:
                 if pitchMin <= ton <= pitchMax:
@@ -265,7 +267,7 @@ class GlobalContext(Context):
                         break
                     ton.octave -= 1
 
-            # assign scale to part based on register of tonic degree
+            # Assign scale to part based on register of tonic degree.
             if self.key.mode == 'major':
                 part.mode = self.key.mode
                 part.scale = scale.MajorScale(part.tonic)
@@ -273,7 +275,7 @@ class GlobalContext(Context):
                 part.mode = self.key.mode
                 part.scale = scale.MelodicMinorScale(part.tonic)
 
-            # infer principal harmonic triads
+            # Infer principal harmonic triads.
             part.tonicTriad = chord.Chord([part.scale.pitchFromDegree(1),
                                            part.scale.pitchFromDegree(3),
                                            part.scale.pitchFromDegree(5)])
@@ -284,42 +286,39 @@ class GlobalContext(Context):
                                                  part.scale.pitchFromDegree(4),
                                                  part.scale.pitchFromDegree(6, direction='descending')])
 
-            # assign scale degrees to notes
+            # Assign scale degrees to notes.
             for indx, note in enumerate(part.recurse().notes):
-                # create a ConcreteScaleDegree object for each note
                 note.csd = csd.ConcreteScaleDegree(note.pitch, part.scale)
-                # 2020-06-29 by this point, it's probably already been
-                # established that all of the
-                # pitches belong to the scale,
-                # so this exception is probably not necessary
+                # 2020-06-29 By this point, it's probably already been
+                # established that all of the pitches belong to the scale,
+                # so this exception is probably not necessary:
                 if not note.csd:
                     raise EvaluationException
                     return
 
-    # for parsing third or fifth species and for counterpoint
-    # analysis, collect dictionary of onbeat harmonies
+    # For parsing third or fifth species and for counterpoint
+    # analysis, collect dictionary of onbeat harmonies.
     def getLocalOnbeatHarmonies(self):
-        # for third and fifth species counterpoint,
-        # use the measures to define the local context timespans
+        # For third and fifth species counterpoint,
+        # use the measures to define the local context timespans.
         self.localHarmonyDict = {}
-        # use context.measureOffsetMap
-        # get the offset for each downbeat
+        # Use context.measureOffsetMap
+        # Get the offset for each downbeat.
         measureOffsets = self.score.measureOffsetMap()
-        # get the start/stop offsets for each measure
+        # Get the start/stop offsets for each measure.
         offsetSpans = pairwise(measureOffsets)
-        # include the span of the final bar
+        # Include the span of the final bar.
         measureSpan = offsetSpans[0][1] - offsetSpans[0][0]
         finalSpanOnset = offsetSpans[-1][1]
         finalSpan = (finalSpanOnset, finalSpanOnset+measureSpan)
         offsetSpans.append(finalSpan)
-        # gather the content of each local context
+        # Gather the content of each local context.
         for span in offsetSpans:
             offsetStart = span[0]
             offsetEnd = span[1]
             harmonicEssentials = []
-#            partIdx = 0
             for part in self.score.parts:
-                # get all the notes in the local span
+                # Get all the notes in the local span.
                 localPartElements = part.flat.recurse().getElementsByOffset(offsetStart,
                                                                             offsetEnd,
                                                                             includeEndBoundary=False,
@@ -327,7 +326,7 @@ class GlobalContext(Context):
                                                                             mustBeginInSpan=True,
                                                                             includeElementsThatEndAtStart=False).notesAndRests
                 localPartNotes = [elem for elem in localPartElements if elem.isNote]
-                # get onbeat consonances or resolutions of tied-over dissonances
+                # Get onbeat consonances or resolutions of tied-over dissonances.
                 for elem in localPartElements:
                     if elem.isNote and elem.offset == offsetStart:
                         if elem.tie is None:
@@ -342,33 +341,33 @@ class GlobalContext(Context):
                         if elem.isNote and isHarmonic:
                             harmonicEssentials.append(elem.pitch)
                         else:
-                            # TODO can't just look at scale in minor
-                            # because music21 uses natural minor
-                            # TODO look for actual resolution pitch
-                            # that is down a step in the context
+                            # TODO Can't just look at scale in minor
+                            # because music21 uses natural minor.
+                            # TODO Look for actual resolution pitch
+                            # that is down a step in the context.
                             for resolution in localPartElements:
                                 if (resolution.isNote and
                                    resolution.offset > offsetStart and
                                    parser.isStepDown(elem, resolution)):
-    #                                resolution = part.scale.next(elem, 'descending')
-                                    harmonicEssentials.append(resolution.pitch)
+                                       # resolution = part.scale.next(elem, 'descending')
+                                       harmonicEssentials.append(resolution.pitch)
                 self.localHarmonyDict[offsetStart] = harmonicEssentials
 
     def setupLocalContexts(self):
-        # TODO this currently sets up measure-length contexts
-        # but would also like to set up harmonic spans for harmonic species
-# TODO create a custom offset map for harmonic species
-#        and use the measure map for third species
-#        offsetspans = []
-#        if harmonicSpecies == True:
-#            offsetSpans = []
-#        else:
+        # TODO This currently sets up measure-length contexts,
+        # but would also like to set up harmonic spans for harmonic species.
+        # TODO Create a custom offset map for harmonic species
+        #        and use the measure map for third species
+        #        offsetspans = []
+        #        if harmonicSpecies == True:
+        #            offsetSpans = []
+        #        else:
 
-        # get the offset for each downbeat
+        # Get the offset for each downbeat.
         measureOffsets = self.score.measureOffsetMap()
-        # get the start/stop offsets for each measure
+        # Get the start/stop offsets for each measure.
         offsetSpans = pairwise(measureOffsets)
-        # include the span of the final bar
+        # Include the span of the final bar.
         # measureSpan = offsetSpans[0][1] - offsetSpans[0][0]
         measureSpan = self.parts[0].getElementsByClass('Measure')[-1].barDuration.quarterLength
         finalSpanOnset = offsetSpans[-1][1]
@@ -382,10 +381,10 @@ class GlobalContext(Context):
             cxt.offset = offsetStart
             cxt.harmonyStart = self.localHarmonyDict[offsetStart]
             cxt.harmonyEnd = self.localHarmonyDict[offsetEnd]
-            # create a new stream for each context
+            # Create a new stream for each context.
             cxt.score = stream.Score()
-            # go through the parts of the global
-            # and add notes to corresponding local parts
+            # Go through the parts of the global context
+            # and add notes to corresponding local parts.
             for num, part in enumerate(self.score.parts):
                 newpart = stream.Part()
                 newpart.species = part.species
@@ -393,12 +392,14 @@ class GlobalContext(Context):
                 for note in part.flat.notes:
                     if offsetStart <= note.offset <= offsetEnd:
                         newpart.append(note)
-                # part-related parsing initialization
-#                newpart.buffer = [n for n in part.flat.notes if not n.tie or n.tie.type == 'start'] # and n.tie.type != 'stop'
-#                newpart.stack = []
-#                newpart.arcs = []
-#                newpart.openHeads = []
-#                newpart.openTransitions = []
+                # Part-related parsing initialization:
+                # newpart.buffer = [n for n in part.flat.notes 
+                #                   if not n.tie or n.tie.type == 'start']
+                #                   # and n.tie.type != 'stop'
+                # newpart.stack = []
+                # newpart.arcs = []
+                # newpart.openHeads = []
+                # newpart.openTransitions = []
             self.localContexts[cxt.offset] = cxt
 
 # -----------------------------------------------------------------------------
@@ -418,12 +419,12 @@ def validateParts(score):
 
 
 def assignSpecies(part):
-    # TODO examine input measure by measure and build up the Context
-    #        fifth species must be a series of contexts, each with its own species
-    #        fourth species may include breaking into second species
-    #        species assignment has to be input into the parser as well as vlChecker
-    #            for the parser: third-species contexts have to permit local elaborations
-    #            for the parser: fifth-species contexts have to permit local decorations
+    # TODO Examine input measure by measure and build up the Context.
+    # Fifth species must be a series of contexts, each with its own species.
+    # Fourth species may include breaking into second species.
+    # Species assignment has to be input into the parser as well as vlChecker.
+    # For the parser: third-species contexts have to permit local elaborations.
+    # For the parser: fifth-species contexts have to permit local decorations.
     meas = len(part.getElementsByClass('Measure'))
     notecount = 0
     if meas < 3:

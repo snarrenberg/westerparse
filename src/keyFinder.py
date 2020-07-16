@@ -86,13 +86,13 @@ class KeyFinderError(Exception):
 
 def testKey(score, knote=None, kmode=None):
     '''Validate and test a key provided by the user.'''
-    # (1) validate the user selected key
+    # (1) Validate the user selected key.
     try:
         userKey = validateKeySelection(knote, kmode)
     except KeyFinderError as kfe:
         kfe.logerror()
         return False
-    # (2) test each part for generic errors
+    # (2) Test each part for generic errors.
     try:
         testValidatedKey(score, knote, kmode)
     except KeyFinderError as kfe:
@@ -104,13 +104,13 @@ def testKey(score, knote=None, kmode=None):
 
 def inferKey(score):
     '''Infer a key from the parts.'''
-    # (1)find the keys of each part
+    # (1) Find the keys of each part.
     try:
         allPartKeys = findPartKeys(score)
     except KeyFinderError as kfe:
         kfe.logerror()
         return False
-    # (2) and then find the keys of the score
+    # (2) And then find the keys of the score.
     try:
         key = findScoreKeys(score)
     except KeyFinderError as kfe:
@@ -125,7 +125,7 @@ def inferKey(score):
 
 
 def validateKeySelection(knote, kmode):
-    # Validate the name of the key provided by the user
+    # Validate the name of the key provided by the user.
     validKeys = ['A- minor', 'A- major',
                  'A minor', 'A major',
                  'A# minor',
@@ -144,10 +144,10 @@ def validateKeySelection(knote, kmode):
                  'G- major',
                  'G minor', 'G major',
                  'G# minor']
-    # three possibilities: no key info provided,
-    # invalid key info, valid key ino
+    # Three possibilities: no key info provided,
+    # invalid key info, valid key info.
     if knote is None or kmode is None:
-        # pass to next step if key not provided by user
+        # Pass to next step if key not provided by user.
         return None
     elif str(knote + ' ' + kmode) not in validKeys:
         error = ('The user-selected key (' + knote
@@ -176,14 +176,14 @@ def testValidatedKey(score, keynote, mode):
         thisTriad = [thisScale.pitchFromDegree(1).name,
                      thisScale.pitchFromDegree(3).name,
                      thisScale.pitchFromDegree(5).name]
-        # test first and last notes
+        # Test first and last notes.
         if part.flat.notes[0].pitch.name not in thisTriad:
             error = ('The first note is not a triad pitch.')
             partErrors = partErrors + error + '\n\t'
         if part.flat.notes[-1].pitch.name not in thisTriad:
             error = ('The last note is not a triad pitch.')
             partErrors = partErrors + error + '\n\t'
-        # test for scale pitches
+        # Test for scale pitches.
         nonscalars = 0
         for n in part.flat.notes:
             if n.pitch.name not in thisCollection:
@@ -195,7 +195,7 @@ def testValidatedKey(score, keynote, mode):
             error = (str(nonscalars)
                      + ' notes in the line do not belong to the scale.')
             partErrors = partErrors + error + '\n\t'
-        # test leaps
+        # Test leaps.
         leapPairs = {(note.pitch.name, note.next().pitch.name)
                      for note in part.flat.notes
                      if note.consecutions.rightType == 'skip'}
@@ -231,15 +231,15 @@ def findScoreKeys(score):
                              for part in score.parts]
     partKeyListsFromHanging = [part.keyCandidatesFromHanging
                                for part in score.parts]
-    # get only those keys that are shared among all parts
+    # Get only those keys that are shared among all parts.
     scoreKeyCandidatesFromScale = set(partKeyListsFromScale[0]).intersection(*partKeyListsFromScale)
-    # get those keys shared among all parts
+    # Get those keys shared among all parts.
     scoreKeyCandidatesFromHanging = set(partKeyListsFromHanging[0]).intersection(*partKeyListsFromHanging)
-    # narrow the list to those that agree with both forms of derivation
+    # Narrow the list to those that agree with both forms of derivation.
     scoreKeyCandidates = set(scoreKeyCandidatesFromScale).intersection(scoreKeyCandidatesFromHanging)
 
-    # if there is still more than one plausible key,
-    # prefer keys in which most lines end on the tonic degree
+    # If there is still more than one plausible key,
+    # prefer keys in which most lines end on the tonic degree.
     if len(scoreKeyCandidates) > 1:
         for part in score.parts:
             part.finalpitch = part.flat.notes[-1].pitch.name
@@ -256,14 +256,15 @@ def findScoreKeys(score):
             scoreKeyCandidates = {strongkeys[0][0]}
     if len(scoreKeyCandidates) == 2:
         k = list(scoreKeyCandidates)
-        # if ambiguous between mode only, prefer major
+        # If ambiguous between mode only, prefer major.
         if k[0][0] == k[1][0]:
             thisKey = key.Key(tonic=k[0][0], mode='major')
             return thisKey
-        # prefer line in which both notes in at least one leap belong to the triad
+        # Prefer line in which both notes in at least one leap
+        # belong to the triad.
 #        elif k[0][0] != k[1][0]:
 #            leapTestsResults = []
-            # TODO perhaps relocate this test to the two getPartKeys functions
+            # TODO Perhaps relocate this test to the two getPartKeys functions.
         else:
             keystring = (k[0][0] + ' ' + k[0][1]
                          + ' and ' + k[1][0] + ' ' + k[1][1])
@@ -297,9 +298,9 @@ def scaleTest(residues, scale):
 
 
 def leapTestWeak(leapPairs, triad):
-    # not sure how to construct this test
-    # test whether at least one note in a leap belongs to the triad
-    # assume it's true, but return false if an interval fails the test
+    # TODO Not sure how to construct this test.
+    # Test whether at least one note in a leap belongs to the triad.
+    # Assume it's true, but return false if an interval fails the test.
     if len(leapPairs) == 0:
         result = True
     else:
@@ -315,8 +316,8 @@ def leapTestWeak(leapPairs, triad):
 
 
 def leapTestStrong(leapPairs, triad):
-    # test whether both notes in at least one leap belong to the triad
-    # assume it's true, but return false if all intervals fail the test
+    # Test whether both notes in at least one leap belong to the triad.
+    # Assume it's true, but return false if all intervals fail the test.
     if len(leapPairs) == 0:
         result = True
     else:
@@ -339,9 +340,11 @@ def getPartKeysUsingScale(part):
                         for note in part.flat.notes
                         if note.consecutions.rightType == 'skip'}
 
-    # run tests for all chromatic-enharmonic minor and major keys
-    tFactorsMinor = []  # store t for minor scales/triads that pass tests
-    tFactorsMajor = []  # store t for major scales/triads that pass tests
+    # Run tests for all chromatic-enharmonic minor and major keys.
+    # Store t for minor/major scales/triads that pass tests.
+    tFactorsMinor = []
+    tFactorsMajor = []
+    
     x = range(12)
     for n in x:
         thisMinorScale = {(deg+n) % 12 for deg in minorMode.get('scale')}
@@ -351,7 +354,7 @@ def getPartKeysUsingScale(part):
 
         terminals = terminalsTest(residueInit, residueFin, thisMinorTriad)
         scalars = scaleTest(chromaResidues, thisMinorScale)
-        # EXEMPT THIRD SPECIES LINES FROM LEAPS TEST
+        # EXEMPT THIRD SPECIES LINES FROM LEAPS TEST.
         if part.species not in ['first', 'second', 'fourth']:
             leaps = True
         else:
@@ -368,13 +371,13 @@ def getPartKeysUsingScale(part):
         if terminals and scalars and leaps:
             tFactorsMajor.append(n)
 
-    # TODO apply leaps test only if key is ambiguous by other measures
+    # TODO Apply leaps test only if key is ambiguous by other measures.
     #        if len(tFactorsMinor) + len(tFactorsMajor) > 1:
 
     keyCandidates = []
 
-    # find the right diatonic spelling for the scale,
-    # using first pitch of the line
+    # Find the right diatonic spelling for the scale,
+    # using first pitch of the line.
     for t in tFactorsMinor:
         mode = 'minor'
         if residueInit == t:
@@ -467,45 +470,13 @@ def getPartKeyUsingHangingNotes(part):
         part.keyCandidatesFromHanging = None
     part.keyCandidatesFromHanging = keyCandidates
 
-# TODO: REVISE THIS FUNCTION: unlike the keyFinder, it needs to distinguish enharmonics
+    # TODO: REVISE THIS FUNCTION:
+    # Unlike the keyFinder, it needs to distinguish enharmonics
 
 # -----------------------------------------------------------------------------
 
 
 if __name__ == "__main__":
-    pass
-
-#    source = 'TestScoresXML/Bass01.musicxml'
-#    source = 'TestScoresXML/Bass02.musicxml' # Krumhansl-Schmuckler gives wrong key
-#    source = 'TestScoresXML/Bass03.musicxml'
-#    source = 'TestScoresXML/Bass04.musicxml' # Krumhansl-Schmuckler gives wrong key
-#    source = 'TestScoresXML/Bass05.musicxml'
-#    source = 'TestScoresXML/Bass06.musicxml'
-#    source = 'TestScoresXML/Bass21.musicxml'
-#    source = 'TestScoresXML/Bass02.musicxml'
-#    source = 'TestScoresXML/Primary01.musicxml'
-#    source = 'TestScoresXML/Primary04.musicxml'
-#    source = 'TestScoresXML/Primary20.musicxml' # Krumhansl-Schmuckler gives wrong key
-#    source = 'TestScoresXML/Primary21.musicxml' # Krumhansl-Schmuckler gives wrong key
-#    source = 'TestScoresXML/FirstSpecies01.musicxml'
-#    source = 'TestScoresXML/FirstSpecies04.musicxml'
-#    source = 'TestScoresXML/SecondSpecies22.musicxml'
-#    source = 'TestScoresXML/ThirdSpecies02.musicxml'
-#    source = 'TestScoresXML/FourthSpecies20.musicxml'
-#    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
-#    source = 'TestScoresXML/WTC_I,_Fugue_in_d_sharp,_subject.musicxml' # fails K-S key assignment
-#    source = 'TestScoresXML/BeethovenOdeToJoy4thPhrase.musicxml'
-#    source = 'TestScoresXML/2020_04_24T16_22_17_785Z.musicxml'
-#    source = 'TestScoresXML/2020_04_25T22_03_04_858Z.musicxml'
-#    source = 'TestScoresXML/2020_04_27T16_06_46_776Z.musicxml'
-#    source = 'TestScoresXML/2020_04_27T18_21_12_217Z.musicxml'
-#    source = 'TestScoresXML/2020_04_29T19_28_50_357Z.musicxml'
-#    source = 'TestScoresXML/2020_05_22T14_39_18_497Z.musicxml'
-
-    gxt = context.makeGlobalContext(source)
-
-    k = findKey(gxt)
-    print(k)
 
     pass
 # -----------------------------------------------------------------------------
