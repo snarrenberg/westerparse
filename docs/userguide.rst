@@ -63,7 +63,7 @@ adding the '.png' suffix.  The default directory for these files is 'tempimages/
 [This, too, can be changed by editing the configuration.py file.]
 
 :literal:`'showWestergaardParse'` can be used if the source consists of only one line. It will 
-display the parse(s) of a line using the layered form of representation that Westergaard used in his book. 
+display the parse(s) of a line using Westergaard's layered form of representation. 
 [This option is not yet functional.]
  
 If one or more lines in the source cannot be parsed (i.e., if there are syntax errors), 

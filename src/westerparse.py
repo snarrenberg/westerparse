@@ -60,24 +60,24 @@ def evaluateLines(source,
 
        *Options*
        
-       `'writeToServer'` -- Reserved for use by the WesterParse web site
+       `writeToServer` -- Reserved for use by the WesterParse web site
        to write parses to musicxml files, which are then displayed in the
        browser window.
 
-       'writeToLocal'` -- Can be used to write parses in musicxml to a user's
-       local directory. [Eventually The user will be able select a directory by
-       editing the configuration.py file.] By default, the files are written
+       `writeToLocal` -- Can be used to write parses in musicxml to a user's
+       local directory. [Eventually the user will be able select a directory by
+       editing a configuration.py file.] By default, the files are written
        to 'parses_from_context/'. The name for each file consists of the prefix
        'parser_output\_', a timestamp, and the suffix '.musicxml'.
 
-       `'writeToPng'` -- Use the application MuseScore to produce png files.
+       `writeToPng` -- Use the application MuseScore to produce png files.
        MuseScore first generates an xml file and then derives the png file.
        These are named with the prefix 'parser_output\_', a timestamp, and the
        appropriate suffix. Note that Musescore inserts '-1' before adding the
        '.png' suffix. The default directory for these files is 'tempimages/'. 
        [This, too, can be changed by editing the configuration.py file.]
 
-       `'showWestergaardParse'` -- Not yet functional. Can be used if the source
+       `showWestergaardParse` -- Not yet functional. Can be used if the source
        consists of only one line. It will display the parse(s) of a line using
        Westergaard's layered form of representation. 
  
@@ -245,22 +245,22 @@ def parseContext(context,
     except ContextError as ce:
         ce.logerror()
         raise EvaluationException
-    # run the parser and collect errors
+    # Run the parser and collect errors.
     for part in partsForParsing:
-        # set the part's lineType if given by the user
+        # Set the part's lineType if given by the user.
         if partLineType:
             part.lineType = partLineType
         else:
             part.lineType = None
-        # parse the selected part
+        # Parse the selected part.
         parsePart(part, context)
-        # collect errors
+        # Collect errors.
         if part.errors:
             context.errorsDict[part.name]['parser errors'] = part.errors
         if part.typeErrorsDict:
             for key, value in part.typeErrorsDict.items():
                 context.errorsDict[part.name][key] = value
-    # continue and report/show results
+    # Continue and report/show results.
     generableParts = 0
     generableContext = False
     if partSelection is None:
@@ -276,13 +276,13 @@ def parseContext(context,
         if any(rules):
             generableContext = True
 
-    # create optional parse report for user
-    # and required error report if errors arise
+    # Create the optional parse report for user
+    # and a required error report if errors arise.
     def createParseReport():
-        # base string for reporting parse results
+        # Base string for reporting parse results.
         context.parseReport = 'PARSE REPORT'
 
-        # gather information on the key to report to the user
+        # Gather information on the key to report to the user.
         if context.keyFromUser == True:
             result = ('Key supplied by user: ' + context.key.nameString)
             context.parseReport = context.parseReport + '\n' + result
@@ -330,7 +330,7 @@ def parseContext(context,
 
             elif partSelection is None and len(context.parts) > 1:
                 upperPrimary = False
-                subsidiaryUpperLines = []  # by part name
+                subsidiaryUpperLines = []
                 lowerBass = False
                 for part in context.parts[0:-1]:
                     if part.isPrimary:
@@ -403,11 +403,11 @@ def parseContext(context,
                         for err in context.errorsDict[bln]['bass']:
                             error = error + '\n\t\t\t' + str(err)
                     raise ContextError(error)
-                # update parse report if no errors found
+                # Update parse report if no errors found.
                 context.parseReport = context.parseReport + '\n' + result
 
         elif generableContext is False:
-            # get header and key information from parse report
+            # Get header and key information from parse report.
             error = context.parseReport + '\n' + 'Line Parsing Errors'
             if len(partsForParsing) == 1:
                 part = partsForParsing[0]
@@ -496,7 +496,7 @@ def parseContext(context,
         pass
 
         if show is not None:
-            # preferences currently only work for two-part counterpoint
+            # Preferences currently only work for two-part counterpoint.
             if 1 < len(context.parts) < 3 and partSelection is None:
                 selectedPreferredParseSets(context, show)
             else:
@@ -505,14 +505,16 @@ def parseContext(context,
 
 def parsePart(part, context):
     '''
-    Given a part, create a parser (:py:class:`~parser.Parser`) for it and
-    collect the results. Determine whether the line is generable as a primary,
-    bass, or generic line. Compile a list of ways the line can be generated
+    Parse a given part.
+    
+    Create a (:py:class:`~parser.Parser`) for the part and
+    collect the results.  Determine whether the line is generable as a primary,
+    bass, or generic line.  Compile a list of ways the line can be generated
     for each line type, if at all. Collect a list of parsing errors.
     '''
-    # run the Parser
+    # Run the parser.
     partParser = parser.Parser(part, context)
-    # sort out the interpretations of the part
+    # Sort out the interpretations of the part.
     part.isPrimary = partParser.isPrimary
     part.isGeneric = partParser.isGeneric
     part.isBass = partParser.isBass
@@ -520,29 +522,31 @@ def parsePart(part, context):
     part.Ginterps = partParser.Ginterps
     part.Binterps = partParser.Binterps
     part.interpretations = partParser.interpretations
-    # gather errors, if any
+    # Gather errors, if any.
     part.errors = partParser.errors
     part.typeErrorsDict = partParser.typeErrorsDict
 
 
 def selectedPreferredParseSets(context, show):
-    '''After parsing the individual parts, select sets of parses
-    based on Westergaard preference rules, trying to negotiate best match
+    '''
+    Select sets of parses according to preference rules.
+    
+    After parsing the individual parts, select sets of parses
+    based on Westergaard preference rules, trying to negotiate the best match
     between global structures in the parts. [This currently works
-    only for two-part counterpoint.]'''
-
-    # TODO currently only works for two-part counterpoint
+    only for two-part counterpoint.]
+    '''
 
     # TODO need to refine the preferences substantially
     if len(context.parts) > 1:
-        # select uppermost part that isPrimary as the primaryPart
-        # this is arbitrary
+        # Select uppermost part that isPrimary as the primaryPart.
+        # This is arbitrary.
         primPart = None
         for part in context.parts[:-1]:
             if part.isPrimary:
                 primPart = part
                 break
-        # select lowest part as the bassPart
+        # Select lowest part as the bassPart.
         bassPart = context.parts[-1]
 
         primaryS3Finals = [i.S3Final for i in primPart.interpretations['primary']]
@@ -576,15 +580,15 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
     '''
 
     def buildInterpretation(parse):
-        # clean out slurs that might have been left behind by a previous parse
+        # Clean out slurs that might have been left behind by a previous parse.
         slurs = context.parts[parse.partNum].recurse().getElementsByClass(spanner.Slur)
         for slur in slurs:
             context.parts[parse.partNum].remove(slur)
-        # TODO remove not only slurs but also parentheses and colors
+        # TODO Remove not only slurs but also parentheses and colors.
 
         # BUILD the interpretation
-        # arcs, rules, and parens are tied to note indexes in the line
-        # and these are then attached to notes in the source part
+        # Arcs, rules, and parens are tied to note indexes in the line,
+        # and these are then attached to notes in the source part.
         gatherArcs(context.parts[parse.partNum], parse.arcs)
         assignRules(context.parts[parse.partNum], parse.ruleLabels)
         assignParentheses(context.parts[parse.partNum], parse.parentheses)
@@ -611,8 +615,8 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
             content.write('musicxml.png', fp=filename)
         elif show == 'showWestergaardParse':
             pass
-            # create a function for displaying layered representation of
-            # a parsed line, for one line only
+            # TODO Create a function for displaying layered representation of
+            # a parsed line, for one line only.
 
     if partSelection is not None:
         part = context.parts[partSelection]
@@ -660,7 +664,7 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
                 selectOutput(part, show)
 
     elif len(context.parts) == 2 and partSelection is None:
-        # TODO transfer this testing to the verify function
+        # TODO Transfer this testing to the verify function.
         upperPart = context.parts[0]
         lowerPart = context.parts[1]
         for P in upperPart.Pinterps:
@@ -708,25 +712,25 @@ def gatherArcs(source, arcs):
     Given a fully parsed line (an interpretation), sort through the arcs and
     create a music21 spanner (tie/slur) to represent each arc.
     '''
-    # source is a Part in the input Score
-    # sort through the arcs and create a spanner(tie/slur) for each
+    # Source is a Part in the input Score.
+    # Sort through the arcs and create a spanner(tie/slur) for each.
     tempArcs = []
-    # skip duplicate arcs
+    # Skip duplicate arcs.
     for elem in arcs:
         if elem not in tempArcs:
             tempArcs.append(elem)
     arcs = tempArcs
-    # build arcs
+    # Build arcs.
     for arc in arcs:
         arcBuild(source, arc)
-    # TODO set up separate function for the basic arc
+    # TODO Set up separate function for the basic arc.
 
 
 def arcBuild(source, arc):
     '''
     The function that actually converts an arc into a slur.
     '''
-    # source is a Part in the input Score
+    # Source is a Part in the input Score.
     if len(arc) == 2:
         slurStyle = 'dashed'
     else:
@@ -746,7 +750,7 @@ def assignRules(source, rules):
     Also assigns the color
     blue to notes generated by a rule of basic structure.
     '''
-    # source is a Part in the input Score
+    # Source is a Part in the input Score.
     ruleLabels = rules
     for index, elem in enumerate(source.recurse().notes):
         for rule in ruleLabels:
@@ -768,7 +772,7 @@ def assignParentheses(source, parentheses):
     whereas syntax coding requires
     the ability to assign left and right parentheses separately.]
     '''
-    # source is a Part in the input Score
+    # Source is a Part in the input Score.
     parentheses = parentheses
     for index, elem in enumerate(source.recurse().notes):
         for parens in parentheses:
