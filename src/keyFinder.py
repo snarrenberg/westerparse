@@ -10,8 +10,8 @@
 Key Finder
 ==========
 
-The Key Finder module examines a music21 Stream
-and either validates a key provided by the user or infers a key.
+Examine a music21 Stream and either validate a key provided by the user
+or infer an appropriate key.
 
 Key inference begins by examining each part in the context to
 determine the scales in which the following criteria are met:
@@ -30,7 +30,7 @@ If there are still multiple options for key,
 the list is winnowed using two preference
 rules: (a) prefer most lines to end on tonic degree,
 and (b) prefer major rather than minor
-if ambiguously mixed. If winnowed to one option,
+if ambiguously mixed.  If winnowed to one option,
 the appropriate major or melodic minor scale and key are
 assigned to the context, otherwise an exception is raised
 and the failure to find a single
