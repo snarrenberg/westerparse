@@ -182,7 +182,10 @@ def parseContext(context,
                     + str(len(context.parts)-1) + '. Hence the selection of part '
                     + str(partSelection) + ' is invalid.')
             else:
-                partsSelected = context.parts[partSelection:partSelection+1]
+                if partSelection >= 0:
+                    partsSelected = context.parts[partSelection:partSelection+1]
+                else:
+                    partsSelected = context.parts[partSelection::partSelection-1]
         elif len(context.parts) == 1:
             partsSelected = context.parts[0:1]
         elif partSelection is None:
@@ -194,7 +197,6 @@ def parseContext(context,
     except ContextError as ce:
         ce.logerror()
         raise EvaluationException
-
     # run the parser and collect errors
     for part in partsForParsing:
         # set the part's lineType if given by the user

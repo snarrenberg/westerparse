@@ -200,7 +200,7 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 28)
+    tester(source, 7)
 #    context.evaluateLines(source, show=None, report=True)
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
