@@ -449,7 +449,7 @@ def parseContext(context,
 
         if show is not None:
             # preferences currently only work for two-part counterpoint
-            if 1 < len(context.parts) < 3:
+            if 1 < len(context.parts) < 3 and partSelection is None:
                 selectedPreferredParseSets(context, show)
             else:
                 showInterpretations(context, show, partSelection, partLineType)

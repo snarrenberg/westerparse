@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # user inputs
     # accept a source file (score) from the user
-    source = 'TestScoresXML/Bass01.musicxml' # Fux Dorian
+#    source = 'TestScoresXML/Bass01.musicxml' # Fux Dorian
 #    source = 'TestScoresXML/Bass02.musicxml' # Krumhansl-Schmuckler gives wrong key
 #    source = 'TestScoresXML/Bass03.musicxml'
 #    source = 'TestScoresXML/Bass04.musicxml' # Krumhansl-Schmuckler gives wrong key
@@ -124,6 +124,7 @@ if __name__ == "__main__":
 
 #    source = '../examples/corpus/Westergaard057b.musicxml'
 
+    source = 'TestScoresXML/2020_07_16T17_54_16_933Z.musicxml'
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
 
@@ -200,7 +201,7 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 5)
 #    context.evaluateLines(source, show=None, report=True)
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)

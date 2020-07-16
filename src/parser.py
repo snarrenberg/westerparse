@@ -1795,7 +1795,7 @@ class Parser():
                                 if arcLength(arc) == arcSpan]
                 if not selectedArcs:
                     error = ('No composite step motion found from '
-                             'this S2 candidate: ' + self.S2Value+1 + '.')
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
                     self.errors.append(error)
                     return
                 selectedArc = selectedArcs[0]
@@ -1827,7 +1827,7 @@ class Parser():
                 # Check for success.
                 if len(basicArcCand) != 2:
                     error = ('No composite step motion found from this '
-                             'S2 candidate: ' + self.S2Value+1 + '.')
+                             'S2 candidate: ' + str(self.S2Value+1) + '.')
                     self.errors.append(error)
                     return
                 else:
@@ -1953,7 +1953,7 @@ class Parser():
                 if len(basicArcCand) != (self.S2Value+1):
                     # TODO Report specific Note/Pitch of failed S2 candidate.
                     error = ('No basic step motion found from this S2 '
-                             'candidate:' + self.S2Value+1 + '.')
+                             'candidate:' + str(self.S2Value+1) + '.')
                     self.errors.append(error)
                     return
                 else:
@@ -1961,7 +1961,7 @@ class Parser():
 
             if self.arcBasic is None:
                 error = ('No basic step motion found from this S2 '
-                         'candidate:' + self.S2Value+1 + '.')
+                         'candidate:' + str(self.S2Value+1) + '.')
                 self.errors.append(error)
                 return
             # If a basic arc is created, set the rule labels for S3 notes.
