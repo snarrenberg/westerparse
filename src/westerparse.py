@@ -10,7 +10,7 @@
 WesterParse
 ===========
 
-This is the main program script.
+The main program script.
 
 WesterParse allows a user to test a species counterpoint exercise
 for conformity with the rules of line construction and voice leading
@@ -52,7 +52,54 @@ def evaluateLines(source,
                   report=False,
                   **keywords):
     '''
-    Determines whether a line is generable using Westergaard's rules.
+    Determine whether lines are generable using Westergaard's rules.
+
+    Keyword arguments:
+
+    `show` -- Determines how the output is handled.
+
+       *Options*
+       
+       `'writeToServer'` -- Reserved for use by the WesterParse web site
+       to write parses to musicxml files, which are then displayed in the
+       browser window.
+
+       'writeToLocal'` -- Can be used to write parses in musicxml to a user's
+       local directory. [Eventually The user will be able select a directory by
+       editing the configuration.py file.] By default, the files are written
+       to 'parses_from_context/'. The name for each file consists of the prefix
+       'parser_output\_', a timestamp, and the suffix '.musicxml'.
+
+       `'writeToPng'` -- Use the application MuseScore to produce png files.
+       MuseScore first generates an xml file and then derives the png file.
+       These are named with the prefix 'parser_output\_', a timestamp, and the
+       appropriate suffix. Note that Musescore inserts '-1' before adding the
+       '.png' suffix. The default directory for these files is 'tempimages/'. 
+       [This, too, can be changed by editing the configuration.py file.]
+
+       `'showWestergaardParse'` -- Not yet functional. Can be used if the source
+       consists of only one line. It will display the parse(s) of a line using
+       Westergaard's layered form of representation. 
+ 
+    `partSelection` -- Designates a line of the composition to parse. 
+
+       *Options*
+       
+       `None` -- The default option. Selects all of the lines for parsing.
+       
+       0, 1, 2, ..., -1 -- Following the conventions of music21, lines are
+       numbered from top to bottom, starting with 0. 
+
+    `partLineType` -- Only for use in evaluating a single line. None is the
+    default. User may select among 'primary', 'bass', or 'generic'.
+
+    `report` -- True or False. Use True to see a text report. Note: If one or
+    more lines in the source cannot be parsed (i.e., if there are syntax
+    errors) or the `show` option is set to None, the program will automatically
+    generate a text report.
+    
+    Other keywords: `knote` and `kmode` -- The user can use these to force the
+    parser to interpret the input in a particular key.
     '''
     clearLogfile('logfile.txt')
     if partLineType == 'any' or '':
@@ -75,7 +122,7 @@ def evaluateCounterpoint(source,
                          sonorityCheck=False,
                          **keywords):
     '''
-    Determines whether the voice leading conforms to Westergaard's rules.
+    Determine whether voice leading conforms to Westergaard's rules.
     '''
     clearLogfile('logfile.txt')
     try:
@@ -149,13 +196,14 @@ def parseContext(context,
                  partLineType=None,
                  report=False):
     '''
-    This function runs the parse on each line of a
-    context using :py:func:`parsePart`.
-    A dictionary is used to collect error reports from the parser;
-    this is used to produce an error report.
-    A separate report is created for successful parses.
-    If the user has elected to display the results, the function selects
-    the preferred interpretations and displays them.
+    Parse the lines in a score.
+    
+    Run the parser for each line of a context using :py:func:`parsePart`.
+    Use a dictionary to collect error reports from the parser and
+    to produce an error report.
+    Create a separate report for successful parses.
+    If the user has elected to display the results, select
+    the preferred interpretations and display them.
     '''
     # dictionary for collecting error reports
     # primary keys: part names
@@ -277,7 +325,7 @@ def parseContext(context,
                             for err in context.errorsDict[part.name][partLineType]:
                                 error = error + '\n\t\t' + str(err)
                         raise ContextError(error)
-                # update parse report if no errors found
+                # Update parse report if no errors found.
                 context.parseReport = context.parseReport + '\n' + result
 
             elif partSelection is None and len(context.parts) > 1:

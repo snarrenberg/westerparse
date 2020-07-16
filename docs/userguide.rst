@@ -50,20 +50,20 @@ with music21. The parse is shown using a modified Schenkerian notation.
 :literal:`'writeToServer'` is used by the web site to write parses to musicxml files, which are then 
 displayed in the browser window. 
 
-:literal:`'writeToLocal'` can be used to write parses to a local directory. [The user can select 
+:literal:`'writeToLocal'` can be used to write parses to a local directory.  [The user can select 
 a directory by editing the configuration.py file.] By default, the files are written to 
-'parses_from_context/'. The name for each file consists of the prefix 'parser_output\_', 
+'parses_from_context/'.  The name for each file consists of the prefix 'parser_output\_', 
 a timestamp, and the suffix '.musicxml'.
 
 :literal:`'writeToPng'` uses the application MuseScore to produce png files, which can then 
-be used as illustrations. In the process, MuseScore first generates an xml file and 
+be used as illustrations.  In the process, MuseScore first generates an xml file and 
 from that derives the png file. These are named with the prefix 'parser_output\_',  
-a timestamp, and the appropriate suffix. note that Musescore inserts '-1' before 
-adding the '.png' suffix. The default directory for these files is 'tempimages/'. 
+a timestamp, and the appropriate suffix.  Note that Musescore inserts '-1' before 
+adding the '.png' suffix.  The default directory for these files is 'tempimages/'. 
 [This, too, can be changed by editing the configuration.py file.]
 
 :literal:`'showWestergaardParse'` can be used if the source consists of only one line. It will 
-display the layered representation of a parse line that Westergaard used in his book. 
+display the parse(s) of a line using the layered form of representation that Westergaard used in his book. 
 [This option is not yet functional.]
  
 If one or more lines in the source cannot be parsed (i.e., if there are syntax errors), 
