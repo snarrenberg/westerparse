@@ -136,7 +136,7 @@ class GlobalContext(Context):
     #. Measure-long local harmonic contexts are created,
        for use in parsing events in third species.
     '''
-    def __init__(self, score, **keywords):
+    def __init__(self, score, **kwargs):
         self.score = score
         self.parts = self.score.parts
         self.score.measures = len(self.parts[0].getElementsByClass('Measure'))
@@ -157,7 +157,7 @@ class GlobalContext(Context):
 
         # (3) Accept key from user if provided, else infer one from the parts.
         # Exit if errors are encountered.
-        self.setupTonalityGeneral(**keywords)
+        self.setupTonalityGeneral(**kwargs)
 
         # (4) Specific set up for notes and parts.
         # To parts: assign tonic, mode, scale.
@@ -215,7 +215,7 @@ class GlobalContext(Context):
                 # Assign a Dependency object to each Note.
                 note.dependency = dependency.Dependency()
 
-    def setupTonalityGeneral(self, **keywords):
+    def setupTonalityGeneral(self, **kwargs):
         # Setup key, using information provided by user or inferred from parts.
         knote = keywords.get('keynote')
         kmode = keywords.get('mode')

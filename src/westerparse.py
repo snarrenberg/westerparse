@@ -50,7 +50,7 @@ def evaluateLines(source,
                   partSelection=None,
                   partLineType=None,
                   report=False,
-                  **keywords):
+                  **kwargs):
     '''
     Determine whether lines are generable using Westergaard's rules.
 
@@ -108,7 +108,7 @@ def evaluateLines(source,
     if partLineType == 'any' or '':
         partLineType = None
     try:
-        cxt = makeGlobalContext(source, **keywords)
+        cxt = makeGlobalContext(source, **kwargs)
     except EvaluationException as fce:
         fce.show()
         return
@@ -123,13 +123,13 @@ def evaluateLines(source,
 def evaluateCounterpoint(source,
                          report=True,
                          sonorityCheck=False,
-                         **keywords):
+                         **kwargs):
     '''
     Determine whether voice leading conforms to Westergaard's rules.
     '''
     clearLogfile('logfile.txt')
     try:
-        cxt = makeGlobalContext(source, **keywords)
+        cxt = makeGlobalContext(source, **kwargs)
     except EvaluationException as fce:
         fce.show()
         return
@@ -154,7 +154,7 @@ def evaluateCounterpoint(source,
 # -----------------------------------------------------------------------------
 
 
-def makeGlobalContext(source, **keywords):
+def makeGlobalContext(source, **kwargs):
     '''
     Import a musicxml file and convert to music21 Stream.
     Then create a :py:class:`~context.GlobalContext`.
@@ -162,7 +162,7 @@ def makeGlobalContext(source, **keywords):
     s = converter.parse(source)
     # create a global context object and prep for evaluation
     # if errors encountered, script will exit and report
-    gxt = GlobalContext(s, **keywords)
+    gxt = GlobalContext(s, **kwargs)
     return gxt
 
 

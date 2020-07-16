@@ -123,7 +123,7 @@ vlErrors = []
 # -----------------------------------------------------------------------------
 
 
-def checkCounterpoint(context, report=True, sonorityCheck=False, **keywords):
+def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
     '''This is the main script.  It creates the analysis database and then
     checks every pair of parts in the score for conformity with the rules
     that control dissonance and the rules that prohibit certain forms of motion.

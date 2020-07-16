@@ -39,7 +39,7 @@ class Dependency():
     '''An object for storing the dependencies of a note in a line'''
     validDirections = ('ascending', 'descending', None)
 
-    def __init__(self, *args, **keywords):
+    def __init__(self, *args, **kwargs):
         # dependencies default to None
         self._lefthead = None  # can be a single line element -- note.index
         self._righthead = None  # can be a single line element -- note.index

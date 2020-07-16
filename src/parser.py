@@ -90,7 +90,7 @@ class Parser():
     The individual parses are contained in a :py:class:`~Parser.Parse`.
     These are created by :py:func:`~prepareParses`.
     '''
-    def __init__(self, part, context, **keywords):
+    def __init__(self, part, context, **kwargs):
         # Set up base content.
         self.part = part
         self.context = context
