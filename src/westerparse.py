@@ -60,6 +60,9 @@ def evaluateLines(source,
 
        *Options*
        
+       None -- Default option. A text report is generated in lieu of a display
+       in musical notation.
+       
        `writeToServer` -- Reserved for use by the WesterParse web site
        to write parses to musicxml files, which are then displayed in the
        browser window.

@@ -105,7 +105,7 @@ if __name__ == "__main__":
         context_process = Process(target=westerparse.evaluateLines,
                                   args=(source,),
                                   kwargs={'show': None,
-                                          'partSelection': 1,
+                                          'partSelection': -1,
                                           'partLineType': 'bass',
                                           'keynote': keynote,
                                           'mode': mode})
