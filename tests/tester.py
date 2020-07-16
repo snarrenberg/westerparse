@@ -156,28 +156,28 @@ if __name__ == "__main__":
 								elif verify == 5:
 												westerparse.evaluateLines(source, show='show')
 								elif verify == 51:
-												context.evaluateLines(source, show='writeToLocal')
+												westerparse.evaluateLines(source, show='writeToLocal')
 								elif verify == 52:
-												context.evaluateLines(source, show='writeToPng')
+												westerparse.evaluateLines(source, show='writeToPng')
 
 								elif verify == 6:
-												context.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
+												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
 								elif verify == 16:
-												context.evaluateLines(source, show='show', partSelection=0, partLineType='primary')
+												westerparse.evaluateLines(source, show='show', partSelection=0, partLineType='primary')
 								elif verify == 7:
-												context.evaluateLines(source, show=None, partSelection=-1, partLineType='bass')
+												westerparse.evaluateLines(source, show=None, partSelection=-1, partLineType='bass')
 								elif verify == 17:
-												context.evaluateLines(source, show='show', partSelection=-1, partLineType='bass')
+												westerparse.evaluateLines(source, show='show', partSelection=-1, partLineType='bass')
 								elif verify == 8:
-												context.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
+												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
 								elif verify == 18:
-												context.evaluateLines(source, show='show', partSelection=0, partLineType='generic')
+												westerparse.evaluateLines(source, show='show', partSelection=0, partLineType='generic')
 								elif verify == 9:
-												context.evaluateLines(source, show=None, partSelection=0, partLineType=None)
+												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType=None)
 								elif verify == 19:
-												context.evaluateLines(source, show='show', partSelection=0, partLineType=None)
+												westerparse.evaluateLines(source, show='show', partSelection=0, partLineType=None)
 								elif verify == 28:
-												context.evaluateLines(source, show='show', partSelection=1, partLineType='generic')
+												westerparse.evaluateLines(source, show='show', partSelection=1, partLineType='generic')
 								else:
 												print('ERROR: No valid evaluation option selected.')
 												
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         tester(source, verify)
 												
     def vltester(source, keynote, mode):
-												context.evaluateCounterpoint(source, report=True, keynote=keynote, mode=mode, validateKey=False)
+												westerparse.evaluateCounterpoint(source, report=True, keynote=keynote, mode=mode, validateKey=False)
 
 #     exx = converter.parse(source)
 #     mf = midi.translate.streamToMidiFile(exx)
@@ -200,7 +200,7 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 28)
 #    context.evaluateLines(source, show=None, report=True)
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)

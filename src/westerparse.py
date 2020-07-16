@@ -165,15 +165,38 @@ def parseContext(context,
         context.errorsDict[part.name] = {}
 
     # determine which parts to parse
-    if partSelection is not None and partSelection < len(context.parts):
-        partsParsed = context.parts[partSelection:partSelection+1]
-    elif len(context.parts) == 1:
-        partsParsed = context.parts[0:1]
-    else:
-        partsParsed = context.parts
+    # and return a slice of context.parts
+    def validatePartSelection(context, partSelection):
+        if partSelection is not None:
+            try:
+               context.parts[partSelection]
+            except IndexError:
+                if len(context.parts) == 1:
+                    pts = ' part'
+                else:
+                    pts = ' parts'
+                raise ContextError(
+                    'Context Error: The composition has only '
+                    + str(len(context.parts)) + pts
+                    + ', so the part selection must fall in the range of 0-'
+                    + str(len(context.parts)-1) + '. Hence the selection of part '
+                    + str(partSelection) + ' is invalid.')
+            else:
+                partsSelected = context.parts[partSelection:partSelection+1]
+        elif len(context.parts) == 1:
+            partsSelected = context.parts[0:1]
+        elif partSelection is None:
+            partsSelected = context.parts
+        return partsSelected
+        
+    try:
+        partsForParsing = validatePartSelection(context, partSelection) 
+    except ContextError as ce:
+        ce.logerror()
+        raise EvaluationException
 
     # run the parser and collect errors
-    for part in partsParsed:
+    for part in partsForParsing:
         # set the part's lineType if given by the user
         if partLineType:
             part.lineType = partLineType
@@ -336,8 +359,8 @@ def parseContext(context,
         elif generableContext is False:
             # get header and key information from parse report
             error = context.parseReport + '\n' + 'Line Parsing Errors'
-            if len(partsParsed) == 1:
-                part = partsParsed[0]
+            if len(partsForParsing) == 1:
+                part = partsForParsing[0]
                 error = (error + '\n\tThe following linear errors were '
                          'found when attempting to interpret the line:')
                 try:
