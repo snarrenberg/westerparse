@@ -59,10 +59,10 @@ def evaluateLines(source,
     `show` -- Determines how the output is handled.
 
        *Options*
-       
+
        None -- Default option. A text report is generated in lieu of a
        display in musical notation.
-       
+
        `writeToServer` -- Reserved for use by the WesterParse web site
        to write parses to musicxml files, which are then displayed in
        the browser window.
@@ -84,16 +84,16 @@ def evaluateLines(source,
 
        `showWestergaardParse` -- Not yet functional.  Can be used if
        the source consists of only one line. It will display the parse(s)
-       of a line using Westergaard's layered form of representation. 
- 
-    `partSelection` -- Designates a line of the composition to parse. 
+       of a line using Westergaard's layered form of representation.
+
+    `partSelection` -- Designates a line of the composition to parse.
 
        *Options*
-       
+
        `None` -- The default option. Selects all of the lines for parsing.
-       
+
        0, 1, 2, ..., -1 -- Following the conventions of music21, lines are
-       numbered from top to bottom, starting with 0. 
+       numbered from top to bottom, starting with 0.
 
     `partLineType` -- Only for use in evaluating a single line.  None is
     the default. User may select among 'primary', 'bass', or 'generic'.
@@ -102,7 +102,7 @@ def evaluateLines(source,
     one or more lines in the source cannot be parsed (i.e., if there are
     syntax errors) or the `show` option is set to None, the program will
     automatically generate a text report.
-    
+
     Other keywords: `knote` and `kmode` -- The user can use these to
     force the parser to interpret the input in a particular key.
     """
@@ -202,7 +202,7 @@ def parseContext(context,
                  report=False):
     """
     Parse the lines in a score.
-    
+
     Run the parser for each line of a context using :py:func:`parsePart`.
     Use a dictionary to collect error reports from the parser and
     to produce an error report.
@@ -222,7 +222,7 @@ def parseContext(context,
     def validatePartSelection(context, partSelection):
         if partSelection is not None:
             try:
-               context.parts[partSelection]
+                context.parts[partSelection]
             except IndexError:
                 if len(context.parts) == 1:
                     pts = ' part'
@@ -245,9 +245,9 @@ def parseContext(context,
         elif partSelection is None:
             partsSelected = context.parts
         return partsSelected
-        
+
     try:
-        partsForParsing = validatePartSelection(context, partSelection) 
+        partsForParsing = validatePartSelection(context, partSelection)
     except ContextError as ce:
         ce.logerror()
         raise EvaluationException
@@ -289,7 +289,7 @@ def parseContext(context,
         context.parseReport = 'PARSE REPORT'
 
         # Gather information on the key to report to the user.
-        if context.keyFromUser == True:
+        if context.keyFromUser:
             result = ('Key supplied by user: ' + context.key.nameString)
             context.parseReport = context.parseReport + '\n' + result
         else:
@@ -514,7 +514,7 @@ def parseContext(context,
 def parsePart(part, context):
     """
     Parse a given part.
-    
+
     Create a (:py:class:`~parser.Parser`) for the part and
     collect the results.  Determine whether the line is generable as a primary,
     bass, or generic line.  Compile a list of ways the line can be generated
@@ -538,7 +538,7 @@ def parsePart(part, context):
 def selectedPreferredParseSets(context, show):
     """
     Select sets of parses according to preference rules.
-    
+
     After parsing the individual parts, select sets of parses
     based on Westergaard preference rules, trying to negotiate the best match
     between global structures in the parts. [This currently works
@@ -633,56 +633,56 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
     if partSelection is not None:
         part = context.parts[partSelection]
         if partLineType == 'primary' and part.isPrimary:
-            for P in part.Pinterps:
-                buildInterpretation(P)
+            for PI in part.Pinterps:
+                buildInterpretation(PI)
                 selectOutput(part, show)
         elif partLineType == 'bass' and part.isBass:
-            for B in part.Binterps:
-                buildInterpretation(B)
+            for BI in part.Binterps:
+                buildInterpretation(BI)
                 selectOutput(part, show)
         elif partLineType == 'generic' and part.isGeneric:
-            for G in part.Ginterps:
-                buildInterpretation(G)
+            for GI in part.Ginterps:
+                buildInterpretation(GI)
                 selectOutput(part, show)
 
     elif len(context.parts) == 1 and partLineType is None:
         part = context.parts[0]
         if part.Pinterps:
-            for P in part.Pinterps:
-                buildInterpretation(P)
+            for PI in part.Pinterps:
+                buildInterpretation(PI)
                 selectOutput(part, show)
         if part.Binterps:
-            for B in part.Binterps:
-                buildInterpretation(B)
+            for BI in part.Binterps:
+                buildInterpretation(BI)
                 selectOutput(part, show)
         if part.Ginterps:
-            for G in part.Ginterps:
-                buildInterpretation(G)
+            for GI in part.Ginterps:
+                buildInterpretation(GI)
                 selectOutput(part, show)
 
     elif len(context.parts) == 1 and partLineType:
         part = context.parts[0]
         if partLineType == 'primary' and part.Pinterps:
-            for P in part.Pinterps:
-                buildInterpretation(P)
+            for PI in part.Pinterps:
+                buildInterpretation(PI)
                 selectOutput(part, show)
         elif partLineType == 'bass' and part.Binterps:
-            for B in part.Binterps:
-                buildInterpretation(B)
+            for BI in part.Binterps:
+                buildInterpretation(BI)
                 selectOutput(part, show)
         elif partLineType == 'generic' and part.Ginterps:
-            for G in part.Ginterps:
-                buildInterpretation(G)
+            for GI in part.Ginterps:
+                buildInterpretation(GI)
                 selectOutput(part, show)
 
     elif len(context.parts) == 2 and partSelection is None:
         # TODO Transfer this testing to the verify function.
         upperPart = context.parts[0]
         lowerPart = context.parts[1]
-        for P in upperPart.Pinterps:
-            buildInterpretation(P)
-            for B in lowerPart.Binterps:
-                buildInterpretation(B)
+        for PI in upperPart.Pinterps:
+            buildInterpretation(PI)
+            for BI in lowerPart.Binterps:
+                buildInterpretation(BI)
                 selectOutput(context.score, show)
                 time.sleep(2)
 
@@ -700,12 +700,12 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
         else:
             innerPartPreferredInterps = innerPart.Ginterps
 
-        for U in upperPartPreferredInterps:
-            buildInterpretation(U)
-            for I in innerPartPreferredInterps:
-                buildInterpretation(I)
-                for B in lowerPart.Binterps:
-                    buildInterpretation(B)
+        for UI in upperPartPreferredInterps:
+            buildInterpretation(UI)
+            for II in innerPartPreferredInterps:
+                buildInterpretation(II)
+                for BI in lowerPart.Binterps:
+                    buildInterpretation(BI)
                     selectOutput(context.score, show)
                     time.sleep(2)
 
