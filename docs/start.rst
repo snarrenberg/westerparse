@@ -59,10 +59,10 @@ You can then ask WesterParse to parse the line:
    ...               partLineType='primary', 
    ...               report=True)
 
-The program infers the key of D minor and attempts to parse the line as a primary
-upper line. There are two possible interpretations (actually, there are a few more,
-but the program exercises some preferential judgment and weeds out the less plausible
-interpretations). 
+The program infers the key of D minor and attempts to parse the line as
+a primary upper line. There are two possible interpretations (actually,
+there are a few more, but the program exercises some preferential judgment
+and weeds out the less plausible interpretations). 
 
 The result could take the form of a text report:
 
@@ -83,6 +83,12 @@ interpretations in a notation program.
    :width: 600
    :alt: Fux Dorian cF, as PL2
   
+The annotations indicate the syntactic function of each note by referring
+to the rule of construction that generates the particular note under this 
+particular interpretation of the line. The slurs bind notes together into
+syntactic units such as passing and neighboring motions.
+Notes shown in blue belong to the basic structure of the line.
+
 
 Installation Instructions
 -------------------------
