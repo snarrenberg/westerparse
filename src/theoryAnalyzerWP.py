@@ -14,12 +14,14 @@
 #-------------------------------------------------------------------------------
 """
 Module Introduction
-===========================================
+===================
 
-Theory Analyzer methods provide easy analysis tools for common music theory type queries regarding
-a :class:`~music21.stream.Score` (**must have parts**), such as finding the parallel fifths,
+Theory Analyzer methods provide easy analysis tools for common music
+theory type queries regarding a :class:`~music21.stream.Score`
+(**must have parts**), such as finding the parallel fifths,
 locating the passing tones, finding
-dissonant harmonic intervals, etc. These analysis methods typically operate in the following way:
+dissonant harmonic intervals, etc. These analysis methods typically
+operate in the following way:
 
 1. the score is automatically parsed into small bits for analysis (such as
    :class:`~music21.voiceLeading.Verticality`,
@@ -29,12 +31,13 @@ dissonant harmonic intervals, etc. These analysis methods typically operate in t
 3. the results are stored in the analyzer's analysisData dictionary,
    (and also returned as a list depending on which method is called)
 
-===========================================
+===================
 Example Module Uses
-===========================================
+===================
 
 **get voiceLeading objects from a score**
-these methods break the score up into voiceLeading atoms, and return objects of that type.
+these methods break the score up into voiceLeading atoms,
+and return objects of that type.
 These objects are then useful
 because they provide easy access to the components within them, and
 those components (notes, chords, etc.) contain
@@ -48,8 +51,9 @@ a direct pointer to the original object in the score.
 * :meth:`~Analyzer.getHarmonicIntervals`
 * :meth:`~Analyzer.getMelodicIntervals`
 
-You can then iterate through these objects and access the attributes directly. Here is an example
-of this that will analyze the root motion in a score:
+You can then iterate through these objects and access the attributes
+directly. Here is an example of this that will analyze
+the root motion in a score:
 
 
     >>> p = corpus.parse('leadsheet').flat.getElementsByClass('Harmony').stream()
