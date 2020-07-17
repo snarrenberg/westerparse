@@ -6,7 +6,7 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # ------------------------------------------------------------------------------
-'''
+"""
 Dependency
 ==========
 
@@ -18,7 +18,7 @@ reference to a lefthead and a righthead, but not to any dependents.
 The note that initiates the passing motion, by contrast, has one
 dependent (the passing tone) but no left- or righthead.
 An anticipation stores a reference to a righthead, but has no
-lefthead and no dependents.'''
+lefthead and no dependents."""
 
 
 # TODO left, right, approach, departure -- these are now handled in Consecutions,
@@ -36,7 +36,7 @@ class DependencyException(Exception):
 
 
 class Dependency():
-    '''An object for storing the dependencies of a note in a line'''
+    """An object for storing the dependencies of a note in a line"""
     validDirections = ('ascending', 'descending', None)
 
     def __init__(self, *args, **kwargs):

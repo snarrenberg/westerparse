@@ -12,7 +12,7 @@
 # Copyright:    Copyright © 2009-2015 Michael Scott Cuthbert and the music21 Project
 # License:      LGPL or BSD, see license.txt
 #-------------------------------------------------------------------------------
-'''
+"""
 Module Introduction
 ===========================================
 
@@ -156,7 +156,7 @@ and one single identify method should
 be written to color/write comments, etc. But for now, all methods serve their
 purpose and the appropriate get methods
 can easily be written (reference getPassingTones for example)
-'''
+"""
 import unittest
 from collections import defaultdict
 
@@ -211,7 +211,7 @@ class Analyzer:
         self.store = {}
 
     def addAnalysisData(self, score):
-        '''
+        """
         adds an attribute "analysisData" to a Stream object if it does not exist.
         
         # Snarrenberg: no such attribute is added -- 
@@ -230,7 +230,7 @@ class Analyzer:
         True
         >>> 'ResultDict' in ads.store[p.id]
         True
-        '''
+        """
         if score.id not in self.store:
             dd = defaultdict(list)
             dd['ResultDict'] = defaultdict(dict)
@@ -249,7 +249,7 @@ class Analyzer:
     # Vertical Slices, VoiceLeadingQuartet, ThreeNoteLinearSegment, and VerticalityNTuplet
 
     def getVerticalities(self, score, classFilterList=('Note', 'Chord', 'Harmony', 'Rest')):
-        '''
+        """
         returns a list of :class:`~music21.voiceLeading.Verticality` objects in
         by parsing the score. Note that it uses the combined rhythm of the parts
         to determine what vertical slices to take. Default is to return only objects of
@@ -305,7 +305,7 @@ class Analyzer:
                  {0: [<music21.harmony.ChordSymbol D>]})>,
          <music21.voiceLeading.Verticality contentDict=defaultdict(<... 'list'>,
                  {0: [<music21.harmony.ChordSymbol E7>]})>]
-        '''
+        """
 
         vsList = []
         sid = score.id
@@ -353,10 +353,10 @@ class Analyzer:
 
 # This is the original music21 function for getVLQs -- does not function properly
 #     def getVLQs(self, score, partNum1, partNum2):
-#         '''
+#         """
 #         extracts and returns a list of the :class:`~music21.voiceLeading.VoiceLeadingQuartet`
 #         objects present between partNum1 and partNum2 in the score
-#         '''
+#         """
 #         from music21 import tree
 #         tsCol = tree.fromStream.asTimespans(score,
 #                                             flatten=True,
@@ -371,11 +371,11 @@ class Analyzer:
 #         return allVLQs
 
     def getVLQs(self, score, partNum1, partNum2):
-        '''
+        """
         written by Tony Li (2019)
         extracts and returns a list of the :class:`~music21.voiceLeading.VoiceLeadingQuartet`
         objects present between partNum1 and partNum2 in the score
-        '''
+        """
         #extract the relevant parts from the score
         part1 = score.parts[partNum1]
         part2 = score.parts[partNum2]
@@ -430,10 +430,10 @@ class Analyzer:
         return allVLQs
 
     def getOnbeatVLQs(self, score, partNum1, partNum2):
-        '''
+        """
         extracts and returns a list of the :class:`~music21.voiceLeading.VoiceLeadingQuartet`
         objects present between partNum1 and partNum2 in the score, restricted to notes that start on the beat
-        '''
+        """
         #extract the relevant parts from the score
         part1 = score.parts[partNum1]
         part2 = score.parts[partNum2]
@@ -490,11 +490,11 @@ class Analyzer:
         return allVLQs
 
     def getNonconsecutiveOffbeatToOnbeatVLQs(self, score, partNum1, partNum2):
-        '''
+        """
         extracts and returns a list of the :class:`~music21.voiceLeading.VoiceLeadingQuartet`
         objects present between partNum1 and partNum2 in the score, restricted to 
         nonconsecutive notes offbeat to onbeat
-        '''
+        """
         #extract the relevant parts from the score
         part1 = score.parts[partNum1]
         part2 = score.parts[partNum2]
@@ -573,11 +573,11 @@ class Analyzer:
 
 
     def getThreeNoteLinearSegments(self, score, partNum):
-        '''
+        """
         extracts and returns a list of the :class:`~music21.voiceLeading.ThreeNoteLinearSegment`
         objects present in partNum in the score (three note linear segments are made up of ONLY
         three notes)
-        '''
+        """
         # Caches the list of TNLS once they have been computed
         # for a specified partNum
 
@@ -599,7 +599,7 @@ class Analyzer:
         return self.store[sid]['ThreeNoteLinearSegments'][tnlsCacheKey]
 
     def getLinearSegments(self, score, partNum, lengthLinearSegment, classFilterList=None):
-        '''
+        """
         extracts and returns a list of all the linear segments in the piece at
         the partNum specified, the length of which specified by lengthLinearSegment:
         Currently Supported: :class:`~music21.voiceLeading.ThreeNoteLinearSegment`
@@ -658,7 +658,7 @@ class Analyzer:
             <music21.harmony.ChordSymbol C11>]  >,
          <music21.voiceLeading.TwoChordLinearSegment objectList=[<music21.harmony.ChordSymbol C11>,
              <music21.harmony.ChordSymbol C7>]  >]
-        '''
+        """
 
         linearSegments = []
         #no caching here - possibly implement later on...
@@ -702,7 +702,7 @@ class Analyzer:
             return []
 
     def getVerticalityNTuplets(self, score, ntupletNum):
-        '''
+        """
         extracts and returns a list of the
         :class:`~music21.voiceLeading.VerticalityNTuplet` or the
         corresponding subclass (currently only supports triplets)
@@ -717,7 +717,7 @@ class Analyzer:
                                  <music21.voiceLeading.Verticality...>,
                                  <music21.voiceLeading.Verticality...>] >
         Snarrenberg: instance variable: .verticalities accesses listofVerticalities
-        '''
+        """
         verticalityNTuplets = []
         sid = score.id
         self.addAnalysisData(score)
@@ -746,7 +746,7 @@ class Analyzer:
     # and getMelodicIntervals() to be extracted from a vertical Slice
 
     def getHarmonicIntervals(self, score, partNum1, partNum2):
-        '''
+        """
         returns a list of all the harmonic intervals (:class:`~music21.interval.Interval` )
         occurring between the two specified parts.
 
@@ -767,7 +767,7 @@ class Analyzer:
         'P5'
         >>> ads.getHarmonicIntervals(sc, 0, 1)[1].name
         'm3'
-        '''
+        """
         hInvList = []
         verticalities = self.getVerticalities(score)
         for verticality in verticalities:
@@ -785,7 +785,7 @@ class Analyzer:
         return hInvList
 
     def getMelodicIntervals(self, score, partNum):
-        '''
+        """
         returns a list of all the melodic intervals (:class:`~music21.interval.Interval`)
         in the specified part.
 
@@ -803,7 +803,7 @@ class Analyzer:
         'P5'
         >>> ads.getMelodicIntervals(sc, 0)[1].name
         'P4'
-        '''
+        """
         mInvList = []
         noteList = score.parts[partNum].flat.getElementsByClass(['Note', 'Rest'])
         for (i,n1) in enumerate(noteList[:-1]):
@@ -819,7 +819,7 @@ class Analyzer:
         return mInvList
 
     def getNotes(self, score, partNum):
-        '''
+        """
         returns a list of notes present in the score. If Rests are present,
         appends None to the list
 
@@ -833,7 +833,7 @@ class Analyzer:
         >>> ads.getNotes(sc, 0)
         [<music21.note.Note C>, <music21.note.Note C>, <music21.note.Note C>, None]
 
-        '''
+        """
         noteList = []
         noteOrRestList = score.parts[partNum].flat.getElementsByClass(['Note', 'Rest'])
         for nr in noteOrRestList:
@@ -847,10 +847,10 @@ class Analyzer:
         return noteList
 
     def getVerticalPairs(self, score, partNum1, partNum2):
-        '''
+        """
         written by Robert Snarrenberg (2019)
         returns a list of all the vertical pairs of notes occurring between the two specified parts.
-        '''
+        """
         vPairList = []
         verticalities = self.getVerticalities(score)
         for verticality in verticalities:
@@ -872,11 +872,11 @@ class Analyzer:
     # Helper for identifying across all parts - used for recursion in identify functions
 
     def getAllPartNumPairs(self, score):
-        '''
+        """
         Gets a list of all possible pairs of partNumbers:
         high to low
         tuples (partNum1, partNum2) where 0 <= partNum1 < partnum2 < numParts
-        '''
+        """
         partNumPairs = []
         numParts = len(score.parts)
         for partNum1 in range(numParts - 1):
@@ -1116,7 +1116,7 @@ class Analyzer:
 
     def identifyParallelFifths(self, score, partNum1=None, partNum2=None, color=None,
                                dictKey='parallelFifths'):
-        '''
+        """
 
         Identifies parallel fifths (calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.parallelFifth`) between
@@ -1152,7 +1152,7 @@ class Analyzer:
         2
         >>> ads.store[sc.id]['ResultDict']['parallelFifths'][0].text
         'Parallel fifth in measure 1: Part 1 moves from D to E while part 2 moves from G to A'
-        '''
+        """
         testFunction = lambda vlq: vlq.parallelFifth()
         textFunction = lambda vlq, pn1, pn2: ("Parallel fifth in measure "
                                               + str(vlq.v1n1.measureNumber)
@@ -1167,7 +1167,7 @@ class Analyzer:
                                  testFunction, textFunction, color)
 
     def getParallelFifths(self, score, partNum1=None, partNum2=None):
-        '''
+        """
         Identifies all parallel fifths in score, or only the parallel fifths found between
         partNum1 and partNum2, and
         returns these as instances of :class:`~music21.voiceLeading.VoiceLeadingQuartet`
@@ -1200,7 +1200,7 @@ class Analyzer:
             v1n2=<music21.note.Note G>, v2n1=<music21.note.Note A>, v2n2=<music21.note.Note C>  >]
         >>> len(ads.store[sc.id]['ResultDict']['parallelFifths'])
         2
-        '''
+        """
         sid = score.id
         testFunction = lambda vlq: vlq.parallelFifth()
         self._identifyBasedOnVLQ(score, partNum1, partNum2, dictKey='parallelFifths',
@@ -1213,7 +1213,7 @@ class Analyzer:
 
     def identifyParallelOctaves(self, score, partNum1=None, partNum2=None,
                                 color=None, dictKey='parallelOctaves'):
-        '''
+        """
         Identifies parallel octaves (calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.parallelOctave`) between
         two parts (if specified) or between all possible pairs of parts (if not specified)
@@ -1244,7 +1244,7 @@ class Analyzer:
         1
         >>> ads.store[sc.id]['ResultDict']['parallelOctaves'][0].text
         'Parallel octave in measure 1: Part 1 moves from C to G while part 2 moves from C to G'
-        '''
+        """
 
         testFunction = lambda vlq: vlq.parallelOctave()
         textFunction = lambda vlq, pn1, pn2: ("Parallel octave in measure "
@@ -1259,7 +1259,7 @@ class Analyzer:
                                  testFunction, textFunction, color)
 
     def getParallelOctaves(self, score, partNum1=None, partNum2=None):
-        '''
+        """
         Identifies all parallel octaves in score (if no part numbers specified),
         or only the parallel octaves found between partNum1 and partNum2, and
         returns these as instances of :class:`~music21.voiceLeading.VoiceLeadingQuartet`
@@ -1284,7 +1284,7 @@ class Analyzer:
         >>> ads.getParallelOctaves(sc)
         [<music21.voiceLeading.VoiceLeadingQuartet v1n1=<music21.note.Note C>,
               v1n2=<music21.note.Note G>, v2n1=<music21.note.Note C>, v2n2=<music21.note.Note G>  >]
-        '''
+        """
         sid = score.id
         testFunction = lambda vlq: vlq.parallelOctave()
         self._identifyBasedOnVLQ(score, partNum1, partNum2, dictKey='parallelOctaves',
@@ -1296,7 +1296,7 @@ class Analyzer:
 
     def identifyParallelUnisons(self, score, partNum1=None, partNum2=None, color=None,
                                 dictKey='parallelUnisons'):
-        '''
+        """
         Identifies parallel unisons (calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.parallelUnison`) between
         two parts (if specified) or between all possible pairs of parts (if not specified)
@@ -1332,7 +1332,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['parallelUnisons'][2].text
         'Parallel unison in measure 1: Part 1 moves from E to F while part 2 moves from E to F'
 
-        '''
+        """
 
         testFunction = lambda vlq: vlq.parallelUnison()
         textFunction = lambda vlq, pn1, pn2: ("Parallel unison in measure "
@@ -1347,12 +1347,12 @@ class Analyzer:
                                  testFunction, textFunction, color)
 
     def getParallelUnisons(self, score, partNum1=None, partNum2=None):
-        '''
+        """
         Robert Snarrenberg
         Identifies all parallel unisons in score (if no part numbers specified),
         or only the parallel unisons found between partNum1 and partNum2, and
         returns these as instances of :class:`~music21.voiceLeading.VoiceLeadingQuartet`
-        '''
+        """
         sid = score.id
         testFunction = lambda vlq: vlq.parallelUnison()
         self._identifyBasedOnVLQ(score, partNum1, partNum2, dictKey='parallelUnisons',
@@ -1364,7 +1364,7 @@ class Analyzer:
         
     def identifyHiddenFifths(self, score, partNum1=None, partNum2=None,
                              color=None, dictKey='hiddenFifths'):
-        '''
+        """
         Identifies hidden fifths (calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.hiddenFifth`) between
         two parts (if specified) or between all possible pairs of parts (if not specified)
@@ -1395,7 +1395,7 @@ class Analyzer:
         1
         >>> ads.store[sc.id]['ResultDict']['hiddenFifths'][0].text
         'Hidden fifth in measure 1: Part 1 moves from E to D while part 2 moves from C to G'
-        '''
+        """
 
         testFunction = lambda vlq: vlq.hiddenFifth()
         textFunction = lambda vlq, pn1, pn2: ("Hidden fifth in measure "
@@ -1410,12 +1410,12 @@ class Analyzer:
                                  testFunction, textFunction, color)
 
     def getHiddenFifths(self, score, partNum1=None, partNum2=None):
-        '''
+        """
         Robert Snarrenberg
         Identifies all hidden fifths in score (if no part numbers specified),
         or only the hidden fifths found between partNum1 and partNum2, and
         returns these as instances of :class:`~music21.voiceLeading.VoiceLeadingQuartet`
-        '''
+        """
         sid = score.id
         testFunction = lambda vlq: vlq.hiddenFifth()
         self._identifyBasedOnVLQ(score, partNum1, partNum2, dictKey='hiddenFifths',
@@ -1427,7 +1427,7 @@ class Analyzer:
         
     def identifyHiddenOctaves(self, score, partNum1=None, partNum2=None, color=None,
                               dictKey='hiddenOctaves'):
-        '''
+        """
         Identifies hidden octaves (calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.hiddenOctave`) between
         two parts (if specified) or between all possible pairs of parts (if not specified)
@@ -1437,7 +1437,7 @@ class Analyzer:
         corresponding notes in the score.
         >>> ads.store[sc.id]['ResultDict']['hiddenOctaves'][0].text
         'Hidden octave in measure 1: Part 1 moves from E to F while part 2 moves from D to F'
-        '''
+        """
 
         testFunction = lambda vlq: vlq.hiddenOctave()
         textFunction = lambda vlq, pn1, pn2: ("Hidden octave in measure "
@@ -1453,7 +1453,7 @@ class Analyzer:
 
     def identifyImproperResolutions(self, score, partNum1=None, partNum2=None, color=None,
                                     dictKey='improperResolution', editorialMarkList=None):
-        '''
+        """
         Identifies improper resolutions of dissonant intervals (calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.improperResolution`)
         between two parts (if specified) or between all possible pairs of parts (if not specified)
@@ -1486,7 +1486,7 @@ class Analyzer:
         'Improper resolution of Augmented Fourth in measure 1: Part 1 moves from
             F# to A while part 2 moves from C to B'
 
-        '''
+        """
         if editorialMarkList is None:
             editorialMarkList = []
         #TODO: incorporate Jose's resolution rules into this method (italian6, etc.)
@@ -1505,7 +1505,7 @@ class Analyzer:
 
     def identifyLeapNotSetWithStep(self, score, partNum1=None, partNum2=None,
                                    color=None, dictKey='LeapNotSetWithStep'):
-        '''
+        """
         Identifies a leap/skip in one voice not set with a step in the other voice
         (calls :meth:`~music21.voiceLeading.VoiceLeadingQuartet.leapNotSetWithStep`)
         between two parts (if specified) or between all possible pairs of parts (if not specified)
@@ -1537,7 +1537,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['LeapNotSetWithStep'][0].text
         'Leap not set with step in measure 1: Part 1 moves from C to G
          while part 2 moves from A to D'
-        '''
+        """
 
         testFunction = lambda vlq: vlq.leapNotSetWithStep()
         textFunction = lambda vlq, pn1, pn2: ("Leap not set with step in measure "
@@ -1553,7 +1553,7 @@ class Analyzer:
 
     def identifyOpensIncorrectly(self, score, partNum1=None, partNum2=None,
                                  color=None, dictKey='opensIncorrectly'):
-        '''
+        """
         Identifies if the piece opens correctly; calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.opensIncorrectly`
 
@@ -1580,7 +1580,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['opensIncorrectly'][0].text
         'Opening harmony is not in style'
 
-        '''
+        """
 
         testFunction = lambda vlq: vlq.opensIncorrectly()
         textFunction = lambda vlq, pn1, pn2: "Opening harmony is not in style"
@@ -1589,7 +1589,7 @@ class Analyzer:
 
     def identifyClosesIncorrectly(self, score, partNum1=None, partNum2=None, color=None,
                                   dictKey='closesIncorrectly'):
-        '''
+        """
         Identifies if the piece closes correctly; calls
         :meth:`~music21.voiceLeading.VoiceLeadingQuartet.closesIncorrectly`
 
@@ -1619,7 +1619,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['closesIncorrectly'][0].text
         'Closing harmony is not in style'
 
-        '''
+        """
         testFunction = lambda vlq: vlq.closesIncorrectly()
         textFunction = lambda vlq, pn1, pn2: "Closing harmony is not in style"
         self._identifyBasedOnVLQ(score, partNum1, partNum2, dictKey, testFunction, textFunction,
@@ -1630,7 +1630,7 @@ class Analyzer:
     def identifyPassingTones(self, score, partNumToIdentify=None, color=None, dictKey=None,
                              unaccentedOnly=True,
                              editorialDictKey=None, editorialValue=True):
-        '''
+        """
         Identifies the passing tones in the piece by looking at the vertical and horizontal
         cross-sections. Optionally
         specify unaccentedOnly to identify only unaccented passing tones (passing tones
@@ -1664,7 +1664,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['unaccentedPassingTones'][0].text
         'G identified as a passing tone in part 1'
 
-        '''
+        """
         if dictKey is None and unaccentedOnly:
             dictKey = 'unaccentedPassingTones'
         elif dictKey is None:
@@ -1677,7 +1677,7 @@ class Analyzer:
                                            editorialMarkDict={1: [partNumToIdentify]}, nTupletNum=3)
 
     def getPassingTones(self, score, dictKey=None, partNumToIdentify=None, unaccentedOnly=True):
-        '''
+        """
         returns a list of all passing tones present in the score, as identified by
         :meth:`~music21.voiceLeading.VerticalityTriplet.hasPassingTone`
 
@@ -1702,7 +1702,7 @@ class Analyzer:
         >>> ads = Analyzer()
         >>> ads.getPassingTones(sc)
         [<music21.note.Note G>]
-        '''
+        """
         sid = score.id
         if dictKey is None and unaccentedOnly:
             dictKey = 'unaccentedPassingTones'
@@ -1718,7 +1718,7 @@ class Analyzer:
             return None
 
     def getNeighborTones(self, score, dictKey=None, partNumToIdentify=None, unaccentedOnly=True):
-        '''
+        """
         returns a list of all passing tones present in the score, as identified
         by :meth:`~music21.voiceLeading.VerticalityTriplet.hasNeighborTone`
 
@@ -1743,7 +1743,7 @@ class Analyzer:
         >>> ads = Analyzer()
         >>> ads.getNeighborTones(sc)
         [<music21.note.Note B>]
-        '''
+        """
         sid = score.id
         if dictKey is None and unaccentedOnly:
             dictKey = 'unaccentedNeighborTones'
@@ -1759,7 +1759,7 @@ class Analyzer:
             return None
 
     def removePassingTones(self, score, dictKey='unaccentedPassingTones'):
-        '''
+        """
         primitively removes the passing tones found in a piece and fills the gap by
         extending note duraitons
         (method under development)
@@ -1789,7 +1789,7 @@ class Analyzer:
         <music21.note.Note A>
         <music21.note.Note F#>
         <music21.note.Note D>
-        '''
+        """
         sid = score.id
         self.getPassingTones(score, dictKey=dictKey)
         for tr in self.store[sid]['ResultDict'][dictKey]:
@@ -1804,7 +1804,7 @@ class Analyzer:
         self.store[sid]['Verticalities'] = None
 
     def removeNeighborTones(self, score, dictKey='unaccentedNeighborTones'):
-        '''
+        """
         primitively removes the neighbor tones found in a piece and fills the gap by
         extending note duraitons
         (method under development)
@@ -1833,7 +1833,7 @@ class Analyzer:
         <music21.note.Note C>
         <music21.note.Note C>
         <music21.note.Note C>
-        '''
+        """
         sid = score.id
         self.getNeighborTones(score, dictKey=dictKey)
         for tr in self.store[sid]['ResultDict'][dictKey]:
@@ -1851,7 +1851,7 @@ class Analyzer:
     def identifyNeighborTones(self, score, partNumToIdentify=None, color=None, dictKey=None,
                               unaccentedOnly=True,
                               editorialDictKey='isNeighborTone', editorialValue=True):
-        '''
+        """
         Identifies the neighbor tones in the piece by looking at the vertical and horizontal
         cross-sections. Optionally
         specify unaccentedOnly to identify only unaccented neighbor tones (neighbor tones
@@ -1882,7 +1882,7 @@ class Analyzer:
         1
         >>> ads.store[sc.id]['ResultDict']['unaccentedNeighborTones'][0].text
         'B identified as a neighbor tone in part 2'
-        '''
+        """
         if dictKey is None and unaccentedOnly:
             dictKey = 'unaccentedNeighborTones'
         elif dictKey is None:
@@ -1897,7 +1897,7 @@ class Analyzer:
 
     def identifyDissonantHarmonicIntervals(self, score, partNum1=None, partNum2=None, color=None,
                                            dictKey='dissonantHarmonicIntervals'):
-        '''
+        """
         Identifies dissonant harmonic intervals
         (calls :meth:`~music21.interval.Interval.isConsonant`)
         between the two parts (if specified) or between all
@@ -1934,7 +1934,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['dissonantHarmonicIntervals'][2].text
         'Dissonant harmonic interval in measure 1: Augmented Fourth
             from F to B between part 1 and part 2'
-        '''
+        """
         testFunction = lambda hIntv: hIntv is not None and not hIntv.isConsonant()
         textFunction = lambda hIntv, pn1, pn2: ("Dissonant harmonic interval in measure "
                                                 + str(hIntv.noteStart.measureNumber) + ": "
@@ -1950,7 +1950,7 @@ class Analyzer:
     def identifyImproperDissonantIntervals(self, score, partNum1=None, partNum2=None, color=None,
                                            dictKey='improperDissonantIntervals',
                                            unaccentedOnly=True):
-        '''
+        """
         Identifies dissonant harmonic intervals that are not passing tones or neighbor tones or
         don't resolve correctly
 
@@ -1980,7 +1980,7 @@ class Analyzer:
         'Improper dissonant harmonic interval in measure 1: Perfect Fourth from C to F
             between part 1 and part 2'
 
-        '''
+        """
         sid = score.id
         if partNum1 is None or partNum2 is None:
             for (pn1, pn2) in self.getAllPartNumPairs(score):
@@ -2022,7 +2022,7 @@ class Analyzer:
 
     def identifyDissonantMelodicIntervals(self, score, partNum=None, color=None,
                                           dictKey='dissonantMelodicIntervals'):
-        '''
+        """
         Identifies dissonant melodic intervals (A2, A4, d5, m7, M7) in the part (if specified)
         or for all parts (if not specified) and stores the resulting list of
         IntervalTheoryResultObject objects in ``self.resultDict['dissonantMelodicIntervals']``.
@@ -2052,7 +2052,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['dissonantMelodicIntervals'][1].text
         'Dissonant melodic interval in part 2 measure 1: Diminished Fifth from D to A-'
 
-        '''
+        """
         testFunction = lambda mIntv: mIntv is not None and mIntv.simpleName in [
                                                     "A2", "A4", "d5", "m7", "M7"]
         textFunction = lambda mIntv, pn: ("Dissonant melodic interval in part " + str(pn + 1) +
@@ -2067,31 +2067,31 @@ class Analyzer:
     # RS: Here are some functions for tracking sonorities
 
 #     def getPerfectConsonances(self, score, dictKey=None, partNum1=None, partNum2=None):
-#         '''
+#         """
 #         returns a list of all perfect consonances present between two parts, as identified by
 #         :meth:`~music21......`
-#         '''
+#         """
 #         pass
 # 
 #     def getImperfectConsonances(self, score, dictKey=None, partNum1=None, partNum2=None):
-#         '''
+#         """
 #         returns a list of all imperfect consonances present between two parts, as identified by
 #         :meth:`~music21......`
-#         '''
+#         """
 #         pass
 # 
 #     def getUnisons(self, score, dictKey=None, partNum1=None, partNum2=None):
-#         '''
+#         """
 #         returns a list of all unisons present between two parts, as identified by
 #         :meth:`~music21......`
-#         '''
+#         """
 #         pass
 # 
 #     def getCompoundIntervals(self, score, dictKey=None, partNum1=None, partNum2=None):
-#         '''
+#         """
 #         returns a list of all compound intervals present between two parts, as identified by
 #         :meth:`~music21......`
-#         '''
+#         """
 #         pass
 
 
@@ -2100,13 +2100,13 @@ class Analyzer:
     
     def identifyFourthLeapsInBass(self, score, color=None,
                                           dictKey='fourthLeapsBass'):
-        '''
+        """
         Identifies P4 intervals in the bass part
         and stores the resulting list of note pairs as
         NNoteLinearSegment objects in ``self.resultDict['fourthLeapsBass']``.
         Optionally, a color attribute may be specified to color all
         corresponding notes in the score.
-        '''
+        """
         partNum = len(score.parts)-1
         lengthLinearSegment = 2
         testFunction = lambda nnls: nnls.objectList is not None and interval.Interval(nnls.objectList[0],nnls.objectList[1]).name == "P4"
@@ -2214,7 +2214,7 @@ class Analyzer:
 
     def identifyTonicAndDominant(self, score, color=None,
                                   dictKey='romanNumeralsVandI', responseOffsetMap=None):
-        '''
+        """
         Identifies the roman numerals in the piece by iterating through
         the vertical slices and figuring
         out which roman numeral best corresponds to that vertical slice. Optionally
@@ -2249,7 +2249,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['romanNumeralsVandI'][1].text
         'Roman Numeral of B-,G is I'
 
-        '''
+        """
         if responseOffsetMap is None:
             responseOffsetMap = []
 
@@ -2282,7 +2282,7 @@ class Analyzer:
     #
     #def identifyRomanNumerals(self, score, color=None,
     #                            dictKey='romanNumerals', responseOffsetMap = []):
-    #    '''
+    #    """
     #    Identifies the roman numerals in the piece by iterating through
     #    the vertical slices and figuring
     #    out which roman numeral best corresponds to that vertical slice.
@@ -2295,7 +2295,7 @@ class Analyzer:
     #    were to be written for the vertical slice at offset 0, 6, and 7 in the piece, pass
     #    responseOffsetMap = [0, 6, 7]
     #
-    #    '''
+    #    """
     #    def testFunction(vs, score, responseOffsetMap=[]):
     #        noteList = vs.noteList
     #
@@ -2319,7 +2319,7 @@ class Analyzer:
 
     def identifyHarmonicIntervals(self, score, partNum1=None, partNum2=None,
                                   color=None, dictKey='harmonicIntervals'):
-        '''
+        """
         identify all the harmonic intervals in the score between partNum1 or partNum2, or
         if not specified ALL
         possible combinations
@@ -2355,7 +2355,7 @@ class Analyzer:
         >>> ads.store[sc.id]['ResultDict']['harmonicIntervals'][0].text
         'harmonic interval between B and A between parts 1 and 2 is a Minor Seventh'
 
-        '''
+        """
         testFunction = lambda hIntv: hIntv.generic.undirected if hIntv is not None else False
         textFunction = lambda hIntv, pn1, pn2: ("harmonic interval between "
                             + hIntv.noteStart.name
@@ -2374,7 +2374,7 @@ class Analyzer:
                                          testFunction, textFunction, valueFunction=valueFunction)
 
     def identifyScaleDegrees(self, score, partNum=None, color=None, dictKey='scaleDegrees'):
-        '''
+        """
         identify all the scale degrees in the score in partNum, or if not specified ALL partNums
 
         >>> sc = stream.Score()
@@ -2404,7 +2404,7 @@ class Analyzer:
         '7'
         >>> ads.store[sc.id]['ResultDict']['scaleDegrees'][1].text
         'scale degree of F# in part 1 is 7'
-        '''
+        """
 
         testFunction = lambda sc, n: (str(self.getKeyAtMeasure(sc,
                                             n.measureNumber).getScale().getScaleDegreeFromPitch(
@@ -2415,7 +2415,7 @@ class Analyzer:
 
     def identifyMotionType(self, score, partNum1=None, partNum2=None,
                            color=None, dictKey='motionType'):
-        '''
+        """
         Identifies the motion types in the score by analyzing each voice leading quartet
         between partNum1 and
         partNum2, or all possible voiceLeadingQuartets if not specified
@@ -2453,7 +2453,7 @@ class Analyzer:
         'Similar'
         >>> ads.store[sc.id]['ResultDict']['motionType'][1].text
         'Similar Motion in measure 1: Part 1 moves from F# to E while part 2 moves from C to B'
-        '''
+        """
 
         testFunction = lambda vlq: vlq.motionType().value
         textFunction = lambda vlq, pn1, pn2: (vlq.motionType().value + ' Motion in measure '+
@@ -2471,7 +2471,7 @@ class Analyzer:
 
     def identifyCommonPracticeErrors(self, score, partNum1=None, partNum2=None,
                                      dictKey='commonPracticeErrors'):
-        '''
+        """
         wrapper method that calls all identify methods for common-practice counterpoint errors,
         assigning a color identifier to each
 
@@ -2479,7 +2479,7 @@ class Analyzer:
         HiddenFifths = orange, HiddenOctaves = green,
         ParallelUnisons = blue, ImproperResolutions = purple, improperDissonances = white,
         DissonantMelodicIntervals = cyan, incorrectOpening = brown, incorrectClosing = gray
-        '''
+        """
 
         self.identifyParallelFifths(score, partNum1, partNum2, 'red', dictKey)
         self.identifyParallelOctaves(score, partNum1, partNum2, 'yellow', dictKey)
@@ -2499,7 +2499,7 @@ class Analyzer:
     # Output methods for reading out information from theoryAnalyzerResult objects
 
     def getResultsString(self, score, typeList=None):
-        '''
+        """
         returns string of all results found by calling all
         identify methods on the TheoryAnalyzer score
 
@@ -2529,7 +2529,7 @@ class Analyzer:
         Parallel fifth in measure 1: Part 1 moves from E to G while part 2 moves from A to C
         Hidden fifth in measure 1: Part 1 moves from C to D while part 2 moves from C to G
         Closing harmony is not in style
-        '''
+        """
         resultStr = ""
         sid = score.id
 
@@ -2544,10 +2544,10 @@ class Analyzer:
         return resultStr
 
     def getHTMLResultsString(self, score, typeList=None):
-        '''
+        """
         returns string of all results found by calling all
         identify methods on the TheoryAnalyzer score
-        '''
+        """
         resultStr = ""
         sid = score.id
 
@@ -2564,10 +2564,10 @@ class Analyzer:
         return resultStr
 
     def colorResults(self, score, color='red', typeList=None):
-        '''
+        """
         colors the notes of all results found in typeList by calling all identify
         methods on Theory Analyzer.
-        '''
+        """
         sid = score.id
 
         self.addAnalysisData(score)
@@ -2577,7 +2577,7 @@ class Analyzer:
                     result.color(color)
 
     def removeFromAnalysisData(self, score, dictKeys):
-        '''
+        """
         remove a result entry or entries from the resultDict by specifying which key or keys
         in the dictionary
         you'd like removed. Pass in a list of dictKeys or just a single dictionary key.
@@ -2597,7 +2597,7 @@ class Analyzer:
         >>> ads.removeFromAnalysisData(sc, ['h1', '5'])
         >>> ads.store[sc.id]['ResultDict']
         {}
-        '''
+        """
         sid = score.id
 
         self.addAnalysisData(score)
@@ -2619,9 +2619,9 @@ class Analyzer:
                 #    that wasn''t in the dictionary: %s', dictKeys)
     #
     def getKeyMeasureMap(self, score):
-        '''
+        """
         returns the keymeasuremap in the score, if present. returns None otherwise
-        '''
+        """
         sid = score.id
 
         self.addAnalysisData(score)
@@ -2631,7 +2631,7 @@ class Analyzer:
             return None
 
     def setKeyMeasureMap(self, score, keyMeasureMap):
-        '''
+        """
         easily specify the key of the score by measure in a dictionary correlating measure number
         to key, such as
         {1:'C', 2:'D', 3:'B-', 5:'g'}. optionally pass in the music21 key object or the key string.
@@ -2660,14 +2660,14 @@ class Analyzer:
         'C'
         >>> ads.getKeyMeasureMap(sc)[2]
         'a'
-        '''
+        """
         sid = score.id
 
         self.addAnalysisData(score)
         self.store[sid]['KeyMeasureMap'] = keyMeasureMap
 
     def getKeyAtMeasure(self, score, measureNumber):
-        '''
+        """
         uses keyMeasureMap to return music21 key object. If keyMeasureMap not specified,
         returns key analysis of theory score as a whole.
 
@@ -2682,7 +2682,7 @@ class Analyzer:
         >>> sc = corpus.parse('bach/bwv66.6')
         >>> ads.getKeyAtMeasure(sc, 5)
         <music21.key.Key of f# minor>
-        '''
+        """
         keyMeasureMap = self.getKeyMeasureMap(score)
         if keyMeasureMap:
             for dictKey in sorted(list(keyMeasureMap.keys()), reverse=True):

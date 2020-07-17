@@ -6,11 +6,11 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
-'''
+"""
 Rule
 ====
 
-The Rule class stores information about a note's syntactic function.'''
+The Rule class stores information about a note's syntactic function."""
 
 # -----------------------------------------------------------------------------
 # MAIN CLASS
@@ -18,9 +18,9 @@ The Rule class stores information about a note's syntactic function.'''
 
 
 class Rule():
-    '''A rule that can be assigned as an attribute to a Note in a Line. A rule
+    """A rule that can be assigned as an attribute to a Note in a Line. A rule
     has a name (e.g., 'S2') and a level. For display purposes, rule
-    names are appended to notes as lyrics.'''
+    names are appended to notes as lyrics."""
     validRuleScopes = ('global', 'local')
 
     def __init__(self, name=None, lineType=None,

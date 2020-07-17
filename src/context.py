@@ -6,13 +6,13 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
-'''
+"""
 Context
 =======
 
 The Context module includes classes to represent both global
 and local contexts.
-'''
+"""
 
 from music21 import *
 import itertools
@@ -70,9 +70,9 @@ class EvaluationException(Exception):
 
 
 class Context():
-    '''An object for representing a span of a composition
+    """An object for representing a span of a composition
     and for storing objects that represent smaller spans.
-    '''
+    """
 
     def __init__(self, music21Stream):
         self.scale
@@ -104,7 +104,7 @@ class LocalContext(Context):
 
 
 class GlobalContext(Context):
-    '''An object for representing a tonally unified span of a composition
+    """An object for representing a tonally unified span of a composition
     and for storing objects that represent local spans
     within the global context.
 
@@ -135,7 +135,7 @@ class GlobalContext(Context):
 
     #. Measure-long local harmonic contexts are created,
        for use in parsing events in third species.
-    '''
+    """
     def __init__(self, score, **kwargs):
         self.score = score
         self.parts = self.score.parts

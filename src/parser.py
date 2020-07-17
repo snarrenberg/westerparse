@@ -7,7 +7,7 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
-'''
+"""
 Parser
 ======
 
@@ -41,7 +41,7 @@ Interpretation then continues by line type.
 
 The parser gathers all of the valid interpretations into lists.
 The parser also records errors that arise.
-'''
+"""
 from music21 import *
 from utilities import pairwise
 import itertools
@@ -65,7 +65,7 @@ selectPreferredParses = True
 # -----------------------------------------------------------------------------
 
 class Parser():
-    '''
+    """
     The Parser class is the engine of the parser. The bulk of the work is done
     by :py:func:`~parseTransition`.  After a preliminary parse of the line,
     the parser decides on a set of possible structural interpretations and
@@ -89,7 +89,7 @@ class Parser():
 
     The individual parses are contained in a :py:class:`~Parser.Parse`.
     These are created by :py:func:`~prepareParses`.
-    '''
+    """
     def __init__(self, part, context, **kwargs):
         # Set up base content.
         self.part = part
@@ -153,7 +153,7 @@ class Parser():
         self.selectPreferredParses()
 
     def inferLineTypes(self):
-        '''If the line type is not specified, infer a set of possibilities.'''
+        """If the line type is not specified, infer a set of possibilities."""
         cond1 = self.notes[0].csd.value % 7 in [0, 2, 4]
         cond2 = self.notes[-1].csd.value % 7 in [0, 2, 4]
         cond3 = self.notes[0].csd.value % 7 == 0
@@ -180,13 +180,13 @@ class Parser():
                     break
 
     def preParseLine(self):
-        '''
+        """
         Conduct a preliminary parse of the line.
         Initialize the buffer, stack, and arcs.
         Initialize the lists of open heads and transitions.
         Set the global harmonic referents.
         Run the scanner, parsing each transition.
-        '''
+        """
         # Initialize the buffer, stack, and arcs
         lineBuffer = [n for n in self.notes
                       if not n.tie or n.tie.type == 'start']
@@ -473,7 +473,7 @@ class Parser():
 
     def parseTransition(self, stack, buffer, part, i, j, harmonyStart,
                         harmonyEnd, openHeads, openTransitions, arcs):
-        '''
+        """
         Asks a series of questions at the transition from note *i* to note *j*.
 
         * Do *i* and *j* belong to the harmony of the context
@@ -576,7 +576,7 @@ class Parser():
 
            * Return an error.
 
-        '''
+        """
         case1 = [(isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart)),
                  (isHarmonic(i, harmonyStart) and isHarmonic(j, harmonyStart))]
         case2 = [self.part.species in ['third', 'fifth'],
@@ -1336,7 +1336,7 @@ class Parser():
         # the list of open heads.
 
     def prepareParses(self):
-        '''
+        """
         After preliminary parsing is completed, determines possibiities
         for basic structures based on available line types and parse the line
         using each candidate for basic structure. The results are collected
@@ -1362,7 +1362,7 @@ class Parser():
         on triad pitches (rules S1 and S2) and then looks for
         a possible step connection between these terminal pitches
         (see :py:func:`~Parser.Parse.parseGeneric`).
-        '''
+        """
 
         # The stack may still have some underinterpreted open heads.
         # If so, the remnant of open heads will be placed in the Parse's
@@ -1451,11 +1451,11 @@ class Parser():
 
     def buildParse(self, cand, lineType, parsecounter,
                    stack, buildErrors, method=None):
-        '''Sets up the basic features of the parse object
+        """Sets up the basic features of the parse object
         and then executes the parsing process.
         Uses deep copies of the arcs and notes, as the list of arcs and the
         properties of notes will be altered during the process.
-        '''
+        """
         # create the Parse object
         newParse = Parser.Parse()
         # copy information
@@ -1501,14 +1501,14 @@ class Parser():
         self.parseErrorsDict.update({newParse.label: newParse.errors})
 
     class Parse():
-        '''An object for holding one interpretation of
+        """An object for holding one interpretation of
         a line's syntactic structure.
 
         The object's attributes include `S1Index`, `S2Degree`, `S2Index`,
         `S2Value`, `S3Degree`, `S3Final`, `S3Index`, `S3Indexes`, `S3Initial`,
         `S3PenultCands`, `S3Value`, `label`, `arcs`, `tonic`, `mode`, and
         `arcBasic`.
-        '''
+        """
         def __init__(self):
             self.stackremnant = []
             self.buffer = []
@@ -1520,7 +1520,7 @@ class Parser():
             return self.label
 
         def performLineParse(self):
-            '''
+            """
             Create a complete interpretation of the line,
             using the following procedure:
 
@@ -1534,7 +1534,7 @@ class Parser():
               generating representations of the interpretation.
             * Set the dependency level of each note. [This function is
               currently disabled.]
-            '''
+            """
             if self.lineType == 'primary':
                 self.parsePrimary()
             elif self.lineType == 'bass':
@@ -1565,8 +1565,8 @@ class Parser():
 #            self.setDependencyLevels()
 
         def arcMerge(self, arc1, arc2):
-            '''Combine two passing motions that share an inner
-            node and direction.'''
+            """Combine two passing motions that share an inner
+            node and direction."""
             # merges elements into first arc and empties the second
             # revises dependencies
             leftouter = self.notes[arc1[0]]
@@ -1595,7 +1595,7 @@ class Parser():
                 addDependenciesFromArc(self.notes, arc1)
 
         def arcEmbed(self, arc1, arc2):
-            '''Embed a repetition inside a passing motion.'''
+            """Embed a repetition inside a passing motion."""
             # in either order
             # start with repetition linked to passing, then embed
             leftouter = self.notes[arc1[0]]
@@ -1621,7 +1621,7 @@ class Parser():
                 addDependenciesFromArc(self.notes, arc1)
 
         def parsePrimary(self):
-            '''
+            """
             Use one of eight methods to find a basic step motion
             from a potential S2 (Kopfton):
 
@@ -1641,7 +1641,7 @@ class Parser():
             #. Reinterpret the line, looking for a descending step motion
                from S2 and then parsing the remaining notes.
                The least reliable method.
-            '''
+            """
             # Once all preliminary parsing is done,
             # prepare for assigning basic structure
             self.arcs.sort()  # = sorted(self.arcList)
@@ -2009,7 +2009,7 @@ class Parser():
                 # TODO: Try to attach repetitions of S3 sd5 or sd3.
 
         def parseBass(self):
-            '''Test whether a specific dominant pitch can function as S3.'''
+            """Test whether a specific dominant pitch can function as S3."""
             # Once all preliminary parsing is done,
             # prepare for assigning basic structure.
             self.arcs.sort()
@@ -2054,10 +2054,10 @@ class Parser():
                         self.arcs.remove(arc)
 
         def parseGeneric(self):
-            '''The line has already passed the generic test, so all that is to
+            """The line has already passed the generic test, so all that is to
             be done is: determine whether there is a basic step motion
             connecting the first and last notes.
-            '''
+            """
             # Once preliminary parsing is done, prepare for assigning basic
             # structure and see whether a basic step motion is absent,
             # ascending, or descending.
@@ -2136,12 +2136,12 @@ class Parser():
 
         def attachOpenheadsToStructuralLefthead(self, structuralLefthead, 
                                                       rightLimit):
-            '''Examine the span between a structural lefthead and a righthand
+            """Examine the span between a structural lefthead and a righthand
             limit, looking for notes that are either head of an arc
             (left or right) or not embedded in an arc,
             and can be taken as a repetition of the structural lefthead.
             This function increases the coherence of a parse.
-            '''
+            """
             self.buffer = [n for n in self.stackremnant
                            if structuralLefthead < n.index < rightLimit]
             self.stack = []
@@ -2176,10 +2176,10 @@ class Parser():
                         pass
 
         def integrateSecondaryWithPrimary(self):
-            '''Revise an intepretation to make it tighter, more efficient,
+            """Revise an intepretation to make it tighter, more efficient,
             more coherent. Connect secondary structures to elements of the
             basic structure where possible.
-            '''
+            """
             # TODO Implement Westergaard preferences for coherent
             # interpretations, pp. 63ff.
             pass
@@ -2335,9 +2335,9 @@ class Parser():
             return
 
         def setDependencyLevels(self):
-            '''Review a completed parse and determine the
+            """Review a completed parse and determine the
             structural level of each note.
-            '''
+            """
             # TODO This works for now, but is not optimal.
             # Does not work for this line:
             #     BL in major:
@@ -2589,9 +2589,9 @@ class Parser():
             generationTable = [n.rule.level for n in self.notes]
 
         def displayFullParse(self):
-            '''Create a multileveled illustration of a parse of the sort
+            """Create a multileveled illustration of a parse of the sort
             used in Westergaard's book. [Under developement]
-            '''
+            """
             # Given a parsed part, with rule dependencies set:
             illustration = stream.Score()
             notes = self.notes
@@ -2636,10 +2636,10 @@ class Parser():
             exit()
 
     def testGenerabilityFromLevels(parse):
-        '''Given a parse in which rule levels have been assigned
+        """Given a parse in which rule levels have been assigned
         (perhaps by the student), determine whether the line is generable
         in that way. [Under development]
-        '''
+        """
         if parse.lineType == 'bass':
             pass
         if parse.lineType == 'primary':
@@ -2649,11 +2649,11 @@ class Parser():
         pass
 
     def collectParses(self):
-        '''Collect all the attempted parses of a line in the
+        """Collect all the attempted parses of a line in the
         :py:class:`~Parser` and discard any that have errors and thus failed.
         Also removes parses of primary lines if the same basic arc was
         produced by a more reliable method.
-        '''
+        """
         failedParses = []
         for key in self.parseErrorsDict:
             if self.parseErrorsDict[key] != []:
@@ -2703,7 +2703,7 @@ class Parser():
             self.isGeneric = False
 
     def selectPreferredParses(self):
-        '''Given a list of successful interpretations from :py:class:`~Parser`,
+        """Given a list of successful interpretations from :py:class:`~Parser`,
         remove those that do not conform to cognitive preference rules.
 
         * Primary line preferences
@@ -2718,7 +2718,7 @@ class Parser():
            * If there are two candidates for S3 and the second can be
              interpreted as a direct repetition of the first, prefer the parse
              that interprets the first candidate as S3.
-        '''
+        """
         # Primary upper lines:
         # Find those that have the same scale degree for S2.
         threelines = [interp for interp in self.Pinterps

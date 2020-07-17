@@ -6,7 +6,7 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # ------------------------------------------------------------------------------
-'''
+"""
 Key Finder
 ==========
 
@@ -41,7 +41,7 @@ the name of the key is tested for validity
 ('Q# diminished' is not a valid option)
 and the validated name is then
 tested using the same criteria as in key inference.
-'''
+"""
 
 from music21 import *
 
@@ -85,7 +85,7 @@ class KeyFinderError(Exception):
 
 
 def testKey(score, knote=None, kmode=None):
-    '''Validate and test a key provided by the user.'''
+    """Validate and test a key provided by the user."""
     # (1) Validate the user selected key.
     try:
         userKey = validateKeySelection(knote, kmode)
@@ -103,7 +103,7 @@ def testKey(score, knote=None, kmode=None):
 
 
 def inferKey(score):
-    '''Infer a key from the parts.'''
+    """Infer a key from the parts."""
     # (1) Find the keys of each part.
     try:
         allPartKeys = findPartKeys(score)

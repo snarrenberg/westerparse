@@ -6,11 +6,10 @@
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # ------------------------------------------------------------------------------
-'''
+"""
 Concrete Scale Degree (CSD)
 ===========================
-
-'''
+"""
 # This should be converted to a method, using the key of a Note's Context.
 
 from music21 import *
@@ -33,12 +32,12 @@ class CSDError(Exception):
 
 
 class ConcreteScaleDegree:
-    '''A scale degree value based on an actual pitch object.
+    """A scale degree value based on an actual pitch object.
     Tonic = 0. Leading tone = -1. The upper octave = 7.
     The fifth above = 4.
     Scale degree residue classes are easily inferred from
     these values using mod7.
-    '''
+    """
     # given a ConcreteScale (scale) with registrally defined keynote
     # return the scale degree of a pitch p, if it is in the scale
     # for example, if the scale is C major and the keynote is middle C (C4),

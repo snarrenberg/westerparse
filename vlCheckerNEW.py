@@ -4,9 +4,9 @@
 #
 # Author:       Robert Snarrenberg
 #-------------------------------------------------------------------------------
-'''Takes a score (source) with two or more parts (lines)
+"""Takes a score (source) with two or more parts (lines)
 and examines the local voice leading 
-for conformity with Westergaard's rules of species counterpoint.'''
+for conformity with Westergaard's rules of species counterpoint."""
 
 # NB: vlq parts and score Parts are numbered top to bottom
 # NB: vPair parts are numbered bottom to top
@@ -34,9 +34,9 @@ vlErrors = []
 # MAIN FUNCTIONS
 # -----------------------------------------------------------------------------
 def voiceLeadingAnalyzer(context):
-    '''A function for processing and reporting on voice leading 
+    """A function for processing and reporting on voice leading 
     in species counterpoint, in both simple and mixed species 
-    in two to four parts.'''
+    in two to four parts."""
 
     # list of errors for reporting
     voiceLeadingErrors = []
@@ -83,7 +83,7 @@ def voiceLeadingAnalyzer(context):
 
 # utility function for finding pairs of parts    
 def getAllPartNumPairs(score):
-    '''from theory analyzer'''
+    """from theory analyzer"""
     partNumPairs = []
     numParts = len(score.parts)
     for partNum1 in range(numParts - 1):
@@ -1639,7 +1639,7 @@ def isOctave(n1, n2):
 # Methods for verticalities
 
 def isConsonantSonority(verticality):
-    '''for checking onbeat sonorities, accepts a verticality of Notes'''
+    """for checking onbeat sonorities, accepts a verticality of Notes"""
     pass
     # TODO write the function
 #     v1 = verticality.removeRedundantPitchNames(inPlace=False)

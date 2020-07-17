@@ -6,7 +6,7 @@
 # Copyright:   (c) 2020 by Robert Snarrenberg
 # License:     BSD, see license.txt
 # -----------------------------------------------------------------------------
-'''
+"""
 WesterParse
 ===========
 
@@ -27,7 +27,7 @@ The main scripts are:
 >>> evaluateCounterpoint(source)
 
 For more information on how to use these scripts, see the User's Guide.
-'''
+"""
 
 from music21 import *
 import parser
@@ -51,7 +51,7 @@ def evaluateLines(source,
                   partLineType=None,
                   report=False,
                   **kwargs):
-    '''
+    """
     Determine whether lines are generable using Westergaard's rules.
 
     Keyword arguments:
@@ -103,7 +103,7 @@ def evaluateLines(source,
     
     Other keywords: `knote` and `kmode` -- The user can use these to force the
     parser to interpret the input in a particular key.
-    '''
+    """
     clearLogfile('logfile.txt')
     if partLineType == 'any' or '':
         partLineType = None
@@ -124,9 +124,9 @@ def evaluateCounterpoint(source,
                          report=True,
                          sonorityCheck=False,
                          **kwargs):
-    '''
+    """
     Determine whether voice leading conforms to Westergaard's rules.
-    '''
+    """
     clearLogfile('logfile.txt')
     try:
         cxt = makeGlobalContext(source, **kwargs)
@@ -155,10 +155,10 @@ def evaluateCounterpoint(source,
 
 
 def makeGlobalContext(source, **kwargs):
-    '''
+    """
     Import a musicxml file and convert to music21 Stream.
     Then create a :py:class:`~context.GlobalContext`.
-    '''
+    """
     s = converter.parse(source)
     # create a global context object and prep for evaluation
     # if errors encountered, script will exit and report
@@ -167,11 +167,11 @@ def makeGlobalContext(source, **kwargs):
 
 
 def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
-    '''
+    """
     Create a local context given a start and stop offset
     in an enclosing Context.
     [Not functional.]
-    '''
+    """
     locCxt = cxt.getElementsByOffset(cxtOn,
                                      cxtOff,
                                      includeEndBoundary=True,
@@ -184,9 +184,9 @@ def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
 
 
 def displaySourceAsPng(source):
-    '''
+    """
     Use MuseScore to create a .png image of a musicxml source file.
-    '''
+    """
     cxt = converter.parse(source)
     timestamp = str(time.time())
     filename = 'tempimages/' + 'display_output_' + timestamp + '.xml'
@@ -198,7 +198,7 @@ def parseContext(context,
                  partSelection=None,
                  partLineType=None,
                  report=False):
-    '''
+    """
     Parse the lines in a score.
     
     Run the parser for each line of a context using :py:func:`parsePart`.
@@ -207,7 +207,7 @@ def parseContext(context,
     Create a separate report for successful parses.
     If the user has elected to display the results, select
     the preferred interpretations and display them.
-    '''
+    """
     # dictionary for collecting error reports
     # primary keys: part names
     # secondary keys: 'parser errors', 'primary', 'bass'
@@ -507,14 +507,14 @@ def parseContext(context,
 
 
 def parsePart(part, context):
-    '''
+    """
     Parse a given part.
     
     Create a (:py:class:`~parser.Parser`) for the part and
     collect the results.  Determine whether the line is generable as a primary,
     bass, or generic line.  Compile a list of ways the line can be generated
     for each line type, if at all. Collect a list of parsing errors.
-    '''
+    """
     # Run the parser.
     partParser = parser.Parser(part, context)
     # Sort out the interpretations of the part.
@@ -531,14 +531,14 @@ def parsePart(part, context):
 
 
 def selectedPreferredParseSets(context, show):
-    '''
+    """
     Select sets of parses according to preference rules.
     
     After parsing the individual parts, select sets of parses
     based on Westergaard preference rules, trying to negotiate the best match
     between global structures in the parts. [This currently works
     only for two-part counterpoint.]
-    '''
+    """
 
     # TODO need to refine the preferences substantially
     if len(context.parts) > 1:
@@ -581,10 +581,10 @@ def selectedPreferredParseSets(context, show):
 
 
 def showInterpretations(context, show, partSelection=None, partLineType=None):
-    '''
+    """
     Build interpretations for the context, gathering information from
     the parses of each line.
-    '''
+    """
 
     def buildInterpretation(parse):
         # Clean out slurs that might have been left behind by a previous parse.
@@ -715,10 +715,10 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
 
 
 def gatherArcs(source, arcs):
-    '''
+    """
     Given a fully parsed line (an interpretation), sort through the arcs and
     create a music21 spanner (tie/slur) to represent each arc.
-    '''
+    """
     # Source is a Part in the input Score.
     # Sort through the arcs and create a spanner(tie/slur) for each.
     tempArcs = []
@@ -734,9 +734,9 @@ def gatherArcs(source, arcs):
 
 
 def arcBuild(source, arc):
-    '''
+    """
     Translate an arc into a notated slur.
-    '''
+    """
     # Source is a Part in the input Score.
     if len(arc) == 2:
         slurStyle = 'dashed'
@@ -751,12 +751,12 @@ def arcBuild(source, arc):
 
 
 def assignRules(source, rules):
-    '''
+    """
     Given a fully parsed line (an interpretation), add a lyric to each
     note to show the syntactic rule that generates the note.
     Also assigns the color
     blue to notes generated by a rule of basic structure.
-    '''
+    """
     # Source is a Part in the input Score.
     ruleLabels = rules
     for index, elem in enumerate(source.recurse().notes):
@@ -772,13 +772,13 @@ def assignRules(source, rules):
 
 
 def assignParentheses(source, parentheses):
-    '''
+    """
     Add parentheses around notes generated as insertions. [This aspect
     of syntax representation cannot be fully implemented at this time,
     because musicxml only allows parentheses to be assigned in pairs,
     whereas syntax coding requires
     the ability to assign left and right parentheses separately.]
-    '''
+    """
     # Source is a Part in the input Score.
     parentheses = parentheses
     for index, elem in enumerate(source.recurse().notes):

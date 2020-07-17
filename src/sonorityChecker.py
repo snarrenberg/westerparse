@@ -114,7 +114,7 @@ def getAllVerticalities(score):
     return vertList   
 
 def getSonorityList(vertList):
-    '''Assemble an explicit figured-bass description for each sonority that has a bass note.'''
+    """Assemble an explicit figured-bass description for each sonority that has a bass note."""
     # get list of voice pairings with the bass
     bassUpperPartPairs = getBassUpperPairs(score)
     
@@ -146,8 +146,8 @@ def getSonorityList(vertList):
     return sonorityList
 
 def getFullSonorities(vertList):
-    '''Given a list of all the verticalities, 
-    select only those that have a note in every part'''
+    """Given a list of all the verticalities, 
+    select only those that have a note in every part"""
     texture = len(vertList[-1].objects)
     vertList = [vert for vert in vertList if len(vert.objects) == texture]
     return vertList   
@@ -161,9 +161,9 @@ def getOffbeatVertList(vertList):
     return offbeatVertList
 
 def printSonorityList(sonorityList):
-    '''
+    """
     For each sonority, the intervals above the bass are listed from lowest to highest.
-    '''
+    """
     # get the number of parts in the texture
     texture = len(sonorityList[0])
     # start with the highest part
@@ -338,7 +338,7 @@ def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
     print('on-beat imperfect intervals count:', len(onbeatImperfect))
             
 def isOnbeatVerticality(verticality):
-    '''Tests whether a verticality is initiated on the downbeat.'''
+    """Tests whether a verticality is initiated on the downbeat."""
     # does not work!!!
     vnotes = verticality.getObjectsByClass('Note')
     isOnbeat = True
@@ -357,14 +357,14 @@ def assignSpeciesToParts(score):
             assignSpecies(part)
        
 def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOnly=True, includeTerminals=False):
-    '''
+    """
     Report the percentage of a given sonority type in the list of full-voiced verticalities.
     Valid options:
         beatPosition: ['on', 'off', None]
         sonorityType: ['imperfect', 'perfect', 'dissonant', 'unison', 'octave', None]
         outerVoicesOnly: [True, False]
         includeTerminals: [True, False]
-    '''
+    """
     vertList = getFullSonorities(getAllVerticalities(score))
     
     # get verts by beat position
@@ -418,13 +418,13 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOn
     return '{:.1%}'.format(sonorityCount/totl)
 
 def getDensityRating(score, beatPosition=None, densityType=None, includeTerminals=False):
-    '''
+    """
     Report the percentage of a given density type in the list of full-voiced verticalities.
     Valid options:
         beatPosition: ['on', 'off', None]
         densityType: ['pitch', 'pitch class', None]
         includeTerminals: [True, False]
-    '''
+    """
     vertList = getFullSonorities(getAllVerticalities(score))
 
     # get verts by beat position
