@@ -1,27 +1,28 @@
-#-------------------------------------------------------------------------------
-# Name:         westerparse.py
-# Purpose:      An application for evaluating Westergaardian species counterpoint
+# -----------------------------------------------------------------------------
+# Name:         sonorityChecker.py
+# Purpose:      Checks sonority for compliance with preference rules
 #
 # Authors:      Robert Snarrenberg, Tony Li
 # Copyright:    (c) 2020 by Robert Snarrenberg
 # License:      BSD, see license.txt
-#-------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+"""
+Sonority Checker
+================
 
-# takes a score (source) with two or more parts (lines)
-# and examines the sonorities 
-# for conformity with the preference rules of species counterpoint
-
+Take a counterpoint exercies with two or more parts and examine the
+sonorities for conformity with the preference rules of species
+counterpoint.
+"""
 # NB: vlq parts and score Parts are numbered top to bottom
 # NB: vPair parts are numbered bottom to top
 
-
 from music21 import *
+
 from vlChecker import *
 import context
 import theoryAnalyzerWP
 import theoryResultWP
-#import itertools
-#from music21 import tree
 
 # -----------------------------------------------------------------------------
 # MODULE VARIABLES
@@ -31,16 +32,14 @@ sonorityReport = ''
 
 sonorityErrors = []
 # set preferences for sonorities
-onBeatImperfectMin = 75 # percentage
-onBeatUnisonMax = 5 # percentage
-onBeatPerfectMax = 20 # percentage
-tiedOverDissonanceMin = 50 # percentage
-offbeatDissonanceMin = 50 # percentage
-# downbeatHarmonyDensity = 
+onBeatImperfectMin = 75  # percentage
+onBeatUnisonMax = 5  # percentage
+onBeatPerfectMax = 20  # percentage
+tiedOverDissonanceMin = 50  # percentage
+offbeatDissonanceMin = 50  # percentage
+# downbeatHarmonyDensity =
 
-
-
-# implement interest rules 
+# implement interest rules
     # look for narrow ambitus
     # look for monotony of various types
         # repeated pitches
@@ -55,33 +54,38 @@ offbeatDissonanceMin = 50 # percentage
     # pcDensity: number of distinct pcs divided by number of pitches
     # pitchDensity: number of distinct pitches divided by number of notes
 
-
 # implement preference rules for sonority
     # run only if the voice-leading passes evaluation??
-    # need to be able to access measure number for each sonority/interval for reporting to user
-    # perhaps modify theoryAnalyzer's getVerticalPairs or get from elements of vPair
-        # add attributes to vPair 
+    # no: run independently or in conjunction with voice-leading check
+    # need to be able to access measure number for each sonority/interval
+    # for reporting to user
+    # perhaps modify theoryAnalyzer's getVerticalPairs
+    # or get from elements of vPair
+        # add attributes to vPair
             # .measure (integer) for time of onset??
             # .onDownbeat (true, false)
-        # see fourthSpeciesForbiddenMotions for assembly of onbeat and offbeat vPairs
+        # see fourthSpeciesForbiddenMotions for assembly
+            # of onbeat and offbeat vPairs
     # count non-terminal measures
 # prefer imperfect on beat (first, second, third)
     # count non-terminal perfect and imperfect
     # prefer, say, 75% imperfect
 # on-beat unisons, non-terminal (first, second, third, fourth?)
 # fifths and octaves, on-beat
-    # report if at least one note's rule is an S rule 
+    # report if at least one note's rule is an S rule
 # adjacent register of lines
     # weight terminal intervals more than internal intervals
     # look for preponderance of simple intervals, not compound
     # report if too many intervals larger than 12th?
     # report if any intervals equal to or greater than 15th
-# first species: series of imperfect consonances, with or without change of direction
+# first species: series of imperfect consonances, with or without
+    # change of direction
 # second species: dissonance off beat
     # count offbeat dissonances, prefer, say, percentage greater than 50%
 # third species: dissonance off beat
     # count offbeat dissonances, prefer, say, percentage greater than 50%
-    # count final off-beat dissonances, prefer, say, percentage greater than 50%
+    # count final off-beat dissonances, prefer, say, percentage
+    # greater than 50%
 # fourth species
     # if tied over, prefer dissonance
     # say, at least 50%
@@ -96,28 +100,32 @@ offbeatDissonanceMin = 50 # percentage
     # test adjacency of upper parts, rarely more than octave
     # test adjacency of lower parts, rarely more than twelfth
 
-#def firstSpeciesSonorities(score, analyzer, partNum1=None, partNum2=None):
+# def firstSpeciesSonorities(score, analyzer, partNum1=None, partNum2=None):
 #    pass
 
 # -----------------------------------------------------------------------------
 # MAIN SCRIPTS
 # -----------------------------------------------------------------------------
 
+
 def getAllVerticalities(score):
     # create the theory analyzer object
     analyzer = theoryAnalyzerWP.Analyzer()
     analyzer.addAnalysisData(score)
     # make a list of voiceLeading.verticalities that have notes
-    vertList = analyzer.getVerticalities(score, classFilterList=('Note'))#, 'Rest'))
-        # the contents are accessible with the following method:
-        # verticality.getObjectsByPart(classFilterList, partNums=None)
-    return vertList   
+    vertList = analyzer.getVerticalities(score, classFilterList=('Note'))
+    # the contents are accessible with the following method:
+    # verticality.getObjectsByPart(classFilterList, partNums=None)
+    return vertList
+
 
 def getSonorityList(vertList):
-    """Assemble an explicit figured-bass description for each sonority that has a bass note."""
+    """Assemble an explicit figured-bass description for each sonority
+    that has a bass note.
+    """
     # get list of voice pairings with the bass
     bassUpperPartPairs = getBassUpperPairs(score)
-    
+
     sonorityList = []
     n = 0
     while n < len(vertList):
@@ -142,27 +150,36 @@ def getSonorityList(vertList):
             else:
                 sonority.append('x')
             sonorityList.append(sonority)
-        n += 1    
+        n += 1
     return sonorityList
 
+
 def getFullSonorities(vertList):
-    """Given a list of all the verticalities, 
-    select only those that have a note in every part"""
+    """Given a list of all the verticalities,
+    select only those that have a note in every part
+    """
     texture = len(vertList[-1].objects)
-    vertList = [vert for vert in vertList if len(vert.objects) == texture]
-    return vertList   
+    vertList = [vert for vert in vertList
+                if len(vert.objects) == texture]
+    return vertList
+
 
 def getOnbeatVertList(vertList):
-    onbeatVertList = [vert for vert in vertList if vert.beat(leftAlign=False) == 1.0]
+    onbeatVertList = [vert for vert in vertList
+                      if vert.beat(leftAlign=False) == 1.0]
     return onbeatVertList
-    
+
+
 def getOffbeatVertList(vertList):
-    offbeatVertList = [vert for vert in vertList if vert.beat(leftAlign=False) != 1.0]
+    offbeatVertList = [vert for vert in vertList
+                       if vert.beat(leftAlign=False) != 1.0]
     return offbeatVertList
+
 
 def printSonorityList(sonorityList):
     """
-    For each sonority, the intervals above the bass are listed from lowest to highest.
+    For each sonority, the intervals above the bass are listed
+    from lowest to highest.
     """
     # get the number of parts in the texture
     texture = len(sonorityList[0])
@@ -173,29 +190,32 @@ def printSonorityList(sonorityList):
         fb = ''
         for son in sonorityList:
             s = son[t]
-            if len(str(s)) == 1: 
+            if len(str(s)) == 1:
                 fb = fb + ' ' + str(s) + '  '
             else:
                 fb = fb + str(s) + '  '
         print(fb)
         t -= 1
 
+
 def getDensityList(vertList, densityType=None):
     densityList = []
     if densityType not in ['pitch', 'pitch class']:
-        print('User must select a density type to report: use \'pitch\' or \'pitch class\'.')
+        print('User must select a density type to report: '
+              'use \'pitch\' or \'pitch class\'.')
         return
     n = 0
     while n < len(vertList):
         vert = vertList[n].getObjectsByClass('Note')
-        if densityType == 'pitch': 
+        if densityType == 'pitch':
             density = getPitchDensity(vert)
-        elif densityType == 'pitch class': 
+        elif densityType == 'pitch class':
             density = getPitchClassDensity(vert)
         densityList.append(density)
         n += 1
     return(densityList)
-   
+
+
 def getPitchDensity(noteList):
     pitches = []
     for note in noteList:
@@ -204,7 +224,8 @@ def getPitchDensity(noteList):
     density = len(pitches)/len(noteList)
     return round(density, 2)
 #    return len(pitches)
-    
+
+
 def getPitchClassDensity(noteList):
     pcs = []
     for note in noteList:
@@ -214,12 +235,16 @@ def getPitchClassDensity(noteList):
     return round(density, 2)
 #    return len(pcs)
 
+
 def isOpen(noteList):
-    # take a sonority list (ordered high to low) and determine whether it is open or closed
+    # take a sonority list (ordered high to low) and determine
+    # whether it is open or closed
     outerIntv = interval.notesToGeneric(noteList[0], noteList[-1]).undirected
     if outerIntv % 7 in {3, 6}:
         return True
-    else: return False
+    else:
+        return False
+
 
 def getBassUpperPairs(score):
     bassPartNum = len(score.parts)-1
@@ -233,7 +258,8 @@ def getBassUpperPairs(score):
         bassUpperPartPairs.append((bassPartNum, partNum))
 #    bassUpperPartPairs = bassUpperPartPairs.sort(key = lambda x: x[1])
     return sorted(bassUpperPartPairs)
-        
+
+
 def getAdjacentPartPairs(score):
     n = len(score.parts) - 1
     adjacentPairs = []
@@ -242,26 +268,31 @@ def getAdjacentPartPairs(score):
         n -= 1
     return adjacentPairs
 
+
 def getAdjacencyRatings(score):
     vertList = getAllVerticalities(score)
     adjPairs = getAdjacentPartPairs(score)
     adjacencyReport = ''
     for pair in adjPairs:
-        # initialize counter for intervals an octave or smaller
-        # initialize counter for all intervals
-        pairReport = 'Adjacency rating for parts ' + str(pair[1]+1) + ' and ' + str(pair[0]+1) + ': '
+        # Initialize counter for intervals an octave or smaller.
+        # Initialize counter for all intervals.
+        pairReport = ('Adjacency rating for parts ' + str(pair[1]+1)
+                      + ' and ' + str(pair[0]+1) + ': ')
         simpleCount = 0
-        fullCount = 0 
+        fullCount = 0
         for vert in vertList:
-            if vert.getObjectsByPart(pair[0], classFilterList='Note') and vert.getObjectsByPart(pair[1], classFilterList='Note'):
+            if (vert.getObjectsByPart(pair[0], classFilterList='Note')
+               and vert.getObjectsByPart(pair[1], classFilterList='Note')):
                 n1 = vert.getObjectsByPart(pair[0], classFilterList='Note')
                 n2 = vert.getObjectsByPart(pair[1], classFilterList='Note')
-                if interval.Interval(n1, n2).name == interval.Interval(n1, n2).semiSimpleName:
+                if (interval.Interval(n1, n2).name
+                   == interval.Interval(n1, n2).semiSimpleName):
                     simpleCount += 1
                 fullCount += 1
         pairReport = pairReport + '{:.1%}'.format(simpleCount/fullCount)
         adjacencyReport = adjacencyReport + '\n' + pairReport
     return adjacencyReport
+
 
 def getBassUpperPair(noteList):
     # accepts a noteList ordered high to low, bass at end of list
@@ -277,6 +308,7 @@ def getBassUpperPair(noteList):
 #    bassUpperPartPairs = bassUpperPartPairs.sort(key = lambda x: x[1])
     return sorted(bassUpperPartPair)
 
+
 # this script not in use
 def getSonorityClass(noteList):
     bassUpperPartPair = getBassUpperPair(noteList)
@@ -284,8 +316,6 @@ def getSonorityClass(noteList):
     for partPair in bassUpperPartPair:
         bassPart = noteList[partPair[0]]
         upperPart = noteList[partPair[1]]
-#            print(vert[partPair[0]], vert[partPair[1]])
-#            print(interval.notesToGeneric(vert[partPair[0]], vert[partPair[1]]).undirected)
         intv = interval.notesToGeneric(bassPart, upperPart).undirected
         if 1 < intv < 10:
             sonority.append(intv)
@@ -294,17 +324,19 @@ def getSonorityClass(noteList):
         else:
             sonority.append(intv % 7)
     return sonority
-    
+
+
 def getOnbeatDyads(score, analyzer, partNum1, partNum2):
     onbeatDyads = []
     vPairList = analyzer.getVerticalPairs(score, partNum1, partNum2)
     for vPair in vPairList:
-        if vPair != None:
+        if vPair is not None:
             # use isOnbeat(note) from vlChecker
             if isOnbeat(vPair[0]) and isOnbeat(vPair[1]):
                 onbeatDyads.append(vPair)
     return onbeatDyads
-      
+
+
 def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
     onbeatDyads = getOnbeatDyads(score, analyzer, partNum1, partNum2)
     # return lists of measure numbers
@@ -314,9 +346,10 @@ def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
     onbeatOctaves = []
     onbeatPerfect = []
     onbeatImperfect = []
-    # or, create an object for every vPair and give it attributes: 
-        # consonance=True, unison=True, perfect=True, dissonance=False, simple=True, onbeat=True
-        # measure, interval, 
+    # or, create an object for every vPair and give it attributes:
+    # consonance=True, unison=True, perfect=True,
+    # dissonance=False, simple=True, onbeat=True
+    # measure, interval,
     for vPair in onbeatDyads:
         if isConsonanceAboveBass(vPair[0], vPair[1]):
             onbeatConsonances.append(vPair[0].measureNumber)
@@ -336,7 +369,8 @@ def getOnbeatIntervals(score, analyzer, partNum1, partNum2):
     print('on-beat octave count:', len(onbeatOctaves))
     print('on-beat perfect intervals count:', len(onbeatPerfect))
     print('on-beat imperfect intervals count:', len(onbeatImperfect))
-            
+
+
 def isOnbeatVerticality(verticality):
     """Tests whether a verticality is initiated on the downbeat."""
     # does not work!!!
@@ -350,23 +384,28 @@ def isOnbeatVerticality(verticality):
             break
     return isOnbeat
 
+
 # based on context.assignSpecies(part)
 def assignSpeciesToParts(score):
     for part in score.parts:
         if not part.species:
             assignSpecies(part)
-       
-def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOnly=True, includeTerminals=False):
+
+
+def getSonorityRating(score, beatPosition=None, sonorityType=None,
+                      outerVoicesOnly=True, includeTerminals=False):
     """
-    Report the percentage of a given sonority type in the list of full-voiced verticalities.
+    Report the percentage of a given sonority type in the
+    list of full-voiced verticalities.
     Valid options:
         beatPosition: ['on', 'off', None]
-        sonorityType: ['imperfect', 'perfect', 'dissonant', 'unison', 'octave', None]
+        sonorityType: ['imperfect', 'perfect', 'dissonant',
+                       'unison', 'octave', None]
         outerVoicesOnly: [True, False]
         includeTerminals: [True, False]
     """
     vertList = getFullSonorities(getAllVerticalities(score))
-    
+
     # get verts by beat position
     if beatPosition == 'on':
         vl = getOnbeatVertList(vertList)
@@ -374,52 +413,64 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None, outerVoicesOn
         vl = getOffbeatVertList(vertList)
     else:
         vl = vertList
-        
-    # trim list if terminals excluded 
-    if includeTerminals == False:
+
+    # Trim list if terminals excluded.
+    if not includeTerminals:
         vl = vl[1:-1]
-        
-    # count the number of parts in the final verticality, as a reliable measure of the basic texture
+
+    # Count the number of parts in the final verticality,
+    # as a reliable measure of the basic texture.
     texture = len(vertList[-1].objects)
-    
-    # select part pairs based on outer voice parameter
-    if outerVoicesOnly == False:
+
+    # Select part pairs based on outer voice parameter.
+    if not outerVoicesOnly:
         partPairs = getBassUpperPairs(score)
-    elif outerVoicesOnly == True:
-        partPairs =[[texture-1,0]] # [bass, top]
-    
-    # now count all the relevant sonorities if the match the given type
-    if sonorityType == None:
-        print('cannot evaluate for all sonority types at once, so choose one and try again')
+    elif outerVoicesOnly:
+        partPairs = [[texture-1, 0]]  # [bass, top]
+
+    # Now count all the relevant sonorities if the match the given type.
+    if sonorityType is None:
+        print('cannot evaluate for all sonority types at once, '
+              'so choose one and try again')
         return
-    # initialize the counter and divisor
+    # Initialize the counter and divisor.
     sonorityCount = 0
-    # set list length to nonzero number 
+    # Set list length to nonzero number.
     totl = len(vl) * len(partPairs)
     if totl == 0:
         totl = 1
-    # count the relevant sonorites    
+    # Count the relevant sonorites.
     for pair in partPairs:
         bassPartNum = pair[0]
         topPartNum = pair[1]
         for vert in vl:
-            bassPart = vert.getObjectsByPart(bassPartNum, classFilterList='Note')
-            topPart = vert.getObjectsByPart(topPartNum, classFilterList='Note')
-            if sonorityType == 'imperfect' and isImperfectVerticalConsonance(bassPart, topPart):
+            bassPart = vert.getObjectsByPart(bassPartNum,
+                                             classFilterList='Note')
+            topPart = vert.getObjectsByPart(topPartNum,
+                                            classFilterList='Note')
+            if (sonorityType == 'imperfect'
+               and isImperfectVerticalConsonance(bassPart, topPart)):
                 sonorityCount += 1
-            elif sonorityType == 'perfect' and isPerfectVerticalConsonance(bassPart, topPart):
+            elif (sonorityType == 'perfect'
+                  and isPerfectVerticalConsonance(bassPart, topPart)):
                 sonorityCount += 1
-            elif sonorityType == 'dissonant' and isVerticalDissonance(bassPart, topPart):
+            elif (sonorityType == 'dissonant'
+                  and isVerticalDissonance(bassPart, topPart)):
                 sonorityCount += 1
-            elif sonorityType == 'unison' and isUnison(bassPart, topPart):
+            elif (sonorityType == 'unison'
+                  and isUnison(bassPart, topPart)):
                 sonorityCount += 1
-            elif sonorityType == 'octave' and isOctave(bassPart, topPart):
+            elif (sonorityType == 'octave'
+                  and isOctave(bassPart, topPart)):
                 sonorityCount += 1
     return '{:.1%}'.format(sonorityCount/totl)
 
-def getDensityRating(score, beatPosition=None, densityType=None, includeTerminals=False):
+
+def getDensityRating(score, beatPosition=None,
+                     densityType=None, includeTerminals=False):
     """
-    Report the percentage of a given density type in the list of full-voiced verticalities.
+    Report the percentage of a given density type in the list of
+    full-voiced verticalities.
     Valid options:
         beatPosition: ['on', 'off', None]
         densityType: ['pitch', 'pitch class', None]
@@ -435,8 +486,8 @@ def getDensityRating(score, beatPosition=None, densityType=None, includeTerminal
     else:
         vl = vertList
 
-    # trim list if terminals excluded 
-    if includeTerminals == False:
+    # trim list if terminals excluded
+    if not includeTerminals:
         vl = vl[1:-1]
 
     # get the appropriate density list
@@ -448,23 +499,22 @@ def getDensityRating(score, beatPosition=None, densityType=None, includeTerminal
     for d in dl:
         density = density + d
     return '{:.1%}'.format(density/totl)
-        
-    
-    
+
 #     for vPair in vPairList:
 #         if vPair != None:
 #             if isUnison(vPair[0],vPair[1]):
 #                 uCount += 1
 #     if uCount > unisonLimit:
-#         error='The number of unisons is '+ str(uCount) + ', which exceeds the limit of ' +\
+#         error='The number of unisons is '+ str(uCount)
+#                + ', which exceeds the limit of ' +\
 #                 str(unisonLimit) + '.'
 #         prefErrors.append(error)
 
-#-------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 
 if __name__ == '__main__':
-    # self_test code
-#    pass
+    pass
 #    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies02.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies03.musicxml'
@@ -474,49 +524,52 @@ if __name__ == '__main__':
 #    source='../tests/TestScoresXML/SecondSpecies20.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies21.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies22.musicxml'
-    source='../tests/TestScoresXML/ThirdSpecies01.musicxml'
+    source = '../tests/TestScoresXML/ThirdSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies20.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies21.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies22.musicxml'
-
 #    source='../examples/corpus/Westergaard075f.musicxml'
 #    source='../examples/corpus/Westergaard075g.musicxml'
 #    source='../examples/corpus/Westergaard121a.musicxml'
 
-
-
     score = converter.parse(source)
-    
+
     vl = getAllVerticalities(score)
     fl = getFullSonorities(vl)
     sl = getSonorityList(vl)
-    
+
     onvl = getOnbeatVertList(fl)
     ofvl = getOffbeatVertList(vl)
     print(len(vl), len(onvl), len(ofvl))
 
-
 #    assignSpeciesToParts(score)
 
-    print(getDensityRating(score, beatPosition='on', densityType='pitch'))    
-    print(getDensityRating(score, beatPosition='on', densityType='pitch class'))    
+    print(getDensityRating(score, beatPosition='on', densityType='pitch'))
+    print(getDensityRating(score, beatPosition='on',
+                           densityType='pitch class'))
 #    print(getAdjacencyRatings(score))
 
 #    [c.beat for c in s.chordify().recurse().getElementsByClass('NotRest')]
 
-    onbeatchords = [c for c in score.chordify().recurse().getElementsByClass('NotRest') if len(c) > 1]
+    onbeatchords = [c for c
+                    in score.chordify().recurse().getElementsByClass('NotRest')
+                    if len(c) > 1]
 #    print(onbeatchords)
 #    for ch in onbeatchords: print(ch.notes[1].beat)
-    
+
 #    sonorityTypes = ['perfect', 'imperfect']
 #    for st in sonorityTypes:
-#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=False, includeTerminals=False)
-#        print('rating for', st, 'sonorities on the beat, terminals excluded:', rating)    
+#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st,
+#                   outerVoicesOnly=False, includeTerminals=False)
+#        print('rating for', st, 'sonorities on the beat,#
+#                   terminals excluded:', rating)
 #    sonorityTypes = ['dissonant']
 #    for st in sonorityTypes:
-#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st, outerVoicesOnly=False, includeTerminals=False)
-#        print('rating for', st, 'sonorities on the beat, terminals excluded:', rating)    
+#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st,
+#                    outerVoicesOnly=False, includeTerminals=False)
+#        print('rating for', st, 'sonorities on the beat,
+#                      terminals excluded:', rating)
 
-#-------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # eof
