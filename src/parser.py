@@ -66,11 +66,12 @@ selectPreferredParses = True
 
 class Parser():
     """
-    The Parser class is the engine of the parser. The bulk of the work
-    is done by :py:func:`~parseTransition`.  After a preliminary
-    parse of the line, the parser decides on a set of possible structural
-    interpretations and creates a :py:class:`~Parser.Parse`
-    object to store each interpretation.
+    The main engine of the parser. 
+    
+    The bulk of the parser's work is done by :py:func:`~parseTransition`.
+    After a preliminary parse of the line, the parser decides on a set
+    of possible structural interpretations and creates a
+    :py:class:`~Parser.Parse` object to store each interpretation.
 
     Upon initialization, the Parser automatically parses the line,
     using the following procedure:
@@ -81,7 +82,7 @@ class Parser():
     * Operate the preliminary parser: :py:func:`~preParseLine`.
     * Interrupt the parser if preliminary parsing is unsuccessful
       and report errors.
-    * Determine the set of possible basic structures and parses
+    * Determine the set of possible basic structures and test
       for each possibility: :py:func:`~prepareParses`.
     * Gather all the valid interpretations of the part by line type:
       :py:func:`~collectParses`.
@@ -102,12 +103,14 @@ class Parser():
         self.errors = []  # syntax errors arising during pre-parse,
         #      by part
         #      results are collected for further evaluation
-        self.typeErrorsDict = {}  # syntax errors arising during prepare parses,
-        #      by lineType
+        self.typeErrorsDict = {}  # syntax errors arising during
+        # prepare parses,
+        #      by line type
         #      results are collected for further evaluation,
         #      only used for 'primary' and 'bass'
-        self.parseErrorsDict = {}  # syntax errors arising during final parse,
-        #      by parseLabel
+        self.parseErrorsDict = {}  # syntax errors arising during
+        # final parse,
+        #      by parse label
         #      used only internally to weed out specific failures
 
         # The following lists will be returned
@@ -115,7 +118,8 @@ class Parser():
         self.parses = []  # list of parseLabels
         self.interpretations = {}  # syntax interpretations
         #       of the part in the context,
-        #       keyed by lineType, dictionary built parseLabels in self.parses
+        #       keyed by lineType, dictionary built parseLabels
+        #       in self.parses
 
         # Lists of parseLabels for successful parses.
         self.Pinterps = []

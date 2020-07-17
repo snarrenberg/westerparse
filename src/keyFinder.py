@@ -45,8 +45,8 @@ tested using the same criteria as in key inference.
 
 from music21 import *
 
-minorMode = {'triad': [0, 3, 7], 'scale': [0, 2, 3, 5, 7, 8, 9, 10, 11]}
-majorMode = {'triad': [0, 4, 7], 'scale': [0, 2, 4, 5, 7, 9, 11]}
+MINORMODE = {'triad': [0, 3, 7], 'scale': [0, 2, 3, 5, 7, 8, 9, 10, 11]}
+MAJORMODE = {'triad': [0, 4, 7], 'scale': [0, 2, 4, 5, 7, 9, 11]}
 
 # -----------------------------------------------------------------------------
 # TODO LISTS
@@ -350,10 +350,10 @@ def getPartKeysUsingScale(part):
     
     x = range(12)
     for n in x:
-        thisMinorScale = {(deg+n) % 12 for deg in minorMode.get('scale')}
-        thisMinorTriad = {(deg+n) % 12 for deg in minorMode.get('triad')}
-        thisMajorScale = {(deg+n) % 12 for deg in majorMode.get('scale')}
-        thisMajorTriad = {(deg+n) % 12 for deg in majorMode.get('triad')}
+        thisMinorScale = {(deg+n) % 12 for deg in MINORMODE.get('scale')}
+        thisMinorTriad = {(deg+n) % 12 for deg in MINORMODE.get('triad')}
+        thisMajorScale = {(deg+n) % 12 for deg in MAJORMODE.get('scale')}
+        thisMajorTriad = {(deg+n) % 12 for deg in MAJORMODE.get('triad')}
 
         terminals = terminalsTest(residueInit, residueFin, thisMinorTriad)
         scalars = scaleTest(chromaResidues, thisMinorScale)
