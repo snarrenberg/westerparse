@@ -1,11 +1,11 @@
-#-------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Name:         vlChecker.py
 # Purpose:      Framework for analyzing voice leading in species counterpoint
 #
 # Author:       Robert Snarrenberg
-#-------------------------------------------------------------------------------
-"""Takes a score (source) with two or more parts (lines)
-and examines the local voice leading 
+# -----------------------------------------------------------------------------
+"""Take a score (source) with two or more parts (lines)
+and examine the local counterpoint 
 for conformity with Westergaard's rules of species counterpoint."""
 
 # NB: vlq parts and score Parts are numbered top to bottom
@@ -43,7 +43,8 @@ def voiceLeadingAnalyzer(context):
     sonorityErrors = []
     
     if len(context.parts) == 1:
-        print('The composition is only a single line. There is no voice-leading to check.')
+        print('The composition is only a single line. '
+              'There is no voice-leading to check.')
 
     # extract relevant information from the score, if contrapuntal
     # using revised versions of music21 theory modules
@@ -66,7 +67,8 @@ def voiceLeadingAnalyzer(context):
         if voiceLeadingErrors == []:
             print('No voice-leading errors found.\n')
         else:
-            print('Voice Leading Report \n\n\tThe following voice-leading errors were found:')
+            print('Voice Leading Report \n\n\tThe following '
+                  'voice-leading errors were found:')
             for error in voiceLeadingErrors: print('\t\t' + error)
             print('\n\n')
 
@@ -75,7 +77,8 @@ def voiceLeadingAnalyzer(context):
         if sonorityErrors == []:
             print('No sonority errors found.\n')
         else:
-            print('Sonority Report \n\n\tThe following sonority errors were found:')
+            print('Sonority Report \n\n\tThe following '
+                  'sonority errors were found:')
             for error in sonorityErrors: print('\t\t' + error)
             print('\n\n')
 

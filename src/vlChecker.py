@@ -124,11 +124,14 @@ vlErrors = []
 
 
 def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
-    """This is the main script.  It creates the analysis database and then
-    checks every pair of parts in the score for conformity with the rules
-    that control dissonance and the rules that prohibit certain forms of motion.
-    A separate function checks for the rules that control leaps of a
-    fourth in the bass.
+    """
+    This is the main script.
+
+    It creates the analysis database and then
+    checks every pair of parts in the score for conformity with the
+    rules that control dissonance and the rules that prohibit certain
+    forms of motion.  A separate function checks for the rules that
+    control leaps of a fourth in the bass.
     """
     # Extract relevant information from the score, if contrapuntal.
     # Use revised versions of music21 theory analyzer module.
@@ -184,7 +187,8 @@ def isThirdOrSixthAboveBass(b, u):
     """Input two notes with pitch, a bass note and an upper note,
     and determine whether the pair forms a vertical third or sixth.
     The test determines whether the simple interval
-    equivalent of the actual interval is in the list: 'm3', 'M3', 'm6', 'M6'.
+    equivalent of the actual interval is in the list:
+    'm3', 'M3', 'm6', 'M6'.
     """
     vert_int = interval.Interval(b, u)
     if (interval.getAbsoluteLowerNote(b, u) == b and
@@ -195,10 +199,10 @@ def isThirdOrSixthAboveBass(b, u):
 
 
 def isConsonanceBetweenUpper(u1, u2):
-    """Input two notes with pitch, two upper-line notes, and determine whether
-    the pair forms a vertical consonance. The test determines whether
-    the simple interval equivalent of the actual interval is in the list:
-    'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'.
+    """Input two notes with pitch, two upper-line notes, and determine
+    whether the pair forms a vertical consonance.  The test determines
+    whether the simple interval equivalent of the actual interval is
+    in the list: 'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'.
     """
     vert_int = interval.Interval(u1, u2)
     if vert_int.simpleName in {'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'}:
@@ -208,9 +212,9 @@ def isConsonanceBetweenUpper(u1, u2):
 
 
 def isPermittedDissonanceBetweenUpper(u1, u2):
-    """Input two notes with pitch, two upper-line notes, and determine whether
-    the pair forms a permitted vertical dissonance. The test determines
-    whether the simple interval
+    """Input two notes with pitch, two upper-line notes, and determine
+    whether the pair forms a permitted vertical dissonance.  The test
+    determines whether the simple interval
     equivalent of the actual interval is in the list: 'P4', 'A4', 'd5'.
     Each note requires additional test with bass:
     :py:func:`isThirdOrSixthAboveBass`.
@@ -364,8 +368,8 @@ def isSimilarFromUnison(vlq):
 
 
 def isSimilarFifth(vlq):
-    """Input a VLQ and determine whether there is similar motion to a perfect
-    fifth (simple or compound).
+    """Input a VLQ and determine whether there is similar motion to
+    a perfect fifth (simple or compound).
     """
     rules = [vlq.similarMotion(),
              vlq.vIntervals[1] != vlq.vIntervals[0],
@@ -377,8 +381,8 @@ def isSimilarFifth(vlq):
 
 
 def isSimilarOctave(vlq):
-    """Input a VLQ and determine whether there is similar motion to an octave
-    (simple or compound).
+    """Input a VLQ and determine whether there is similar motion to
+    an octave (simple or compound).
     """
     rules = [vlq.similarMotion(),
              vlq.vIntervals[1] != vlq.vIntervals[0],
@@ -491,7 +495,9 @@ def isSyncopated(score, note):
     elif note.tie.type == 'stop':
         note.len = 0
     # Find the maximum metrically stable duration of a note initiated at t.
-    maxlen = note.beatStrength * note.beatDuration.quarterLength * ts.beatCount
+    maxlen = (note.beatStrength
+              * note.beatDuration.quarterLength
+              * ts.beatCount)
     # Determine whether the note is syncopated.
     if n.len > maxlen:
         return True
@@ -515,7 +521,7 @@ def checkPartPairs(score, analyzer):
     for numPair in partNumPairs:
         cond1 = score.parts[numPair[0]].species == 'first'
         cond2 = score.parts[numPair[1]].species == 'first'
-        if  cond1 and cond2:
+        if cond1 and cond2:
             checkFirstSpecies(score, analyzer, numPair)
         if (cond1 and score.parts[numPair[1]].species == 'second'
                 or score.parts[0].species == 'second' and cond2):
@@ -545,7 +551,8 @@ def checkFirstSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
-    firstSpeciesForbiddenMotions(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
+    firstSpeciesForbiddenMotions(score, analytics,
+                                 partNum1=numPair[0], partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer)
 
 
@@ -556,16 +563,22 @@ def checkSecondSpecies(score, analyzer, numPair):
     repetitions in the second species line).
     Evaluate control of dissonance and forbidden forms of motion,
     including the rules for nonconsecutive unisons and octaves.
-    Also check the final step for conformity with the global rule for upper lines.
+    Also check the final step for conformity with the global rule
+    for upper lines.
     """
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
     checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
-    secondSpeciesForbiddenMotions(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
+    secondSpeciesForbiddenMotions(score, analytics,
+                                  partNum1=numPair[0], partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer)
-    checkSecondSpeciesNonconsecutiveUnisons(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
-    checkSecondSpeciesNonconsecutiveOctaves(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
+    checkSecondSpeciesNonconsecutiveUnisons(score, analytics,
+                                            partNum1=numPair[0],
+                                            partNum2=numPair[1])
+    checkSecondSpeciesNonconsecutiveOctaves(score, analytics,
+                                            partNum1=numPair[0],
+                                            partNum2=numPair[1])
 
 
 def checkThirdSpecies(score, analyzer, numPair):
@@ -582,7 +595,8 @@ def checkThirdSpecies(score, analyzer, numPair):
     checkConsecutions(score)
     checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     partNumPairs = getAllPartNumPairs(score)
-    thirdSpeciesForbiddenMotions(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
+    thirdSpeciesForbiddenMotions(score, analytics,
+                                 partNum1=numPair[0], partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer)
 
 
@@ -600,8 +614,10 @@ def checkFourthSpecies(score, analyzer, numPair):
     checkConsecutions(score)
     checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     partNumPairs = getAllPartNumPairs(score)
-    fourthSpeciesForbiddenMotions(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
-    fourthSpeciesControlOfDissonance(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
+    fourthSpeciesForbiddenMotions(score, analytics,
+                                  partNum1=numPair[0], partNum2=numPair[1])
+    fourthSpeciesControlOfDissonance(score, analytics,
+                                     partNum1=numPair[0], partNum2=numPair[1])
 
 
 def checkConsecutions(score):
@@ -621,11 +637,13 @@ def checkConsecutions(score):
         if part.species == 'fourth':
             for n in part.recurse().notes:
                 if n.tie:
-                    if n.tie.type == 'start' and n.consecutions.rightType != 'same':
+                    if (n.tie.type == 'start'
+                       and n.consecutions.rightType != 'same'):
                         error = ('Pitch not tied across the barline '
                                  'into bar ' + str(n.measureNumber+1) + '.')
                         vlErrors.append(error)
-                    elif n.tie.type == 'stop' and n.consecutions.leftType != 'same':
+                    elif (n.tie.type == 'stop'
+                          and n.consecutions.leftType != 'same'):
                         error = ('Pitch not tied across the barline '
                                  'into bar ' + str(n.measureNumber) + '.')
                         vlErrors.append(error)
@@ -740,11 +758,14 @@ def checkControlOfDissonance(score, analyzer):
             # TODO This won't work if the bass is a rest and not a note.
             rules2c = [bassPartNum not in numPair,
                        isPermittedDissonanceBetweenUpper(lowerNote, upperNote),
-                       isThirdOrSixthAboveBass(vert.objects[bassPartNum], upperNote),
-                       isThirdOrSixthAboveBass(vert.objects[bassPartNum], lowerNote)]
+                       isThirdOrSixthAboveBass(vert.objects[bassPartNum],
+                                               upperNote),
+                       isThirdOrSixthAboveBass(vert.objects[bassPartNum],
+                                               lowerNote)]
 
             # Test co-initiated simultaneities.
-            if all(rules1) and not (all(rules2a) or all(rules2b) or all(rules2c)):
+            if (all(rules1) and not (all(rules2a)
+               or all(rules2b) or all(rules2c))):
                 error = ('Dissonance between co-initiated notes in bar '
                          + str(upperNote.measureNumber) + ': '
                          + str(interval.Interval(lowerNote, upperNote).name)
@@ -797,8 +818,8 @@ def checkControlOfDissonance(score, analyzer):
 #                     vlErrors.append(error)
 
             # Both notes start at the same time, both of them are tied over:
-            if all(rules3) and ((all(rules4) and not all(rules5a))
-                   or (not all(rules4) and not all(rules5b))):
+            if (all(rules3) and ((all(rules4) and not all(rules5a))
+               or (not all(rules4) and not all(rules5b)))):
                 error = ('Dissonant interval off the beat that is not '
                          'approached and left by step in bar '
                          + str(lowerNote.measureNumber) + ': '
@@ -809,8 +830,8 @@ def checkControlOfDissonance(score, analyzer):
         # Check whether consecutive dissonances move in one directions.
         vlqList = analyzer.getVLQs(score, numPair[0], numPair[1])
         for vlq in vlqList:
-#            if vlq.v1n1 == vlq.v1n2 or vlq.v2n1 == vlq.v2n2:
-#                print('motion is oblique against sustained tone')
+            # if vlq.v1n1 == vlq.v1n2 or vlq.v2n1 == vlq.v2n2:
+            #     print('motion is oblique against sustained tone')
             # Either both of the intervals are dissonant above the bass:
             rules1a = [bassPartNum in numPair,
                        isVerticalDissonance(vlq.v1n1, vlq.v2n1),
@@ -819,22 +840,29 @@ def checkControlOfDissonance(score, analyzer):
             # between upper parts:
             rules1b = [bassPartNum not in numPair,
                        isVerticalDissonance(vlq.v1n1, vlq.v2n1),
-                       not isPermittedDissonanceBetweenUpper(vlq.v1n1, vlq.v2n1),
+                       not isPermittedDissonanceBetweenUpper(vlq.v1n1,
+                                                             vlq.v2n1),
                        isVerticalDissonance(vlq.v1n2, vlq.v2n2),
-                       not isPermittedDissonanceBetweenUpper(vlq.v1n2, vlq.v2n2)]
+                       not isPermittedDissonanceBetweenUpper(vlq.v1n2,
+                                                             vlq.v2n2)]
             # Either the first voice is stationary and
             # the second voice moves in one direction:
             rules2a = [vlq.v1n1 == vlq.v1n2,
-                       vlq.v2n1.consecutions.leftDirection == vlq.v2n2.consecutions.leftDirection,
-                       vlq.v2n1.consecutions.rightDirection == vlq.v2n2.consecutions.rightDirection]
+                       (vlq.v2n1.consecutions.leftDirection
+                        == vlq.v2n2.consecutions.leftDirection),
+                       (vlq.v2n1.consecutions.rightDirection
+                        == vlq.v2n2.consecutions.rightDirection)]
             # Or the second voice is stationary and
             # the first voice moves in one direction:
             rules2b = [vlq.v2n1 == vlq.v2n2,
-                       vlq.v1n1.consecutions.leftDirection == vlq.v1n2.consecutions.leftDirection,
-                       vlq.v1n1.consecutions.rightDirection == vlq.v1n2.consecutions.rightDirection]
+                       (vlq.v1n1.consecutions.leftDirection
+                        == vlq.v1n2.consecutions.leftDirection),
+                       (vlq.v1n1.consecutions.rightDirection
+                        == vlq.v1n2.consecutions.rightDirection)]
             # Must be in the same measure:
             rules3 = [vlq.v1n1.measureNumber != vlq.v1n2.measureNumber]
-            if (all(rules1a) or all(rules1b)) and not (all(rules2a) or all(rules2b)) and not(all(rules3)):
+            if ((all(rules1a) or all(rules1b))
+               and not (all(rules2a) or all(rules2b)) and not(all(rules3))):
                 error = ('Consecutive dissonant intervals in bar '
                          + str(vlq.v1n1.measureNumber)
                          + ' are not approached and left '
@@ -850,7 +878,8 @@ def checkControlOfDissonance(score, analyzer):
     # Check resolution of diss relative to onbeat note
     # (which may move if not whole notes) to determine category of susp;
     # this can be extracted from the vlq: e.g., v1n1,v2n1 and v1n2,v2n1.
-    # Separately check the consonance of the resolution in the vlq (v1n2, v2n2).
+    # Separately check the consonance of the resolution in the
+    # vlq (v1n2, v2n2).
     # Add rules for multiple parts.
     # TODO Add contiguous intervals to vlqs ?? xint1, xint2.
 
@@ -873,12 +902,16 @@ def fourthSpeciesControlOfDissonance(score, analyzer,
             # Evaluate on- and offbeat intervals when one of the parts
             # is the bass.
             # TODO Need to figure out rules for 3 or more parts.
-            if score.parts[-1] in [score.parts[partNum1], score.parts[partNum2]]:
-                # Look for onbeat note that is dissonant and improperly treated.
-                rules = [vPair[speciesPart].beat == 1.0,
-                         not isConsonanceAboveBass(vPair[0], vPair[1]),
-                         not vPair[speciesPart].consecutions.leftType == 'same',
-                         not vPair[speciesPart].consecutions.rightType == 'step']
+            if score.parts[-1] in [score.parts[partNum1],
+                                   score.parts[partNum2]]:
+                # Look for onbeat note that is dissonant
+                # and improperly treated.
+                rules = [
+                    vPair[speciesPart].beat == 1.0,
+                    not isConsonanceAboveBass(vPair[0], vPair[1]),
+                    not vPair[speciesPart].consecutions.leftType == 'same',
+                    not vPair[speciesPart].consecutions.rightType == 'step'
+                    ]
                 if all(rules):
                     error = ('Dissonant interval on the beat that is '
                              'either not prepared or not resolved in bar '
@@ -922,14 +955,17 @@ def fourthSpeciesControlOfDissonance(score, analyzer,
         elif speciesPart == 0:
             speciesNote = vlq.v2n2
         if speciesNote.tie is None and speciesNote.beat > 1.0:
-            if not allowSecondSpeciesBreak and speciesNote.measureNumber != score.measures-1:
+            if (not allowSecondSpeciesBreak
+               and speciesNote.measureNumber != score.measures-1):
                 error = ('Breaking of fourth species is allowed only '
                          'at the end and not in bars '
                          + str(speciesNote.measureNumber) + ' to '
                          + str(speciesNote.measureNumber+1) + '.')
                 vlErrors.append(error)
-            elif allowSecondSpeciesBreak and speciesNote.measureNumber != score.measures-1:
-                rules = [earliestBreak < speciesNote.measureNumber < latestBreak,
+            elif (allowSecondSpeciesBreak
+                  and speciesNote.measureNumber != score.measures-1):
+                rules = [earliestBreak < speciesNote.measureNumber
+                         < latestBreak,
                          breakcount < 1]
                 if all(rules):
                     breakcount += 1
@@ -966,7 +1002,8 @@ def fourthSpeciesControlOfDissonance(score, analyzer,
     # Westergaard's lists of suspensions, by type:
     strongSuspensions = {'upper': ['d7-6', 'm7-6', 'M7-6'],
                          'lower': ['m2-3', 'M2-3', 'A2-3']}
-    intermediateSuspensions = {'upper': ['m9-8', 'M9-8', 'd4-3', 'P4-3', 'A4-3'],
+    intermediateSuspensions = {'upper': ['m9-8', 'M9-8', 'd4-3',
+                                         'P4-3', 'A4-3'],
                                'lower': ['A4-5', 'd5-6', 'A5-6']}
     weakSuspensions = {'upper': ['m2-1', 'M2-1'],
                        'lower': ['m7-8', 'M7-8', 'P4-5']}
@@ -976,7 +1013,8 @@ def fourthSpeciesControlOfDissonance(score, analyzer,
 
     # Function for distinguishing between intervals 9 and 2 in upper lines.
     def dissName(intval):
-        if intval.simpleName in ['m2', 'M2', 'A2'] and intval.name not in ['m2', 'M2', 'A2']:
+        if (intval.simpleName in ['m2', 'M2', 'A2']
+           and intval.name not in ['m2', 'M2', 'A2']):
             intervalName = interval.add([intval.simpleName, 'P8']).name
         else:
             intervalName = intval.simpleName
@@ -989,22 +1027,30 @@ def fourthSpeciesControlOfDissonance(score, analyzer,
             if vlq.v1n1.tie:
                 if vlq.v1n1.tie.type == 'stop':
                     if vlq.vIntervals[0].simpleName in validDissonances:
-                        syncopeList[vlq.v1n1.measureNumber] = (dissName(vlq.vIntervals[0]) + '-' + vlq.vIntervals[1].semiSimpleName[-1])
+                        syncopeList[vlq.v1n1.measureNumber] = (
+                            dissName(vlq.vIntervals[0])
+                            + '-' + vlq.vIntervals[1].semiSimpleName[-1]
+                            )
         elif speciesPart == 0:
             if vlq.v2n1.tie:
                 if vlq.v2n1.tie.type == 'stop':
                     if vlq.vIntervals[0].simpleName in validDissonances:
-                        syncopeList[vlq.v2n1.measureNumber] = (vlq.vIntervals[0].simpleName + '-' + vlq.vIntervals[1].semiSimpleName[-1])
+                        syncopeList[vlq.v2n1.measureNumber] = (
+                            vlq.vIntervals[0].simpleName
+                            + '-' + vlq.vIntervals[1].semiSimpleName[-1]
+                            )
     if speciesPart == 1:
         for bar in syncopeList:
-            if syncopeList[bar] not in strongSuspensions['upper'] and syncopeList[bar] not in intermediateSuspensions['upper']:
+            if (syncopeList[bar] not in strongSuspensions['upper']
+               and syncopeList[bar] not in intermediateSuspensions['upper']):
                 error = ('The dissonant syncopation in bar '
                          + str(bar) + ' is not permitted: '
                          + str(syncopeList[bar]) + '.')
                 vlErrors.append(error)
     elif speciesPart == 0:
         for bar in syncopeList:
-            if syncopeList[bar] not in strongSuspensions['lower'] and syncopeList[bar] not in intermediateSuspensions['lower']:
+            if (syncopeList[bar] not in strongSuspensions['lower']
+               and syncopeList[bar] not in intermediateSuspensions['lower']):
                 error = ('The dissonant syncopation in bar '
                          + str(bar) + ' is not permitted: '
                          + str(syncopeList[bar]) + '.')
@@ -1050,7 +1096,8 @@ def forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                   vlq.v1n2.csd.value % 7 != vlqBassNote.csd.value % 7,
                   vlq.v2n2.csd.value % 7 != vlqBassNote.csd.value % 7]
         # TODO Recheck the logic of this.
-        if not ((all(rules1) and all(rules2)) or (all(rules1) and all(rules3))):
+        if not ((all(rules1) and all(rules2))
+           or (all(rules1) and all(rules3))):
             error = ('Forbidden similar motion to fifth going into bar '
                      + str(vlq.v2n2.measureNumber) + '.')
             vlErrors.append(error)
@@ -1094,7 +1141,8 @@ def forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
             # Test for step motion in another part.
             crossStep = False
             for part in score.parts:
-                if part != score.parts[partNum1] and part != score.parts[partNum2]:
+                if (part != score.parts[partNum1]
+                   and part != score.parts[partNum2]):
                     vlqOtherNote1 = part.measure(vlq.v1n1.measureNumber).getElementsByClass('Note')[0]
                     vlqOtherNote2 = part.measure(vlq.v1n2.measureNumber).getElementsByClass('Note')[0]
                     if vlqOtherNote1.csd.value - vlqOtherNote2.csd.value == 1:
@@ -1106,7 +1154,8 @@ def forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                 vlErrors.append(error)
 
 
-def firstSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None):
+def firstSpeciesForbiddenMotions(score, analyzer,
+                                 partNum1=None, partNum2=None):
     """Check the forbidden forms of motion for a pair
     of lines in first species.
     Essentially: :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`.
@@ -1116,7 +1165,8 @@ def firstSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None):
         forbiddenMotionsOntoBeatWithoutSyncope(score, vlq, partNum1, partNum2)
 
 
-def secondSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None):
+def secondSpeciesForbiddenMotions(score, analyzer,
+                                  partNum1=None, partNum2=None):
     """Check the forbidden forms of motion for a pair of lines
     in second species.
     Use :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`
@@ -1157,10 +1207,15 @@ def secondSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None)
                 vSpeciesNote2 = vlq.v2n2
                 vCantusNote1 = vlq.v1n1
                 vSpeciesPartNum = vlq.v2n1.getContextByClass('Part').partNum
-            localNotes = [note for note in score.parts[vSpeciesPartNum].notes if (vSpeciesNote1.index < note.index < vSpeciesNote2.index)]
+            localNotes = [note for note in score.parts[vSpeciesPartNum].notes
+                          if (vSpeciesNote1.index
+                              < note.index
+                              < vSpeciesNote2.index)]
             # Test for step motion contrary to parallels.
-            rules1 = [vSpeciesNote2.consecutions.leftDirection != parDirection,
-                      vSpeciesNote2.consecutions.rightDirection != parDirection,
+            rules1 = [vSpeciesNote2.consecutions.leftDirection
+                      != parDirection,
+                      vSpeciesNote2.consecutions.rightDirection
+                      != parDirection,
                       vSpeciesNote2.consecutions.leftType == 'step',
                       vSpeciesNote2.consecutions.leftType == 'step']
             # test for appearance of note as consonance in first bar
@@ -1182,25 +1237,28 @@ def secondSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None)
 
 def thirdSpeciesForbiddenMotions(score, analyzer,
                                  partNum1=None, partNum2=None):
-    """Check the forbidden forms of motion for a pair of lines in third species.
-    Use :py:func:`forbiddenMotionsOntoBeatWithoutSyncope` to check motion
-    across the barline and then checks motion from beat to beat, from off the
-    beat to next but not immediately following on the beat.
+    """Check the forbidden forms of motion for a pair of lines in
+    third species.  Use :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`
+    to check motion across the barline and then checks motion from beat
+    to beat, from off the beat to next but not immediately following
+    on the beat.
     """
     # TODO: Finish this script.
 
     def checkMotionsOntoBeat():
-    # Check motion across the barline.
+        # Check motion across the barline.
         vlqList = analyzer.getVLQs(score, partNum1, partNum2)
         for vlq in vlqList:
             # Check motion across the barline, as in first and second species.
             if vlq.v1n2.beat == 1.0 and vlq.v2n2.beat == 1.0:
-                forbiddenMotionsOntoBeatWithoutSyncope(score, vlq, partNum1, partNum2)
+                forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
+                                                       partNum1, partNum2)
             else:
-            # Check motion within the bar.
+                # Check motion within the bar.
                 if isVoiceCrossing(vlq):
-                # Strict rule when the bass is involved.
-                    if partNum1 == len(score.parts)-1 or partNum2 == len(score.parts)-1:
+                    # Strict rule when the bass is involved.
+                    if (partNum1 == len(score.parts)-1
+                       or partNum2 == len(score.parts)-1):
                         error = ('Voice crossing in bar '
                                  + str(vlq.v2n2.measureNumber) + '.')
                         vlErrors.append(error)
@@ -1210,7 +1268,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                         vlErrors.append(alert)
 
     def checkMotionsBeatToBeat():
-    # Check motion from beat to beat.
+        # Check motion from beat to beat.
         vlqOnbeatList = analyzer.getOnbeatVLQs(score, partNum1, partNum2)
         for vlq in vlqOnbeatList:
             if isParallelUnison(vlq):
@@ -1232,17 +1290,23 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                     vSpeciesPartNum = vlq.v2n1.getContextByClass('Part').partNum
                 localSpeciesMeasure = score.parts[vSpeciesPartNum].measures(vCantusNote1.measureNumber, vCantusNote1.measureNumber)
                 localNotes = localSpeciesMeasure.getElementsByClass('Measure')[0].notes
-                localNotes = [note for note in localNotes if (vSpeciesNote1.index < note.index < vSpeciesNote2.index)]
+                localNotes = [note for note in localNotes
+                              if (vSpeciesNote1.index
+                                  < note.index
+                                  < vSpeciesNote2.index)]
                 # Test for step motion contrary to parallels.
-                rules1 = [vSpeciesNote2.consecutions.leftDirection != parDirection,
-                          vSpeciesNote2.consecutions.rightDirection != parDirection,
+                rules1 = [vSpeciesNote2.consecutions.leftDirection
+                          != parDirection,
+                          vSpeciesNote2.consecutions.rightDirection
+                          != parDirection,
                           vSpeciesNote2.consecutions.leftType == 'step',
                           vSpeciesNote2.consecutions.leftType == 'step']
                 # Test for appearance of note as consonance in first bar.
                 # TODO Figure out better way to test for consonance.
                 rules2 = False
                 for note in localNotes:
-                    if note.pitch == vSpeciesNote2.pitch and isConsonanceAboveBass(vCantusNote1, note):
+                    if (note.pitch == vSpeciesNote2.pitch
+                       and isConsonanceAboveBass(vCantusNote1, note)):
                         rules2 = True
                         break
                 # TODO Verify that the logic of the rules evaluation is correct.
@@ -1254,7 +1318,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                     vlErrors.append(error)
 
     def checkMotionsOffToOnBeat():
-    # Check motions from off to nonconsecutive onbeat.
+        # Check motions from off to nonconsecutive onbeat.
         vlqNonconsecutivesList = analyzer.getNonconsecutiveOffbeatToOnbeatVLQs(score, partNum1, partNum2)
         for vlq in vlqNonconsecutivesList:
             if isParallelUnison(vlq):
@@ -1280,8 +1344,10 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                 localNotes = localSpeciesMeasure.getElementsByClass('Measure')[0].notes
                 localNotes = [note for note in localNotes]
                 # Test for step motion contrary to parallels.
-                rules1 = [vSpeciesNote2.consecutions.leftDirection != parDirection,
-                          vSpeciesNote2.consecutions.rightDirection != parDirection,
+                rules1 = [vSpeciesNote2.consecutions.leftDirection
+                          != parDirection,
+                          vSpeciesNote2.consecutions.rightDirection
+                          != parDirection,
                           vSpeciesNote2.consecutions.leftType == 'step',
                           vSpeciesNote2.consecutions.leftType == 'step']
                 # Test for appearance of note as consonance in first bar.
@@ -1303,7 +1369,9 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
     checkMotionsBeatToBeat()
     checkMotionsOffToOnBeat()
 
-def fourthSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None):
+
+def fourthSpeciesForbiddenMotions(score, analyzer,
+                                  partNum1=None, partNum2=None):
     """Check the forbidden forms of motion for a pair of lines in fourth
     species. Mostly limited to looking for parallel unisons and octaves
     in consecutive meausures.
@@ -1313,7 +1381,7 @@ def fourthSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None)
     """
     vlqList = analyzer.getVLQs(score, partNum1, partNum2)
     vPairList = analyzer.getVerticalPairs(score, partNum1, partNum2)
-    
+
     if score.parts[partNum1].species == 'fourth':
         speciesPart = 1
     elif score.parts[partNum2].species == 'fourth':
@@ -1356,7 +1424,8 @@ def fourthSpeciesForbiddenMotions(score, analyzer, partNum1=None, partNum2=None)
         elif speciesPart == 0:
             speciesNote = vlq.v2n1
         if speciesNote.tie is None and speciesNote.beat > 1.0:
-            forbiddenMotionsOntoBeatWithoutSyncope(score, vlq, partNum1, partNum2)
+            forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
+                                                   partNum1, partNum2)
 
 
 def checkSecondSpeciesNonconsecutiveUnisons(score, analyzer,
@@ -1376,7 +1445,8 @@ def checkSecondSpeciesNonconsecutiveUnisons(score, analyzer,
         if firstUnison:
             if (interval.Interval(vPair[0], vPair[1]).name == 'P1'
                     and vPair[speciesPart].beat == 1.5
-                    and vPair[speciesPart].measureNumber - 1 == firstUnison[0]):
+                    and vPair[speciesPart].measureNumber - 1
+                    == firstUnison[0]):
                 error = ('Offbeat unisons in bars '
                          + str(firstUnison[0]) + ' and '
                          + str(vPair[speciesPart].measureNumber))
@@ -1403,15 +1473,19 @@ def checkSecondSpeciesNonconsecutiveOctaves(score, analyzer,
         if firstOctave:
             if (interval.Interval(vPair[0], vPair[1]).name == 'P8'
                     and vPair[speciesPart].beat > 1.0
-                    and vPair[speciesPart].measureNumber-1 == firstOctave[0]):
+                    and vPair[speciesPart].measureNumber-1
+                    == firstOctave[0]):
                 if interval.Interval(firstOctave[1][speciesPart], vPair[speciesPart]).isDiatonicStep:
-                    if vPair[speciesPart].consecutions.leftDirection == firstOctave[1][speciesPart].consecutions.leftDirection:
+                    if (vPair[speciesPart].consecutions.leftDirection
+                       == firstOctave[1][speciesPart].consecutions.leftDirection):
                         error = ('Offbeat octaves in bars ' + str(firstOctave[0])
                                  + ' and '
                                  + str(vPair[speciesPart].measureNumber))
                         vlErrors.append(error)
-                elif interval.Interval(firstOctave[1][speciesPart], vPair[speciesPart]).generic.isSkip:
-                    if (vPair[speciesPart].consecutions.leftDirection != firstOctave[1][speciesPart].consecutions.leftDirection
+                elif interval.Interval(firstOctave[1][speciesPart],
+                                       vPair[speciesPart]).generic.isSkip:
+                    if (vPair[speciesPart].consecutions.leftDirection
+                       != firstOctave[1][speciesPart].consecutions.leftDirection
                        or firstOctave[1][speciesPart].consecutions.rightInterval.isDiatonicStep):
                         continue
                     else:
@@ -1452,7 +1526,8 @@ def checkFourthLeapsInBass(score, analyzer):
                 rules1 = [n != bn1,
                           n != bn2,
                           n == interval.getAbsoluteLowerNote(n, fourthBass),
-                          interval.Interval(n, fourthBass).semitones < interval.Interval('P8').semitones,
+                          interval.Interval(n, fourthBass).semitones
+                          < interval.Interval('P8').semitones,
                           isTriadicConsonance(n, bn1),
                           isTriadicConsonance(n, bn2)]
                 if all(rules1):
@@ -1464,36 +1539,42 @@ def checkFourthLeapsInBass(score, analyzer):
             # Check upper parts for note that denies the implication.
             for part in score.parts[0:bnPartNum]:
                 # Get the two bars in the context of the bass fourth.
-                bars = part.getElementsByOffset(offsetStart=bn1Start,
-                                                offsetEnd=bn2End,
-                                                includeEndBoundary=False,
-                                                mustFinishInSpan=False,
-                                                mustBeginInSpan=False,
-                                                includeElementsThatEndAtStart=False,
-                                                classList=None)
+                bars = part.getElementsByOffset(
+                    offsetStart=bn1Start,
+                    offsetEnd=bn2End,
+                    includeEndBoundary=False,
+                    mustFinishInSpan=False,
+                    mustBeginInSpan=False,
+                    includeElementsThatEndAtStart=False,
+                    classList=None
+                    )
                 # Make note list for each bar of the part, simultaneous
                 # with notes of the fourth.
                 barseg1 = []
                 barseg2 = []
                 for bar in bars:
                     # bar notes 1
-                    barns1 = bar.getElementsByOffset(offsetStart=bn1Start-bar.offset,
-                                                     offsetEnd=bn1End-bar.offset,
-                                                     includeEndBoundary=False,
-                                                     mustFinishInSpan=False,
-                                                     mustBeginInSpan=False,
-                                                     includeElementsThatEndAtStart=False,
-                                                     classList='Note')
+                    barns1 = bar.getElementsByOffset(
+                        offsetStart=bn1Start-bar.offset,
+                        offsetEnd=bn1End-bar.offset,
+                        includeEndBoundary=False,
+                        mustFinishInSpan=False,
+                        mustBeginInSpan=False,
+                        includeElementsThatEndAtStart=False,
+                        classList='Note'
+                        )
                     for n in barns1:
                         barseg1.append(n)
                     # bar notes 2
-                    barns2 = bar.getElementsByOffset(offsetStart=bn2Start-bar.offset,
-                                                     offsetEnd=bn2End,
-                                                     includeEndBoundary=False,
-                                                     mustFinishInSpan=False,
-                                                     mustBeginInSpan=False,
-                                                     includeElementsThatEndAtStart=False,
-                                                     classList='Note')
+                    barns2 = bar.getElementsByOffset(
+                        offsetStart=bn2Start-bar.offset,
+                        offsetEnd=bn2End,
+                        includeEndBoundary=False,
+                        mustFinishInSpan=False,
+                        mustBeginInSpan=False,
+                        includeElementsThatEndAtStart=False,
+                        classList='Note'
+                        )
                     for n in barns2:
                         barseg2.append(n)
 
@@ -1501,7 +1582,8 @@ def checkFourthLeapsInBass(score, analyzer):
                     # rules for all species
                     # locally consonant, step-class contiguity
                     rules1 = [isConsonanceAboveBass(bn1, n),
-                              interval.Interval(bn2, n).simpleName in ['m2', 'M2', 'm7', 'M7']]
+                              interval.Interval(bn2, n).simpleName
+                              in ['m2', 'M2', 'm7', 'M7']]
 
                     # rules for first species
                     if len(barseg1) == 1:
@@ -1515,23 +1597,27 @@ def checkFourthLeapsInBass(score, analyzer):
                         # (hence contiguous with bn2)
                         rules2 = [n.offset == 0.0,
                                   n.consecutions.leftType == 'skip',
-                                  n.offset+n.quarterLength == score.measure(bn1Meas).quarterLength]
+                                  n.offset+n.quarterLength
+                                  == score.measure(bn1Meas).quarterLength]
                         if all(rules1) and any(rules2):
                             impliedSixFour = False
                             break
 
                     # rules for third species
                     elif len(barseg1) > 2:
-                        # first in bar or last in bar (hence contiguous with bn2)
+                        # first in bar or last in bar (hence
+                        # contiguous with bn2)
                         rules3a = [n.offset == 0.0,
-                                   n.offset+n.quarterLength == score.measure(bn1Meas).quarterLength]
+                                   n.offset+n.quarterLength
+                                   == score.measure(bn1Meas).quarterLength]
                         # not first or last in bar and no step follows
                         stepfollows = [x for x in barseg1
                                        if x.offset > n.offset
                                        and isConsonanceAboveBass(bn1, x)
                                        and isDiatonicStep(x, n)]
                         rules3b = [n.offset > 0.0,
-                                   n.offset+n.quarterLength < score.measure(bn1Meas).quarterLength,
+                                   n.offset+n.quarterLength
+                                   < score.measure(bn1Meas).quarterLength,
                                    stepfollows == []]
 
                         if all(rules1) and (any(rules3a) or all(rules3b)):
@@ -1548,7 +1634,8 @@ def checkFourthLeapsInBass(score, analyzer):
                 for n in barseg2:
                     # locally consonant, step-class contiguity
                     rules1 = [isConsonanceAboveBass(bn2, n),
-                              interval.Interval(bn1, n).simpleName in ['m2', 'M2', 'm7', 'M7']]
+                              interval.Interval(bn1, n).simpleName
+                              in ['m2', 'M2', 'm7', 'M7']]
 
                     # rules for first species
                     if len(barseg2) == 1:
@@ -1635,10 +1722,14 @@ def makeVLQFromVPair(vPairList):
     """
     quartetList = []
     for quartet in pairwise(vPairList):
-        quartetList.append((quartet[0][1], quartet[1][1], quartet[0][0], quartet[1][0]))
+        quartetList.append((quartet[0][1], quartet[1][1],
+                            quartet[0][0], quartet[1][0]))
     vlqList = []
     for quartet in quartetList:
-        vlqList.append(voiceLeading.VoiceLeadingQuartet(quartet[0], quartet[1], quartet[2], quartet[3]))
+        vlqList.append(voiceLeading.VoiceLeadingQuartet(quartet[0],
+                                                        quartet[1],
+                                                        quartet[2],
+                                                        quartet[3]))
     return vlqList
 
 
@@ -1661,7 +1752,8 @@ def makeVLQsFromVertPair(vertPair, partNumPairs):
             continue
         else:
             vlqList.append((numPair,
-                            voiceLeading.VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2)))
+                            voiceLeading.VoiceLeadingQuartet(v1n1, v1n2,
+                                                             v2n1, v2n2)))
     return vlqList
 
 # -----------------------------------------------------------------------------
