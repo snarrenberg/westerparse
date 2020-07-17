@@ -24,14 +24,14 @@ Procedure:
 
 The machinery consists of a buffer, a stack, and a scanner.
 At initialization, the notes of the line are read into the buffer.
-The scanner then shifts notes onto the stack one by one. With each shift,
-the transition is evaluated in light of the previously analyzed line.
-As the scanning proceeds, the parser maintains lists of
+The scanner then shifts notes onto the stack one by one. With each
+shift, the transition is evaluated in light of the previously analyzed
+line.  As the scanning proceeds, the parser maintains lists of
 open heads, open transitions, and syntactic units (arcs). These lists
-shrink and grow as the interpretive process unfolds. When an arc is formed
-(e.g., a passing or neighboring motion), a tuple of note positions is placed
-in the list of arcs. Meanwhile, dependent elements within the arc are removed
-from both the stack and the list of open transitions,
+shrink and grow as the interpretive process unfolds. When an arc is
+formed (e.g., a passing or neighboring motion), a tuple of note positions
+is placed in the list of arcs.  Meanwhile, dependent elements within the
+arc are removed from both the stack and the list of open transitions,
 leaving structural heads in place for subsequent attachment.
 The parser has a limited ability to
 backtrack and reinterpret segments of a line.
@@ -66,10 +66,11 @@ selectPreferredParses = True
 
 class Parser():
     """
-    The Parser class is the engine of the parser. The bulk of the work is done
-    by :py:func:`~parseTransition`.  After a preliminary parse of the line,
-    the parser decides on a set of possible structural interpretations and
-    creates a :py:class:`~Parser.Parse` object to store each interpretation.
+    The Parser class is the engine of the parser. The bulk of the work
+    is done by :py:func:`~parseTransition`.  After a preliminary
+    parse of the line, the parser decides on a set of possible structural
+    interpretations and creates a :py:class:`~Parser.Parse`
+    object to store each interpretation.
 
     Upon initialization, the Parser automatically parses the line,
     using the following procedure:
@@ -248,16 +249,21 @@ class Parser():
                     localOpenHeads = []
                     localOpenTransitions = []
                     if i.beat == 1.0 and i.index > 0:
-                        localHarmonyStart = self.context.localHarmonyDict[i.offset]
+                        localHarmonyStart = (
+                            self.context.localHarmonyDict[i.offset]
+                            )
                     else:  # Get tonic harmony for first measure.
-                        localHarmonyStart = [p for p in self.part.tonicTriad.pitches]
+                        localHarmonyStart = [p for p
+                                             in self.part.tonicTriad.pitches]
 
                     # Fill the local buffer up to and including the next onbeat
                     # note and set localHarmonyEnd by that note.
                     for note in lineBuffer:
                         if note.beat == 1.0:
                             localBuffer.append(note)
-                            localHarmonyEnd = self.context.localHarmonyDict[note.offset]
+                            localHarmonyEnd = (
+                                self.context.localHarmonyDict[note.offset]
+                                )
                             localEnd = note.index
                             break
                         else:
@@ -275,11 +281,13 @@ class Parser():
                         ln = len(localBuffer)
                         x = localStack[-1]
                         y = localBuffer[0]
-                        self.parseTransition(localStack, localBuffer, self.part,
-                                             x, y,
-                                             localHarmonyStart, localHarmonyEnd,
-                                             localOpenHeads,
-                                             localOpenTransitions, localArcs)
+                        self.parseTransition(
+                            localStack, localBuffer,
+                            self.part, x, y,
+                            localHarmonyStart, localHarmonyEnd,
+                            localOpenHeads, localOpenTransitions,
+                            localArcs
+                            )
                     # Break upon finding errors.
                         if self.errors:
                             break
@@ -305,8 +313,8 @@ class Parser():
                     # to neighbors and repetitions.
                     if localNeighborsOnly:
                         localArcs = [arc for arc in localArcs if
-                                     (isNeighboring(arc, self.notes) or
-                                      isRepetition(arc, self.notes))]
+                                     (isNeighboringArc(arc, self.notes) or
+                                      isRepetitionArc(arc, self.notes))]
 
                     # Collect indexes of pitches that are
                     # embedded in local arcs.
@@ -314,8 +322,8 @@ class Parser():
                         if arc in localArcs:
                             cond1 = len(arc) == 3
                             cond2 = len(arc) == 2
-                            cond3 = isNeighboring(arc, self.notes)
-                            cond4 = isRepetition(arc, self.notes)
+                            cond3 = isNeighboringArc(arc, self.notes)
+                            cond4 = isRepetitionArc(arc, self.notes)
                             if (cond1 and cond3) or (cond2 and cond4):
                                 for idx in range(arc[0]+1, arc[-1]+1):
                                     if self.notes[idx].beat != 1.0:
@@ -345,11 +353,11 @@ class Parser():
 
                                 # See whether the global lefthead
                                 # is just a step away
-                                if isPassing(arc, self.notes):
+                                if isPassingArc(arc, self.notes):
                                     tempArc = extensions + arc
                                     # See whether new arc passes through
                                     # a consonant interval
-                                    rules = [isPassing(tempArc, self.notes),
+                                    rules = [isPassingArc(tempArc, self.notes),
                                              isLinearConsonance(self.notes[tempArc[0]],
                                              self.notes[tempArc[-1]])]
                                     if all(rules):
@@ -366,7 +374,7 @@ class Parser():
                         for arc in localArcs:
                             if arc[-1] == localEnd-1:
                                 tempArc = arc + [localEnd]
-                                rules = [isPassing(tempArc, self.notes),
+                                rules = [isPassingArc(tempArc, self.notes),
                                          isLinearConsonance(self.notes[arc[0]],
                                          self.notes[localEnd])]
                                 if all(rules):
@@ -651,8 +659,11 @@ class Parser():
                         openHeads.append(i.index)
                     openHeads.append(j.index)
             else:
-                if i.index not in openHeads:
-                    openHeads.append(i.index)
+# 2020-07-16
+# turned off adding i to open head, since it might be a repetition
+# if not, it should have already been added to open heads when it was j 
+#                if i.index not in openHeads:
+#                    openHeads.append(i.index)
                 openHeads.append(j.index)
 
         # CASE TWO: Transition from the harmony of this bar
@@ -1169,11 +1180,11 @@ class Parser():
 #                            lefthead_found = False
                             for arc in arcs:
                                 # Look for 8-7-8 if j is 6, or 5-6-5 if j is 7.
-                                rules1 = [isNeighboring(arc, self.notes),
+                                rules1 = [isNeighboringArc(arc, self.notes),
                                           isDiatonicStep(self.notes[arc[1]], j),
                                           self.notes[arc[0]].csd.value % 7 == 0,
                                           j.csd.value % 7 == 5]
-                                rules2 = [isNeighboring(arc, self.notes),
+                                rules2 = [isNeighboringArc(arc, self.notes),
                                           isDiatonicStep(self.notes[arc[1]], j),
                                           self.notes[arc[0]].csd.value % 7 == 4,
                                           j.csd.value % 7 == 6]
@@ -1876,7 +1887,8 @@ class Parser():
             # Reinterpret the line, starting with the S2 candidate. 
             # This is a radical solution that does not work well
             # and shouldn't really ignore all the preparse work.
-            # Test cases: 2020_05_19T16_58_53_914Z.musicxml; Westergaard070g.musicxml.
+            # Test cases: 2020_05_19T16_58_53_914Z.musicxml;
+            #             Westergaard070g.musicxml
             # TODO Prefer S2 on beat in third species,
             # if there are two candidates in the same bar.
             elif self.method == 8:
@@ -1899,14 +1911,14 @@ class Parser():
                     h = self.notes[basicArcCand[-1]]
                     # Look for descending steps to S1.
                     if isStepDown(j, h) and j.csd.value < self.S2Value:
-                        # Skip the pitch if it is a local repetition
+                        # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
-                        if not isLocalRepetition(j.index, self.notes, self.arcs):
+                        if not isRepetition(j.index, self.notes, self.arcs):
                             basicArcCand.append(j.index)
                     elif isStepDown(j, h) and j.csd.value == self.S2Value:
-                        # Skip the pitch if it is a local repetition
+                        # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
-                        if not isLocalRepetition(j.index, self.notes, self.arcs):
+                        if not isRepetition(j.index, self.notes, self.arcs):
                             basicArcCand.append(self.S2Index)
                             break
                 # The following procedure prefers to locate tonic triad S3
@@ -1933,7 +1945,8 @@ class Parser():
                             for arc in self.arcs:
                                 a = self.notes[arc[0]]
                                 b = self.notes[arc[-1]]
-                                if prevS < a.index < j.index and prevS < b.index < j.index:
+                                if (prevS < a.index < j.index
+                                        and prevS < b.index < j.index):
                                     # Grab the a head if possible.
                                     if a.csd.value == j.csd.value:
                                         j.dependency.lefthead = a.index
@@ -2006,7 +2019,6 @@ class Parser():
 
                 # TODO: Reset Note attributes.
                 # Look for secondary structures between S nodes.
-                # TODO: Try to attach repetitions of S3 sd5 or sd3.
 
         def parseBass(self):
             """Test whether a specific dominant pitch can function as S3."""
@@ -2290,7 +2302,7 @@ class Parser():
                     rules1 = [arc1[-1] == arc2[0],
                               self.notes[arc1[-1]].rule.name[0] != 'S']
                     # TODO Consider changing the conditions
-                    # to isPassing and in same direction.
+                    # to isPassingArc and in same direction.
                     rules2 = [self.notes[arc1[0]].csd.value > self.notes[arc1[-1]].csd.value,
                               self.notes[arc2[0]].csd.value > self.notes[arc2[-1]].csd.value]
                     rules3 = [self.notes[arc1[0]].csd.value < self.notes[arc1[-1]].csd.value,
@@ -2960,7 +2972,7 @@ def isDirectedStep(n1, n2):
         return False
 
 
-def isNeighboring(arc, notes):
+def isNeighboringArc(arc, notes):
     if len(arc) != 3:
         return False
     # Accept an arcList of line indices
@@ -2982,7 +2994,7 @@ def isNeighboring(arc, notes):
         return False
 
 
-def isPassing(arc, notes):
+def isPassingArc(arc, notes):
     # Accept an arcList of line indices and determine whether
     # a valid P structure; can probably assume that
     # first and last pitches are in tonic triad, but ...
@@ -3011,7 +3023,7 @@ def isPassing(arc, notes):
     return True
 
 
-def isRepetition(arc, notes):
+def isRepetitionArc(arc, notes):
     # Accept an arcList of line indices and determine
     # whether a valid R structure;
     # can probably assume that first and last pitches
@@ -3024,6 +3036,20 @@ def isRepetition(arc, notes):
     else:
         return False
 
+def isRepetition(noteIndex, notes, arcs):
+    # Check whether a note at noteIndex in notes
+    # is a global repetition in an arc.
+    isGlobalRepetition = False
+    for arc in arcs:
+        i = notes[arc[0]]
+        j = notes[arc[-1]]
+        rules1 = [noteIndex == j.index,
+                  j.csd.value == i.csd.value]
+        if all(rules1):
+            isGlobalRepetition = True
+            break
+    return isGlobalRepetition
+
 
 def isLocalRepetition(noteIndex, notes, arcs):
     # Check whether a note at noteIndex in notes
@@ -3032,7 +3058,7 @@ def isLocalRepetition(noteIndex, notes, arcs):
     for arc in arcs:
         i = notes[arc[0]]
         j = notes[arc[-1]]
-        rules1 = [noteIndex == j,
+        rules1 = [noteIndex == j.index,
                   j.csd.value == i.csd.value,
                   i.measureNumber == j.measureNumber]
         if all(rules1):
@@ -3068,7 +3094,7 @@ def arcGenerateTransition(i, part, arcs, stack):
 
 
 def arcGenerateRepetition(j, part, arcs, stack):
-    # Aassemble an arc after a repetition is detected.
+    # Assemble an arc after a repetition is detected.
     # Variable j is a note.index of the repetition.
     # Tests for arc type in self.line.notes.
     elements = [elem for elem in (part.flat.notes[j].dependency.lefthead, j)]
@@ -3186,7 +3212,9 @@ def isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=-1):
     isEmbedded = False
     testArcs = []
     for testArc in arcs:
-        if testArc[0] >= startIndex and testArc[-1] <= stopIndex and testArc != arc:
+        if (testArc[0] >= startIndex
+                and testArc[-1] <= stopIndex
+                and testArc != arc):
             testArcs.append(testArc)
     for testArc in testArcs:
         if arc[0] >= testArc[0] and arc[-1] <= testArc[-1]:
@@ -3224,5 +3252,6 @@ def arcLength(arc):
 
 if __name__ == "__main__":
     pass
+    
 # -----------------------------------------------------------------------------
 # eof

@@ -168,14 +168,14 @@ class GlobalContext(Context):
         self.localContexts = {}
 
         # TODO Move harmonic species span stuff to a different place.
-        if keywords.get('harmonicSpecies'):
-            self.harmonicSpecies = keywords['harmonicSpecies']
+        if kwargs.get('harmonicSpecies'):
+            self.harmonicSpecies = kwargs['harmonicSpecies']
         else:
             self.harmonicSpecies = False
-        if keywords.get('harmonicSpecies'):
-            offPre = keywords['offsetPredominant']
-            offDom = keywords['offsetDominant']
-            offClosTon = keywords['offsetClosingTonic']
+        if kwargs.get('harmonicSpecies'):
+            offPre = kwargs['offsetPredominant']
+            offDom = kwargs['offsetDominant']
+            offClosTon = kwargs['offsetClosingTonic']
             if offPre is None:
                 initialTonicSpan = makeLocalContext(cxt.score, 0.0, offPre, 'initial tonic')
                 predominantSpan = makeLocalContext(cxt.score, offPre, offDom, 'predominant')
@@ -217,8 +217,8 @@ class GlobalContext(Context):
 
     def setupTonalityGeneral(self, **kwargs):
         # Setup key, using information provided by user or inferred from parts.
-        knote = keywords.get('keynote')
-        kmode = keywords.get('mode')
+        knote = kwargs.get('keynote')
+        kmode = kwargs.get('mode')
         # (1a) If user provides key, validate and test.
         if knote and kmode:
             self.key = keyFinder.testKey(self.score, knote, kmode)

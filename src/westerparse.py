@@ -60,29 +60,31 @@ def evaluateLines(source,
 
        *Options*
        
-       None -- Default option. A text report is generated in lieu of a display
-       in musical notation.
+       None -- Default option. A text report is generated in lieu of a
+       display in musical notation.
        
        `writeToServer` -- Reserved for use by the WesterParse web site
-       to write parses to musicxml files, which are then displayed in the
-       browser window.
+       to write parses to musicxml files, which are then displayed in
+       the browser window.
 
-       `writeToLocal` -- Can be used to write parses in musicxml to a user's
-       local directory. [Eventually the user will be able select a directory by
-       editing a configuration.py file.] By default, the files are written
-       to 'parses_from_context/'. The name for each file consists of the prefix
-       'parser_output\_', a timestamp, and the suffix '.musicxml'.
+       `writeToLocal` -- Can be used to write parses in musicxml to a
+       user's local directory. [Eventually the user will be able select
+       a directory by editing a configuration.py file.]  By default, the
+       files are written to 'parses_from_context/'.  The name for each
+       file consists of the prefix 'parser_output\_', a timestamp,
+       and the suffix '.musicxml'.
 
        `writeToPng` -- Use the application MuseScore to produce png files.
-       MuseScore first generates an xml file and then derives the png file.
-       These are named with the prefix 'parser_output\_', a timestamp, and the
-       appropriate suffix. Note that Musescore inserts '-1' before adding the
-       '.png' suffix. The default directory for these files is 'tempimages/'. 
-       [This, too, can be changed by editing the configuration.py file.]
+       MuseScore first generates an xml file and then derives the png
+       file.  These are named with the prefix 'parser_output\_',
+       a timestamp, and the appropriate suffix.  Note that Musescore
+       inserts '-1' before adding the '.png' suffix. The default
+       directory for these files is 'tempimages/'.  [This, too, can be
+       changed by editing the configuration.py file.]
 
-       `showWestergaardParse` -- Not yet functional. Can be used if the source
-       consists of only one line. It will display the parse(s) of a line using
-       Westergaard's layered form of representation. 
+       `showWestergaardParse` -- Not yet functional.  Can be used if
+       the source consists of only one line. It will display the parse(s)
+       of a line using Westergaard's layered form of representation. 
  
     `partSelection` -- Designates a line of the composition to parse. 
 
@@ -93,16 +95,16 @@ def evaluateLines(source,
        0, 1, 2, ..., -1 -- Following the conventions of music21, lines are
        numbered from top to bottom, starting with 0. 
 
-    `partLineType` -- Only for use in evaluating a single line. None is the
-    default. User may select among 'primary', 'bass', or 'generic'.
+    `partLineType` -- Only for use in evaluating a single line.  None is
+    the default. User may select among 'primary', 'bass', or 'generic'.
 
-    `report` -- True or False. Use True to see a text report. Note: If one or
-    more lines in the source cannot be parsed (i.e., if there are syntax
-    errors) or the `show` option is set to None, the program will automatically
-    generate a text report.
+    `report` -- True or False. Use True to see a text report.  Note: If
+    one or more lines in the source cannot be parsed (i.e., if there are
+    syntax errors) or the `show` option is set to None, the program will
+    automatically generate a text report.
     
-    Other keywords: `knote` and `kmode` -- The user can use these to force the
-    parser to interpret the input in a particular key.
+    Other keywords: `knote` and `kmode` -- The user can use these to
+    force the parser to interpret the input in a particular key.
     """
     clearLogfile('logfile.txt')
     if partLineType == 'any' or '':
@@ -230,7 +232,8 @@ def parseContext(context,
                     'Context Error: The composition has only '
                     + str(len(context.parts)) + pts
                     + ', so the part selection must fall in the range of 0-'
-                    + str(len(context.parts)-1) + '. Hence the selection of part '
+                    + str(len(context.parts)-1)
+                    + '. Hence the selection of part '
                     + str(partSelection) + ' is invalid.')
             else:
                 if partSelection >= 0:
@@ -309,8 +312,10 @@ def parseContext(context,
                     elif part.isPrimary and not part.isBass:
                         result = ('The line is generable as a primary '
                                   'line but not as a bass line.')
-                    if not part.isPrimary and not part.isBass and part.isGeneric:
-                        result = ('The line is generable only as a generic line.')
+                    if (not part.isPrimary and not part.isBass
+                            and part.isGeneric):
+                        result = ('The line is generable only '
+                                  'as a generic line.')
                 elif partLineType is not None:
                     if partLineType == 'primary' and part.isPrimary:
                         result = ('The line is generable as a primary line.')

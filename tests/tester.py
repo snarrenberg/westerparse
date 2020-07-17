@@ -31,6 +31,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Primary04.musicxml'
 #    source = 'TestScoresXML/Primary05.musicxml'
 #    source = 'TestScoresXML/Primary06.musicxml'
+    source = 'TestScoresXML/Primary16.musicxml'
 #    source = 'TestScoresXML/Primary20.musicxml' # Krumhansl-Schmuckler gives wrong key
 #    source = 'TestScoresXML/Primary21.musicxml' # line has no clear key
 
@@ -124,7 +125,7 @@ if __name__ == "__main__":
 
 #    source = '../examples/corpus/Westergaard057b.musicxml'
 
-    source = 'TestScoresXML/2020_07_16T17_54_16_933Z.musicxml'
+#    source = 'TestScoresXML/2020_07_16T17_54_16_933Z.musicxml'
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
 

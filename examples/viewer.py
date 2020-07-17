@@ -2,26 +2,25 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../src'))
 
-from tkinter import *
-from tkinter import ttk
-from PIL import Image, ImageTk
-
-import westerparse
-from music21 import *
 import signal
 import time
 import glob
 import io
+
+from tkinter import *
+from tkinter import ttk
+from PIL import Image, ImageTk
+
+from music21 import *
+import westerparse
 # import strip_xml_metadata
 
 
-# set corpus selection to null
+# Set corpus selection to null.
 corpus = ''
 
-# wpcomplete = tuple(open('wpcomplete.txt').read().split('\n'))
 wplines = tuple(open('wplines.txt').read().split('\n'))
 wpcounterpoint = tuple(open('wpcounterpoint.txt').read().split('\n'))
-# wpfragments = tuple(open('wpfrags.txt').read().split('\n'))
 
 
 def selectCorpus():
@@ -81,12 +80,12 @@ def onSelectFileSource(*args):
 
 
 def cleanUpCanvas():
-    # clear the content of the display area
+    # Clear the content of the display area.
     music_canvas.delete('all')
 
 
 def clearReportArea():
-    # clear the report content
+    # Clear the report content.
     reporttext.delete(1.0, END)
 
 
@@ -126,14 +125,14 @@ def clearMetadataFromTempFiles():
 
 
 def cleanUpTempFiles():
-    # delete all the .xml files
+    # Delete all the .xml files.
     files = glob.glob('tempimages/*.xml')
     for f in files:
         try:
             os.unlink(f)
         except OSError as e:
             print("Error: %s : %s" % (f, e.strerror))
-    # delete all the .png files
+    # Delete all the .png files.
     files = glob.glob('tempimages/*.png')
     for f in files:
         try:
@@ -146,7 +145,6 @@ def evaluateSyntax(*args):
     clearReportArea()
     idxs = fileList.curselection()
     if len(idxs) == 1:
-        # run WesterParse
         idx = int(idxs[0])
         WPfile = selectXmlFile(idx)
         if linetype.get():
@@ -164,7 +162,7 @@ def evaluateSyntax(*args):
         temp_out.close()
         sys.stdout = sys.__stdout__
 
-        # select files to display
+        # Select files to display.
         files = glob.glob('tempimages/*.png')
         if len(files) < 5:
             display_number = len(files)
@@ -172,14 +170,14 @@ def evaluateSyntax(*args):
             display_number = 4
         displaymsg = ('Displaying ' + str(display_number)
                       + ' of ' + str(len(files)) + ' possible parses.')
-        # display up to 4 parses
+        # Display up to 4 parses.
         imgcounter = 0
         if len(files) == 0:
             reporttext.insert(INSERT, eval_report)
             cleanUpCanvas()
             displayFileSource()
         elif len(files) > 0:
-            # clear out the previous thumbnails and report
+            # Clear out the previous thumbnails and report.
             cleanUpCanvas()
             reporttext.insert(INSERT, eval_report)
             reporttext.insert(INSERT, '\n')
@@ -220,7 +218,6 @@ def evaluateCounterpoint(*args):
         WPfile = selectXmlFile(idx)
         temp_out = io.StringIO()
         sys.stdout = temp_out
-        # run the vl checker
         westerparse.evaluateCounterpoint(WPfile, report=True)
         eval_report = sys.stdout.getvalue()
         temp_out.close()
@@ -258,7 +255,7 @@ logo_canvas.grid(column=1, row=1)
 
 # APP DESCRIPTION
 apptext = Text(mainframe, width=50, height=9,
-               wrap='word', relief='sunken')  # state='disabled')
+               wrap='word', relief='sunken')
 apptext.grid(column=2, row=1, sticky=(W))
 apptext.insert(INSERT, 'WesterParse Corpus Tester')
 apptext.insert(END, '\n\nWesterParse consists of a transition-based '
@@ -271,13 +268,13 @@ apptext.insert(END, '\n\nDeveloped by Robert Snarrenberg '
 listframe = ttk.Frame(mainframe)
 listframe.grid(column=3, row=1, sticky=(E))
 
-# corpus selection
+# Corpus selection
 cpsframe = ttk.Frame(listframe)
 cpsframe.grid(column=1, row=1, sticky=(N, W))
-# instruction 1
+# Instruction 1
 cpslabel = ttk.Label(cpsframe, text='Select a corpus: ')
 cpslabel.grid(column=1, row=1, sticky=(W), padx=10)
-# corpus options
+# Corpus options
 corpus = StringVar()
 cps1 = ttk.Radiobutton(cpsframe, text='Lines', variable=corpus,
                        value='wplines', command=selectCorpus)
@@ -285,33 +282,27 @@ cps1.grid(column=1, row=2, sticky=(W))
 cps2 = ttk.Radiobutton(cpsframe, text='Counterpoint', variable=corpus,
                        value='wpcounterpoint', command=selectCorpus)
 cps2.grid(column=1, row=3, sticky=(W))
-# cps3 = ttk.Radiobutton(cpsframe, text='Fragments',
-#                        variable=corpus, value='wpfragments',
-#                        command=selectCorpus)
-# cps3.grid(column=1, row=3, sticky=(W))
 
-# file selection
+# File selection
 cpslistframe = ttk.Frame(listframe)
 cpslistframe.grid(column=2, row=1, sticky=(N, W))
-# instruction 2
+# Instruction 2
 listlabel = ttk.Label(cpslistframe, text='Select a file: ')
 listlabel.grid(column=1, row=1)
-# file list
+# File list
 fileList = Listbox(cpslistframe, height=5, listvariable=WPfiles)
 fileList.grid(column=1, row=2)
 fileList.bind('<<ListboxSelect>>', onSelectFileSource)
-# fileList.bind('<Double-1>', evaluateSyntax)
 s = ttk.Scrollbar(cpslistframe, orient=VERTICAL, command=fileList.yview)
 s.grid(column=2, row=2, sticky=(N, S))
 fileList.configure(yscrollcommand=s.set)
 
-
-# linetype selection
+# Line type selection
 linetype = StringVar()
 linetype.set('any')
 selectframe = ttk.Frame(listframe)
 selectframe.grid(column=3, row=1, sticky=(N, W))
-# instruction 3
+# Instruction 3
 cpslabel = ttk.Label(selectframe, text='Select a line type: ')
 cpslabel.grid(column=1, row=0, sticky=(W))
 rad1 = Radiobutton(selectframe, text='primary',
@@ -327,7 +318,7 @@ rad2.grid(column=1, row=2, sticky=(W))
 rad3.grid(column=1, row=3, sticky=(W))
 rad4.grid(column=1, row=4, sticky=(W))
 
-# evaluate options
+# Evaluate options
 evalframe = ttk.Frame(listframe)
 evalframe.grid(column=1, row=2, columnspan=3, sticky=(W, E))
 evaluateLine = ttk.Button(evalframe,
@@ -346,7 +337,7 @@ reporttext.grid(column=1, row=3, columnspan=4)
 # DISPLAY AREA
 musicframe = ttk.Frame(mainframe, padding='0 0 0 0', borderwidth='2')
 musicframe.grid(column=1, row=4, columnspan=4)
-# intro image
+# Intro image
 imageSelected = 'FuxDorian.png'
 music_canvas = Canvas(musicframe, width=1000, height=700)
 music_converted = convertImage(imageSelected)
@@ -357,10 +348,5 @@ music_canvas.create_image(0, 300, image=None, anchor='nw', tag='thumb2')
 music_canvas.create_image(0, 450, image=None, anchor='nw', tag='thumb3')
 music_canvas.pack()
 music_canvas.mainloop()
-
-# displaymsg = StringVar()
-# displaymsg.set('blank')
-# displaylabel = ttk.Label(listframe, text=displaymsg)
-# displaylabel.grid(column=3, row=4)
 
 root.mainloop()
