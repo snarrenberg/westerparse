@@ -5,7 +5,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../s
 import westerparse
 import keyFinder
 
-source = 'TestScoresXML/Bass01.musicxml'
+#source = 'TestScoresXML/Bass01.musicxml'
+source = 'TestScoresXML/2020_07_17T19_22_29_948Z.musicxml'
 #    source = 'TestScoresXML/Bass02.musicxml' # Krumhansl-Schmuckler gives wrong key
 #    source = 'TestScoresXML/Bass03.musicxml'
 #    source = 'TestScoresXML/Bass04.musicxml' # Krumhansl-Schmuckler gives wrong key

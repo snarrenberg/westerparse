@@ -161,6 +161,7 @@ def validateKeySelection(knote, kmode):
 def testValidatedKey(score, keynote, mode):
     # Test whether the user-selected key is fits the context.
     userKeyErrors = ''
+    partErrorStr = ''
     for part in score.parts:
         partErrors = ''
         thisKey = key.Key(tonic=keynote, mode=mode)
@@ -229,11 +230,13 @@ def findScoreKeys(score):
     error = ''
     partKeyListsFromScale = [part.keyCandidatesFromScale
                              for part in score.parts]
+    # Exempt third-species lines from the hanging notes test.
     partKeyListsFromHanging = [part.keyCandidatesFromHanging
-                               for part in score.parts]
+                               for part in score.parts
+                               if part.species != 'third']
     # Get only those keys that are shared among all parts.
     scoreKeyCandidatesFromScale = set(partKeyListsFromScale[0]).intersection(*partKeyListsFromScale)
-    # Get those keys shared among all parts.
+    # Get those keys shared among all parts not in third species.
     scoreKeyCandidatesFromHanging = set(partKeyListsFromHanging[0]).intersection(*partKeyListsFromHanging)
     # Narrow the list to those that agree with both forms of derivation.
     scoreKeyCandidates = set(scoreKeyCandidatesFromScale).intersection(scoreKeyCandidatesFromHanging)
@@ -402,7 +405,6 @@ def getPartKeysUsingScale(part):
             keyCandidates.append((keynote, mode))
 
     part.keyCandidatesFromScale = keyCandidates
-
 
 def getPartKeyUsingHangingNotes(part):
     hangingNotes = []
