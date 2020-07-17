@@ -25,8 +25,7 @@ installing all this stuff? Yes.
 
    * Westegaardian Species Counterpoint Online: 
       
-      * https://talus.artsci.wustl.edu/line_tester/
-      * https://talus.artsci.wustl.edu/counterpoint_tester/
+      * https://ada.artsci.wustl.edu/westerparse/
 
 Where can I find more information about using the program?
  
