@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
         if evaluation_type in ['primary', 'generic', 'bass', None]:
 
-            context_process = Process(target=context.evaluateLines,
+            context_process = Process(target=westerparse.evaluateLines,
                                       args=(source,),
                                       kwargs={'show': 'writeToServer',
                                               'partLineType': evaluation_type,
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
         else:
 
-            context_process = Process(target=context.evaluateLines,
+            context_process = Process(target=westerparse.evaluateLines,
                                       args=(source,),
                                       kwargs={'show': 'writeToServer',
                                               'keynote': keynote,
@@ -66,7 +66,7 @@ if __name__ == "__main__":
                                   args=(source,),
                                   kwargs={'show': None,
                                           'partSelection': 0,
-                                          'partLineType': 'primary',
+                                          'partLineType': evaluation_type,
                                           'keynote': keynote,
                                           'mode': mode})
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
                                   args=(source,),
                                   kwargs={'show': None,
                                           'partSelection': 0,
-                                          'partLineType': 'bass',
+                                          'partLineType': evaluation_type,
                                           'keynote': keynote,
                                           'mode': mode})
 
@@ -86,7 +86,17 @@ if __name__ == "__main__":
                                   args=(source,),
                                   kwargs={'show': None,
                                           'partSelection': 0,
-                                          'partLineType': 'generic',
+                                          'partLineType': evaluation_type,
+                                          'keynote': keynote,
+                                          'mode': mode})
+
+    elif evaluation_type is None:
+
+        context_process = Process(target=westerparse.evaluateLines,
+                                  args=(source,),
+                                  kwargs={'show': None,
+                                          'partSelection': 0,
+                                          'partLineType': evaluation_type,
                                           'keynote': keynote,
                                           'mode': mode})
 
@@ -116,8 +126,9 @@ if __name__ == "__main__":
                                   args=(source,),
                                   kwargs={'show': None,
                                           'partSelection': 1,
-                                          'partLineType': ['primary',
-                                                           'generic'],
+                                          'partLineType': 'generic',
+#                                          'partLineType': ['primary',
+#                                                           'generic'],
                                           'keynote': keynote,
                                           'mode': mode})
 

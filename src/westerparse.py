@@ -1,11 +1,11 @@
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Name:        westerparse.py
 # Purpose:     Evaluating Westergaardian species counterpoint
 #
 # Author:      Robert Snarrenberg
 # Copyright:   (c) 2020 by Robert Snarrenberg
 # License:     BSD, see license.txt
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 '''
 WesterParse
 ===========
@@ -552,17 +552,21 @@ def selectedPreferredParseSets(context, show):
         # Select lowest part as the bassPart.
         bassPart = context.parts[-1]
 
-        primaryS3Finals = [i.S3Final for i in primPart.interpretations['primary']]
+        primaryS3Finals = [i.S3Final for i
+                           in primPart.interpretations['primary']]
         bassS3s = [i.S3Index for i in bassPart.interpretations['bass']]
         preferredGlobals = []
         domOffsetDiffList = []  # structural Dominant Offset Differences List
         lowestDifference = 100
         for interpPrimary in primPart.interpretations['primary']:
             for interpBass in bassPart.interpretations['bass']:
-                domOffsetDiff = (primPart.recurse().flat.notes[interpPrimary.S3Final].offset - bassPart.recurse().flat.notes[interpBass.S3Index].offset)
+                a = primPart.recurse().flat.notes[interpPrimary.S3Final].offset
+                b = bassPart.recurse().flat.notes[interpBass.S3Index].offset
+                domOffsetDiff = (a - b)
                 if abs(domOffsetDiff) < lowestDifference:
                     lowestDifference = domOffsetDiff
-                domOffsetDiffList.append((domOffsetDiff, (interpPrimary, interpBass)))
+                domOffsetDiffList.append((domOffsetDiff, (interpPrimary,
+                                                          interpBass)))
 #                    if interpBass.S3Index == interpPrimary.S3Final:
 #                        preferredGlobals.append((interpPrimary, interpBass))
         for pair in domOffsetDiffList:
@@ -731,7 +735,7 @@ def gatherArcs(source, arcs):
 
 def arcBuild(source, arc):
     '''
-    The function that actually converts an arc into a slur.
+    Translate an arc into a notated slur.
     '''
     # Source is a Part in the input Score.
     if len(arc) == 2:
@@ -769,7 +773,7 @@ def assignRules(source, rules):
 
 def assignParentheses(source, parentheses):
     '''
-    Adds parentheses around notes generated as insertions. [This aspect
+    Add parentheses around notes generated as insertions. [This aspect
     of syntax representation cannot be fully implemented at this time,
     because musicxml only allows parentheses to be assigned in pairs,
     whereas syntax coding requires
