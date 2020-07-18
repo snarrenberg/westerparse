@@ -26,7 +26,8 @@ The main scripts are:
 >>> evaluateLines(source)
 >>> evaluateCounterpoint(source)
 
-For more information on how to use these scripts, see the User's Guide.
+For more information on how to use these scripts, see 
+:doc:`User's Guide to WesterParse <userguide>`.
 """
 
 from music21 import *
