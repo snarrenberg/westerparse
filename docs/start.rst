@@ -7,36 +7,36 @@ First Questions
 What music theory do I need to know? -- Users who are familiar with traditional species 
 counterpoint may only need to consult Westergaard's rules:
 
-   * :doc:`The Westergaard Rules <speciesrules>` 
+* :doc:`The Westergaard Rules <speciesrules>` 
 
 If you are new to species counterpoint, you may find the following guide of use:
     
-   * :download:`Species Counterpoint in the Tradition of Fux, Schenker, and Westergaard <SpeciesText.pdf>` 
+* :download:`Species Counterpoint in the Tradition of Fux, Schenker, and Westergaard <SpeciesText.pdf>` 
 
 What software do I need to install to run the project on my own system?
 
-   * Python 3
-   * `the music21 toolkit <http://web.mit.edu/music21/>`_
-   * WesterParse
-   * a music notation program like MuseScore
+* Python 3
+* `the music21 toolkit <http://web.mit.edu/music21/>`_
+* WesterParse
+* a music notation program like MuseScore
 
 I just want to play around with it. Is there a website I can use instead of 
 installing all this stuff? Yes.
 
-   * Westegaardian Species Counterpoint Online: 
+* Westegaardian Species Counterpoint Online: 
       
-      * https://ada.artsci.wustl.edu/westerparse/
+  * https://ada.artsci.wustl.edu/westerparse/
       
 If you want to know how the program interprets Westergaard's own examples of
 counterpoint, you can use the WesterParse Corpus Viewer, which includes over
 one hundred examples of lines and counterpoint, mainly drawn from
 Westergaard's textbook.
 
-   * :doc:`Viewing the WesterParse Corpus <corpus>`
+* :doc:`Viewing the WesterParse Corpus <corpus>`
 
 Where can I find more information about using the program?
  
-   * :doc:`User's Guide to WesterParse <userguide>`
+* :doc:`User's Guide to WesterParse <userguide>`
 
 
 An Example
@@ -89,7 +89,8 @@ interpretations in a notation program.
 .. image:: images/FuxDorianP2.png
    :width: 600
    :alt: Fux Dorian cF, as PL2
-  
+
+
 The annotations indicate the syntactic function of each note by referring
 to the rule of construction that generates the particular note under this 
 particular interpretation of the line. The slurs bind notes together into
