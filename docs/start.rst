@@ -26,6 +26,13 @@ installing all this stuff? Yes.
    * Westegaardian Species Counterpoint Online: 
       
       * https://ada.artsci.wustl.edu/westerparse/
+      
+If you want to know how the program interprets Westergaard's own examples of
+counterpoint, you can use the WesterParse Corpus Viewer, which includes over
+one hundred examples of lines and counterpoint, mainly drawn from
+Westergaard's textbook.
+
+   * :doc:`Viewing the WesterParse Corpus <corpus.rst>`
 
 Where can I find more information about using the program?
  
