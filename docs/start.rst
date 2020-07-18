@@ -32,7 +32,7 @@ counterpoint, you can use the WesterParse Corpus Viewer, which includes over
 one hundred examples of lines and counterpoint, mainly drawn from
 Westergaard's textbook.
 
-   * :doc:`Viewing the WesterParse Corpus <corpus.rst>`
+   * :doc:`Viewing the WesterParse Corpus <corpus>`
 
 Where can I find more information about using the program?
  
