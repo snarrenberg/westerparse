@@ -12,6 +12,6 @@ Westegaardian Species Counterpoint Online
 
 https://ada.artsci.wustl.edu/westerparse/
 
-The web interface was written by Stephen Pentecost, Senior Digital 
+The web interface was created by Stephen Pentecost, Senior Digital 
 Humanities Specialist at Washington University in St. Louis. 
 
