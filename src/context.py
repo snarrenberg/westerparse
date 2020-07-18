@@ -117,21 +117,21 @@ class GlobalContext(Context):
        using the Key Finder (:py:mod:`~keyFinder`).
     #. For each part:
 
-        * A part number is assigned.
-        * The rhythmic species is identified.
-        * A referential tonic scale degree (csd.value = 0) is selected.
-        * A list is created to collect errors.
+       * A part number is assigned.
+       * The rhythmic species is identified.
+       * A referential tonic scale degree (csd.value = 0) is selected.
+       * A list is created to collect errors.
 
     #. For each note in the part:
 
-        * A position index is assigned. The is the primary note
-          reference used during parsing.
-        * A concrete scale degree (:py:class:`~csd.ConcreteScaleDegree`)
-          is determined.
-        * A :py:class:`~rule.Rule` object is attached.
-        * A :py:class:`~dependency.Dependency` object is attached.
-        * The manner or approach and departure
-          (:py:class:`~consecutions.Consecutions`) for the note are determined.
+       * A position index is assigned. The is the primary note
+         reference used during parsing.
+       * A concrete scale degree (:py:class:`~csd.ConcreteScaleDegree`)
+         is determined.
+       * A :py:class:`~rule.Rule` object is attached.
+       * A :py:class:`~dependency.Dependency` object is attached.
+       * The manner or approach and departure
+         (:py:class:`~consecutions.Consecutions`) for the note are determined.
 
     #. Measure-long local harmonic contexts are created,
        for use in parsing events in third species.
