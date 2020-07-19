@@ -11,7 +11,7 @@
 Parser
 ======
 
-Designed as a transition-based dependency parser, the WesterParse parser
+A transition-based dependency parser. The WesterParse parser
 analyzes the syntax of a rhythmically simple melodic line
 and produces a set of valid interpretations.
 
