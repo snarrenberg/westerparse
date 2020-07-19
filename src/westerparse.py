@@ -111,7 +111,7 @@ def evaluateLines(source,
     if partLineType == 'any' or '':
         partLineType = None
     try:
-        cxt = _makeGlobalContext(source, **kwargs)
+        cxt = makeGlobalContext(source, **kwargs)
     except EvaluationException as fce:
         fce.show()
         return
@@ -132,7 +132,7 @@ def evaluateCounterpoint(source,
     """
     clearLogfile('logfile.txt')
     try:
-        cxt = _makeGlobalContext(source, **kwargs)
+        cxt = makeGlobalContext(source, **kwargs)
     except EvaluationException as fce:
         fce.show()
         return
@@ -157,7 +157,7 @@ def evaluateCounterpoint(source,
 # -----------------------------------------------------------------------------
 
 
-def _makeGlobalContext(source, **kwargs):
+def makeGlobalContext(source, **kwargs):
     """
     Import a musicxml file and convert to music21 Stream.
     Then create a :py:class:`~context.GlobalContext`.
