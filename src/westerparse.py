@@ -267,7 +267,8 @@ def parseContext(context,
         if part.typeErrorsDict:
             for key, value in part.typeErrorsDict.items():
                 context.errorsDict[part.name][key] = value
-    # Continue and report/show results.
+
+    # Determine whether all parts are generable.
     generableParts = 0
     generableContext = False
     if partSelection is None:
