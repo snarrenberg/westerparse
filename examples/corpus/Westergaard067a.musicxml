@@ -4,7 +4,7 @@
   <identification>
     <encoding>
       <software>MuseScore 3.4.2</software>
-      <encoding-date>2020-06-11</encoding-date>
+      <encoding-date>2020-07-20</encoding-date>
       <supports element="accidental" type="yes"/>
       <supports element="beam" type="yes"/>
       <supports element="print" attribute="new-page" type="yes" value="yes"/>
@@ -80,18 +80,7 @@
           <line>2</line>
           </clef>
         </attributes>
-      <note default-x="75.99" default-y="-15.00">
-        <pitch>
-          <step>C</step>
-          <octave>5</octave>
-          </pitch>
-        <duration>4</duration>
-        <voice>1</voice>
-        <type>whole</type>
-        </note>
-      </measure>
-    <measure number="2" width="174.80">
-      <note default-x="13.32" default-y="-5.00">
+      <note default-x="75.99" default-y="-5.00">
         <pitch>
           <step>E</step>
           <octave>5</octave>
@@ -101,10 +90,21 @@
         <type>whole</type>
         </note>
       </measure>
-    <measure number="3" width="174.80">
+    <measure number="2" width="174.80">
       <note default-x="13.32" default-y="-10.00">
         <pitch>
           <step>D</step>
+          <octave>5</octave>
+          </pitch>
+        <duration>4</duration>
+        <voice>1</voice>
+        <type>whole</type>
+        </note>
+      </measure>
+    <measure number="3" width="174.80">
+      <note default-x="13.32" default-y="-5.00">
+        <pitch>
+          <step>E</step>
           <octave>5</octave>
           </pitch>
         <duration>4</duration>
