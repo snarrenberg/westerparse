@@ -485,7 +485,7 @@ class Parser():
             self.errors.append(error)
         self.arcs = arcs
         self.openHeads = openHeads
-        
+
 
     def showPartialParse(self, stackTop, bufferBottom, arcs,
                          openHeads, openTransitions):

@@ -43,6 +43,7 @@ import time
 # -----------------------------------------------------------------------------
 
 selectPreferredParseSets = False
+logParses = False
 
 # -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
@@ -128,6 +129,8 @@ def evaluateLines(source,
             print(cxt.parseReport)
     except EvaluationException as fce:
         fce.show()
+    if logParses:
+        logInterpretations(cxt)
 
 
 def evaluateCounterpoint(source,
@@ -728,6 +731,22 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
         error = 'Not yet able to display counterpoint in four or more parts.'
         raise ContextError(error)
     return
+
+
+def logInterpretations(context:
+    """
+    Write log file for interpretations for the context,
+    gathering information from the parses of each line.
+    """
+    pass
+    logInfo = []
+    for part in context.parts:
+        parseHeader = ('Parse of part ' + str(part.partNum) + ':')
+        logInfo.append(parseHeader)
+        parseInfo = '\n'.join(' --- '.join(_) for part.interpretations.items())
+        logInfo.append(parseInfo)
+    print('\n'.join(logInfo))
+            
 
 # -----------------------------------------------------------------------------
 # OPERATIONAL SCRIPTS FOR PARSING DISPLAY

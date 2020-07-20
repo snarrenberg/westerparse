@@ -63,6 +63,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies07.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'    
+    source = 'TestScoresXML/ThirdSpecies040.musicxml'
 
 #    source = 'TestScoresXML/FourthSpecies01.musicxml'
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
@@ -127,8 +128,7 @@ if __name__ == "__main__":
 
 #    source = '../examples/corpus/Westergaard057b.musicxml'
 #    source = '../examples/corpus/WP020.musicxml'
-    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
-
+#    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
 
 
 #    source = 'TestScoresXML/2020_07_17T19_22_29_948Z.musicxml'
@@ -211,7 +211,7 @@ if __name__ == "__main__":
 
 #    vltester(source, keynote='C', mode='major')
     tester(source, 1)
-#    westerparse.evaluateLines(source, show=None, keynote='G', mode='major')
+#    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
     
