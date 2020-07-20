@@ -430,6 +430,8 @@ def parseContext(context,
                 else:
                     for err in context.errorsDict[part.name]['parser errors']:
                         error = error + '\n\t\t\t' + str(err)
+                    if not context.errorsDict[part.name]['parser errors']:
+                        error = error  + '\n\t\t\tUnspecified error.'
                 try:
                     context.errorsDict[part.name]['primary']
                 except KeyError:
