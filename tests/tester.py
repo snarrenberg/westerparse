@@ -38,7 +38,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Generic01.musicxml'
 #    source = 'TestScoresXML/Generic02.musicxml'
 
-#    source = 'TestScoresXML/FirstSpecies01.musicxml'
+    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
 #    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
@@ -63,7 +63,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies07.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'    
-    source = 'TestScoresXML/ThirdSpecies040.musicxml'
+#    source = 'TestScoresXML/ThirdSpecies040.musicxml'
 
 #    source = 'TestScoresXML/FourthSpecies01.musicxml'
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error

@@ -743,8 +743,26 @@ def logInterpretations(context):
     for part in context.parts:
         parseHeader = ('Parse of part ' + str(part.partNum) + ':')
         logInfo.append(parseHeader)
-        parseInfo = '\n'.join('---'.join((str(k),str(v))) for k,v in part.interpretations.items())
-        logInfo.append(parseInfo)
+#        parseInfo = '\n'.join('---'.join((str(k),str(v))) for k,v in part.interpretations.items())
+#        logInfo.append(parseInfo)
+        if part.Pinterps:
+            for prse in part.Pinterps:
+                parseData = ('Label: ' + prse.label
+                             + '\n\tArcs:  ' + str(prse.arcs)
+                             + '\n\tRules: ' + str(prse.ruleLabels))
+                logInfo.append(parseData)
+        if part.Binterps:
+            for prse in part.Pinterps:
+                parseData = ('Label: ' + prse.label
+                             + '\n\tArcs:  ' + str(prse.arcs)
+                             + '\n\tRules: ' + str(prse.ruleLabels))
+                logInfo.append(parseData)
+        if part.Ginterps:
+            for prse in part.Pinterps:
+                parseData = ('Label: ' + prse.label
+                             + '\n\tArcs:  ' + str(prse.arcs)
+                             + '\n\tRules: ' + str(prse.ruleLabels))
+                logInfo.append(parseData)
     print('\n'.join(logInfo))
             
 
