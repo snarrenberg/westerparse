@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
 #    source = 'TestScoresXML/2019_12_10T15_37_10_018Z.musicxml'
 #    source = 'TestScoresXML/2020_07_20T15_46_56_126Z.musicxml'
-    source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
+#    source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
 
 
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
@@ -126,6 +126,10 @@ if __name__ == "__main__":
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/WP017.musicxml'
 
 #    source = '../examples/corpus/Westergaard057b.musicxml'
+#    source = '../examples/corpus/WP020.musicxml'
+    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
+
+
 
 #    source = 'TestScoresXML/2020_07_17T19_22_29_948Z.musicxml'
 
@@ -206,8 +210,8 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
-#    context.evaluateLines(source, show=None, report=True)
+#    tester(source, 1)
+    westerparse.evaluateLines(source, show=None, keynote='G', mode='major')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
     

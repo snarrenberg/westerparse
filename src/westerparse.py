@@ -104,7 +104,7 @@ def evaluateLines(source,
     syntax errors) or the `show` option is set to None, the program will
     automatically generate a text report.
 
-    Other keywords: `knote` and `kmode` -- The user can use these to
+    Other keywords: `keynote` and `mode` -- The user can use these to
     force the parser to interpret the input in a particular key.
     """
     clearLogfile('logfile.txt')
