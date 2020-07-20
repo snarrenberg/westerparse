@@ -37,6 +37,13 @@ from context import *
 from utilities import pairwise
 import time
 
+
+# -----------------------------------------------------------------------------
+# OPERATIONAL VARIABLES
+# -----------------------------------------------------------------------------
+
+selectPreferredParseSets = False
+
 # -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
 # -----------------------------------------------------------------------------
@@ -509,7 +516,9 @@ def parseContext(context,
 
         if show is not None:
             # Preferences currently only work for two-part counterpoint.
-            if 1 < len(context.parts) < 3 and partSelection is None:
+            if (1 < len(context.parts) < 3
+               and partSelection is None
+               and selectPreferredParseSets):
                 selectedPreferredParseSets(context, show)
             else:
                 showInterpretations(context, show, partSelection, partLineType)
