@@ -232,11 +232,7 @@ def findScoreKeys(score):
                              for part in score.parts]
     # Exempt third-species lines from the hanging notes test.
     partKeyListsFromHanging = [part.keyCandidatesFromHanging
-                               for part in score.parts
-                               if part.species != 'third']
-    scoreKeyCandidatesFromScale = set()
-    scoreKeyCandidatesFromHanging = set()
-    scoreKeyCandidates = set()
+                               for part in score.parts]
     # Get only those keys that are shared among all parts.
     scoreKeyCandidatesFromScale = set(
         partKeyListsFromScale[0]
@@ -247,13 +243,9 @@ def findScoreKeys(score):
             partKeyListsFromHanging[0]
             ).intersection(*partKeyListsFromHanging)
     # Narrow the list to those that agree with both forms of derivation.
-    # Exempt third-species lines from the requirement.
-    if len(score.parts) == 1 and score.parts[0].species == 'third':
-        scoreKeyCandidates = scoreKeyCandidatesFromScale
-    else:
-        scoreKeyCandidates = set(
-            scoreKeyCandidatesFromScale
-            ).intersection(scoreKeyCandidatesFromHanging)
+    scoreKeyCandidates = set(
+        scoreKeyCandidatesFromScale
+        ).intersection(scoreKeyCandidatesFromHanging)
 
     # If there is still more than one plausible key,
     # prefer keys in which most lines end on the tonic degree.
