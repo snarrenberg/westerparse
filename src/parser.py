@@ -485,6 +485,7 @@ class Parser():
             self.errors.append(error)
         self.arcs = arcs
         self.openHeads = openHeads
+        
 
     def showPartialParse(self, stackTop, bufferBottom, arcs,
                          openHeads, openTransitions):
@@ -3158,7 +3159,7 @@ def isPassingArc(arc, notes):
     k = notes[arc[-1]]
     if i.csd.value > k.csd.value:
         passdir = 'falling'
-    if i.csd.value < k.csd.value:
+    elif i.csd.value < k.csd.value:
         passdir = 'rising'
     else:
         return False

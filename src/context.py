@@ -362,7 +362,6 @@ class GlobalContext(Context):
         # of non-triadic collections.
         harmErrorList = []
         for harm in self.localHarmonyDict.items():
-            print('here', harm[1])
             if not parser.isTriadicSet(harm[1]):
                 mn = harm[0] / measureSpan
                 harmErrorList.append('{:2.0f}'.format(mn))
