@@ -55,9 +55,9 @@ import copy
 selectPreferredParses = True
 
 # for third species
-# localNeighborsOnly=False
-# extendLocalArcs = True
-# addLocalRepetitions = True
+localNeighborsOnly=False
+extendLocalArcs = True
+addLocalRepetitions = True
 
 
 # -----------------------------------------------------------------------------
@@ -230,9 +230,9 @@ class Parser():
             # Set variable for whether to attempt extending local arcs
             # outside local context.
             # Use for testing.
-            localNeighborsOnly = False
-            extendLocalArcs = True
-            addLocalRepetitions = True
+#            localNeighborsOnly = False
+#            extendLocalArcs = True
+#            addLocalRepetitions = True
 
             # Scan the global context.
             n = len(lineBuffer)
