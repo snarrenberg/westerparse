@@ -363,7 +363,7 @@ class GlobalContext(Context):
         harmErrorList = []
         for harm in self.localHarmonyDict.items():
             if not parser.isTriadicSet(harm[1]):
-                mn = harm[0] / measureSpan
+                mn = (harm[0] + measureSpan) / measureSpan
                 harmErrorList.append('{:2.0f}'.format(mn))
         if harmErrorList:
             error = ('Counterpoint Error: The following measures contain '

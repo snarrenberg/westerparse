@@ -516,6 +516,8 @@ def parseContext(context,
 
         if show is not None:
             # Preferences currently only work for two-part counterpoint.
+            # Preference can be turned off by setting
+            # selectPreferredParseSets to False
             if (1 < len(context.parts) < 3
                and partSelection is None
                and selectPreferredParseSets):
