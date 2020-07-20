@@ -56,7 +56,7 @@ selectPreferredParses = True
 
 # for third species
 localNeighborsOnly = False
-extendLocalArcs = True
+extendLocalArcs = False
 addLocalRepetitions = True
 
 
