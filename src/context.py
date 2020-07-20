@@ -187,7 +187,12 @@ class GlobalContext(Context):
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
-        self.getLocalOnbeatHarmonies()
+        try:
+            self.getLocalOnbeatHarmonies()
+        except ContextError as ce:    
+            ce.logerror()
+            raise EvaluationException()
+            return
 
         # TODO Local contexts aren't yet used by the parser.
 #        self.setupLocalContexts()
@@ -352,6 +357,21 @@ class GlobalContext(Context):
                                        # resolution = part.scale.next(elem, 'descending')
                                        harmonicEssentials.append(resolution.pitch)
                 self.localHarmonyDict[offsetStart] = harmonicEssentials
+
+        # Test the local harmonies for triadicity. Collect measure numbers
+        # of non-triadic collections.
+        harmErrorList = []
+        for harm in self.localHarmonyDict.items():
+            if not parser.isTriadicSet(harm[1]):
+                mn = harm[0] / measureSpan
+                harmErrorList.append('{:2.0f}'.format(mn))
+        if harmErrorList:
+            error = ('Counterpoint Error: The following measures contain '
+                     + 'non-triadic sonorities: '
+                     + ', '.join(harmErrorList) + '.')
+            raise ContextError(error)
+        else:
+            pass
 
     def setupLocalContexts(self):
         # TODO This currently sets up measure-length contexts,

@@ -44,7 +44,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -57,7 +57,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -69,7 +69,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -81,7 +81,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -94,7 +94,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -106,7 +106,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -118,7 +118,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -130,7 +130,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -161,7 +161,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -171,7 +170,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -181,7 +179,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
     </measure>
     <measure number="2">
@@ -193,7 +190,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -204,7 +200,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -214,7 +209,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
     </measure>
     <measure number="3">
@@ -226,7 +220,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -236,7 +229,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -246,7 +238,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
     </measure>
     <measure number="4">
@@ -259,7 +250,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -269,7 +259,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -280,7 +269,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
     </measure>
     <measure number="5">
@@ -292,7 +280,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -302,7 +289,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -312,7 +298,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
     </measure>
     <measure number="6">
@@ -325,7 +310,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
         <accidental>sharp</accidental>
       </note>
       <note>
@@ -336,7 +320,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -346,7 +329,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
     </measure>
     <measure number="7">
@@ -359,7 +341,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -369,7 +350,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
       <note>
         <pitch>
@@ -379,7 +359,6 @@
         <duration>2</duration>
         <voice>1</voice>
         <type>half</type>
-        <dot/>
       </note>
     </measure>
     <measure number="8">
@@ -391,7 +370,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -420,7 +399,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -432,7 +411,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -444,7 +423,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -457,7 +436,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -470,7 +449,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -482,7 +461,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -494,7 +473,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>
@@ -506,7 +485,7 @@
         </pitch>
         <duration>1</duration>
         <voice>1</voice>
-        <type>quarter</type>
+        <type>whole</type>
         <dot/>
       </note>
     </measure>

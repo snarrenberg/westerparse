@@ -54,7 +54,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/SecondSpecies21.musicxml' # not generable
 #    source = 'TestScoresXML/SecondSpecies22.musicxml' # not generable
 
-    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
+#    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
@@ -97,6 +97,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/BeethovenOdeToJoy4thPhrase.musicxml'
 
 #    source = 'TestScoresXML/2019_12_10T15_37_10_018Z.musicxml'
+    source = 'TestScoresXML/2020_07_17T19_22_29_948Z.musicxml'
 
 
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
@@ -180,6 +181,8 @@ if __name__ == "__main__":
 												westerparse.evaluateLines(source, show='show', partSelection=0, partLineType=None)
 								elif verify == 28:
 												westerparse.evaluateLines(source, show='show', partSelection=1, partLineType='generic')
+								elif verify == 29:
+												westerparse.evaluateLines(source, show=None, partSelection=1, partLineType='generic')
 								else:
 												print('ERROR: No valid evaluation option selected.')
 												
@@ -202,7 +205,7 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 2)
+    tester(source, 29)
 #    context.evaluateLines(source, show=None, report=True)
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
