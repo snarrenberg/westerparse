@@ -234,12 +234,26 @@ def findScoreKeys(score):
     partKeyListsFromHanging = [part.keyCandidatesFromHanging
                                for part in score.parts
                                if part.species != 'third']
+    scoreKeyCandidatesFromScale = set()
+    scoreKeyCandidatesFromHanging = set()
+    scoreKeyCandidates = set()
     # Get only those keys that are shared among all parts.
-    scoreKeyCandidatesFromScale = set(partKeyListsFromScale[0]).intersection(*partKeyListsFromScale)
+    scoreKeyCandidatesFromScale = set(
+        partKeyListsFromScale[0]
+        ).intersection(*partKeyListsFromScale)
     # Get those keys shared among all parts not in third species.
-    scoreKeyCandidatesFromHanging = set(partKeyListsFromHanging[0]).intersection(*partKeyListsFromHanging)
+    if partKeyListsFromHanging:
+        scoreKeyCandidatesFromHanging = set(
+            partKeyListsFromHanging[0]
+            ).intersection(*partKeyListsFromHanging)
     # Narrow the list to those that agree with both forms of derivation.
-    scoreKeyCandidates = set(scoreKeyCandidatesFromScale).intersection(scoreKeyCandidatesFromHanging)
+    # Exempt third-species lines from the requirement.
+    if len(score.parts) == 1 and score.parts[0].species == 'third':
+        scoreKeyCandidates = scoreKeyCandidatesFromScale
+    else:
+        scoreKeyCandidates = set(
+            scoreKeyCandidatesFromScale
+            ).intersection(scoreKeyCandidatesFromHanging)
 
     # If there is still more than one plausible key,
     # prefer keys in which most lines end on the tonic degree.

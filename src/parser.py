@@ -3032,16 +3032,19 @@ def isTriadicSet(pitchList):
     isTriadicSet = False
     pairs = itertools.combinations(pitchList, 2)
     for pair in pairs:
-        int = interval.Interval(pair[0], pair[1]).simpleName
-        rules = [int[-1] in ['2', '7'],
-                 (int[-1] == '1' and int != 'P1'),
-                 (int[-1] == '5' and int == 'A5'),
-                 (int[-1] == '4' and int == 'd4')]
+        invl = interval.Interval(pair[0], pair[1]).simpleName
+        rules = [invl[-1] in ['2', '7'],
+                 (invl[-1] == '1' and invl != 'P1'),
+                 (invl[-1] == '5' and invl == 'A5'),
+                 (invl[-1] == '4' and invl == 'd4')]
         if any(rules):
             isTriadicSet = False
             return isTriadicSet
         else:
             isTriadicSet = True
+    # If the pitchList is 0 or 1 pitches, return True.
+    if len(pitchList) < 2:
+        isTriadicSet = True
     return isTriadicSet
 
 

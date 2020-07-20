@@ -1,1 +1,6 @@
-Counterpoint Error: The following measures contain non-triadic sonorities:  6.
+PARSE REPORT
+Key inferred by program: G minor
+Line Parsing Errors
+	The following linear errors were found when attempting to interpret the line:
+			The non-tonic-triad pitch E5 in measure 4 cannot be generated.
+			The non-tonic-triad pitch A4 in measure 4 cannot be generated.

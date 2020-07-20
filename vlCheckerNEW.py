@@ -322,7 +322,7 @@ def checkVoiceLeading(score, analyzer):
     offbeatVerts = []
     for i, elem in enumerate(vertList):
         thiselem = elem
-        nextelem = vertList[(i+1)%lenvl]#
+        nextelem = vertList[(i+1) % lenvl]#
         if nextelem.offset(leftAlign=False) % paceUnit == 0: 
             pass
         elif thiselem.offset(leftAlign=False) % paceUnit == 0:

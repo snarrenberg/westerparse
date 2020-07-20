@@ -97,7 +97,8 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/BeethovenOdeToJoy4thPhrase.musicxml'
 
 #    source = 'TestScoresXML/2019_12_10T15_37_10_018Z.musicxml'
-    source = 'TestScoresXML/2020_07_17T19_22_29_948Z.musicxml'
+#    source = 'TestScoresXML/2020_07_20T15_46_56_126Z.musicxml'
+    source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
 
 
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
@@ -205,7 +206,7 @@ if __name__ == "__main__":
 #     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 29)
+    tester(source, 1)
 #    context.evaluateLines(source, show=None, report=True)
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
