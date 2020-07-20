@@ -2871,16 +2871,16 @@ class Parser():
 
         * Primary line preferences
 
-           * For parses that share the same S2 scale degree, prefer the parse
-             in which S2 occurs earliest.
+          * For parses that share the same S2 scale degree, prefer the parse
+            in which S2 occurs earliest.
 
         * Bass Lines
 
-           * Prefer parses in which S3 occurs after the midpoint.
-           * Prefer parses in which S3 occurs on the beat.
-           * If there are two candidates for S3 and the second can be
-             interpreted as a direct repetition of the first, prefer the parse
-             that interprets the first candidate as S3.
+          * Prefer parses in which S3 occurs after the midpoint.
+          * Prefer parses in which S3 occurs on the beat.
+          * If there are two candidates for S3 and the second can be
+            interpreted as a direct repetition of the first, prefer the parse
+            that interprets the first candidate as S3.
         """
         # Primary upper lines:
         # Find those that have the same scale degree for S2.
