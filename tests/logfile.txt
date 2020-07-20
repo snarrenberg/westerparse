@@ -1,5 +1,0 @@
-PARSE REPORT
-Key supplied by user: G major
-Line Parsing Errors
-	The following linear errors were found when attempting to interpret the line:
-			The non-tonic-triad pitch C5 in measure 2 cannot be generated.

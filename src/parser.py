@@ -55,7 +55,7 @@ import copy
 selectPreferredParses = True
 
 # for third species
-localNeighborsOnly=False
+localNeighborsOnly = False
 extendLocalArcs = True
 addLocalRepetitions = True
 
