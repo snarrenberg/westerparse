@@ -733,7 +733,7 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
     return
 
 
-def logInterpretations(context:
+def logInterpretations(context):
     """
     Write log file for interpretations for the context,
     gathering information from the parses of each line.
@@ -743,7 +743,7 @@ def logInterpretations(context:
     for part in context.parts:
         parseHeader = ('Parse of part ' + str(part.partNum) + ':')
         logInfo.append(parseHeader)
-        parseInfo = '\n'.join(' --- '.join(_) for part.interpretations.items())
+        parseInfo = '\n'.join('---'.join((str(k),str(v))) for k,v in part.interpretations.items())
         logInfo.append(parseInfo)
     print('\n'.join(logInfo))
             
