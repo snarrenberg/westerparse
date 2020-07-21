@@ -33,7 +33,7 @@ entered as keyword arguments.
 - :literal:`report`
 - :literal:`partSelection`
 - :literal:`partLineType`
-- :literal:`knote` and :literal:`kmode`
+- :literal:`keynote` and :literal:`mode`
 
 The options for :literal:`show` determine how the parsing results will be displayed in musical 
 notation. The valid options are: :literal:`None`, :literal:`'show'`, :literal:`'writeToServer'`, 
