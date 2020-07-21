@@ -1464,7 +1464,7 @@ class Parser():
         (see :py:func:`~Parser.Parse.parseGeneric`).
         """
 
-        # The stack may still have some underinterpreted open heads.
+        # The line may still have some underinterpreted open heads.
         # If so, the remnant of open heads will be placed in the Parse's
         # buffer and re-parsed.
         for lineType in self.part.lineTypes:
@@ -1593,7 +1593,8 @@ class Parser():
             newParse.S2Value = cand.csd.value
             newParse.notes[newParse.S2Index].rule.name = 'S2'
         # Copy the remnant of open heads from the stack.
-        newParse.stackremnant = stack
+#        newParse.stackremnant = stack
+        newParse.stackremnant = [self.notes[idx] for idx in self.openHeads]
 
         # Now parse the line.
         newParse.performLineParse()
@@ -1664,7 +1665,6 @@ class Parser():
             # for running with musicxml input/output.
             self.gatherRuleLabels()
             self.gatherParentheses()
-
 
         def arcMerge(self, arc1, arc2):
             """Combine two passing motions that share an inner
