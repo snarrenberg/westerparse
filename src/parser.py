@@ -249,22 +249,24 @@ class Parser():
                 closedLocalPitchIndexes = []
                 localStart = lineStack[-1].index
                 localEnd = 0
-                if i.beat == 1.0 or i.index == 0:  # and i.offset > 0.0:
+                if i.beat == 1.0 or i.index == 0:
                     localStack = []
                     localBuffer = []
                     localArcs = []
                     localOpenHeads = []
                     localOpenTransitions = []
+                    # Set the local harmony.
                     if i.beat == 1.0 and i.index > 0:
                         localHarmonyStart = (
                             self.context.localHarmonyDict[i.offset]
                             )
-                    else:  # Get tonic harmony for first measure.
+                    # But use tonic harmony for first measure.
+                    else:
                         localHarmonyStart = [p for p
                                              in self.part.tonicTriad.pitches]
 
-                    # Fill the local buffer up to and including the next onbeat
-                    # note and set localHarmonyEnd by that note.
+                    # Fill the local buffer up to and including the next
+                    # onbeat note and set localHarmonyEnd by that note.
                     for note in lineBuffer:
                         if note.beat == 1.0:
                             localBuffer.append(note)
