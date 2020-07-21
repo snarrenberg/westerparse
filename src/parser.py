@@ -231,7 +231,8 @@ class Parser():
             # Set variables for parsing the local context.
             # (1) Admit local repetitions:
             #     addLocalRepetitions = True/False
-            # (2) Limit local elaborations to neighboring:
+            # (2) Limit local elaborations to neighboring and restrict
+            #     local insertions and passing:
             #     localNeighborsOnly = True/False
             # (3) Attempt to extend local arcs beyond local context:
             #     extendLocalArcs = True/False
@@ -301,7 +302,7 @@ class Parser():
                         if self.errors:
                             break
 
-                    # Look for local repetitions.
+                    # Look for unattached local repetitions.
                     if addLocalRepetitions:
                         firstLocalHead = localOpenHeads[0]
                         for h in localOpenHeads[1:]:
