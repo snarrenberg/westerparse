@@ -667,7 +667,6 @@ class Parser():
                 arcGenerateRepetition(j.index, part, arcs, stack)
             elif openTransitions:
                 # See if j resolves the most recent open transition.
-                t = openTransitions[-1]
                 for t in reversed(openTransitions):
                     h = self.notes[t]
                     if isDiatonicStep(h, j):
@@ -686,6 +685,8 @@ class Parser():
                                         if head not in pruneHeads]
                         openHeads.append(j.index)
                         return
+                    else:
+                        break
                 else:
                     if i.index not in openHeads:
                         openHeads.append(i.index)

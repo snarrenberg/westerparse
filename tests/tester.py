@@ -38,7 +38,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Generic01.musicxml'
 #    source = 'TestScoresXML/Generic02.musicxml'
 
-    source = 'TestScoresXML/FirstSpecies01.musicxml'
+#    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
 #    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
@@ -127,7 +127,7 @@ if __name__ == "__main__":
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/WP017.musicxml'
 
 #    source = '../examples/corpus/Westergaard057b.musicxml'
-#    source = '../examples/corpus/WP020.musicxml'
+    source = '../examples/corpus/WP013.musicxml'
 #    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
 
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 17)
+    tester(source, 5)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
