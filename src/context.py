@@ -187,12 +187,18 @@ class GlobalContext(Context):
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
-        try:
-            self.getLocalOnbeatHarmonies()
-        except ContextError as ce:    
-            ce.logerror()
-            raise EvaluationException()
-            return
+        thirdSpeciesPart = False
+        for part in self.parts:
+            if part.species == 'third':
+                thirdSpeciesPart = True
+                break
+        if thirdSpeciesPart:
+            try:
+                self.getLocalOnbeatHarmonies()
+            except ContextError as ce:    
+                ce.logerror()
+                raise EvaluationException()
+                return
 
         # TODO Local contexts aren't yet used by the parser.
 #        self.setupLocalContexts()
