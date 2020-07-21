@@ -53,6 +53,7 @@ import copy
 
 # variables set by user
 selectPreferredParses = True
+getStructuralLevels = False
 
 # for third species
 localNeighborsOnly = False
@@ -1656,8 +1657,8 @@ class Parser():
             self.gatherRuleLabels()
             self.gatherParentheses()
 
-            # TODO Finish writing function to set dependency levels.
-#            self.setDependencyLevels()
+            if getStructuralLevels:
+                self.setDependencyLevels()
 
         def arcMerge(self, arc1, arc2):
             """Combine two passing motions that share an inner
