@@ -1594,7 +1594,7 @@ class Parser():
             newParse.notes[newParse.S2Index].rule.name = 'S2'
         # Copy the remnant of open heads from the stack.
 #        newParse.stackremnant = stack
-        newParse.stackremnant = [self.notes[idx] for idx in self.openHeads]
+        newParse.openHeads = [self.notes[idx] for idx in self.openHeads]
 
         # Now parse the line.
         newParse.performLineParse()
@@ -1612,7 +1612,7 @@ class Parser():
         `mode`, and `arcBasic`.
         """
         def __init__(self):
-            self.stackremnant = []
+            self.openHeads = []
             self.buffer = []
             self.stack = []
             self.errors = []
@@ -2301,7 +2301,7 @@ class Parser():
             and can be taken as a repetition of the structural lefthead.
             This function increases the coherence of a parse.
             """
-            self.buffer = [n for n in self.stackremnant
+            self.buffer = [n for n in self.openHeads
                            if structuralLefthead < n.index < rightLimit]
             self.stack = []
             n = len(self.buffer)
