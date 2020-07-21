@@ -228,12 +228,13 @@ class Parser():
             pass
 
         elif self.part.species in ['third', 'fifth']:
-            # Set variable for whether to attempt extending local arcs
-            # outside local context.
-            # Use for testing.
-#            localNeighborsOnly = False
-#            extendLocalArcs = True
-#            addLocalRepetitions = True
+            # Set variables for parsing the local context.
+            # (1) Admit local repetitions:
+            #     addLocalRepetitions = True/False
+            # (2) Limit local elaborations to neighboring:
+            #     localNeighborsOnly = True/False
+            # (3) Attempt to extend local arcs beyond local context:
+            #     extendLocalArcs = True/False
 
             # Scan the global context.
             n = len(lineBuffer)
