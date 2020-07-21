@@ -38,7 +38,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Generic01.musicxml'
 #    source = 'TestScoresXML/Generic02.musicxml'
 
-    source = 'TestScoresXML/FirstSpecies01.musicxml'
+#    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
 #    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/SecondSpecies21.musicxml' # not generable
 #    source = 'TestScoresXML/SecondSpecies22.musicxml' # not generable
 
-#    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
+    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
@@ -202,23 +202,11 @@ if __name__ == "__main__":
     def vltester(source, keynote, mode):
 												westerparse.evaluateCounterpoint(source, report=True, keynote=keynote, mode=mode, validateKey=False)
 
-#     exx = converter.parse(source)
-#     mf = midi.translate.streamToMidiFile(exx)
-#     mf.open('WesterParseCorpora/WesterParseLineCorpus/midi.mid', 'wb')
-#     mf.write()
-#     mf.close()
-#     os.system("open -a /Applications/MIDIPlayer\ X.app WesterParseCorpora/WesterParseLineCorpus/midi.mid")
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 17)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
     
 #    reporter(source, verify)
-#    context.evaluateCounterpoint(source, keynote='B-', mode='major')
-#    context.evaluateLines(source, show=None, partSelection=0, partLineType=None, keynote='B-', mode='major')
-#    context.evaluateLines(source, show=None, partSelection=0, partLineType=None)
-#    context.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
-#    context.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
-#    context.evaluateLines(source, show=None, partSelection=0, partLineType='bass')

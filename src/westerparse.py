@@ -130,7 +130,7 @@ def evaluateLines(source,
     except EvaluationException as fce:
         fce.show()
     if logParses:
-        logInterpretations(cxt)
+        logInterpretations(cxt, partSelection)
 
 
 def evaluateCounterpoint(source,
@@ -230,33 +230,33 @@ def parseContext(context,
 
     # determine which parts to parse
     # and return a slice of context.parts
-    def validatePartSelection(context, partSelection):
-        if partSelection is not None:
-            try:
-                context.parts[partSelection]
-            except IndexError:
-                if len(context.parts) == 1:
-                    pts = ' part'
-                else:
-                    pts = ' parts'
-                raise ContextError(
-                    'Context Error: The composition has only '
-                    + str(len(context.parts)) + pts
-                    + ', so the part selection must fall in the range of 0-'
-                    + str(len(context.parts)-1)
-                    + '. Hence the selection of part '
-                    + str(partSelection) + ' is invalid.')
-            else:
-                if partSelection >= 0:
-                    partsSelected = context.parts[partSelection:partSelection+1]
-                else:
-                    partsSelected = context.parts[partSelection::partSelection-1]
-        elif len(context.parts) == 1:
-            partsSelected = context.parts[0:1]
-        elif partSelection is None:
-            partsSelected = context.parts
-        return partsSelected
-
+#     def validatePartSelection(context, partSelection):
+#         if partSelection is not None:
+#             try:
+#                 context.parts[partSelection]
+#             except IndexError:
+#                 if len(context.parts) == 1:
+#                     pts = ' part'
+#                 else:
+#                     pts = ' parts'
+#                 raise ContextError(
+#                     'Context Error: The composition has only '
+#                     + str(len(context.parts)) + pts
+#                     + ', so the part selection must fall in the range of 0-'
+#                     + str(len(context.parts)-1)
+#                     + '. Hence the selection of part '
+#                     + str(partSelection) + ' is invalid.')
+#             else:
+#                 if partSelection >= 0:
+#                     partsSelected = context.parts[partSelection:partSelection+1]
+#                 else:
+#                     partsSelected = context.parts[partSelection::partSelection-1]
+#         elif len(context.parts) == 1:
+#             partsSelected = context.parts[0:1]
+#         elif partSelection is None:
+#             partsSelected = context.parts
+#         return partsSelected
+# 
     try:
         partsForParsing = validatePartSelection(context, partSelection)
     except ContextError as ce:
@@ -529,6 +529,34 @@ def parseContext(context,
                 showInterpretations(context, show, partSelection, partLineType)
 
 
+def validatePartSelection(context, partSelection):
+    if partSelection is not None:
+        try:
+            context.parts[partSelection]
+        except IndexError:
+            if len(context.parts) == 1:
+                pts = ' part'
+            else:
+                pts = ' parts'
+            raise ContextError(
+                'Context Error: The composition has only '
+                + str(len(context.parts)) + pts
+                + ', so the part selection must fall in the range of 0-'
+                + str(len(context.parts)-1)
+                + '. Hence the selection of part '
+                + str(partSelection) + ' is invalid.')
+        else:
+            if partSelection >= 0:
+                partsSelected = context.parts[partSelection:partSelection+1]
+            else:
+                partsSelected = context.parts[partSelection::partSelection-1]
+    elif len(context.parts) == 1:
+        partsSelected = context.parts[0:1]
+    elif partSelection is None:
+        partsSelected = context.parts
+    return partsSelected
+
+
 def parsePart(part, context):
     """
     Parse a given part.
@@ -541,6 +569,7 @@ def parsePart(part, context):
     # Run the parser.
     partParser = parser.Parser(part, context)
     # Sort out the interpretations of the part.
+    part.parses = partParser.parses
     part.isPrimary = partParser.isPrimary
     part.isGeneric = partParser.isGeneric
     part.isBass = partParser.isBass
@@ -733,30 +762,19 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
     return
 
 
-def logInterpretations(context):
+def logInterpretations(context, partSelection):
     """
     Write log file for interpretations for the context,
     gathering information from the parses of each line.
     """
     pass
     logInfo = []
-    for part in context.parts:
+    partsForParsing = validatePartSelection(context, partSelection)
+    for part in partsForParsing:
         parseHeader = ('Parse of part ' + str(part.partNum) + ':')
         logInfo.append(parseHeader)
-        if part.Pinterps:
-            for prse in part.Pinterps:
-                parseData = ('Label: ' + prse.label
-                             + '\n\tArcs:  ' + str(prse.arcs)
-                             + '\n\tRules: ' + str(prse.ruleLabels))
-                logInfo.append(parseData)
-        if part.Binterps:
-            for prse in part.Binterps:
-                parseData = ('Label: ' + prse.label
-                             + '\n\tArcs:  ' + str(prse.arcs)
-                             + '\n\tRules: ' + str(prse.ruleLabels))
-                logInfo.append(parseData)
-        if part.Ginterps:
-            for prse in part.Ginterps:
+        if part.parses:
+            for prse in part.parses:
                 parseData = ('Label: ' + prse.label
                              + '\n\tArcs:  ' + str(prse.arcs)
                              + '\n\tRules: ' + str(prse.ruleLabels))

@@ -53,7 +53,7 @@ import copy
 
 # variables set by user
 selectPreferredParses = True
-getStructuralLevels = True
+getStructuralLevels = False
 
 # for third species
 localNeighborsOnly = False
