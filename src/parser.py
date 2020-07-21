@@ -53,7 +53,7 @@ import copy
 
 # variables set by user
 selectPreferredParses = True
-getStructuralLevels = False
+getStructuralLevels = True
 
 # for third species
 localNeighborsOnly = False
@@ -1651,14 +1651,16 @@ class Parser():
             self.testLocalResolutions()
             # Consolidate arcs into longer passing motions if possible.
             self.pruneArcs()
+            # Calculate the structural level of each note.
+            if getStructuralLevels:
+                self.setDependencyLevels()
+
             # Make lists for rule labels and parentheses.
             # Make tuples of note indices and labels/parentheses,
             # for running with musicxml input/output.
             self.gatherRuleLabels()
             self.gatherParentheses()
 
-            if getStructuralLevels:
-                self.setDependencyLevels()
 
         def arcMerge(self, arc1, arc2):
             """Combine two passing motions that share an inner
@@ -2483,7 +2485,7 @@ class Parser():
         def gatherRuleLabels(self):
             self.ruleLabels = []
             for elem in self.notes:
-                self.ruleLabels.append((elem.index, elem.rule.name))
+                self.ruleLabels.append((elem.index, elem.rule.name, elem.rule.level))
             return
 
         def gatherParentheses(self):
