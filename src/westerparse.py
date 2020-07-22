@@ -777,10 +777,20 @@ def logInterpretations(context, partSelection):
             for prse in part.parses:
                 parseData = ('Label: ' + prse.label
                              + '\n\tArcs:  ' + str(prse.arcs)
-                             + '\n\tRules: ' + str(prse.ruleLabels))
+                             + '\n\tRules:\t' 
+                             + ''.join(['{:4d}'.format(lbl[0]) 
+                                        for lbl in prse.ruleLabels])
+                             + '\n\t      \t' 
+                             + ''.join(['{:>4}'.format(lbl[1])
+                                        for lbl in prse.ruleLabels])
+                             + '\n\t      \t' 
+                             + ''.join(['{:4d}'.format(lbl[2])
+                                        for lbl in prse.ruleLabels])
+                             )
                 logInfo.append(parseData)
     print('\n'.join(logInfo))
-            
+
+
 
 # -----------------------------------------------------------------------------
 # OPERATIONAL SCRIPTS FOR PARSING DISPLAY
