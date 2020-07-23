@@ -257,7 +257,7 @@ class Parser():
                     l_openHeads = []
                     l_openTransitions = []
                     # Set the local harmony.
-                    if i.index == 0::
+                    if i.index == 0:
                         l_harmonyStart = [p for p
                                              in self.part.tonicTriad.pitches]
                     elif i.beat == 1.0 and i.index > 0:
