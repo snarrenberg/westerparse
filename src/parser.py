@@ -331,11 +331,9 @@ class Parser():
                     # embedded in local repetition and neighboring arcs.
                     for arc in l_arcs:
                         if arc in l_arcs:
-                            cond1 = len(arc) == 3
-                            cond2 = len(arc) == 2
-                            cond3 = isNeighboringArc(arc, self.notes)
-                            cond4 = isRepetitionArc(arc, self.notes)
-                            if (cond1 and cond3) or (cond2 and cond4):
+                            cond1 = isNeighboringArc(arc, self.notes)
+                            cond2 = isRepetitionArc(arc, self.notes)
+                            if cond1 or cond2:
                                 for idx in range(arc[0]+1, arc[-1]+1):
                                     if self.notes[idx].beat != 1.0:
                                         closedLocalPitchIndexes.append(idx)
