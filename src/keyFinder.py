@@ -263,6 +263,22 @@ def findScoreKeys(score):
         strongkeys = [k for k in ksweighted if k[1] > 0]
         if len(strongkeys) == 1:
             scoreKeyCandidates = {strongkeys[0][0]}
+    # If there is still more than one plausible key,
+    # prefer keys in which some lines begin on the tonic degree.
+    if len(scoreKeyCandidates) > 1:
+        for part in score.parts:
+            part.initialpitch = part.flat.notes[0].pitch.name
+        ks = list(scoreKeyCandidates)
+        ksweighted = []
+        for k in ks:
+            kw = 0
+            for part in score.parts:
+                if part.initialpitch == k[0]:
+                    kw += 1
+            ksweighted.append((k, kw))
+        strongkeys = [k for k in ksweighted if k[1] > 0]
+        if len(strongkeys) == 1:
+            scoreKeyCandidates = {strongkeys[0][0]}
     if len(scoreKeyCandidates) == 2:
         k = list(scoreKeyCandidates)
         # If ambiguous between mode only, prefer major.

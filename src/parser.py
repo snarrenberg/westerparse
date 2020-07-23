@@ -57,7 +57,7 @@ getStructuralLevels = False
 
 # for third species
 localNeighborsOnly = False
-extendLocalArcs = False
+extendLocalArcs = True
 addLocalRepetitions = True
 
 
@@ -364,11 +364,13 @@ class Parser():
                                         l_arcs.remove(arc)
                                         l_arcs.append(tempArc)
 
-                        # Try to extend local arcs rightward if ...
+                        # Try to extend local arcs rightward
+                        # if righthead still locally open.
                         for arc in l_arcs:
                             if arc[-1] == localEnd-1:
                                 tempArc = arc + [localEnd]
                                 rules = [
+                                    arc[-1] in l_openHeads,
                                     isPassingArc(tempArc, self.notes),
                                     isLinearConsonance(self.notes[arc[0]],
                                                        self.notes[localEnd])
