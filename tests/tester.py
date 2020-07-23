@@ -55,7 +55,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/SecondSpecies21.musicxml' # not generable
 #    source = 'TestScoresXML/SecondSpecies22.musicxml' # not generable
 
-#    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
+    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
@@ -125,10 +125,9 @@ if __name__ == "__main__":
     
 #    source = 'TestScoresXML/Third_Species_Line_Test_0.musicxml'
 
-#    source = 'WesterParseCorpora/WesterParseLineCorpus/WP017.musicxml'
 
 #    source = '../examples/corpus/Westergaard057b.musicxml'
-    source = '../examples/corpus/WP013.musicxml'
+#    source = '../examples/corpus/WP302.musicxml'
 #    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
 
 
