@@ -253,25 +253,25 @@ class Parser():
                 if i.beat == 1.0 or i.index == 0:
                     l_stack = []
                     l_buffer = []
-                    localArcs = []
-                    localOpenHeads = []
-                    localOpenTransitions = []
+                    l_arcs = []
+                    l_openHeads = []
+                    l_openTransitions = []
                     # Set the local harmony.
                     if i.beat == 1.0 and i.index > 0:
-                        localHarmonyStart = (
+                        l_harmonyStart = (
                             self.context.localHarmonyDict[i.offset]
                             )
                     # But use tonic harmony for first measure.
                     else:
-                        localHarmonyStart = [p for p
+                        l_harmonyStart = [p for p
                                              in self.part.tonicTriad.pitches]
 
                     # Fill the local buffer up to and including the next
-                    # onbeat note and set localHarmonyEnd by that note.
+                    # onbeat note and set l_harmonyEnd by that note.
                     for note in g_buffer:
                         if note.beat == 1.0:
                             l_buffer.append(note)
-                            localHarmonyEnd = (
+                            l_harmonyEnd = (
                                 self.context.localHarmonyDict[note.offset]
                                 )
                             localEnd = note.index
@@ -282,7 +282,7 @@ class Parser():
                     l_buffer.insert(0, i)
 
                     # Add onbeat note to local heads.
-                    localOpenHeads = [i.index]
+                    l_openHeads = [i.index]
 
                     # Scan local context.
                     ln = len(l_buffer)
@@ -294,9 +294,9 @@ class Parser():
                         self.parseTransition(
                             l_stack, l_buffer,
                             self.part, x, y,
-                            localHarmonyStart, localHarmonyEnd,
-                            localOpenHeads, localOpenTransitions,
-                            localArcs
+                            l_harmonyStart, l_harmonyEnd,
+                            l_openHeads, l_openTransitions,
+                            l_arcs
                             )
                     # Break upon finding errors.
                         if self.errors:
@@ -304,18 +304,18 @@ class Parser():
 
                     # Look for unattached local repetitions.
                     if addLocalRepetitions:
-                        firstLocalHead = localOpenHeads[0]
-                        for h in localOpenHeads[1:]:
+                        firstLocalHead = l_openHeads[0]
+                        for h in l_openHeads[1:]:
                             if self.notes[h] == self.notes[firstLocalHead]:
                                 self.notes[h].dependency.lefthead = firstLocalHead
                                 self.notes[firstLocalHead].dependency.dependents.append(h)
                                 arcGenerateRepetition(h, self.part,
-                                                      localArcs, l_stack)
+                                                      l_arcs, l_stack)
                                 # Remove any intervening local heads.
                                 revisedHeads = [head for head
-                                                in localOpenHeads[1:]
+                                                in l_openHeads[1:]
                                                 if head < h]
-                                localOpenHeads = ([firstLocalHead]
+                                l_openHeads = ([firstLocalHead]
                                                   + revisedHeads)
                                 # Transfer dependencies to new lefthead.
 #                for d in self.notes[h].dependency.dependents:
@@ -325,14 +325,14 @@ class Parser():
                     # If local insertions are not allowed, limit local arcs
                     # to neighbors and repetitions.
                     if localNeighborsOnly:
-                        localArcs = [arc for arc in localArcs if
+                        l_arcs = [arc for arc in l_arcs if
                                      (isNeighboringArc(arc, self.notes) or
                                       isRepetitionArc(arc, self.notes))]
 
                     # Collect indexes of pitches that are
                     # embedded in local arcs.
-                    for arc in localArcs:
-                        if arc in localArcs:
+                    for arc in l_arcs:
+                        if arc in l_arcs:
                             cond1 = len(arc) == 3
                             cond2 = len(arc) == 2
                             cond3 = isNeighboringArc(arc, self.notes)
@@ -354,7 +354,7 @@ class Parser():
                     if extendLocalArcs:
                         # Try to extend local arcs leftward
                         # if lefthead in open transitions.
-                        for arc in localArcs:
+                        for arc in l_arcs:
                             if arc[0] in openTransitions:
                                 lh = self.notes[arc[0]].dependency.lefthead
                                 # Get all of the global notes connected to
@@ -382,15 +382,15 @@ class Parser():
                                         arcExtendTransition(self.notes, arc,
                                                             extensions)
                                         openTransitions.remove(arc[0])
-                                        localOpenHeads.remove(arc[0])
+                                        l_openHeads.remove(arc[0])
                                         closedLocalPitchIndexes.append(arc[0])
                                         arcs.remove(arc)
-                                        localArcs.remove(arc)
+                                        l_arcs.remove(arc)
                                         arcs.append(tempArc)
-                                        localArcs.append(tempArc)
+                                        l_arcs.append(tempArc)
 
                         # Try to extend local arcs rightward if ...
-                        for arc in localArcs:
+                        for arc in l_arcs:
                             if arc[-1] == localEnd-1:
                                 tempArc = arc + [localEnd]
                                 rules = [
@@ -401,41 +401,41 @@ class Parser():
                                 if all(rules):
                                     arcExtendTransition(self.notes, arc,
                                                         extensions=[localEnd])
-                                    localOpenHeads.remove(arc[-1])
+                                    l_openHeads.remove(arc[-1])
                                     closedLocalPitchIndexes.append(arc[-1])
                                     arcs.remove(arc)
-                                    localArcs.remove(arc)
+                                    l_arcs.remove(arc)
                                     arcs.append(tempArc)
-                                    localArcs.append(tempArc)
+                                    l_arcs.append(tempArc)
 
                         # TODO: Try to extend leftward and rightward
                         # simultaneously?
 
                         # And now see whether any local neighbors
                         # remain available
-                        if len(localOpenHeads) > 1:
-                            pairs = itertools.combinations(localOpenHeads, 2)
+                        if len(l_openHeads) > 1:
+                            pairs = itertools.combinations(l_openHeads, 2)
                             for pair in pairs:
                                 i = self.notes[pair[0]]
                                 j = self.notes[pair[1]]
                                 rules = [
                                     i.csd.value == j.csd.value,
                                     i.measureNumber == j.measureNumber,
-                                    not isEmbeddedInArcs(pair[0], localArcs),
-                                    not isEmbeddedInArcs(pair[1], localArcs)
+                                    not isEmbeddedInArcs(pair[0], l_arcs),
+                                    not isEmbeddedInArcs(pair[1], l_arcs)
                                     ]
                                 if all(rules):
                                     j.dependency.lefthead = i.index
                                     i.dependency.dependents.append(j.index)
                                     arcGenerateRepetition(j.index, self.notes,
-                                                          localArcs, l_stack)
-                                    localOpenHeads.remove(j.index)
+                                                          l_arcs, l_stack)
+                                    l_openHeads.remove(j.index)
                                     closedLocalPitchIndexes.append(j.index)
                                     j.rule.name = 'L1'
                                     # remove embedded local heads
-                                    for h in localOpenHeads:
+                                    for h in l_openHeads:
                                         if i.index < h < j.index:
-                                            localOpenHeads.remove(h)
+                                            l_openHeads.remove(h)
                                             closedLocalPitchIndexes.append(h)
 
                 # Shift locals into line stack if not locally closed.
