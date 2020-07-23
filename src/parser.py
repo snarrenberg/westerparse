@@ -53,7 +53,7 @@ import copy
 
 # variables set by user
 selectPreferredParses = True
-getStructuralLevels = False
+getStructuralLevels = True
 
 # for third species
 localNeighborsOnly = False
@@ -308,7 +308,7 @@ class Parser():
                             if self.notes[h].csd.value == self.notes[firstHead].csd.value:
                                 self.notes[h].dependency.lefthead = firstHead
                                 self.notes[firstHead].dependency.dependents.append(h)
-                                self.notes[h].rule.name = 'L1'
+#                                self.notes[h].rule.name = 'L1'
                                 arcGenerateRepetition(h, self.part,
                                                       l_arcs, l_stack)
                                 # Skip any intervening local heads.
@@ -403,7 +403,7 @@ class Parser():
                                     arcGenerateRepetition(j.index, self.notes,
                                                           l_arcs, l_stack)
                                     l_openHeads.remove(j.index)
-                                    j.rule.name = 'L1'
+#                                    j.rule.name = 'L1'
                                     # Remove local heads embedded
                                     # in the repetition.
                                     for h in l_openHeads:
@@ -802,8 +802,10 @@ class Parser():
                            in ['ascending', 'bidirectional']):
                             i.dependency.righthead = j.index
                             j.dependency.dependents.append(i.index)
+                            # Add dependents that aren't repetitions.
                             for d in i.dependency.dependents:
-                                self.notes[d].dependency.righthead = j.index
+                                if self.notes[d].csd.value != i.csd.value:
+                                    self.notes[d].dependency.righthead = j.index
                             openTransitions.remove(i.index)
                             if (self.notes[i.dependency.lefthead]
                                != self.notes[i.dependency.righthead]):
@@ -823,9 +825,11 @@ class Parser():
 #     I removed the following three lines, because they added dependents that shouldn't really to j
 # REINSTATED 2020-05-26: add dependents to j, because otherwise longer passing motions don't get parsed correctly
 # TODO: figure out how to add only those dependents that share the lefthead
+                            # Add dependents that aren't repetitions.
                             for d in i.dependency.dependents:
-                                self.notes[d].dependency.righthead = j.index
-                                j.dependency.dependents.append(d)
+                                if self.notes[d].csd.value != i.csd.value:
+                                    self.notes[d].dependency.righthead = j.index
+                                    j.dependency.dependents.append(d)
                             openTransitions.remove(i.index)
                             if (self.notes[i.dependency.lefthead]
                                != self.notes[i.dependency.righthead]):
