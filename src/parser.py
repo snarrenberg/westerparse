@@ -803,6 +803,8 @@ class Parser():
                             i.dependency.righthead = j.index
                             j.dependency.dependents.append(i.index)
                             # Add dependents that aren't repetitions.
+                            # TODO limit to depends that should belong to the
+                            # new arc.
                             for d in i.dependency.dependents:
                                 if self.notes[d].csd.value != i.csd.value:
                                     self.notes[d].dependency.righthead = j.index
@@ -821,11 +823,9 @@ class Parser():
                               in ['descending', 'bidirectional']):
                             i.dependency.righthead = j.index
                             j.dependency.dependents.append(i.index)
-# REMOVED 2020-05-26: add dependents to j
-#     I removed the following three lines, because they added dependents that shouldn't really to j
-# REINSTATED 2020-05-26: add dependents to j, because otherwise longer passing motions don't get parsed correctly
-# TODO: figure out how to add only those dependents that share the lefthead
                             # Add dependents that aren't repetitions.
+                            # TODO limit to depends that should belong to the
+                            # new arc.
                             for d in i.dependency.dependents:
                                 if self.notes[d].csd.value != i.csd.value:
                                     self.notes[d].dependency.righthead = j.index
