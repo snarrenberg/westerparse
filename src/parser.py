@@ -195,9 +195,9 @@ class Parser():
         Run the scanner, parsing each transition.
         """
         # Initialize the buffer, stack, and arcs
-        lineBuffer = [n for n in self.notes
+        g_buffer = [n for n in self.notes
                       if not n.tie or n.tie.type == 'start']
-        lineStack = []
+        g_stack = []
         arcs = []
         # Initialize the lists of open heads and transitions
         openHeads = [0]
@@ -209,14 +209,14 @@ class Parser():
         if (self.part.species in ['first', 'second', 'fourth'] and
            not self.context.harmonicSpecies):
             # Run the line scanner.
-            n = len(lineBuffer)
+            n = len(g_buffer)
             while n > 1:
-                shiftBuffer(lineStack, lineBuffer)
-                n = len(lineBuffer)
-                i = lineStack[-1]
-                j = lineBuffer[0]
+                shiftBuffer(g_stack, g_buffer)
+                n = len(g_buffer)
+                i = g_stack[-1]
+                j = g_buffer[0]
                 # Parse the transition i-j.
-                self.parseTransition(lineStack, lineBuffer, self.part, i, j,
+                self.parseTransition(g_stack, g_buffer, self.part, i, j,
                                      harmonyStart, harmonyEnd, openHeads,
                                      openTransitions, arcs)
                 # Break upon finding errors.
@@ -238,21 +238,21 @@ class Parser():
             #     extendLocalArcs = True/False
 
             # Scan the global context.
-            n = len(lineBuffer)
+            n = len(g_buffer)
             while n > 1:
-                shiftBuffer(lineStack, lineBuffer)
-                n = len(lineBuffer)
-                i = lineStack[-1]
-                j = lineBuffer[0]
+                shiftBuffer(g_stack, g_buffer)
+                n = len(g_buffer)
+                i = g_stack[-1]
+                j = g_buffer[0]
 
                 # Parse the local span whenever i falls
                 # at the start of the measure.
                 closedLocalPitchIndexes = []
-                localStart = lineStack[-1].index
+                localStart = g_stack[-1].index
                 localEnd = 0
                 if i.beat == 1.0 or i.index == 0:
-                    localStack = []
-                    localBuffer = []
+                    l_stack = []
+                    l_buffer = []
                     localArcs = []
                     localOpenHeads = []
                     localOpenTransitions = []
@@ -268,31 +268,31 @@ class Parser():
 
                     # Fill the local buffer up to and including the next
                     # onbeat note and set localHarmonyEnd by that note.
-                    for note in lineBuffer:
+                    for note in g_buffer:
                         if note.beat == 1.0:
-                            localBuffer.append(note)
+                            l_buffer.append(note)
                             localHarmonyEnd = (
                                 self.context.localHarmonyDict[note.offset]
                                 )
                             localEnd = note.index
                             break
                         else:
-                            localBuffer.append(note)
+                            l_buffer.append(note)
                     # Now put i in the local buffer so i--j can be parsed.
-                    localBuffer.insert(0, i)
+                    l_buffer.insert(0, i)
 
                     # Add onbeat note to local heads.
                     localOpenHeads = [i.index]
 
                     # Scan local context.
-                    ln = len(localBuffer)
+                    ln = len(l_buffer)
                     while ln > 1:
-                        shiftBuffer(localStack, localBuffer)
-                        ln = len(localBuffer)
-                        x = localStack[-1]
-                        y = localBuffer[0]
+                        shiftBuffer(l_stack, l_buffer)
+                        ln = len(l_buffer)
+                        x = l_stack[-1]
+                        y = l_buffer[0]
                         self.parseTransition(
-                            localStack, localBuffer,
+                            l_stack, l_buffer,
                             self.part, x, y,
                             localHarmonyStart, localHarmonyEnd,
                             localOpenHeads, localOpenTransitions,
@@ -310,7 +310,7 @@ class Parser():
                                 self.notes[h].dependency.lefthead = firstLocalHead
                                 self.notes[firstLocalHead].dependency.dependents.append(h)
                                 arcGenerateRepetition(h, self.part,
-                                                      localArcs, localStack)
+                                                      localArcs, l_stack)
                                 # Remove any intervening local heads.
                                 revisedHeads = [head for head
                                                 in localOpenHeads[1:]
@@ -428,7 +428,7 @@ class Parser():
                                     j.dependency.lefthead = i.index
                                     i.dependency.dependents.append(j.index)
                                     arcGenerateRepetition(j.index, self.notes,
-                                                          localArcs, localStack)
+                                                          localArcs, l_stack)
                                     localOpenHeads.remove(j.index)
                                     closedLocalPitchIndexes.append(j.index)
                                     j.rule.name = 'L1'
@@ -442,41 +442,41 @@ class Parser():
                 # Start with the top of the stack, which is
                 # first in the local context.
                 # Remove top of stack if it is now closed.
-                if lineStack[-1].index in closedLocalPitchIndexes:
-                    lineStack.pop(-1)
+                if g_stack[-1].index in closedLocalPitchIndexes:
+                    g_stack.pop(-1)
                 # Then proceed through the rest of the local context.
-                while lineBuffer[0].index < localEnd:
-                    shiftBuffer(lineStack, lineBuffer)
-                    if lineStack[-1].index in closedLocalPitchIndexes:
-                        lineStack.pop(-1)
+                while g_buffer[0].index < localEnd:
+                    shiftBuffer(g_stack, g_buffer)
+                    if g_stack[-1].index in closedLocalPitchIndexes:
+                        g_stack.pop(-1)
 
                 # Restore the open locals to the buffer.
-                while lineStack[-1].index > localStart:
-                    shiftStack(lineStack, lineBuffer)
+                while g_stack[-1].index > localStart:
+                    shiftStack(g_stack, g_buffer)
 
                 # Reparse the open locals in the global context.
                 # TODO This is problematical when there are
                 # several open locals.
                 harmonyStart = [p for p in self.part.tonicTriad.pitches]
                 harmonyEnd = [p for p in self.part.tonicTriad.pitches]
-                while lineBuffer[0].index < localEnd:
-                    i = lineStack[-1]
-                    j = lineBuffer[0]
-                    self.parseTransition(lineStack, lineBuffer,
+                while g_buffer[0].index < localEnd:
+                    i = g_stack[-1]
+                    j = g_buffer[0]
+                    self.parseTransition(g_stack, g_buffer,
                                          self.part, i, j,
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
-                    shiftBuffer(lineStack, lineBuffer)
+                    shiftBuffer(g_stack, g_buffer)
 
                 # Parse the transition into the next span.
-                if lineBuffer[0].index == localEnd:
-                    i = lineStack[-1]
-                    j = lineBuffer[0]
-                    self.parseTransition(lineStack, lineBuffer,
+                if g_buffer[0].index == localEnd:
+                    i = g_stack[-1]
+                    j = g_buffer[0]
+                    self.parseTransition(g_stack, g_buffer,
                                          self.part, i, j,
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
-                n = len(lineBuffer)
+                n = len(g_buffer)
 
         if self.part.species in ['third', 'fifth'] and openTransitions:
             for idx in openTransitions:
