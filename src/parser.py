@@ -916,7 +916,7 @@ class Parser():
                             if i.dependency.lefthead is None:
                                 i.dependency.lefthead = self.notes[d].dependency.lefthead
                             self.notes[d].dependency.righthead = j.index
-                            j.dependency.dependents.append(d.index)
+                            j.dependency.dependents.append(d)
                         arcGenerateTransition(i.index, part, arcs, stack)
                         break
             elif i.dependency.lefthead is None:
