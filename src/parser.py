@@ -57,7 +57,7 @@ getStructuralLevels = False
 
 # for third species
 localNeighborsOnly = False
-extendLocalArcs = True
+extendLocalArcs = False
 addLocalRepetitions = True
 
 
@@ -305,7 +305,7 @@ class Parser():
                     if addLocalRepetitions:
                         firstHead = l_openHeads[0]
                         for h in l_openHeads[1:]:
-                            if self.notes[h] == self.notes[firstHead]:
+                            if self.notes[h].csd.value == self.notes[firstHead].csd.value:
                                 self.notes[h].dependency.lefthead = firstHead
                                 self.notes[firstHead].dependency.dependents.append(h)
                                 self.notes[h].rule.name = 'L1'
@@ -317,7 +317,6 @@ class Parser():
                                                 if head > h]
                                 l_openHeads = ([firstHead]
                                                   + revisedHeads)
-                                # TODO: add idx to closed local pitches
 
                     # If local insertions are not allowed, limit local arcs
                     # to neighbors and repetitions.

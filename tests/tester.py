@@ -60,7 +60,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
 #    source = 'TestScoresXML/ThirdSpecies05.musicxml'    # completion of Westergaard p. 136 exercise 4
-#    source = 'TestScoresXML/ThirdSpecies06.musicxml'    
+    source = 'TestScoresXML/ThirdSpecies06.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies07.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'    
@@ -101,7 +101,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2019_12_10T15_37_10_018Z.musicxml'
 #    source = 'TestScoresXML/2020_07_20T15_46_56_126Z.musicxml'
 #    source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
-    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
+#    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
 
 
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
@@ -205,7 +205,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 5)
+    tester(source, 1)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
