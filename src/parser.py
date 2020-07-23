@@ -257,14 +257,13 @@ class Parser():
                     l_openHeads = []
                     l_openTransitions = []
                     # Set the local harmony.
-                    if i.beat == 1.0 and i.index > 0:
+                    if i.index == 0::
+                        l_harmonyStart = [p for p
+                                             in self.part.tonicTriad.pitches]
+                    elif i.beat == 1.0 and i.index > 0:
                         l_harmonyStart = (
                             self.context.localHarmonyDict[i.offset]
                             )
-                    # But use tonic harmony for first measure.
-                    else:
-                        l_harmonyStart = [p for p
-                                             in self.part.tonicTriad.pitches]
 
                     # Fill the local buffer up to and including the next
                     # onbeat note and set l_harmonyEnd by that note.
@@ -281,7 +280,7 @@ class Parser():
                     # Now put i in the local buffer so i--j can be parsed.
                     l_buffer.insert(0, i)
 
-                    # Add onbeat note to local heads.
+                    # Add first local note to local heads.
                     l_openHeads = [i.index]
 
                     # Scan local context.
@@ -299,38 +298,37 @@ class Parser():
                             l_arcs
                             )
                     # Break upon finding errors.
+                    # TODO: Collect errors and continue?
                         if self.errors:
                             break
 
-                    # Look for unattached local repetitions.
+                    # Look for unattached local repetitions of first open head.
                     if addLocalRepetitions:
-                        firstLocalHead = l_openHeads[0]
+                        firstHead = l_openHeads[0]
                         for h in l_openHeads[1:]:
-                            if self.notes[h] == self.notes[firstLocalHead]:
-                                self.notes[h].dependency.lefthead = firstLocalHead
-                                self.notes[firstLocalHead].dependency.dependents.append(h)
+                            if self.notes[h] == self.notes[firstHead]:
+                                self.notes[h].dependency.lefthead = firstHead
+                                self.notes[firstHead].dependency.dependents.append(h)
                                 arcGenerateRepetition(h, self.part,
                                                       l_arcs, l_stack)
                                 # Remove any intervening local heads.
                                 revisedHeads = [head for head
                                                 in l_openHeads[1:]
                                                 if head < h]
-                                l_openHeads = ([firstLocalHead]
+                                l_openHeads = ([firstHead]
                                                   + revisedHeads)
-                                # Transfer dependencies to new lefthead.
-#                for d in self.notes[h].dependency.dependents:
-#                      if self.notes[d].dependency.lefthead == h:
-#                          self.notes[d].dependency.lefthead = firstLocalHead
+                                # TODO: add idx to closed local pitches
 
                     # If local insertions are not allowed, limit local arcs
                     # to neighbors and repetitions.
+                    # TODO: reset dependencies in local passing arcs.
                     if localNeighborsOnly:
                         l_arcs = [arc for arc in l_arcs if
                                      (isNeighboringArc(arc, self.notes) or
                                       isRepetitionArc(arc, self.notes))]
 
                     # Collect indexes of pitches that are
-                    # embedded in local arcs.
+                    # embedded in local repetition and neighboring arcs.
                     for arc in l_arcs:
                         if arc in l_arcs:
                             cond1 = len(arc) == 3
