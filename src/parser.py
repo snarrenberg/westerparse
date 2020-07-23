@@ -681,11 +681,9 @@ class Parser():
                         for x in openHeads:
                             if h.index < x < j.index:
                                 pruneHeads.append(x)
-                        print('unpruned heads', openHeads)
                         openHeads[:] = [head for head in openHeads
                                         if head not in pruneHeads]
                         openHeads.append(j.index)
-                        print('pruned heads', openHeads)
                         return
                 else:
                     if i.index not in openHeads:
