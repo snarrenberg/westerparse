@@ -30,7 +30,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Primary02.musicxml'
 #    source = 'TestScoresXML/Primary03.musicxml'
 #    source = 'TestScoresXML/Primary04.musicxml'
-#    source = 'TestScoresXML/Primary05.musicxml'
+    source = 'TestScoresXML/Primary05.musicxml'
 #    source = 'TestScoresXML/Primary06.musicxml'
 #    source = 'TestScoresXML/Primary16.musicxml'
 #    source = 'TestScoresXML/Primary20.musicxml' # Krumhansl-Schmuckler gives wrong key
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 #    source = '../examples/corpus/Westergaard057b.musicxml'
 #    source = '../examples/corpus/WP302.musicxml'
 #    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
-    source = '../examples/corpus/WP021.musicxml'
+#    source = '../examples/corpus/WP021.musicxml'
 
 
 #    source = 'TestScoresXML/2020_07_17T19_22_29_948Z.musicxml'

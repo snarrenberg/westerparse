@@ -1071,8 +1071,6 @@ class Parser():
                 openTransitions.remove(i.index)
                 arcGenerateTransition(i.index, part, arcs, stack)
                 openHeads.remove(i.dependency.lefthead)
-                # Take lefthead off the stack, too. WHY?
-#                stack = [n for n in stack if n.index != i.dependency.lefthead]
             else:
                 # I think this is okay, for catching things in third species
                 j.dependency.lefthead = i.dependency.lefthead
@@ -1173,7 +1171,7 @@ class Parser():
                         # Test cases: Westergaard100k, soprano; Primary05.
                         # (Search 1) Look in reverse at the terminals of current
                         # arcs and select the most recent that is step-related;
-                        # return the note of that terminal to the stack and
+                        # return the note of that terminal to the
                         # open heads; remove any existing arcs that cross over
                         # the new lefthead candidate;
                         # return their internal elements to open transitions;
@@ -1198,6 +1196,7 @@ class Parser():
                         if leftheadCandidates:
                             newLefthead = leftheadCandidates[0]
                             j.dependency.lefthead = newLefthead
+                            openHeads.append(newLefthead)
                             openTransitions.append(j.index)
                             self.notes[newLefthead].dependency.dependents.append(j.index)
                             # Look for arcs that cross over the new lefthead
@@ -1214,6 +1213,7 @@ class Parser():
                                         self.notes[arc[-1]].dependency.dependents.remove(idx)
                                     openHeads.remove(arc[-1])
                             openTransitions = sorted(openTransitions)
+                            print('here', arcs, openHeads, newLefthead)
                             break
                         # (Search 2) Look for possible step-related transition
                         # that was previously integrated into a neighbor arc;
