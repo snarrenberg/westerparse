@@ -1071,10 +1071,8 @@ class Parser():
                 openTransitions.remove(i.index)
                 arcGenerateTransition(i.index, part, arcs, stack)
                 openHeads.remove(i.dependency.lefthead)
-                # Take lefthead off the stack, too.
-                stack = [n for n in stack if n.index != i.dependency.lefthead]
-# elif i.csd.direction == 'bidirectional'
-#      and j.csd.direction == 'bidirectional':
+                # Take lefthead off the stack, too. WHY?
+#                stack = [n for n in stack if n.index != i.dependency.lefthead]
             else:
                 # I think this is okay, for catching things in third species
                 j.dependency.lefthead = i.dependency.lefthead

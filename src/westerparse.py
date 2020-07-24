@@ -43,7 +43,7 @@ import time
 # -----------------------------------------------------------------------------
 
 selectPreferredParseSets = False
-logParses = True
+logParses = False
 
 # -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
