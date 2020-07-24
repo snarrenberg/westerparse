@@ -663,11 +663,6 @@ class Parser():
                         openHeads.append(i.index)
                     openHeads.append(j.index)
             else:
-# 2020-07-16
-# turned off adding i to open head, since it might be a repetition
-# if not, it should have already been added to open heads when it was j
-#                if i.index not in openHeads:
-#                    openHeads.append(i.index)
                 openHeads.append(j.index)
 
         # CASE TWO: Transition from the harmony of this bar
@@ -841,33 +836,6 @@ class Parser():
                             j.dependency.dependents.append(i.index)
                             openTransitions.remove(i.index)
                             arcGenerateTransition(i.index, part, arcs)
-# 2020-06-10 not sure why we are checking relation between open trans and nonharmonic i
-# TODO rethink this if problem cases are discovered
-#                     elif isStepDown(h, i) and h.csd.direction == i.csd.direction:
-#                         if i.csd.direction in ['descending', 'bidirectional']:
-#                             h.dependency.righthead = j.index
-#                             i.dependency.righthead = j.index
-#                             self.notes[h.dependency.lefthead].dependency.dependents.append(i.index)
-#                             self.notes[j.index].dependency.dependents.append(h.index)
-#                             self.notes[j.index].dependency.dependents.append(i.index)
-#                             openTransitions.remove(h.index)
-#                             if i.index in openTransitions:
-#                                 openTransitions.remove(i.index)
-#                             arcGenerateTransition(h.index, part, arcs)
-#                     elif isStepUp(h, i) and h.csd.direction == i.csd.direction:
-#                         print('listening to', j.index, openHeads, arcs, openTransitions)
-#                         if i.csd.direction in ['ascending', 'bidirectional']:
-#                             h.dependency.righthead = j.index
-#                             i.dependency.righthead = j.index
-#                             self.notes[h.dependency.lefthead].dependency.dependents.append(i.index)
-#                             self.notes[j.index].dependency.dependents.append(h.index)
-#                             self.notes[j.index].dependency.dependents.append(i.index)
-#                             openTransitions.remove(h.index)
-#                             # I think this should be the same as with StepDown
-#                             if i.index in openTransitions:
-#                                 openTransitions.remove(i.index)
-#                             arcGenerateTransition(h.index, part, arcs)
-
                     elif isDiatonicStep(h, j) and t != i.index:
                         if (isStepUp(h, j)
                            and h.csd.direction
@@ -967,8 +935,6 @@ class Parser():
                     j.dependency.lefthead = i.index
                 else:
                     if not i.dependency.dependents:
-# 2020-06-09 added rules to make sure that reversals continue in same direction
-# needs to be verified in further tests
                         rules1 = [isStepDown(self.notes[i.dependency.lefthead],
                                              i),
                                   isStepDown(i, j)]
@@ -987,10 +953,6 @@ class Parser():
                                      + j.nameWithOctave)
                             self.errors.append(error)
                             return
-# TODO verify that this new code handles reversals in passing motions:
-# allow for finding preceding as well as subsequent head
-# at the change of direction, close off an arc,
-# then look backward for head or add i to openTransitions
                     else:
                         if (i.consecutions.leftDirection
                            == j.consecutions.leftDirection):
@@ -1019,26 +981,18 @@ class Parser():
                                     j.dependency.dependents.append(i.index)
                                     self.notes[h].dependency.dependents.append(j.index)
                                     self.notes[h].dependency.dependents.append(i.index)
-# 2020-06-10 added line to remove embedded heads between h and j
-# need to verify that this is always correct
                                     openHeads[:] = [head for head in openHeads
                                                     if not h < head < j.index]
                                     openTransitions.remove(i.index)
                                     openTransitions.append(j.index)
                                     break
                             if not connectsToHead:
-# 2020-06-10
-# now set things up to allow for connection to a later head
+                                # Set things up to allow for
+                                # connection to a later head.
                                 openHeads.append(i.index)
                                 i.dependency.dependents.append(j.index)
                                 j.dependency.lefthead = i.index
                                 openTransitions.append(j.index)
-# close off the transition to i, and add i to j's dependents,
-# remove i from open transitions and add j
-#     error = 'The non-tonic-triad pitch ' + j.nameWithOctave
-#              + str(j.index) + ' cannot be generated.'
-#                                self.errors.append(error)
-
             elif (i.csd.direction == 'ascending'
                   and j.csd.direction == 'descending'):
                 i.dependency.righthead = j.index
@@ -1070,7 +1024,7 @@ class Parser():
                 arcGenerateTransition(i.index, part, arcs)
                 openHeads.remove(i.dependency.lefthead)
             else:
-                # I think this is okay, for catching things in third species
+                # For catching things in third species...
                 j.dependency.lefthead = i.dependency.lefthead
                 i.dependency.dependents.append(j.index)
                 j.dependency.dependents.append(i.index)
@@ -1095,7 +1049,7 @@ class Parser():
         # CASE SEVEN: Skip from harmonic to nonharmonic.
         elif all(case7):
             if openTransitions:
-                # A. See whether j continues a transition in progress
+                # A. See whether j continues a transition in progress.
                 continuesTransition = False
                 for t in reversed(openTransitions):
                     h = self.notes[t]
@@ -1114,10 +1068,6 @@ class Parser():
                         openHeads[:] = [head for head in openHeads
                                         if head not in deletedHeads]
                         break
-# 2020-06-09 I don't think two unrelated transitions can be in progress at the
-# same time, except when the lefthead of the second is later than
-# (not earlier than!) the first open transition, so I rewrote the earlierHeads
-# to get heads that intervene between the first and second transition
                 # B. If not, see whether j connects to a head that
                 # precedes the open transitions
                 if continuesTransition:
@@ -1387,10 +1337,6 @@ class Parser():
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
 
-        # TODO Prune the list open heads if a repetition has been added.
-        # TODO Figure out the optimal time to prune direct repetitions from
-        # the list of open heads.
-
     def prepareParses(self):
         """
         After preliminary parsing is completed, determines possibiities
@@ -1462,7 +1408,7 @@ class Parser():
                 if buildErrors == []:
                     for cand in s3cands:
                         self.buildParse(cand, lineType,
-                                        parsecounter, stack, buildErrors=[])
+                                        parsecounter, buildErrors=[])
                         parsecounter += 1
                 # If the build as type fails, collect errors in dictionary.
                 else:
@@ -1495,7 +1441,7 @@ class Parser():
                     for cand in s2cands:
                         for m in range(0, methods):
                             self.buildParse(cand, lineType, parsecounter,
-                                            stack, buildErrors=[], method=m)
+                                            buildErrors=[], method=m)
                             parsecounter += 1  # update numbering of parses
                 # If the build as type fails, collect errors in dictionary.
                 else:
@@ -1505,10 +1451,10 @@ class Parser():
                 s2cand = buffer[0]
                 stack = buffer
                 self.buildParse(s2cand, lineType, parsecounter,
-                                stack, buildErrors=[])
+                                buildErrors=[])
 
     def buildParse(self, cand, lineType, parsecounter,
-                   stack, buildErrors, method=None):
+                   buildErrors, method=None):
         """Sets up the basic features of the parse object
         and then executes the parsing process.
         Uses deep copies of the arcs and notes, as the list of arcs and the
@@ -1549,8 +1495,6 @@ class Parser():
             newParse.S2Degree = cand.csd.degree
             newParse.S2Value = cand.csd.value
             newParse.notes[newParse.S2Index].rule.name = 'S2'
-        # Copy the remnant of open heads from the stack.
-#        newParse.stackremnant = stack
         newParse.openHeads = [self.notes[idx] for idx in self.openHeads]
 
         # Now parse the line.
