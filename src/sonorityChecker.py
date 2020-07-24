@@ -1,3 +1,4 @@
+#!/Users/snarrenberg/opt/anaconda3/envs/westerparse/bin/python
 # -----------------------------------------------------------------------------
 # Name:         sonorityChecker.py
 # Purpose:      Checks sonority for compliance with preference rules
@@ -32,11 +33,11 @@ sonorityReport = ''
 
 sonorityErrors = []
 # set preferences for sonorities
-onBeatImperfectMin = 75  # percentage
-onBeatUnisonMax = 5  # percentage
-onBeatPerfectMax = 20  # percentage
-tiedOverDissonanceMin = 50  # percentage
-offbeatDissonanceMin = 50  # percentage
+onBeatImperfectMin = .75  # percentage
+onBeatUnisonMax = .05  # percentage
+onBeatPerfectMax = .20  # percentage
+tiedOverDissonanceMin = .50  # percentage
+offbeatDissonanceMin = .50  # percentage
 # downbeatHarmonyDensity =
 
 # implement interest rules
@@ -169,6 +170,7 @@ def getOnbeatVertList(vertList):
                       if vert.beat(leftAlign=False) == 1.0]
     return onbeatVertList
 
+# [c.beat for c in s.chordify().recurse().getElementsByClass('NotRest')] 
 
 def getOffbeatVertList(vertList):
     offbeatVertList = [vert for vert in vertList
@@ -463,7 +465,8 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None,
             elif (sonorityType == 'octave'
                   and isOctave(bassPart, topPart)):
                 sonorityCount += 1
-    return '{:.1%}'.format(sonorityCount/totl)
+    return sonorityCount/totl
+#    return '{:.1%}'.format(sonorityCount/totl)
 
 
 def getDensityRating(score, beatPosition=None,
@@ -510,12 +513,16 @@ def getDensityRating(score, beatPosition=None,
 #                 str(unisonLimit) + '.'
 #         prefErrors.append(error)
 
+
+def checkImperfectSequences():
+    pass
+
 # -----------------------------------------------------------------------------
 
 
 if __name__ == '__main__':
     pass
-#    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
+    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies02.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies03.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies04.musicxml'
@@ -524,7 +531,7 @@ if __name__ == '__main__':
 #    source='../tests/TestScoresXML/SecondSpecies20.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies21.musicxml'
 #    source='../tests/TestScoresXML/SecondSpecies22.musicxml'
-    source = '../tests/TestScoresXML/ThirdSpecies01.musicxml'
+#    source = '../tests/TestScoresXML/ThirdSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies20.musicxml'
 #    source='../tests/TestScoresXML/FourthSpecies21.musicxml'
@@ -545,9 +552,9 @@ if __name__ == '__main__':
 
 #    assignSpeciesToParts(score)
 
-    print(getDensityRating(score, beatPosition='on', densityType='pitch'))
-    print(getDensityRating(score, beatPosition='on',
-                           densityType='pitch class'))
+#    print(getDensityRating(score, beatPosition='on', densityType='pitch'))
+#    print(getDensityRating(score, beatPosition='on',
+#                           densityType='pitch class'))
 #    print(getAdjacencyRatings(score))
 
 #    [c.beat for c in s.chordify().recurse().getElementsByClass('NotRest')]
@@ -555,7 +562,12 @@ if __name__ == '__main__':
     onbeatchords = [c for c
                     in score.chordify().recurse().getElementsByClass('NotRest')
                     if len(c) > 1]
-#    print(onbeatchords)
+
+    impfRating = getSonorityRating(score, beatPosition='on', sonorityType='imperfect',
+                      outerVoicesOnly=True, includeTerminals=False)
+    print('imperfect rating', '{:.0%}'.format(impfRating))
+    if impfRating > onBeatImperfectMin:
+        print('sonority test passed')
 #    for ch in onbeatchords: print(ch.notes[1].beat)
 
 #    sonorityTypes = ['perfect', 'imperfect']

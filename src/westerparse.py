@@ -167,6 +167,14 @@ def evaluateCounterpoint(source,
 # -----------------------------------------------------------------------------
 
 
+def makeScore(source):
+    """
+    Import a musicxml file and convert to music21 Stream.
+    """
+    s = converter.parse(source)
+    return s
+
+
 def makeGlobalContext(source, **kwargs):
     """
     Import a musicxml file and convert to music21 Stream.
