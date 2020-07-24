@@ -216,7 +216,7 @@ class GlobalContext(Context):
             # Part rhythmic species.
             part.species = assignSpecies(part)
             # Set up note consecution relations, from consecutions.py.
-            consecutions.getConsecutions(part)
+            consecutions.setConsecutions(part)
             # Set up note properties used in parsing.
             for idx, note in enumerate(part.recurse().notes):
                 # Get the order position of the note in the line.

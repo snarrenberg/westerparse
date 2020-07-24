@@ -104,7 +104,7 @@ class Consecutions():
 # -----------------------------------------------------------------------------
 
 
-def getConsecutions(part):
+def setConsecutions(part):
     idx = 0
     for n in part.recurse().notes:
         if idx == 0:

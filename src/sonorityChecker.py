@@ -568,6 +568,13 @@ if __name__ == '__main__':
     print('imperfect rating', '{:.0%}'.format(impfRating))
     if impfRating > onBeatImperfectMin:
         print('sonority test passed')
+
+
+    ivl = interval.Interval(note.Note('D3'), note.Note('F4'))
+    print(ivl.generic.directed)
+
+
+
 #    for ch in onbeatchords: print(ch.notes[1].beat)
 
 #    sonorityTypes = ['perfect', 'imperfect']
