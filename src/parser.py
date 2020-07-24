@@ -31,8 +31,8 @@ open heads, open transitions, and syntactic units (arcs). These lists
 shrink and grow as the interpretive process unfolds. When an arc is
 formed (e.g., a passing or neighboring motion), a tuple of note positions
 is placed in the list of arcs.  Meanwhile, dependent elements within the
-arc are removed from both the stack and the list of open transitions,
-leaving structural heads in place for subsequent attachment.
+arc are removed from the list of open transitions, but structural heads
+are retained in the list of open heads for subsequent attachment.
 The parser has a limited ability to
 backtrack and reinterpret segments of a line.
 
@@ -308,7 +308,6 @@ class Parser():
                             if self.notes[h].csd.value == self.notes[firstHead].csd.value:
                                 self.notes[h].dependency.lefthead = firstHead
                                 self.notes[firstHead].dependency.dependents.append(h)
-#                                self.notes[h].rule.name = 'L1'
                                 arcGenerateRepetition(h, self.part,
                                                       l_arcs)
                                 # Skip any intervening local heads.
@@ -403,7 +402,6 @@ class Parser():
                                     arcGenerateRepetition(j.index, self.notes,
                                                           l_arcs)
                                     l_openHeads.remove(j.index)
-#                                    j.rule.name = 'L1'
                                     # Remove local heads embedded
                                     # in the repetition.
                                     for h in l_openHeads:
