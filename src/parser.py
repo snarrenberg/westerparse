@@ -1308,20 +1308,6 @@ class Parser():
                                                 if h < oh < j.index:
                                                     openHeads.remove(oh)
                                             return
-
-#  (4) if either of these fails, take the radical approach ?
-#
-#                         stack = self.notes[0:j.index]
-#                         for s in reversed(stack):
-#                             clearDependencies(s)
-#                             for arc in arcs:
-#                                 if arc[-1] == s.index:
-#                                     arcs.remove(arc)
-#                         stack.pop()  # remove i from consideration
-#                         for x in reversed(stack):
-#                             buffer.insert(0,x)
-#                             stack.pop()
-#
                         else:
                             error = ('The non-tonic-triad pitch '
                                      + j.nameWithOctave + ' in measure '
