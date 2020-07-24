@@ -22,6 +22,7 @@ from music21 import *
 
 from vlChecker import *
 import context
+import consecutions
 import theoryAnalyzerWP
 import theoryResultWP
 
@@ -32,6 +33,7 @@ import theoryResultWP
 sonorityReport = ''
 
 sonorityErrors = []
+
 # set preferences for sonorities
 onBeatImperfectMin = .75  # percentage
 onBeatUnisonMax = .05  # percentage
@@ -39,6 +41,12 @@ onBeatPerfectMax = .20  # percentage
 tiedOverDissonanceMin = .50  # percentage
 offbeatDissonanceMin = .50  # percentage
 # downbeatHarmonyDensity =
+
+# preferences errors
+pferrors = []
+# preferences for consecutive imperfect intervals
+imperfectStreakLimit = 4
+imperfectSeriesLimit = 3
 
 # implement interest rules
     # look for narrow ambitus
@@ -108,6 +116,11 @@ offbeatDissonanceMin = .50  # percentage
 # MAIN SCRIPTS
 # -----------------------------------------------------------------------------
 
+
+def initiateAnalysis(score):
+    analyzer = theoryAnalyzerWP.Analyzer()
+    analyzer.addAnalysisData(score)
+    
 
 def getAllVerticalities(score):
     # create the theory analyzer object
@@ -514,15 +527,110 @@ def getDensityRating(score, beatPosition=None,
 #         prefErrors.append(error)
 
 
-def checkImperfectSequences():
-    pass
+def checkImperfectSequences(score, analyzer, numPair):
+    # original written by Tony Li
+    vPairList = analyzer.getVerticalPairs(score, numPair[0], numPair[1])
+    maxThirdsStreak = 0
+    maxThirdsSeries = 0
+    maxSixthsStreak = 0
+    maxSixthsSeries = 0
+    # Find maximum number of consecutive imperfect intervals:
+    #     streak = with change of direction
+    #     series = without a change of direction
+    n = 0
+    while n < len(vPairList):
+        if vPairList[n] is not None:
+            itvl = interval.Interval(vPairList[n][0], vPairList[n][1])
+            if itvl.simpleName in {'m3', 'M3', 'm6', 'M6'}:
+                streak = 1
+                series = 1
+                done = False
+                intSize = itvl.generic.directed  # 3 or 6
+                while not done:
+                    if n < len(vPairList) - 1:
+                        n += 1
+                        newInt = interval.Interval(vPairList[n][0],
+                                                   vPairList[n][1])
+                        if (newInt.simpleName in {'m3', 'M3', 'm6', 'M6'}
+                           and newInt.generic.directed == intSize):
+                            streak += 1
+                            series += 1
+                            if streak >= 3:
+                                #Check for a change of direction
+                                rules = [
+                                    (vPairList[n][0] > vPairList[n-1][0]
+                                     and vPairList[n-1][0] < vPairList[n-2][0]),
+                                    (vPairList[n][0] < vPairList[n-1][0]
+                                     and vPairList[n-1][0] > vPairList[n-2][0])
+                                     ]
+                                if any(rules):
+                                    series = streak - 1
+                                    # record series if longer than previous
+                                    if (series > maxThirdsSeries
+                                       and intSize % 7 == 3):
+                                        maxThirdsSeries = series
+                                    elif (series > maxSixthsSeries
+                                       and intSize % 7 == 6):
+                                        maxSixthsSeries = series
+                                    # reset series variables
+                                    series = 1
+                                else:
+                                    continue
+                        else:
+                            # record streak if longer than previous
+                            if streak == series:
+                                if (series > maxThirdsSeries
+                                   and intSize % 7 == 3):
+                                    maxThirdsSeries = series
+                                elif (series > maxSixthsSeries
+                                      and intSize % 7 == 6):
+                                    maxSixthsSeries = series
+                            elif streak > series:
+                                if (streak > maxThirdsStreak
+                                   and intSize % 7 == 3):
+                                    maxThirdsStreak = streak
+                                elif (streak > maxSixthsStreak
+                                      and intSize % 7 == 6):
+                                    maxSixthsStreak = streak
+                            done = True
+                    else:
+                        done = True
+                        n += 1
+            else:
+                n += 1
+        else:
+            n += 1
+    if maxThirdsSeries > imperfectSeriesLimit:
+        error = ('The maximum number of parallel thirds in the same '
+                 'direction is ' + str(maxThirdsSeries)
+                 + ', which exceeds the limit of '
+                 + str(imperfectSeriesLimit) + '.')
+        pferrors.append(error)
+    if maxThirdsStreak > imperfectStreakLimit:
+        error = ('The maximum number of parallel thirds with a change '
+                 'of direction is ' + str(maxThirdsStreak)
+                 + ', which exceeds the limit of '
+                 + str(imperfectStreakLimit) + '.')
+        pferrors.append(error)
+    if maxSixthsSeries > imperfectSeriesLimit:
+        error = ('The maximum number of parallel sixths in the same '
+                 'direction is ' + str(maxSixthsSeries)
+                 + ', which exceeds the limit of '
+                 + str(imperfectSeriesLimit) + '.')
+        pferrors.append(error)
+    if maxSixthsStreak > imperfectStreakLimit:
+        error = ('The maximum number of parallel sixths with a change '
+                 'of direction is ' + str(maxSixthsStreak)
+                 + ', which exceeds the limit of '
+                 + str(imperfectStreakLimit) + '.')
+        pferrors.append(error)
 
 # -----------------------------------------------------------------------------
 
 
 if __name__ == '__main__':
     pass
-    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
+#    source='../tests/TestScoresXML/FirstSpecies01.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies02.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies03.musicxml'
 #    source='../tests/TestScoresXML/FirstSpecies04.musicxml'
@@ -539,56 +647,13 @@ if __name__ == '__main__':
 #    source='../examples/corpus/Westergaard075f.musicxml'
 #    source='../examples/corpus/Westergaard075g.musicxml'
 #    source='../examples/corpus/Westergaard121a.musicxml'
+    source='../tests/TestScoresXML/2020_07_24T20_59_43_778Z.musicxml'
 
     score = converter.parse(source)
-
-    vl = getAllVerticalities(score)
-    fl = getFullSonorities(vl)
-    sl = getSonorityList(vl)
-
-    onvl = getOnbeatVertList(fl)
-    ofvl = getOffbeatVertList(vl)
-    print(len(vl), len(onvl), len(ofvl))
-
-#    assignSpeciesToParts(score)
-
-#    print(getDensityRating(score, beatPosition='on', densityType='pitch'))
-#    print(getDensityRating(score, beatPosition='on',
-#                           densityType='pitch class'))
-#    print(getAdjacencyRatings(score))
-
-#    [c.beat for c in s.chordify().recurse().getElementsByClass('NotRest')]
-
-    onbeatchords = [c for c
-                    in score.chordify().recurse().getElementsByClass('NotRest')
-                    if len(c) > 1]
-
-    impfRating = getSonorityRating(score, beatPosition='on', sonorityType='imperfect',
-                      outerVoicesOnly=True, includeTerminals=False)
-    print('imperfect rating', '{:.0%}'.format(impfRating))
-    if impfRating > onBeatImperfectMin:
-        print('sonority test passed')
-
-
-    ivl = interval.Interval(note.Note('D3'), note.Note('F4'))
-    print(ivl.generic.directed)
-
-
-
-#    for ch in onbeatchords: print(ch.notes[1].beat)
-
-#    sonorityTypes = ['perfect', 'imperfect']
-#    for st in sonorityTypes:
-#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st,
-#                   outerVoicesOnly=False, includeTerminals=False)
-#        print('rating for', st, 'sonorities on the beat,#
-#                   terminals excluded:', rating)
-#    sonorityTypes = ['dissonant']
-#    for st in sonorityTypes:
-#        rating = getSonorityRating(score, beatPosition='on', sonorityType=st,
-#                    outerVoicesOnly=False, includeTerminals=False)
-#        print('rating for', st, 'sonorities on the beat,
-#                      terminals excluded:', rating)
-
+    analyzer = theoryAnalyzerWP.Analyzer()
+    analyzer.addAnalysisData(score)
+    checkImperfectSequences(score, analyzer, numPair=(0, 1))
+    
+    print('\n'.join(pferrors))
 # -----------------------------------------------------------------------------
 # eof

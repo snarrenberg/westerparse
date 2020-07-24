@@ -118,6 +118,23 @@ def setConsecutions(part):
         n.consecutions = Consecutions(n, nLeft, nRight)
         idx += 1
 
+
+def getConsecutions(idx, part):
+    """
+    Given a note index in a part, set the note's Consecution object
+    if not already extant.
+    """
+    if part.recurse.notes(idx).consecutions is None:
+        if idx == 0:
+            nLeft = None
+        else:
+            nLeft = part.recurse().notes[idx-1]
+        if idx == len(part.recurse().notes)-1:
+            nRight = None
+        else:
+            nRight = part.recurse().notes[idx+1]
+        part.recurse.notes(idx).consecutions = Consecutions(n, nLeft, nRight)
+
 # -----------------------------------------------------------------------------
 
 
