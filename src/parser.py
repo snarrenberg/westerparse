@@ -1159,12 +1159,9 @@ class Parser():
                         self.notes[h].dependency.dependents.append(j.index)
                         j.dependency.lefthead = h
                         openTransitions.append(j.index)
-                        # Remove skipped heads from open heads and stack.
+                        # Remove skipped heads from open heads.
                         openHeads[:] = [head for head in openHeads
                                         if head not in skippedHeads]
-                        for s in reversed(stack):
-                            if s.index in skippedHeads:
-                                stack.remove(s)
                         break  # Stop now that a lefthead was found.
                     # B. If A was not successful, search for possible
                     # step-related antecedent (head or trans)
