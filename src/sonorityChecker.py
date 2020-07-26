@@ -87,7 +87,8 @@ imperfectSeriesLimit = 3
     # look for preponderance of simple intervals, not compound
     # report if too many intervals larger than 12th?
     # report if any intervals equal to or greater than 15th
-# first species: series of imperfect consonances, with or without
+# first species:
+    # consecutive imperfect consonances, with or without
     # change of direction
 # second species: dissonance off beat
     # count offbeat dissonances, prefer, say, percentage greater than 50%

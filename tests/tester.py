@@ -30,7 +30,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Primary02.musicxml'
 #    source = 'TestScoresXML/Primary03.musicxml'
 #    source = 'TestScoresXML/Primary04.musicxml'
-    source = 'TestScoresXML/Primary05.musicxml'
+#    source = 'TestScoresXML/Primary05.musicxml'
 #    source = 'TestScoresXML/Primary06.musicxml'
 #    source = 'TestScoresXML/Primary16.musicxml'
 #    source = 'TestScoresXML/Primary20.musicxml' # Krumhansl-Schmuckler gives wrong key
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/SecondSpecies22.musicxml' # not generable
 
 #    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
-#    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
+    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
 #    source = 'TestScoresXML/ThirdSpecies05.musicxml'    # completion of Westergaard p. 136 exercise 4

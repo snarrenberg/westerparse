@@ -42,10 +42,13 @@ Interpretation then continues by line type.
 The parser gathers all of the valid interpretations into lists.
 The parser also records errors that arise.
 """
-from music21 import *
-from utilities import pairwise
 import itertools
 import copy
+import logging
+
+from music21 import *
+
+from utilities import pairwise
 
 # -----------------------------------------------------------------------------
 # MODULE VARIABLES
@@ -60,6 +63,26 @@ localNeighborsOnly = False
 extendLocalArcs = False
 addLocalRepetitions = True
 
+
+# -----------------------------------------------------------------------------
+# LOGGER
+# -----------------------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# logging handlers
+c_handler = logging.StreamHandler()
+c_handler.setLevel(logging.ERROR)
+f_handler = logging.FileHandler('parser.txt', mode='w')
+f_handler.setLevel(logging.DEBUG)
+# logging formatters
+c_formatter = logging.Formatter('%(message)s')
+c_handler.setFormatter(c_formatter)
+f_formatter = logging.Formatter('%(message)s')
+f_handler.setFormatter(f_formatter)
+# add handlers to logger
+logger.addHandler(c_handler)
+logger.addHandler(f_handler)
 
 # -----------------------------------------------------------------------------
 # MAIN CLASSES
@@ -138,9 +161,13 @@ class Parser():
         else:
             self.part.lineTypes = []
             self.inferLineTypes()
+        # log result
+        logger.debug(f'Line types: {self.part.lineTypes}')
 
         # STEP ONE: Operate the preliminary parser.
         self.preParseLine()
+        # log result
+        logger.debug(f'Preliminary Arcs: {self.arcs}')
 
         # Interrupt parser if preliminary parsing is unsuccessful.
         # and report errors
@@ -210,6 +237,7 @@ class Parser():
            not self.context.harmonicSpecies):
             # Run the line scanner.
             n = len(g_buffer)
+            logger.debug(f'Parser state: 0 \n\tHeads: {openHeads} \n\tTrans: {openTransitions} \n\tArcs:  {arcs}')
             while n > 1:
                 shiftBuffer(g_stack, g_buffer)
                 n = len(g_buffer)
@@ -219,6 +247,8 @@ class Parser():
                 self.parseTransition(g_stack, g_buffer, self.part, i, j,
                                      harmonyStart, harmonyEnd, openHeads,
                                      openTransitions, arcs)
+                # log result
+                logger.debug(f'Parser state: {j.index} \n\tHeads: {openHeads} \n\tTrans: {openTransitions} \n\tArcs:  {arcs}')
                 # Break upon finding errors.
                 if self.errors:
                     break
@@ -1378,7 +1408,7 @@ class Parser():
             # Look for S2 or S3 candidate notes in the given line type
             # and build parse objects for each candidate.
             # Assign a label and counter to each parse object.
-            parsecounter = 1
+            parsecounter = 0
 
             if lineType == 'bass':
                 buildErrors = []
@@ -1566,7 +1596,22 @@ class Parser():
             # for running with musicxml input/output.
             self.gatherRuleLabels()
             self.gatherParentheses()
-
+            # log result
+            parseData = ('Label: ' + self.label
+                             + '\n\tBasic: ' + str(self.arcBasic)
+                             + '\n\tArcs:  ' + str(self.arcs)
+                             + '\n\tRules:\t' 
+                             + ''.join(['{:4d}'.format(lbl[0]) 
+                                        for lbl in self.ruleLabels])
+                             + '\n\t      \t' 
+                             + ''.join(['{:>4}'.format(lbl[1])
+                                        for lbl in self.ruleLabels])
+                             + '\n\t      \t' 
+                             + ''.join(['{:4d}'.format(lbl[2])
+                                        for lbl in self.ruleLabels])
+                             )
+            logger.debug(parseData)
+                             
         def arcMerge(self, arc1, arc2):
             """Combine two passing motions that share an inner
             node and direction."""
@@ -2052,11 +2097,17 @@ class Parser():
                 for arc in purgeList:
                     removeDependenciesFromArc(self.notes, arc)
                     self.arcs.remove(arc)
-                # Add basic step motion arc.
-                self.arcs.append(self.arcBasic)
-                addDependenciesFromArc(self.notes, self.arcBasic)
+                # Add basic step motion arc if not already in arcs.
+                if self.arcBasic not in self.arcs:
+                    self.arcs.append(self.arcBasic)
+                    addDependenciesFromArc(self.notes, self.arcBasic)
 
-                # TODO: Reset Note attributes.
+            logger.debug('Method ' + str(self.method)
+                         + ' for creating basic step motion.'
+                         + '\n\tBasic arc: ' + str(self.arcBasic)
+                         + '\n\tArcs:      ' + str(self.arcs))
+
+               # TODO: Reset Note attributes.
                 # Look for secondary structures between S nodes.
 
         def parseBass(self):
@@ -3290,7 +3341,7 @@ def arcLength(arc):
 # -----------------------------------------------------------------------------
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     pass
 
 # -----------------------------------------------------------------------------
