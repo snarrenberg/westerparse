@@ -60,7 +60,7 @@ getStructuralLevels = True
 
 # for third species
 localNeighborsOnly = False
-extendLocalArcs = False
+extendLocalArcs = True
 addLocalRepetitions = True
 
 
@@ -488,12 +488,17 @@ class Parser():
                 while g_buffer[0].index < localEnd:
                     i = g_stack[-1]
                     j = g_buffer[0]
+                    logger.debug(f'Parser state: {j.index}'
+                                 '--before parsing local heads in global context--'
+                                 f'\n\tHeads: {openHeads}'
+                                 f'\n\tTrans: {openTransitions}'
+                                 f'\n\tArcs:  {arcs}')
                     self.parseTransition(g_stack, g_buffer,
                                          self.part, i, j,
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
                     logger.debug(f'Parser state: {j.index}'
-                                 '--after parsing local span--'
+                                 '--after parsing local heads--'
                                  f'\n\tHeads: {openHeads}'
                                  f'\n\tTrans: {openTransitions}'
                                  f'\n\tArcs:  {arcs}')
@@ -868,7 +873,6 @@ class Parser():
                     # TODO: When is the arc created for this??
             elif openTransitions:
                 for t in reversed(openTransitions):
-                    logger.debug(f'--before generating trans: {arcs}')
                     h = self.notes[t]
                     if t == i.index:
                         if (isStepUp(i, j)
@@ -1185,11 +1189,15 @@ class Parser():
                             break
                 # C. If neither of these works, return an error.
                     if not connectsToHead:
-                        error = ('The non-tonic-triad pitch '
-                                 + j.nameWithOctave + ' in measure '
-                                 + str(j.measureNumber)
-                                 + ' cannot be generated.')
-                        self.errors.append(error)
+                        if self.part.species in ['third', 'fifth']:
+                            # can't just add j to open transitions without knowing its lefthead
+                            pass
+                        else:
+                            error = ('The non-tonic-triad pitch '
+                                     + j.nameWithOctave + ' in measure '
+                                     + str(j.measureNumber)
+                                     + ' cannot be generated.')
+                            self.errors.append(error)
             elif openHeads:
                 skippedHeads = []
                 for h in reversed(openHeads):
@@ -1256,7 +1264,6 @@ class Parser():
                                         self.notes[arc[-1]].dependency.dependents.remove(idx)
                                     openHeads.remove(arc[-1])
                             openTransitions = sorted(openTransitions)
-                            print('here', arcs, openHeads, newLefthead)
                             break
                         # (Search 2) Look for possible step-related transition
                         # that was previously integrated into a neighbor arc;
@@ -1521,7 +1528,9 @@ class Parser():
                     shiftBuffer(stack, buffer)
                     n = len(buffer)
                     i = stack[-1]
-                    if i.csd.value in {2, 4, 7}:
+                    # look for 3, 5, or 8 above final tonic
+                    t = self.notes[-1].csd.value
+                    if i.csd.value in {2+t, 4+t, 7+t}:
                         s2cands.append(i)
                 if not s2cands:
                     buildError = ('Primary structure error: '

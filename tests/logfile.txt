@@ -1,0 +1,5 @@
+PARSE REPORT
+Key inferred by program: C major
+Line Parsing Errors
+	The following linear errors were found when attempting to interpret the line:
+			Primary structure error: No candidate for S2 detected.

@@ -56,7 +56,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/SecondSpecies22.musicxml' # not generable
 
 #    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
-    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
+#    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
 #    source = 'TestScoresXML/ThirdSpecies05.musicxml'    # completion of Westergaard p. 136 exercise 4
@@ -133,7 +133,7 @@ if __name__ == "__main__":
 #    source = '../examples/corpus/WP021.musicxml'
 
 
-#    source = 'TestScoresXML/2020_07_17T19_22_29_948Z.musicxml'
+    source = 'TestScoresXML/2020_07_27T22_03_17_936Z.musicxml'
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
 
@@ -206,7 +206,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 16)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
