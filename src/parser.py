@@ -237,7 +237,10 @@ class Parser():
            not self.context.harmonicSpecies):
             # Run the line scanner.
             n = len(g_buffer)
-            logger.debug(f'Parser state: 0 \n\tHeads: {openHeads} \n\tTrans: {openTransitions} \n\tArcs:  {arcs}')
+            logger.debug(f'Parser state: 0'
+                         f'\n\tHeads: {openHeads}'
+                         f'\n\tTrans: {openTransitions}'
+                         f'\n\tArcs:  {arcs}')
             while n > 1:
                 shiftBuffer(g_stack, g_buffer)
                 n = len(g_buffer)
@@ -248,7 +251,10 @@ class Parser():
                                      harmonyStart, harmonyEnd, openHeads,
                                      openTransitions, arcs)
                 # log result
-                logger.debug(f'Parser state: {j.index} \n\tHeads: {openHeads} \n\tTrans: {openTransitions} \n\tArcs:  {arcs}')
+                logger.debug(f'Parser state: {j.index}'
+                             f'\n\tHeads: {openHeads}'
+                             f'\n\tTrans: {openTransitions}'
+                             f'\n\tArcs:  {arcs}')
                 # Break upon finding errors.
                 if self.errors:
                     break
@@ -267,6 +273,10 @@ class Parser():
             # (3) Attempt to extend local arcs beyond local context:
             #     extendLocalArcs = True/False
 
+            logger.debug(f'Parser state: 0'
+                         f'\n\tHeads: {openHeads}'
+                         f'\n\tTrans: {openTransitions}'
+                         f'\n\tArcs:  {arcs}')
             # Scan the global context.
             n = len(g_buffer)
             while n > 1:
@@ -326,6 +336,10 @@ class Parser():
                             l_openHeads, l_openTransitions,
                             l_arcs
                             )
+                        logger.debug(f'Parser state: {y.index}'
+                                     f'\n\tLoc Heads: {l_openHeads}'
+                                     f'\n\tLoc Trans: {l_openTransitions}'
+                                     f'\n\tLoc Arcs:  {l_arcs}')
                     # Break upon finding errors.
                     # TODO: Collect errors and continue?
                         if self.errors:
@@ -346,6 +360,9 @@ class Parser():
                                                 if head > h]
                                 l_openHeads = ([firstHead]
                                                   + revisedHeads)
+                        logger.debug(f'Parser state: {y.index}'
+                                     '--after adding local repetitions--'
+                                     f'\n\tRevised Loc Arcs:  {l_arcs}')
 
                     # If local insertions are not allowed, limit local arcs
                     # to neighbors and repetitions.
@@ -354,6 +371,9 @@ class Parser():
                         l_arcs = [arc for arc in l_arcs if
                                      (isNeighboringArc(arc, self.notes) or
                                       isRepetitionArc(arc, self.notes))]
+                        logger.debug(f'Parser state: {y.index}'
+                                     '--after limiting to local neighbors--'
+                                     f'\n\tRevised Loc Arcs:  {l_arcs}')
 
                     # Try to extend local passing motions from
                     # or into bordering context
@@ -438,6 +458,9 @@ class Parser():
                                         if i.index < h < j.index:
                                             l_openHeads.remove(h)
 
+                        logger.debug(f'Parser state: {y.index}'
+                                     '--after extending local arcs--'
+                                     f'\n\tRevised Loc Arcs:  {l_arcs}')
                 # Copy local arcs to global arcs.
                 for arc in l_arcs:
                     arcs.append(arc)
@@ -469,16 +492,31 @@ class Parser():
                                          self.part, i, j,
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
+                    logger.debug(f'Parser state: {j.index}'
+                                 '--after parsing local span--'
+                                 f'\n\tHeads: {openHeads}'
+                                 f'\n\tTrans: {openTransitions}'
+                                 f'\n\tArcs:  {arcs}')
                     shiftBuffer(g_stack, g_buffer)
 
                 # Parse the transition into the next span.
                 if g_buffer[0].index == localEnd:
                     i = g_stack[-1]
                     j = g_buffer[0]
+                    logger.debug(f'Parser state: {j.index}'
+                                 '--before parsing into next local span--'
+                                 f'\n\tHeads: {openHeads}'
+                                 f'\n\tTrans: {openTransitions}'
+                                 f'\n\tArcs:  {arcs}')
                     self.parseTransition(g_stack, g_buffer,
                                          self.part, i, j,
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
+                    logger.debug(f'Parser state: {j.index}'
+                                 '--after parsing into next local span--'
+                                 f'\n\tHeads: {openHeads}'
+                                 f'\n\tTrans: {openTransitions}'
+                                 f'\n\tArcs:  {arcs}')
                 n = len(g_buffer)
 
         if self.part.species in ['third', 'fifth'] and openTransitions:
@@ -537,7 +575,7 @@ class Parser():
 
         #. *Step from the harmony of this bar to the harmony of the next*
 
-           * If *i* is an open transition, end the transition at *j*.
+           * If *i* is an open local transition, end the transition at *j*.
 
         #. *Step from harmonic to nonharmonic pitch*
 
@@ -673,6 +711,13 @@ class Parser():
                 for t in reversed(openTransitions):
                     h = self.notes[t]
                     if isDiatonicStep(h, j):
+                        # add the new arc only if it doesn't contradict
+                        # an existing arc
+                        testArc = [h.dependency.lefthead, h.index, j.index]
+                        if conflictsWithOtherArc(testArc, arcs):
+                            return
+                        else:
+                            pass
                         h.dependency.righthead = j.index
                         if h.dependency.dependents:
                             for d in h.dependency.dependents:
@@ -695,7 +740,7 @@ class Parser():
             else:
                 openHeads.append(j.index)
 
-        # CASE TWO: Transition from the harmony of this bar
+        # CASE TWO: Transition through end of this bar
         # to the harmony of the next.
         elif all(case2):
             if i.index in openTransitions:
@@ -738,6 +783,7 @@ class Parser():
                             openHeads.remove(i.index)
                         break
                     if openHeads:
+                        connected = False
                         for t in reversed(openHeads):
                             h = self.notes[t]
                             # If i is the only open head, ...
@@ -745,6 +791,7 @@ class Parser():
                                 j.dependency.lefthead = i.index
                                 i.dependency.dependents.append(j.index)
                                 openTransitions.append(j.index)
+                                connected = True
                                 break
                             elif h != i:
                                 # TODO rethink why we remove t from
@@ -754,7 +801,10 @@ class Parser():
                                 j.dependency.lefthead = h.index
                                 h.dependency.dependents.append(j.index)
                                 openTransitions.append(j.index)
+                                connected = True
                                 break
+                        if connected:
+                            break
                         else:
                             j.dependency.lefthead = i.index
                             i.dependency.dependents.append(j.index)
@@ -818,6 +868,7 @@ class Parser():
                     # TODO: When is the arc created for this??
             elif openTransitions:
                 for t in reversed(openTransitions):
+                    logger.debug(f'--before generating trans: {arcs}')
                     h = self.notes[t]
                     if t == i.index:
                         if (isStepUp(i, j)
@@ -870,6 +921,13 @@ class Parser():
                         if (isStepUp(h, j)
                            and h.csd.direction
                            in ['ascending', 'bidirectional']):
+                            # add the new arc only if it doesn't contradict
+                            # an existing arc
+                            testArc = [h.dependency.lefthead, h.index, j.index]
+                            if conflictsWithOtherArc(testArc, arcs):
+                                return
+                            else:
+                                pass
                             h.dependency.righthead = j.index
                             j.dependency.dependents.append(h.index)
                             for d in h.dependency.dependents:
@@ -889,6 +947,13 @@ class Parser():
                         elif (isStepDown(h, j)
                               and h.csd.direction
                               in ['descending', 'bidirectional']):
+                            # add the new arc only if it doesn't contradict
+                            # an existing arc
+                            testArc = [h.dependency.lefthead, h.index, j.index]
+                            if conflictsWithOtherArc(testArc, arcs):
+                                return
+                            else:
+                                pass
                             h.dependency.righthead = j.index
                             j.dependency.dependents.append(h.index)
                             for d in h.dependency.dependents:
@@ -1567,6 +1632,9 @@ class Parser():
             * Set the dependency level of each note. [This function is
               currently disabled.]
             """
+            # log message
+            logger.debug('Beginning parse: ' + str(self.label))
+
             if self.lineType == 'primary':
                 self.parsePrimary()
             elif self.lineType == 'bass':
@@ -1598,14 +1666,17 @@ class Parser():
             self.gatherParentheses()
             # log result
             parseData = ('Label: ' + self.label
-                             + '\n\tBasic: ' + str(self.arcBasic)
-                             + '\n\tArcs:  ' + str(self.arcs)
-                             + '\n\tRules:\t' 
-                             + ''.join(['{:4d}'.format(lbl[0]) 
-                                        for lbl in self.ruleLabels])
-                             + '\n\t      \t' 
-                             + ''.join(['{:>4}'.format(lbl[1])
-                                        for lbl in self.ruleLabels])
+                         + '\n\tBasic: ' + str(self.arcBasic)
+                         + '\n\tArcs:  ' + str(self.arcs)
+                         + '\n\tRules:\t' 
+                         + ''.join(['{:4d}'.format(lbl[0]) 
+                                    for lbl in self.ruleLabels])
+                         + '\n\t      \t' 
+                         + ''.join(['{:>4}'.format(lbl[1])
+                                    for lbl in self.ruleLabels])
+                         )
+            if getStructuralLevels:
+                parseData = (parseData
                              + '\n\t      \t' 
                              + ''.join(['{:4d}'.format(lbl[2])
                                         for lbl in self.ruleLabels])
@@ -3299,7 +3370,13 @@ def isEmbeddedInArc(i, arc):
 
 
 def isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=-1):
-    # Check whether an arc is embedded within another arc between two indices.
+    """
+    Check whether an arc is embedded within another arc between two indices.
+    >>> arc = [4, 8, 20]
+    >>> arcs = [[0, 1, 2], [4, 14, 20]]
+    >>> print(isEmbeddedInOtherArc(arc, arcs, 0, 20))
+    True
+    """
     isEmbedded = False
     testArcs = []
     for testArc in arcs:
@@ -3312,6 +3389,51 @@ def isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=-1):
             isEmbedded = True
     return isEmbedded
 
+
+def conflictsWithOtherArc(arc, arcs):
+    """
+    Check whether an arc is in conflict with any existing arc.
+
+    conflicting pair examples: arc, extArc
+        cond1: [0, 6]	[4, 8]
+        cond2: [4, 8] [0, 6]
+        cond3: [4, 7, 9] [6, 9]
+        cond4: [6, 7, 9] [6, 8, 10]
+    >>> arc = [0, 6]  
+    >>> arcs = [[4, 8]]
+    >>> print(conflictsWithOtherArc(arc, arcs))
+    True
+    """
+    conflict = False
+    for extArc in arcs:
+        # overlaps later arc
+        cond1 = (arc[0] < extArc[0]
+                 and extArc[0] < arc[-1] < extArc[-1])
+        # overlaps earlier arc
+        cond2 = (extArc[0] < arc[0] < extArc[-1]
+                 and arc[-1] > extArc[-1])
+        # contains an existing arc ...
+        cond3 = (arc[0] <= extArc[0]
+                 and arc[-1] >= extArc[-1])
+        # or is contained by an existing arc ...
+        cond4 = (extArc[0] <= arc[0]
+                 and extArc[-1] >= arc[-1])
+        if cond1 or cond2:
+            conflict = True
+        # but has internal elements enclosed in the extant arc
+        elif cond3:
+            if len(arc) > 2:
+                for d in arc[1:-1]:
+                    if extArc[0] < d < extArc[-1]:
+                        conflict = True
+                        break
+        elif cond4:
+            if len(extArc) > 2:
+                for d in extArc[1:-1]:
+                    if arc[0] < d < arc[-1]:
+                        conflict = True
+                        break
+    return conflict
 
 def isIndependent(note):
     rules = [note.dependency.dependents == [],
@@ -3343,6 +3465,5 @@ def arcLength(arc):
 
 if __name__ == '__main__':
     pass
-
 # -----------------------------------------------------------------------------
 # eof
