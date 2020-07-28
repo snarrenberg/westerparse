@@ -45,11 +45,12 @@ The parser also records errors that arise.
 import itertools
 import copy
 import logging
+import unittest
 
 from music21 import *
 
 from utilities import pairwise
-
+import dependency
 # -----------------------------------------------------------------------------
 # MODULE VARIABLES
 # -----------------------------------------------------------------------------
@@ -3444,6 +3445,7 @@ def conflictsWithOtherArc(arc, arcs):
                         break
     return conflict
 
+
 def isIndependent(note):
     rules = [note.dependency.dependents == [],
              note.dependency.lefthead is None,
@@ -3471,8 +3473,220 @@ def arcLength(arc):
 
 # -----------------------------------------------------------------------------
 
+class Test(unittest.TestCase):
+
+    def runTest(self):
+        pass
+
+    def test_inferLineTypes(self):
+        pass
+
+    def test_preParseLine(self):
+        pass
+
+    def test_showPartialParse(self):
+        pass
+
+    def test_parseTransition(self):
+        pass
+
+    def test_prepareParses(self):
+        pass
+
+    def test_buildParse(self):
+        pass
+
+    def test_performLineParse(self):
+        pass
+
+    def test_arcMerge(self):
+        pass
+
+    def test_arcEmbed(self):
+        pass
+
+    def test_parsePrimary(self):
+        pass
+
+    def test_parseBass(self):
+        pass
+
+    def test_parseGeneric(self):
+        pass
+
+    def test_attachOpenheadsToStructuralLefthead(self):
+        pass
+
+    def test_integrateSecondaryWithPrimary(self):
+        pass
+
+    def test_assignSecondaryRules(self):
+        pass
+
+    def test_testLocalResolutions(self):
+        pass
+
+    def test_pruneArcs(self):
+        pass
+
+    def test_gatherRuleLabels(self):
+        pass
+
+    def test_gatherParentheses(self):
+        pass
+
+    def test_setDependencyLevels(self):
+        pass
+
+    def test_displayFullParse(self):
+        pass
+
+    def test_testGenerabilityFromLevels(self):
+        pass
+
+    def test_collectParses(self):
+        pass
+
+    def test_selectPreferredParses(self):
+        pass
+
+    def test_shiftBuffer(self):
+        pass
+
+    def test_shiftStack(self):
+        pass
+
+    def test_isTriadMember(self):
+        pass
+
+    def test_isTriadicSet(self):
+        pass
+
+    def test_isHarmonic(self):
+        pass
+
+    def test_isLinearConsonance(self):
+        pass
+
+    def test_isSemiSimpleInterval(self):
+        pass
+
+    def test_isLinearUnison(self):
+        pass
+
+    def test_isDiatonicStep(self):
+        pass
+
+    def test_isStepUp(self):
+        pass
+
+    def test_isStepDown(self):
+        pass
+
+    def test_isDirectedStep(self):
+        pass
+
+    def test_isNeighboringArc(self):
+        pass
+
+    def test_isPassingArc(self):
+        pass
+
+    def test_isRepetitionArc(self):
+        pass
+
+    def test_isRepetition(self):
+        pass
+
+    def test_isLocalRepetition(self):
+        pass
+
+    def test_arcGenerateTransition(self):
+        pass
+
+    def test_arcGenerateRepetition(self):
+        pass
+
+    def test_arcExtendTransition(self):
+        pass
+
+    def test_pruneOpenHeads(self):
+        pass
+
+    def test_clearDependencies(self):
+        pass
+
+    def test_removeDependenciesFromArc(self):
+        pass
+
+    def test_addDependenciesFromArc(self):
+        pass
+
+    def test_addDependenciesFromArc(self):
+        pass
+
+    def test_isArcTerminal(self):
+        i = 5
+        arcs = [[0, 1, 2], [0, 3, 4], [6, 7, 8]]
+        assert isArcTerminal(i, arcs) is False
+        arcs = [[0, 1, 2], [0, 3, 4, 5], [6, 7, 8]]
+        assert isArcTerminal(i, arcs) is True
+
+    def test_isEmbeddedInArcs(self):
+        i = 5
+        arcs = [[0, 1, 2], [0, 3, 4], [6, 7, 8]]
+        assert isEmbeddedInArcs(i, arcs) is False
+
+    def test_isEmbeddedInArc(self):
+        i = 5
+        arc = [4, 7, 8]
+        assert isEmbeddedInArc(i, arc) is True
+
+    def test_isEmbeddedInOtherArc(self):
+        arc = [4, 8, 20]
+        arcs = [[0, 1, 2], [4, 14, 20]]
+        assert isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=20) is True
+
+    def test_conflictsWithOtherArc(self):
+
+        cond1 = ([0, 6],	[[4, 8]])
+        cond2 = ([4, 8], [[0, 6]])
+        cond3 = ([4, 7, 9], [[6, 9]])
+        cond4 = ([6, 7, 9], [[6, 8, 10]])
+        assert conflictsWithOtherArc(cond1[0], cond1[1]) is True
+        assert conflictsWithOtherArc(cond2[0], cond2[1]) is True
+        assert conflictsWithOtherArc(cond3[0], cond3[1]) is True
+        assert conflictsWithOtherArc(cond4[0], cond4[1]) is True
+
+        a = ([0, 9, 10],	[[4, 8]])
+        b = ([4, 7, 9], [[4, 5, 6]])
+        assert conflictsWithOtherArc(a[0], a[1]) is False
+        assert conflictsWithOtherArc(b[0], b[1]) is False
+
+    def test_isIndependent(self):
+        n = note.Note('C4')
+        n.dependency = dependency.Dependency()
+        n.dependency.lefthead = None
+        n.dependency.righthead = None
+        n.dependency.dependents = []
+        assert isIndependent(n) is True
+
+    def test_areArcTerminals(self):
+        h = 4
+        i = 7
+        arcs = [[0, 1, 4], [5, 6, 7]]
+        assert areArcTerminals(h, i, arcs) is False
+        arcs = [[0, 1, 4], [4, 5, 6, 7]]
+        assert areArcTerminals(h, i, arcs) is True
+
+    def test_arcLength(self):
+        arc = [4, 5, 7, 10]
+        assert (arcLength(arc) == 6) is True
+# -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    pass
+#    import doctest
+#    doctest.testmod()
+    unittest.main()
 # -----------------------------------------------------------------------------
 # eof

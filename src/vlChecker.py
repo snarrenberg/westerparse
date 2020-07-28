@@ -97,12 +97,15 @@ or :py:func:'fourthSpeciesControlOfDissonance'.
 # NB: vlq parts and score Parts are numbered top to bottom.
 # NB: vPair parts are numbered bottom to top.
 
+import itertools
+import unittest
+
 from music21 import *
+
 import csd
 import context
 import theoryAnalyzerWP
 import theoryResultWP
-import itertools
 from utilities import *
 
 
@@ -314,7 +317,7 @@ def isDiatonicStep(n1, n2):
 
 def isUnison(n1, n2):
     """Input two notes with pitch and determine whether
-    the pair forms a diatonic step.  The test determines whether
+    the pair forms a unison.  The test determines whether
     the actual interval is in the list:
     'P1'.
     """
@@ -327,7 +330,7 @@ def isUnison(n1, n2):
 
 def isOctave(n1, n2):
     """Input two notes with pitch and determine whether
-    the pair forms a diatonic step.  The test determines whether
+    the pair forms an octave.  The test determines whether
     the actual interval is in the list:
     'P8', 'P15', 'P22'.
     """
@@ -1759,12 +1762,186 @@ def makeVLQsFromVertPair(vertPair, partNumPairs):
 # -----------------------------------------------------------------------------
 
 
+class Test(unittest.TestCase):
+
+    def runTest(self):
+        pass
+
+    def test_UnifiedIntervalTests(self):
+        G3 = note.Note('G3')
+        A3 = note.Note('A3')
+        B3 = note.Note('B3')
+        C4 = note.Note('C4')
+        D4 = note.Note('D4')
+        E4 = note.Note('E4')
+        F4 = note.Note('F4')
+        G4 = note.Note('G4')
+        A4 = note.Note('A4')
+        B4 = note.Note('B4')
+        C5 = note.Note('C5')
+        D5 = note.Note('D5')
+
+        assert isConsonanceAboveBass(G3, C4) is False
+        assert isConsonanceAboveBass(G3, D4) is True
+
+        assert isThirdOrSixthAboveBass(G3, B3) is True
+        assert isThirdOrSixthAboveBass(G3, C4) is False
+        assert isThirdOrSixthAboveBass(G3, E4) is True
+
+        assert isConsonanceBetweenUpper(F4, B4) is False
+        assert isConsonanceBetweenUpper(D4, B4) is True
+
+        assert isPermittedDissonanceBetweenUpper(F4, B4) is True
+        assert isPermittedDissonanceBetweenUpper(F4, G4) is False
+
+        assert isTriadicConsonance(F4, B4) is False
+        assert isTriadicConsonance(D4, B4) is True
+
+        assert isTriadicInterval(F4, G4) is False
+        assert isTriadicInterval(F4, B4) is True
+        assert isTriadicInterval(C4, C5) is True
+
+        assert isPerfectVerticalConsonance(C4, G4) is True
+        assert isPerfectVerticalConsonance(D4, G4) is False
+
+        assert isImperfectVerticalConsonance(D4, B4) is True
+        assert isImperfectVerticalConsonance(D4, A4) is False
+
+        assert isVerticalDissonance(F4, B4) is True
+        assert isVerticalDissonance(D4, B4) is False
+
+        assert isDiatonicStep(F4, G4) is True
+        assert isDiatonicStep(F4, A4) is False
+
+        assert isUnison(G4, G4) is True
+        assert isUnison(C4, C5) is False
+
+        assert isOctave(G4, G4) is False
+        assert isOctave(C4, C5) is True
+
+    def test_unifiedVLQTests(self):
+        G3 = note.Note('G3')
+        A3 = note.Note('A3')
+        B3 = note.Note('B3')
+        C4 = note.Note('C4')
+        D4 = note.Note('D4')
+        E4 = note.Note('E4')
+        F4 = note.Note('F4')
+        G4 = note.Note('G4')
+        A4 = note.Note('A4')
+        Bb4 = note.Note('Bb4')
+        B4 = note.Note('B4')
+        C5 = note.Note('C5')
+        D5 = note.Note('D5')
+    
+        a = voiceLeading.VoiceLeadingQuartet(C5, D5, A4, D5)
+        assert isSimilarUnison(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(D5, C5, D5, A4)
+        assert isSimilarFromUnison(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(C5, D5, E4, G4)
+        assert isSimilarFifth(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(B4, C5, G3, C4)
+        assert isSimilarOctave(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(C4, D4, C4, D4)
+        assert isParallelUnison(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(G4, A4, C4, D4)
+        assert isParallelFifth(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(C5, D5, C4, D4)
+        assert isParallelOctave(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(G4, D5, F4, A4)
+        assert isVoiceOverlap(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(G4, A4, E4, C5)
+        assert isVoiceCrossing(a) is True
+
+        a = voiceLeading.VoiceLeadingQuartet(B3, C4, G4, Bb4)
+        assert isCrossRelation(a) is True
+
+
+    def test_isOnbeat(self):
+        pass
+
+    def test_isSyncopated(self):
+        pass
+
+    def test_checkPartPairs(self):
+        pass
+
+    def test_checkFirstSpecies(self):
+        pass
+
+    def test_checkSecondSpecies(self):
+        pass
+
+    def test_checkThirdSpecies(self):
+        pass
+
+    def test_checkFourthSpecies(self):
+        pass
+
+    def test_checkConsecutions(self):
+        pass
+
+    def test_checkFinalStep(self):
+        pass
+
+    def test_checkControlOfDissonance(self):
+        pass
+
+    def test_fourthSpeciesControlOfDissonance(self):
+        pass
+
+    def test_forbiddenMotionsOntoBeatWithoutSyncope(self):
+        pass
+
+    def test_firstSpeciesForbiddenMotions(self):
+        pass
+
+    def test_secondSpeciesForbiddenMotions(self):
+        pass
+
+    def test_thirdSpeciesForbiddenMotions(self):
+        pass
+
+    def test_fourthSpeciesForbiddenMotions(self):
+        pass
+
+    def test_checkSecondSpeciesNonconsecutiveUnisons(self):
+        pass
+
+    def test_checkSecondSpeciesNonconsecutiveOctaves(self):
+        pass
+
+    def test_checkFourthLeapsInBass(self):
+        pass
+
+    def test_getAllPartNumPairs(self):
+        pass
+
+    def test_makeVLQFromVPair(self):
+        pass
+
+    def test_makeVLQsFromVertPair(self):
+        pass
+
+# -----------------------------------------------------------------------------
+
+
 if __name__ == '__main__':
     # self_test code
-    pass
+    unittest.main()
 
-    source = 'TestScoresXML/FirstSpecies10.musicxml'
-    cxt = context.makeGlobalContext(source)
-    checkCounterpoint(cxt, report=True)
+#    source = 'TestScoresXML/FirstSpecies10.musicxml'
+#    cxt = context.makeGlobalContext(source)
+#    checkCounterpoint(cxt, report=True)
+
+
 # -----------------------------------------------------------------------------
 # eof

@@ -42,6 +42,7 @@ the name of the key is tested for validity
 and the validated name is then
 tested using the same criteria as in key inference.
 """
+import unittest
 
 from music21 import *
 
@@ -500,8 +501,20 @@ def getPartKeyUsingHangingNotes(part):
 # -----------------------------------------------------------------------------
 
 
-if __name__ == "__main__":
+class Test(unittest.TestCase):
 
-    pass
+    def runTest(self):
+        pass
+
+    def test_(self):
+        pass
+
+# -----------------------------------------------------------------------------
+
+
+if __name__ == '__main__':
+    # self_test code
+    unittest.main()
+
 # -----------------------------------------------------------------------------
 # eof

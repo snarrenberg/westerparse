@@ -30,12 +30,15 @@ For more information on how to use these scripts, see
 :doc:`User's Guide to WesterParse <userguide>`.
 """
 
+import time
+import logging
+
 from music21 import *
+
 import parser
 import vlChecker
 from context import *
 from utilities import pairwise
-import time
 
 
 # -----------------------------------------------------------------------------
