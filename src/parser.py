@@ -1537,6 +1537,8 @@ class Parser():
                     buildError = ('Primary structure error: '
                                   'No candidate for S2 detected.')
                     buildErrors.append(buildError)
+                logger.debug(f'List of S2 candidates: '
+                             f'{[s.index for s in s2cands]}')
 
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
@@ -1544,6 +1546,9 @@ class Parser():
                 methods = 9
                 if buildErrors == []:
                     for cand in s2cands:
+                        logger.debug(f'Building parses for S2 candidate: '
+                                     f'{cand.index}, scale degree '
+                                     f'{cand.csd.degree}')
                         for m in range(0, methods):
                             self.buildParse(cand, lineType, parsecounter,
                                             buildErrors=[], method=m)
@@ -2067,6 +2072,7 @@ class Parser():
                 basicArcNodeCand = None
                 # Append S1 to basic arc.
                 basicArcCand.append(self.S1Index)
+                logger.debug(f'{basicArcCand}')
                 while n > 1:
                     shiftBuffer(self.stack, self.buffer)
                     n = len(self.buffer)
@@ -2077,14 +2083,20 @@ class Parser():
                     if isStepDown(j, h) and j.csd.value < self.S2Value:
                         # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
-                        if not isRepetition(j.index, self.notes, self.arcs):
-                            basicArcCand.append(j.index)
+                        logger.debug(f'considering scale degree {j.csd.degree}'
+                                     f' at index {j.index}')
+                        basicArcCand.append(j.index)
+# 2020-07-28 removed the repetition condition: too restrictive, see Fux Ionian
+#                        if not isLocalRepetition(j.index, self.notes, self.arcs):
+#                            basicArcCand.append(j.index)
+                        logger.debug(f'{basicArcCand}')
                     elif isStepDown(j, h) and j.csd.value == self.S2Value:
                         # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
                         if not isRepetition(j.index, self.notes, self.arcs):
                             basicArcCand.append(self.S2Index)
                             break
+                logger.debug(f'{basicArcCand}')
                 # The following procedure prefers to locate tonic triad S3
                 # nodes earlier rather than later.  May have to be overriden
                 # when harmonizing counterpoint with bass line.
@@ -2127,6 +2139,8 @@ class Parser():
                                                               arcs)
                                         j.rule.name = 'E1'
                                         basicArcCand[x+1] = b.index
+                        logger.debug(f'{basicArcCand}')
+                logger.debug(f'{basicArcCand}')
                 # Check to make sure the basic step motion is complete.
                 if len(basicArcCand) != (self.S2Value+1):
                     # TODO Report specific Note/Pitch of failed S2 candidate.
@@ -3380,39 +3394,11 @@ def isEmbeddedInArc(i, arc):
 
 
 def isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=-1):
-    """
-    Check whether an arc is embedded within another arc between two indices.
-    >>> arc = [4, 8, 20]
-    >>> arcs = [[0, 1, 2], [4, 14, 20]]
-    >>> print(isEmbeddedInOtherArc(arc, arcs, 0, 20))
-    True
-    """
-    isEmbedded = False
-    testArcs = []
-    for testArc in arcs:
-        if (testArc[0] >= startIndex
-                and testArc[-1] <= stopIndex
-                and testArc != arc):
-            testArcs.append(testArc)
-    for testArc in testArcs:
-        if arc[0] >= testArc[0] and arc[-1] <= testArc[-1]:
-            isEmbedded = True
-    return isEmbedded
 
 
 def conflictsWithOtherArc(arc, arcs):
     """
     Check whether an arc is in conflict with any existing arc.
-
-    conflicting pair examples: arc, extArc
-        cond1: [0, 6]	[4, 8]
-        cond2: [4, 8] [0, 6]
-        cond3: [4, 7, 9] [6, 9]
-        cond4: [6, 7, 9] [6, 8, 10]
-    >>> arc = [0, 6]  
-    >>> arcs = [[4, 8]]
-    >>> print(conflictsWithOtherArc(arc, arcs))
-    True
     """
     conflict = False
     for extArc in arcs:
@@ -3628,40 +3614,40 @@ class Test(unittest.TestCase):
     def test_isArcTerminal(self):
         i = 5
         arcs = [[0, 1, 2], [0, 3, 4], [6, 7, 8]]
-        assert isArcTerminal(i, arcs) is False
+        self.assertFalse(isArcTerminal(i, arcs))
         arcs = [[0, 1, 2], [0, 3, 4, 5], [6, 7, 8]]
-        assert isArcTerminal(i, arcs) is True
+        self.assertTrue(isArcTerminal(i, arcs))
 
     def test_isEmbeddedInArcs(self):
         i = 5
         arcs = [[0, 1, 2], [0, 3, 4], [6, 7, 8]]
-        assert isEmbeddedInArcs(i, arcs) is False
+        self.assertFalse(isEmbeddedInArcs(i, arcs))
 
     def test_isEmbeddedInArc(self):
         i = 5
         arc = [4, 7, 8]
-        assert isEmbeddedInArc(i, arc) is True
+        self.assertTrue(isEmbeddedInArc(i, arc))
 
     def test_isEmbeddedInOtherArc(self):
         arc = [4, 8, 20]
         arcs = [[0, 1, 2], [4, 14, 20]]
-        assert isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=20) is True
+        self.assertTrue(isEmbeddedInOtherArc(arc, arcs, 
+                                             startIndex=0, stopIndex=20))
 
     def test_conflictsWithOtherArc(self):
-
         cond1 = ([0, 6],	[[4, 8]])
         cond2 = ([4, 8], [[0, 6]])
         cond3 = ([4, 7, 9], [[6, 9]])
         cond4 = ([6, 7, 9], [[6, 8, 10]])
-        assert conflictsWithOtherArc(cond1[0], cond1[1]) is True
-        assert conflictsWithOtherArc(cond2[0], cond2[1]) is True
-        assert conflictsWithOtherArc(cond3[0], cond3[1]) is True
-        assert conflictsWithOtherArc(cond4[0], cond4[1]) is True
+        self.assertTrue(conflictsWithOtherArc(cond1[0], cond1[1]))
+        self.assertTrue(conflictsWithOtherArc(cond2[0], cond2[1]))
+        self.assertTrue(conflictsWithOtherArc(cond3[0], cond3[1]))
+        self.assertTrue(conflictsWithOtherArc(cond4[0], cond4[1]))
 
         a = ([0, 9, 10],	[[4, 8]])
         b = ([4, 7, 9], [[4, 5, 6]])
-        assert conflictsWithOtherArc(a[0], a[1]) is False
-        assert conflictsWithOtherArc(b[0], b[1]) is False
+        self.assertFalse(conflictsWithOtherArc(a[0], a[1]))
+        self.assertFalse(conflictsWithOtherArc(b[0], b[1]))
 
     def test_isIndependent(self):
         n = note.Note('C4')
@@ -3669,19 +3655,19 @@ class Test(unittest.TestCase):
         n.dependency.lefthead = None
         n.dependency.righthead = None
         n.dependency.dependents = []
-        assert isIndependent(n) is True
+        self.assertTrue(isIndependent(n))
 
     def test_areArcTerminals(self):
         h = 4
         i = 7
         arcs = [[0, 1, 4], [5, 6, 7]]
-        assert areArcTerminals(h, i, arcs) is False
+        self.assertFalse(areArcTerminals(h, i, arcs))
         arcs = [[0, 1, 4], [4, 5, 6, 7]]
-        assert areArcTerminals(h, i, arcs) is True
+        self.assertTrue(areArcTerminals(h, i, arcs))
 
     def test_arcLength(self):
         arc = [4, 5, 7, 10]
-        assert (arcLength(arc) == 6) is True
+        self.assertTrue((arcLength(arc) == 6))
 # -----------------------------------------------------------------------------
 
 if __name__ == '__main__':

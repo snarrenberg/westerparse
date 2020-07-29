@@ -495,8 +495,6 @@ def getPartKeyUsingHangingNotes(part):
         part.keyCandidatesFromHanging = None
     part.keyCandidatesFromHanging = keyCandidates
 
-    # TODO: REVISE THIS FUNCTION:
-    # Unlike the keyFinder, it needs to distinguish enharmonics
 
 # -----------------------------------------------------------------------------
 

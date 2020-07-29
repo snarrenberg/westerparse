@@ -1781,43 +1781,43 @@ class Test(unittest.TestCase):
         C5 = note.Note('C5')
         D5 = note.Note('D5')
 
-        assert isConsonanceAboveBass(G3, C4) is False
-        assert isConsonanceAboveBass(G3, D4) is True
+        self.assertFalse(isConsonanceAboveBass(G3, C4))
+        self.assertTrue(isConsonanceAboveBass(G3, D4))
 
-        assert isThirdOrSixthAboveBass(G3, B3) is True
-        assert isThirdOrSixthAboveBass(G3, C4) is False
-        assert isThirdOrSixthAboveBass(G3, E4) is True
+        self.assertTrue(isThirdOrSixthAboveBass(G3, B3))
+        self.assertFalse(isThirdOrSixthAboveBass(G3, C4))
+        self.assertTrue(isThirdOrSixthAboveBass(G3, E4))
 
-        assert isConsonanceBetweenUpper(F4, B4) is False
-        assert isConsonanceBetweenUpper(D4, B4) is True
+        self.assertFalse(isConsonanceBetweenUpper(F4, B4))
+        self.assertTrue(isConsonanceBetweenUpper(D4, B4))
 
-        assert isPermittedDissonanceBetweenUpper(F4, B4) is True
-        assert isPermittedDissonanceBetweenUpper(F4, G4) is False
+        self.assertTrue(isPermittedDissonanceBetweenUpper(F4, B4))
+        self.assertFalse(isPermittedDissonanceBetweenUpper(F4, G4))
 
-        assert isTriadicConsonance(F4, B4) is False
-        assert isTriadicConsonance(D4, B4) is True
+        self.assertFalse(isTriadicConsonance(F4, B4))
+        self.assertTrue(isTriadicConsonance(D4, B4))
 
-        assert isTriadicInterval(F4, G4) is False
-        assert isTriadicInterval(F4, B4) is True
-        assert isTriadicInterval(C4, C5) is True
+        self.assertFalse(isTriadicInterval(F4, G4))
+        self.assertTrue(isTriadicInterval(F4, B4))
+        self.assertTrue(isTriadicInterval(C4, C5))
 
-        assert isPerfectVerticalConsonance(C4, G4) is True
-        assert isPerfectVerticalConsonance(D4, G4) is False
+        self.assertTrue(isPerfectVerticalConsonance(C4, G4))
+        self.assertFalse(isPerfectVerticalConsonance(D4, G4))
 
-        assert isImperfectVerticalConsonance(D4, B4) is True
-        assert isImperfectVerticalConsonance(D4, A4) is False
+        self.assertTrue(isImperfectVerticalConsonance(D4, B4))
+        self.assertFalse(isImperfectVerticalConsonance(D4, A4))
 
-        assert isVerticalDissonance(F4, B4) is True
-        assert isVerticalDissonance(D4, B4) is False
+        self.assertTrue(isVerticalDissonance(F4, B4))
+        self.assertFalse(isVerticalDissonance(D4, B4))
 
-        assert isDiatonicStep(F4, G4) is True
-        assert isDiatonicStep(F4, A4) is False
+        self.assertTrue(isDiatonicStep(F4, G4))
+        self.assertFalse(isDiatonicStep(F4, A4))
 
-        assert isUnison(G4, G4) is True
-        assert isUnison(C4, C5) is False
+        self.assertTrue(isUnison(G4, G4))
+        self.assertFalse(isUnison(C4, C5))
 
-        assert isOctave(G4, G4) is False
-        assert isOctave(C4, C5) is True
+        self.assertFalse(isOctave(G4, G4))
+        self.assertTrue(isOctave(C4, C5))
 
     def test_unifiedVLQTests(self):
         G3 = note.Note('G3')
@@ -1835,35 +1835,34 @@ class Test(unittest.TestCase):
         D5 = note.Note('D5')
     
         a = voiceLeading.VoiceLeadingQuartet(C5, D5, A4, D5)
-        assert isSimilarUnison(a) is True
+        self.assertTrue(isSimilarUnison(a))
 
         a = voiceLeading.VoiceLeadingQuartet(D5, C5, D5, A4)
-        assert isSimilarFromUnison(a) is True
+        self.assertTrue(isSimilarFromUnison(a))
 
         a = voiceLeading.VoiceLeadingQuartet(C5, D5, E4, G4)
-        assert isSimilarFifth(a) is True
+        self.assertTrue(isSimilarFifth(a))
 
         a = voiceLeading.VoiceLeadingQuartet(B4, C5, G3, C4)
-        assert isSimilarOctave(a) is True
+        self.assertTrue(isSimilarOctave(a))
 
         a = voiceLeading.VoiceLeadingQuartet(C4, D4, C4, D4)
-        assert isParallelUnison(a) is True
+        self.assertTrue(isParallelUnison(a))
 
         a = voiceLeading.VoiceLeadingQuartet(G4, A4, C4, D4)
-        assert isParallelFifth(a) is True
+        self.assertTrue(isParallelFifth(a))
 
         a = voiceLeading.VoiceLeadingQuartet(C5, D5, C4, D4)
-        assert isParallelOctave(a) is True
+        self.assertTrue(isParallelOctave(a))
 
         a = voiceLeading.VoiceLeadingQuartet(G4, D5, F4, A4)
-        assert isVoiceOverlap(a) is True
+        self.assertTrue(isVoiceOverlap(a))
 
         a = voiceLeading.VoiceLeadingQuartet(G4, A4, E4, C5)
-        assert isVoiceCrossing(a) is True
+        self.assertTrue(isVoiceCrossing(a))
 
         a = voiceLeading.VoiceLeadingQuartet(B3, C4, G4, Bb4)
-        assert isCrossRelation(a) is True
-
+        self.assertTrue(isCrossRelation(a))
 
     def test_isOnbeat(self):
         pass

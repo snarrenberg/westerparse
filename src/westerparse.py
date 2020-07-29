@@ -32,6 +32,7 @@ For more information on how to use these scripts, see
 
 import time
 import logging
+import unittest
 
 from music21 import *
 
@@ -888,8 +889,6 @@ def assignParentheses(source, parentheses):
 if __name__ == "__main__":
     pass
 
-    source = '../TestScoresXML/Primary06.musicxml'
-    evaluateLines(source)
 
 # -----------------------------------------------------------------------------
 # eof
