@@ -163,6 +163,8 @@ class Parser():
             self.part.lineTypes = []
             self.inferLineTypes()
         # log result
+        logger.debug(f'PARSE DEBUG REPORT: Part {self.part.partNum+1} of '
+                     f'{len(self.context.parts)} parts')
         logger.debug(f'Line types: {self.part.lineTypes}')
 
         # STEP ONE: Operate the preliminary parser.
@@ -2113,7 +2115,6 @@ class Parser():
                 basicArcNodeCand = None
                 # Append S1 to basic arc.
                 basicArcCand.append(self.S1Index)
-                logger.debug(f'{basicArcCand}')
                 while n > 1:
                     shiftBuffer(self.stack, self.buffer)
                     n = len(self.buffer)
@@ -2124,20 +2125,16 @@ class Parser():
                     if isStepDown(j, h) and j.csd.value < self.S2Value:
                         # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
-                        logger.debug(f'considering scale degree {j.csd.degree}'
-                                     f' at index {j.index}')
                         basicArcCand.append(j.index)
 # 2020-07-28 removed the repetition condition: too restrictive, see Fux Ionian
 #                        if not isLocalRepetition(j.index, self.notes, self.arcs):
 #                            basicArcCand.append(j.index)
-                        logger.debug(f'{basicArcCand}')
                     elif isStepDown(j, h) and j.csd.value == self.S2Value:
                         # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
                         if not isRepetition(j.index, self.notes, self.arcs):
                             basicArcCand.append(self.S2Index)
                             break
-                logger.debug(f'{basicArcCand}')
                 # The following procedure prefers to locate tonic triad S3
                 # nodes earlier rather than later.  May have to be overriden
                 # when harmonizing counterpoint with bass line.
@@ -2180,8 +2177,6 @@ class Parser():
                                                               arcs)
                                         j.rule.name = 'E1'
                                         basicArcCand[x+1] = b.index
-                        logger.debug(f'{basicArcCand}')
-                logger.debug(f'{basicArcCand}')
                 # Check to make sure the basic step motion is complete.
                 if len(basicArcCand) != (self.S2Value+1):
                     # TODO Report specific Note/Pitch of failed S2 candidate.
@@ -2845,21 +2840,9 @@ class Parser():
                         spans.remove(span)
                         if rightEdge - (leftEdge+2) > 1:
                             spans.append((leftEdge+2, rightEdge))
-#                    else:
-#                        for y in range(leftEdge+1, rightEdge):
-#                            self.notes[y].rule.level = 88
 
             spancount = len(spans)
-#            while spancount > 0:
-#                logger.debug(f'processing spans: {spans}')
-#                for span in spans:
-#                    logger.debug(f'processing span: {span}')
-#                    processSpan(span, spans, dependentArcs)
-#                    spancount = len(spans)
             while spancount > 0:
-                logger.debug(f'processing spans: {spans}')
-#                for span in spans:
-                logger.debug(f'processing span: {spans[0]}')
                 processSpan(spans[0], spans, dependentArcs)
                 spancount = len(spans)
                 spans.sort()

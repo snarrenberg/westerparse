@@ -1,3 +1,4 @@
+PARSE DEBUG REPORT: Part 1 of 2 parts
 Line types: ['generic', 'primary']
 Parser state: 0
 	Heads: [0]
@@ -29,12 +30,6 @@ Parser state: 6
 	Arcs:  [[1, 2, 3], [4, 5, 6]]
 Preliminary Arcs: [[1, 2, 3], [4, 5, 6]]
 Beginning parse: parse0_GL
-processing spans: [(0, 6)]
-processing span: (0, 6)
-processing spans: [(0, 3), (3, 6)]
-processing span: (0, 3)
-processing spans: [(3, 6)]
-processing span: (3, 6)
 Label: parse0_GL
 	Basic: [0, 6]
 	Arcs:  [[1, 2, 3], [4, 5, 6], [0, 3]]
@@ -48,10 +43,6 @@ Beginning parse: parse1_PL
 Method 1 for creating basic step motion.
 	Basic arc: [1, 5, 6]
 	Arcs:      [[1, 2, 3], [1, 4], [1, 5, 6]]
-processing spans: [(1, 5)]
-processing span: (1, 5)
-processing spans: [(1, 4)]
-processing span: (1, 4)
 Label: parse1_PL
 	Basic: [1, 5, 6]
 	Arcs:  [[1, 2, 3], [1, 4], [1, 5, 6]]
@@ -66,10 +57,6 @@ Beginning parse: parse6_PL
 Method 6 for creating basic step motion.
 	Basic arc: [1, 2, 6]
 	Arcs:      [[1, 2, 6], [4, 5, 6]]
-processing spans: [(2, 6)]
-processing span: (2, 6)
-processing spans: [(2, 4)]
-processing span: (2, 4)
 Label: parse6_PL
 	Basic: [1, 2, 6]
 	Arcs:  [[1, 2, 6], [4, 5, 6]]
@@ -78,18 +65,9 @@ Label: parse6_PL
 	      	   3   1   2   4   3   4   0
 Beginning parse: parse7_PL
 Beginning parse: parse8_PL
-[6]
-considering scale degree 2 at index 5
-[6, 5]
-[6, 5, 1]
-[6, 5, 1]
 Method 8 for creating basic step motion.
 	Basic arc: [1, 5, 6]
 	Arcs:      [[1, 2, 3], [1, 4], [1, 5, 6]]
-processing spans: [(1, 5)]
-processing span: (1, 5)
-processing spans: [(1, 4)]
-processing span: (1, 4)
 Label: parse8_PL
 	Basic: [1, 5, 6]
 	Arcs:  [[1, 2, 3], [1, 4], [1, 5, 6]]
@@ -101,8 +79,6 @@ Beginning parse: parse9_PL
 Method 0 for creating basic step motion.
 	Basic arc: [4, 5, 6]
 	Arcs:      [[1, 2, 3], [4, 5, 6]]
-processing spans: [(0, 4)]
-processing span: (0, 4)
 Label: parse9_PL
 	Basic: [4, 5, 6]
 	Arcs:  [[1, 2, 3], [4, 5, 6]]
@@ -118,8 +94,6 @@ Beginning parse: parse15_PL
 Method 6 for creating basic step motion.
 	Basic arc: [4, 5, 6]
 	Arcs:      [[1, 2, 3], [4, 5, 6]]
-processing spans: [(0, 4)]
-processing span: (0, 4)
 Label: parse15_PL
 	Basic: [4, 5, 6]
 	Arcs:  [[1, 2, 3], [4, 5, 6]]
@@ -128,22 +102,16 @@ Label: parse15_PL
 	      	   3   4   6   5   1   2   0
 Beginning parse: parse16_PL
 Beginning parse: parse17_PL
-[6]
-considering scale degree 2 at index 5
-[6, 5]
-[6, 5, 4]
-[6, 5, 4]
 Method 8 for creating basic step motion.
 	Basic arc: [4, 5, 6]
 	Arcs:      [[1, 2, 3], [4, 5, 6]]
-processing spans: [(0, 4)]
-processing span: (0, 4)
 Label: parse17_PL
 	Basic: [4, 5, 6]
 	Arcs:  [[1, 2, 3], [4, 5, 6]]
 	Rules:	   0   1   2   3   4   5   6
 	      	  E3  E3  E4  E3  S2  S3  S1
 	      	   3   4   6   5   1   2   0
+PARSE DEBUG REPORT: Part 2 of 2 parts
 Line types: ['generic', 'bass', 'primary']
 Parser state: 0
 	Heads: [0]
@@ -367,34 +335,6 @@ Parser state: 24--after parsing into next local span--
 	Arcs:  [[0, 1, 2], [2, 3, 4], [5, 6, 7], [4, 8], [4, 8], [8, 9, 10, 11], [2, 11, 12], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [20, 21, 22], [19, 20, 24]]
 Preliminary Arcs: [[0, 1, 2], [2, 3, 4], [5, 6, 7], [4, 8], [4, 8], [8, 9, 10, 11], [2, 11, 12], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [20, 21, 22], [19, 20, 24]]
 Beginning parse: parse0_GL
-processing spans: [(0, 24)]
-processing span: (0, 24)
-processing spans: [(0, 19), (19, 24)]
-processing span: (0, 19)
-processing spans: [(2, 19), (19, 24)]
-processing span: (2, 19)
-processing spans: [(2, 11), (12, 19), (19, 24)]
-processing span: (2, 11)
-processing spans: [(4, 11), (12, 19), (19, 24)]
-processing span: (4, 11)
-processing spans: [(4, 8), (8, 11), (12, 19), (19, 24)]
-processing span: (4, 8)
-processing spans: [(4, 8), (8, 11), (12, 19), (19, 24)]
-processing span: (4, 8)
-processing spans: [(8, 11), (12, 19), (19, 24)]
-processing span: (8, 11)
-processing spans: [(12, 19), (19, 24)]
-processing span: (12, 19)
-processing spans: [(14, 19), (19, 24)]
-processing span: (14, 19)
-processing spans: [(16, 19), (19, 24)]
-processing span: (16, 19)
-processing spans: [(19, 24)]
-processing span: (19, 24)
-processing spans: [(20, 24)]
-processing span: (20, 24)
-processing spans: [(22, 24)]
-processing span: (22, 24)
 Label: parse0_GL
 	Basic: [0, 24]
 	Arcs:  [[0, 1, 2], [2, 3, 4], [2, 11, 12], [4, 8], [4, 8], [5, 6, 7], [8, 9, 10, 11], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [19, 20, 24], [20, 21, 22], [0, 19]]
@@ -404,32 +344,6 @@ Label: parse0_GL
 List of S3 candidates: [14]
 Building parses for S3 candidate: 14, scale degree 5
 Beginning parse: parse0_BL
-processing spans: [(0, 14), (14, 24)]
-processing span: (0, 14)
-processing spans: [(2, 14), (14, 24)]
-processing span: (2, 14)
-processing spans: [(2, 11), (12, 14), (14, 24)]
-processing span: (2, 11)
-processing spans: [(4, 11), (12, 14), (14, 24)]
-processing span: (4, 11)
-processing spans: [(4, 8), (8, 11), (12, 14), (14, 24)]
-processing span: (4, 8)
-processing spans: [(4, 8), (8, 11), (12, 14), (14, 24)]
-processing span: (4, 8)
-processing spans: [(8, 11), (12, 14), (14, 24)]
-processing span: (8, 11)
-processing spans: [(12, 14), (14, 24)]
-processing span: (12, 14)
-processing spans: [(14, 24)]
-processing span: (14, 24)
-processing spans: [(16, 24)]
-processing span: (16, 24)
-processing spans: [(18, 24)]
-processing span: (18, 24)
-processing spans: [(20, 24)]
-processing span: (20, 24)
-processing spans: [(22, 24)]
-processing span: (22, 24)
 Label: parse0_BL
 	Basic: [0, 14, 24]
 	Arcs:  [[0, 1, 2], [2, 3, 4], [2, 11, 12], [4, 8], [4, 8], [5, 6, 7], [8, 9, 10, 11], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [19, 20, 24], [20, 21, 22], [0, 14, 24]]
@@ -449,30 +363,6 @@ Beginning parse: parse7_PL
 Method 7 for creating basic step motion.
 	Basic arc: [2, 11, 24]
 	Arcs:      [[0, 1, 2], [2, 3, 4], [2, 11, 24], [4, 8], [4, 8], [5, 6, 7], [8, 9, 10, 11], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [19, 20, 24], [20, 21, 22]]
-processing spans: [(0, 2), (2, 11), (11, 24)]
-processing span: (0, 2)
-processing spans: [(2, 11), (11, 24)]
-processing span: (2, 11)
-processing spans: [(4, 11), (11, 24)]
-processing span: (4, 11)
-processing spans: [(4, 8), (8, 11), (11, 24)]
-processing span: (4, 8)
-processing spans: [(4, 8), (8, 11), (11, 24)]
-processing span: (4, 8)
-processing spans: [(8, 11), (11, 24)]
-processing span: (8, 11)
-processing spans: [(11, 24)]
-processing span: (11, 24)
-processing spans: [(11, 19), (20, 24)]
-processing span: (11, 19)
-processing spans: [(14, 19), (20, 24)]
-processing span: (14, 19)
-processing spans: [(16, 19), (20, 24)]
-processing span: (16, 19)
-processing spans: [(20, 24)]
-processing span: (20, 24)
-processing spans: [(22, 24)]
-processing span: (22, 24)
 Label: parse7_PL
 	Basic: [2, 11, 24]
 	Arcs:  [[0, 1, 2], [2, 3, 4], [2, 11, 24], [4, 8], [4, 8], [5, 6, 7], [8, 9, 10, 11], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [19, 20, 24], [20, 21, 22]]
@@ -480,38 +370,9 @@ Label: parse7_PL
 	      	  E3  E4  S2  E4  E3  E3  E2  E1  E1  E4  E4  S3  E3  E4  E3  E2  E1  E2  E1  E3  E2  E4  E3  E3  S1
 	      	   3   4   1   4   3   5   7   6   4   5   5   2   4   6   5   7   6   8   7   3   4   6   5   6   0
 Beginning parse: parse8_PL
-[24]
-considering scale degree 2 at index 11
-[24, 11]
-[24, 11, 2]
-[24, 11, 2]
 Method 8 for creating basic step motion.
 	Basic arc: [2, 11, 24]
 	Arcs:      [[0, 1, 2], [2, 3, 4], [4, 8], [4, 8], [5, 6, 7], [8, 9, 10, 11], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [19, 20, 24], [20, 21, 22], [2, 11, 24]]
-processing spans: [(0, 2), (2, 11), (11, 24)]
-processing span: (0, 2)
-processing spans: [(2, 11), (11, 24)]
-processing span: (2, 11)
-processing spans: [(4, 11), (11, 24)]
-processing span: (4, 11)
-processing spans: [(4, 8), (8, 11), (11, 24)]
-processing span: (4, 8)
-processing spans: [(4, 8), (8, 11), (11, 24)]
-processing span: (4, 8)
-processing spans: [(8, 11), (11, 24)]
-processing span: (8, 11)
-processing spans: [(11, 24)]
-processing span: (11, 24)
-processing spans: [(11, 19), (20, 24)]
-processing span: (11, 19)
-processing spans: [(14, 19), (20, 24)]
-processing span: (14, 19)
-processing spans: [(16, 19), (20, 24)]
-processing span: (16, 19)
-processing spans: [(20, 24)]
-processing span: (20, 24)
-processing spans: [(22, 24)]
-processing span: (22, 24)
 Label: parse8_PL
 	Basic: [2, 11, 24]
 	Arcs:  [[0, 1, 2], [2, 3, 4], [4, 8], [4, 8], [5, 6, 7], [8, 9, 10, 11], [12, 13, 14], [14, 15, 16], [14, 16], [16, 17, 18], [19, 20, 24], [20, 21, 22], [2, 11, 24]]
@@ -528,16 +389,3 @@ Beginning parse: parse14_PL
 Beginning parse: parse15_PL
 Beginning parse: parse16_PL
 Beginning parse: parse17_PL
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
-[24]
