@@ -57,7 +57,7 @@ import dependency
 
 # variables set by user
 selectPreferredParses = True
-getStructuralLevels = True
+getStructuralLevels = False
 
 # for third species
 localNeighborsOnly = False
@@ -230,6 +230,7 @@ class Parser():
         # Initialize the lists of open heads and transitions
         openHeads = [0]
         openTransitions = []
+#        openLocals = []
         # Set the global harmonic referents
         harmonyStart = [p for p in self.part.tonicTriad.pitches]
         harmonyEnd = [p for p in self.part.tonicTriad.pitches]
@@ -350,7 +351,8 @@ class Parser():
                     if addLocalRepetitions:
                         firstHead = l_openHeads[0]
                         for h in l_openHeads[1:]:
-                            if self.notes[h].csd.value == self.notes[firstHead].csd.value:
+                            if (self.notes[h].csd.value
+                               == self.notes[firstHead].csd.value):
                                 self.notes[h].dependency.lefthead = firstHead
                                 self.notes[firstHead].dependency.dependents.append(h)
                                 arcGenerateRepetition(h, self.part,
@@ -491,6 +493,7 @@ class Parser():
                     j = g_buffer[0]
                     logger.debug(f'Parser state: {j.index}'
                                  '--before parsing local heads in global context--'
+                                 f'--transition: {i.index}-{j.index}--'
                                  f'\n\tHeads: {openHeads}'
                                  f'\n\tTrans: {openTransitions}'
                                  f'\n\tArcs:  {arcs}')
@@ -664,8 +667,8 @@ class Parser():
         """
         case1 = [(isHarmonic(i, harmonyStart)
                   and isHarmonic(j, harmonyStart)),
-                 (isHarmonic(i, harmonyStart)
-                  and isHarmonic(j, harmonyStart))]
+                 (isLinearConsonance(i, j)
+                  or isLinearUnison(i, j))]
         case2 = [self.part.species in ['third', 'fifth'],
                  not isHarmonic(i, harmonyStart),
                  isHarmonic(j, harmonyEnd),
@@ -703,7 +706,7 @@ class Parser():
                   not isDiatonicStep(i, j)]
         case12 = [not isSemiSimpleInterval(i, j)]
 
-        # CASE ONE: Both pitches are harmonic.
+        # CASE ONE: Both pitches are harmonic and consonant.
         if all(case1):
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
@@ -771,12 +774,24 @@ class Parser():
                               h.csd.direction
                               in ['ascending', 'bidirectional'],
                               j.csd.direction
-                              in ['ascending', 'bidirectional']]
+                              in ['ascending', 'bidirectional'],
+                              h.dependency.dependents == []]
                     rules2 = [isStepDown(h, j),
                               h.csd.direction
                               in ['descending', 'bidirectional'],
                               j.csd.direction
-                              in ['descending', 'bidirectional']]
+                              in ['descending', 'bidirectional'],
+                              h.dependency.dependents == []]
+                    logger.debug(f'Trying to connect to transition {t} '
+                                 'which has the following dependency: '
+                                 f'{h.dependency.lefthead}'
+                                 f'{h.dependency.righthead}'
+                                 f'{h.dependency.dependents}'
+                                 f'{rules1}, {rules2}'
+                                 )
+                    # TODO The rules need to take into account where h is
+                    # coming from ... WP021 ... and in whether it must continue
+                    # in a particular direction or can be diverted back
                     if all(rules1) or all(rules2):
                         j.dependency.lefthead = h.dependency.lefthead
                         j.dependency.dependents.append(h.index)  # YES?
@@ -1133,7 +1148,9 @@ class Parser():
 
         # CASE SIX: Skip from nonharmonic to harmonic.
         elif all(case6):
+            openLocals = []
             if i.dependency.lefthead is None:
+                # look for a lefthead
                 for t in reversed(openHeads):
                     h = self.notes[t]
                     if isDiatonicStep(h, i):
@@ -1143,6 +1160,25 @@ class Parser():
                             openTransitions.append(i.index)
                         openHeads.append(j.index)
                         break
+                # if third species and no lefthead was found,
+                # make it a local insertion and try to parse j
+                # ADDED: 2020-07-29 NEEDS TESTING
+                if (i.dependency.lefthead is None
+                   and self.part.species in ['third', 'fifth']):
+                    openLocals.append(i.index)
+                    if i.index in openTransitions:
+                        openTransitions.remove(i.index)
+                    if openTransitions:
+                        for t in reversed(openTransitions):
+                            h = self.notes[t]
+                            if isDirectedStep(h, j):
+                                h.dependency.righthead = j.index
+                                j.dependency.dependents.append(t)
+                                openTransitions.remove(t)
+                                openHeads.append(j.index)
+                                arcGenerateTransition(t, part, arcs)
+                            
+                    
             else:
                 openHeads.append(j.index)
 
@@ -1376,7 +1412,7 @@ class Parser():
 
         # CASE EIGHT: Skip from nonharmonic to nonharmonic.
         elif all(case8):
-            openNonTonicTriadPitches = []
+            openLocals = []
             if self.part.species not in ['third', 'fifth']:
                 if i.index == j.index-1:
                     error = ('Nongenerable succession between '
@@ -1391,9 +1427,9 @@ class Parser():
                     self.errors.append(error)
             elif self.part.species in ['third', 'fifth']:
                 # TODO Interpret local non-tonic insertions.
-                if i.index not in openNonTonicTriadPitches:
-                    openNonTonicTriadPitches.append(i.index)
-                openNonTonicTriadPitches.append(j.index)
+                if i.index not in openLocals:
+                    openLocals.append(i.index)
+                openLocals.append(j.index)
                 if openHeads:
                     # TODO Figure out how to connect at least one of
                     # these open nttps to a global head.
@@ -1507,9 +1543,14 @@ class Parser():
                     buildError = ('Bass structure error: '
                                   'No candidate for S3 detected.')
                     buildErrors.append(buildError)
+                logger.debug(f'List of S3 candidates: '
+                             f'{[s.index for s in s3cands]}')
 
                 if buildErrors == []:
                     for cand in s3cands:
+                        logger.debug(f'Building parses for S3 candidate: '
+                                     f'{cand.index}, scale degree '
+                                     f'{cand.csd.degree}')
                         self.buildParse(cand, lineType,
                                         parsecounter, buildErrors=[])
                         parsecounter += 1
@@ -2276,14 +2317,18 @@ class Parser():
                 b = self.notes[arc1[-1]]
                 # Look for one existing basic step motion arc
                 # that starts from S2
-                if arc1[0] == self.S2Index and arc1[-1] == self.S1Index:
+                if (arc1[0] == self.S2Index
+                   and arc1[-1] == self.S1Index
+                   and isPassingArc(arc1, self.notes)):
                     for elem in arc1[1:-1]:
                         self.notes[elem].rule.name = 'S3'
                     self.arcBasic = arc1
                     break
                 # Look for an existing basic step motion arc
                 # that can be attached to S2.
-                elif a.csd.value == self.S2Value and b.index == self.S1Index:
+                elif (a.csd.value == self.S2Value
+                      and b.index == self.S1Index
+                      and isPassingArc(arc1, self.notes)):
                     arc1[0] = self.S2Index
                     a.dependency.lefthead = self.S2Index
                     arcGenerateRepetition(a.index, self.notes,
@@ -2601,8 +2646,10 @@ class Parser():
             # Create a list to hold all the fillable spans.
             spans = []
 
-            # Add spans before and after basic arc, if they exist
-            # (outer edges will not have been generated yet).
+            # Add spans before and after basic arc, if they exist.
+            # (Outer edges will not have been generated yet.)
+            # (In the current implementation, there will never be
+            # a span after the basic arc, but Westergaard allows it.)
             if self.arcBasic[0] != rootSpan[0]:
                 span = (0, self.arcBasic[0])
                 if length(span) > 1:
@@ -2619,15 +2666,15 @@ class Parser():
             # to the intervallic constraints:
             def isPermissibleConsonance(x, y, z):
                 # Checks the insertion of y between x and z indexes.
+                insertion = self.notes[y]
                 left = self.notes[x]
                 right = self.notes[z]
-                insertion = self.notes[y]
-                rules = [(isLinearConsonance(left, insertion) or
-                          isLinearUnison(left, insertion) or
-                          isDiatonicStep(left, insertion)),
-                         (isLinearConsonance(insertion, right) or
-                          isLinearUnison(insertion, right) or
-                          isDiatonicStep(insertion, right))]
+                rules = [(isLinearConsonance(left, insertion)
+                          or isLinearUnison(left, insertion)
+                          or isDiatonicStep(left, insertion)),
+                         (isLinearConsonance(insertion, right)
+                          or isLinearUnison(insertion, right)
+                          or isDiatonicStep(insertion, right))]
                 if all(rules):
                     return True
                 else:
@@ -2655,70 +2702,72 @@ class Parser():
                 # (1) Search for possible branches across or within the span.
                 # A dependent arc can fit into a span in one of four ways:
                 #     (1) crossBranches connect leftEdge to rightEdge.
-                #     (2) leftBranches connect onto the rightEdge
-                #         (branch to the left)
-                #     (3) rightBranches connect onto the leftEdge
+                #     (2) rightBranches connect onto the leftEdge
                 #         (branch to the right)
+                #     (3) leftBranches connect onto the rightEdge
+                #         (branch to the left)
                 #     (4) interBranches do not connect to either edge
                 # Find the best and longest arc available in a span
-                #     preferences between categories:
+                #     preferences among categories:
                 #          cross > right > left > inter
                 #     preferences within category:
                 #          longer > shorter
                 crossBranch = None
-                leftBranch = None
                 rightBranch = None
+                leftBranch = None
                 interBranch = None
                 # First look for cross branch connection across span.
                 for arc in dependentArcs:
                     if arc[0] == leftEdge and arc[-1] == rightEdge:
                         crossBranch = arc
                 # Otherwise look for right or left branches to generated edges.
-                for arc in dependentArcs:
-                    # Look for right branches if the left edge
-                    # has been generated.
-                    if leftEdgeLevel and not crossBranch:
+                # Look for right branches if the left edge
+                # has been generated.
+                if leftEdgeLevel and not crossBranch:
+                    for arc in dependentArcs:
                         # Look for a right branch.
-                        if arc[0] == leftEdge and rightBranch is None:
-                            if isPermissibleConsonance(leftEdge, arc[-1],
-                                                       rightEdge):
-                                rightBranch = arc
-                        # Look to see if there's a longer branch available.
-                        if arc[0] == leftEdge and rightBranch:
-                            if length(arc) > length(rightBranch):
-                                if isPermissibleConsonance(leftEdge, arc[-1],
-                                                           rightEdge):
-                                    rightBranch = arc
+                        if (arc[0] == leftEdge
+                           and rightBranch is None
+                           and isPermissibleConsonance(leftEdge, arc[-1],
+                                                       rightEdge)):
+                            rightBranch = arc
+                        # See if there's a longer right branch available.
+                        if (arc[0] == leftEdge
+                           and rightBranch
+                           and length(arc) > length(rightBranch)
+                           and isPermissibleConsonance(leftEdge, arc[-1],
+                                                       rightEdge)):
+                            rightBranch = arc
                 # Look for left branches if the right edge has been
                 # generated and there is no right branch.
-                for arc in dependentArcs:
-                    if rightEdgeLevel and not crossBranch and not rightBranch:
-                        if arc[-1] == rightEdge and leftBranch is None:
-                            if isPermissibleConsonance(leftEdge, arc[0],
-                                                       rightEdge):
-                                leftBranch = arc
+                if rightEdgeLevel and not crossBranch and not rightBranch:
+                    for arc in dependentArcs:
+                        if (arc[-1] == rightEdge
+                           and leftBranch is None
+                           and isPermissibleConsonance(leftEdge, arc[0],
+                                                       rightEdge)):
                             leftBranch = arc
-                        # Look to see if there's a longer branch available.
-                        if arc[-1] == rightEdge and leftBranch:
-                            if length(arc) > length(leftBranch):
-                                if isPermissibleConsonance(leftEdge, arc[0],
-                                                           rightEdge):
-                                    leftBranch = arc
+                        # See if there's a longer left branch available.
+                        if (arc[-1] == rightEdge
+                           and leftBranch
+                           and length(arc) > length(leftBranch)
+                           and isPermissibleConsonance(leftEdge, arc[0],
+                                                       rightEdge)):
+                            leftBranch = arc
                 # Look for inter branch if no cross branches
                 # or left or right branches.
-                for arc in dependentArcs:
-                    if not rightBranch and not leftBranch and not crossBranch:
-                        for arc in dependentArcs:
-                            if (arc[0] > leftEdge and
-                               arc[-1] < rightEdge and
-                               interBranch is None):
-                                interBranch = arc
-                            # Look to see if there's a longer branch available.
-                            if (arc[0] > leftEdge and
-                               arc[-1] < rightEdge and
-                               interBranch):
-                                if length(arc) > length(interBranch):
-                                    interBranch = arc
+                if not rightBranch and not leftBranch and not crossBranch:
+                    for arc in dependentArcs:
+                        if (arc[0] > leftEdge
+                           and arc[-1] < rightEdge
+                           and interBranch is None):
+                            interBranch = arc
+                        # See if there's a longer inter branch available.
+                        if (arc[0] > leftEdge
+                           and arc[-1] < rightEdge
+                           and interBranch
+                           and length(arc) > length(interBranch)):
+                            interBranch = arc
 
                 # (2) Process any branches that have been found in the span:
                 #     (a) Remove the branch from the list of dependent arcs.
@@ -2794,10 +2843,14 @@ class Parser():
                         spans.remove(span)
                         if rightEdge - (leftEdge+2) > 1:
                             spans.append((leftEdge+2, rightEdge))
+#                    else:
+#                        for y in range(leftEdge+1, rightEdge):
+#                            self.notes[y].rule.level = 88
 
             spancount = len(spans)
             while spancount > 0:
                 for span in spans:
+                    logger.debug(f'processing span: {span}')
                     processSpan(span, spans, dependentArcs)
                     spancount = len(spans)
 
@@ -3119,7 +3172,7 @@ def isHarmonic(pitchTarget, harmonicPitches):
 def isLinearConsonance(n1, n2):
     # Input two notes with pitch.
     lin_int = interval.Interval(n1, n2)
-    if lin_int.name in {"m3", "M3", "P4", "P5", "m6", "M6", "P8"}:
+    if lin_int.name in {'m3', 'M3', 'P4', 'P5', 'm6', 'M6', 'P8'}:
         return True
     else:
         return False
@@ -3394,6 +3447,20 @@ def isEmbeddedInArc(i, arc):
 
 
 def isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=-1):
+    """
+    Check whether an arc is embedded within another arc between two indices.
+    """
+    isEmbedded = False
+    testArcs = []
+    for testArc in arcs:
+        if (testArc[0] >= startIndex
+                and testArc[-1] <= stopIndex
+                and testArc != arc):
+            testArcs.append(testArc)
+    for testArc in testArcs:
+        if arc[0] >= testArc[0] and arc[-1] <= testArc[-1]:
+            isEmbedded = True
+    return isEmbedded
 
 
 def conflictsWithOtherArc(arc, arcs):
@@ -3671,8 +3738,7 @@ class Test(unittest.TestCase):
 # -----------------------------------------------------------------------------
 
 if __name__ == '__main__':
-#    import doctest
-#    doctest.testmod()
     unittest.main()
+
 # -----------------------------------------------------------------------------
 # eof

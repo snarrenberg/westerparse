@@ -1932,15 +1932,8 @@ class Test(unittest.TestCase):
 
 # -----------------------------------------------------------------------------
 
-
 if __name__ == '__main__':
-    # self_test code
     unittest.main()
-
-#    source = 'TestScoresXML/FirstSpecies10.musicxml'
-#    cxt = context.makeGlobalContext(source)
-#    checkCounterpoint(cxt, report=True)
-
 
 # -----------------------------------------------------------------------------
 # eof
