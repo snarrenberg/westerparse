@@ -57,7 +57,7 @@ import dependency
 
 # variables set by user
 selectPreferredParses = True
-getStructuralLevels = False
+getStructuralLevels = True
 
 # for third species
 localNeighborsOnly = False
@@ -2723,7 +2723,7 @@ class Parser():
                 # Otherwise look for right or left branches to generated edges.
                 # Look for right branches if the left edge
                 # has been generated.
-                if leftEdgeLevel and not crossBranch:
+                if (leftEdgeLevel is not None and crossBranch is None):
                     for arc in dependentArcs:
                         # Look for a right branch.
                         if (arc[0] == leftEdge
@@ -2740,7 +2740,8 @@ class Parser():
                             rightBranch = arc
                 # Look for left branches if the right edge has been
                 # generated and there is no right branch.
-                if rightEdgeLevel and not crossBranch and not rightBranch:
+                if (rightEdgeLevel is not None and crossBranch is None
+                   and rightBranch is None):
                     for arc in dependentArcs:
                         if (arc[-1] == rightEdge
                            and leftBranch is None
@@ -2756,7 +2757,8 @@ class Parser():
                             leftBranch = arc
                 # Look for inter branch if no cross branches
                 # or left or right branches.
-                if not rightBranch and not leftBranch and not crossBranch:
+                if (rightBranch is None and leftBranch is None
+                   and crossBranch is None):
                     for arc in dependentArcs:
                         if (arc[0] > leftEdge
                            and arc[-1] < rightEdge
@@ -2848,11 +2850,19 @@ class Parser():
 #                            self.notes[y].rule.level = 88
 
             spancount = len(spans)
+#            while spancount > 0:
+#                logger.debug(f'processing spans: {spans}')
+#                for span in spans:
+#                    logger.debug(f'processing span: {span}')
+#                    processSpan(span, spans, dependentArcs)
+#                    spancount = len(spans)
             while spancount > 0:
-                for span in spans:
-                    logger.debug(f'processing span: {span}')
-                    processSpan(span, spans, dependentArcs)
-                    spancount = len(spans)
+                logger.debug(f'processing spans: {spans}')
+#                for span in spans:
+                logger.debug(f'processing span: {spans[0]}')
+                processSpan(spans[0], spans, dependentArcs)
+                spancount = len(spans)
+                spans.sort()
 
             generatedNotes = [(n.index, n.rule.name, n.rule.level)
                               for n in self.notes
