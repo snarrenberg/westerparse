@@ -189,7 +189,7 @@ class GlobalContext(Context):
         # in parsing third species.
         thirdSpeciesPart = False
         for part in self.parts:
-            if part.species == 'third':
+            if part.species in {'third', 'fifth'}:
                 thirdSpeciesPart = True
                 break
         if thirdSpeciesPart:

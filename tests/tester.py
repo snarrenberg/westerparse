@@ -70,7 +70,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
-    source = 'TestScoresXML/FourthSpecies20.musicxml'
+#    source = 'TestScoresXML/FourthSpecies20.musicxml'
 #    source = 'TestScoresXML/FourthSpecies21.musicxml'
 #    source = 'TestScoresXML/FourthSpecies22.musicxml'
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
 #    source = 'TestScoresXML/BachKunst.musicxml'
 #    source = 'TestScoresXML/WTC_I,_Fugue_in_C_Subject.musicxml'
-#    source = 'TestScoresXML/WTC_I,_Fugue_in_d_sharp,_subject.musicxml' # fails K-S key assignment
+    source = 'TestScoresXML/WTC_I,_Fugue_in_d_sharp,_subject.musicxml' # fails K-S key assignment
 #    source = 'TestScoresXML/WTC_I,_Fugue_in_F_sharp,_Subject.musicxml'
 
 #    source = 'TestScoresXML/BeethovenOdeToJoy4thPhrase.musicxml'
