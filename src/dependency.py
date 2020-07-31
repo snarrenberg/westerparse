@@ -37,7 +37,9 @@ class DependencyException(Exception):
 
 class Dependency():
     """An object for storing the dependencies of a note in a line"""
-    validDirections = ('ascending', 'descending', None)
+    # TODO change directions to music21-compatible format: [-1, 0, 1]
+    # TODO retain None as a possible direction?
+    validDirections = {'ascending', 'descending', None}
 
     def __init__(self, *args, **kwargs):
         # dependencies default to None

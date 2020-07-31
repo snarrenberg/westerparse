@@ -1,0 +1,437 @@
+PARSE DEBUG REPORT: Part 1 of 2 parts
+Line types: ['generic', 'bass', 'primary']
+Parser state: 0
+	Heads: [0]
+	Trans: []
+	Arcs:  []
+Parser state: 1
+	Heads: [0, 1]
+	Trans: []
+	Arcs:  []
+Parser state: 2
+	Heads: [0, 1]
+	Trans: [2]
+	Arcs:  []
+Parser state: 3
+	Heads: [0, 1, 3]
+	Trans: []
+	Arcs:  [[1, 2, 3]]
+Parser state: 4
+	Heads: [0, 1]
+	Trans: [4]
+	Arcs:  [[1, 2, 3]]
+Parser state: 5
+	Heads: [0, 1]
+	Trans: []
+	Arcs:  [[1, 2, 3], [1, 4, 5]]
+Parser state: 6
+	Heads: [0, 1, 6]
+	Trans: []
+	Arcs:  [[1, 2, 3], [1, 4, 5]]
+Parser state: 7
+	Heads: [0, 1, 6]
+	Trans: [7]
+	Arcs:  [[1, 2, 3], [1, 4, 5]]
+Parser state: 8
+	Heads: [0, 1, 6, 8]
+	Trans: []
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8]]
+Parser state: 9
+	Heads: [0, 1, 6, 8]
+	Trans: [9]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8]]
+Parser state: 10
+	Heads: [0, 1, 6, 8, 10]
+	Trans: []
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+Preliminary Arcs: [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+Beginning parse: parse0_GL
+Label: parse0_GL
+	Basic: [0, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  S2  E3  E4  E3  E2  E1  E3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
+List of S3 candidates: [6]
+Building parses for S3 candidate: 6, scale degree 5
+Beginning parse: parse0_BL
+Label: parse0_BL
+	Basic: [0, 6, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10], [0, 6, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  S2  E3  E4  E3  E2  E1  S3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
+List of S2 candidates: [1, 6, 8]
+Building parses for S2 candidate: 1, scale degree 3
+Beginning parse: parse0_PL
+Beginning parse: parse1_PL
+Method 1 for creating basic step motion.
+	Basic arc: [1, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
+Label: parse1_PL
+	Basic: [1, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
+Beginning parse: parse2_PL
+Beginning parse: parse3_PL
+Beginning parse: parse4_PL
+Beginning parse: parse5_PL
+Beginning parse: parse6_PL
+Method 6 for creating basic step motion.
+	Basic arc: [1, 2, 10]
+	Arcs:      [[1, 2, 10], [6, 7, 8], [8, 9, 10]]
+Label: parse6_PL
+	Basic: [1, 2, 10]
+	Arcs:  [[1, 2, 10], [6, 7, 8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  S2  S3  E3   x  E3  E3  E4  E4  E4  S1
+	      	   3   1   2   4   5   6   3   4   4   4   0
+Beginning parse: parse7_PL
+Beginning parse: parse8_PL
+Method 8 for creating basic step motion.
+	Basic arc: [1, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
+Label: parse8_PL
+	Basic: [1, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
+Building parses for S2 candidate: 6, scale degree 5
+Beginning parse: parse9_PL
+Beginning parse: parse10_PL
+Beginning parse: parse11_PL
+Beginning parse: parse12_PL
+Method 3 for creating basic step motion.
+	Basic arc: [6, 7, 8, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
+Label: parse12_PL
+	Basic: [6, 7, 8, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
+Beginning parse: parse13_PL
+Beginning parse: parse14_PL
+Method 5 for creating basic step motion.
+	Basic arc: [6, 7, 8, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
+Label: parse14_PL
+	Basic: [6, 7, 8, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
+Beginning parse: parse15_PL
+Beginning parse: parse16_PL
+Beginning parse: parse17_PL
+Method 8 for creating basic step motion.
+	Basic arc: [6, 7, 8, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
+Label: parse17_PL
+	Basic: [6, 7, 8, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
+Building parses for S2 candidate: 8, scale degree 3
+Beginning parse: parse18_PL
+Method 0 for creating basic step motion.
+	Basic arc: [8, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+Label: parse18_PL
+	Basic: [8, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
+Beginning parse: parse19_PL
+Beginning parse: parse20_PL
+Beginning parse: parse21_PL
+Beginning parse: parse22_PL
+Beginning parse: parse23_PL
+Beginning parse: parse24_PL
+Method 6 for creating basic step motion.
+	Basic arc: [8, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+Label: parse24_PL
+	Basic: [8, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
+Beginning parse: parse25_PL
+Beginning parse: parse26_PL
+Method 8 for creating basic step motion.
+	Basic arc: [8, 9, 10]
+	Arcs:      [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+Label: parse26_PL
+	Basic: [8, 9, 10]
+	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
+PARSE DEBUG REPORT: Part 2 of 2 parts
+Line types: ['generic', 'bass', 'primary']
+Parser state: 0
+	Heads: [0]
+	Trans: []
+	Arcs:  []
+Parser state: 1
+	Heads: [0]
+	Trans: []
+	Arcs:  [[0, 1]]
+Parser state: 2
+	Heads: [0]
+	Trans: [2]
+	Arcs:  [[0, 1]]
+Parser state: 3
+	Heads: [0, 3]
+	Trans: [2]
+	Arcs:  [[0, 1]]
+Parser state: 4
+	Heads: [0]
+	Trans: [4]
+	Arcs:  [[0, 1]]
+Parser state: 5
+	Heads: [0, 5]
+	Trans: [4]
+	Arcs:  [[0, 1]]
+Parser state: 6
+	Heads: [0, 6]
+	Trans: []
+	Arcs:  [[0, 1], [0, 2, 4, 6]]
+Parser state: 7
+	Heads: [0, 6]
+	Trans: [7]
+	Arcs:  [[0, 1], [0, 2, 4, 6]]
+Parser state: 8
+	Heads: [0, 6]
+	Trans: []
+	Arcs:  [[0, 1], [0, 2, 4, 6], [6, 7, 8]]
+Parser state: 9
+	Heads: [0, 6, 9]
+	Trans: []
+	Arcs:  [[0, 1], [0, 2, 4, 6], [6, 7, 8]]
+Parser state: 10
+	Heads: [0, 6, 9, 10]
+	Trans: []
+	Arcs:  [[0, 1], [0, 2, 4, 6], [6, 7, 8]]
+Preliminary Arcs: [[0, 1], [0, 2, 4, 6], [6, 7, 8]]
+Beginning parse: parse0_GL
+Label: parse0_GL
+	Basic: [0, 10]
+	Arcs:  [[0, 1], [0, 2, 4, 6], [6, 7, 8]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  S2  E1  E4  E3  E4  E3  E3  E2  E1  E3  S1
+	      	   1   4   3   4   3   4   2   4   3   4   0
+List of S3 candidates: [6, 9]
+Building parses for S3 candidate: 6, scale degree 5
+Beginning parse: parse0_BL
+Label: parse0_BL
+	Basic: [0, 6, 10]
+	Arcs:  [[0, 1], [0, 2, 4, 6], [6, 7, 8], [0, 6, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  S2  E1  E4  E3  E4  E3  S3  E2  E1  E3  S1
+	      	   1   4   3   4   3   4   2   4   3   4   0
+Building parses for S3 candidate: 9, scale degree 5
+Beginning parse: parse1_BL
+Label: parse1_BL
+	Basic: [0, 9, 10]
+	Arcs:  [[0, 1], [0, 2, 4, 6], [6, 7, 8], [0, 9, 10]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10
+	      	  S2  E1  E4  E3  E4  E3  E3  E2  E1  S3  S1
+	      	   1   5   4   5   4   5   3   5   4   2   0
+List of S2 candidates: [9]
+Building parses for S2 candidate: 9, scale degree 5
+Beginning parse: parse0_PL
+Beginning parse: parse1_PL
+Beginning parse: parse2_PL
+Beginning parse: parse3_PL
+Beginning parse: parse4_PL
+Beginning parse: parse5_PL
+Beginning parse: parse6_PL
+Beginning parse: parse7_PL
+Beginning parse: parse8_PL
+PARSE DEBUG REPORT: Part 1 of 2 parts
+Line types: ['generic', 'primary']
+Parser state: 0
+	Heads: [0]
+	Trans: []
+	Arcs:  []
+Parser state: 1
+	Heads: [0, 1]
+	Trans: []
+	Arcs:  []
+Parser state: 2
+	Heads: [0, 1]
+	Trans: [2]
+	Arcs:  []
+Parser state: 3
+	Heads: [0, 1, 3]
+	Trans: [2]
+	Arcs:  []
+Trying to connect to transition 2 which has the following dependency: 1None[][None, True, True, True], [None, True, True, True]
+Parser state: 4
+	Heads: [0, 1, 3]
+	Trans: [2, 4]
+	Arcs:  []
+Parser state: 5
+	Heads: [0, 1, 3, 5]
+	Trans: [2, 4]
+	Arcs:  []
+Trying to connect to transition 4 which has the following dependency: 3None[][True, True, True, True], [False, True, False, True]
+Parser state: 6
+	Heads: [0, 1, 3]
+	Trans: [2, 6]
+	Arcs:  []
+Parser state: 7
+	Heads: [0, 1, 7]
+	Trans: []
+	Arcs:  [[3, 4, 6, 7], [1, 2, 7]]
+Preliminary Arcs: [[3, 4, 6, 7], [1, 2, 7]]
+Beginning parse: parse0_GL
+Label: parse0_GL
+	Basic: [0, 7]
+	Arcs:  [[1, 2, 7], [3, 4, 6, 7]]
+	Rules:	   0   1   2   3   4   5   6   7
+	      	  S2  E3  E2  E3  E4  E3  E4  S1
+	      	   1   2   3   4   5   6   5   0
+List of S2 candidates: [0]
+Building parses for S2 candidate: 0, scale degree 3
+Beginning parse: parse0_PL
+Beginning parse: parse1_PL
+Beginning parse: parse2_PL
+Beginning parse: parse3_PL
+Beginning parse: parse4_PL
+Beginning parse: parse5_PL
+Beginning parse: parse6_PL
+Beginning parse: parse7_PL
+Beginning parse: parse8_PL
+Method 8 for creating basic step motion.
+	Basic arc: [0, 2, 7]
+	Arcs:      [[3, 4, 6, 7], [0, 2, 7]]
+Label: parse8_PL
+	Basic: [0, 2, 7]
+	Arcs:  [[3, 4, 6, 7], [0, 2, 7]]
+	Rules:	   0   1   2   3   4   5   6   7
+	      	  S2  E3  S3  E3  E4  E3  E4  S1
+	      	   1   3   2   3   4   5   4   0
+PARSE DEBUG REPORT: Part 2 of 2 parts
+Line types: ['generic', 'bass', 'primary']
+Parser state: 0
+	Heads: [0]
+	Trans: []
+	Arcs:  []
+Parser state: 1
+	Heads: [0]
+	Trans: [1]
+	Arcs:  []
+Parser state: 2
+	Heads: [0, 2]
+	Trans: []
+	Arcs:  [[0, 1, 2]]
+Parser state: 3
+	Heads: [0, 2, 3]
+	Trans: []
+	Arcs:  [[0, 1, 2]]
+Parser state: 4
+	Heads: [0, 2, 3, 4]
+	Trans: []
+	Arcs:  [[0, 1, 2]]
+Parser state: 5
+	Heads: [0, 2, 3, 4]
+	Trans: [5]
+	Arcs:  [[0, 1, 2]]
+Parser state: 6
+	Heads: [0, 2, 3, 4]
+	Trans: [6]
+	Arcs:  [[0, 1, 2]]
+Parser state: 7
+	Heads: [0, 2, 3, 4, 7]
+	Trans: [6]
+	Arcs:  [[0, 1, 2]]
+Parser state: 8
+	Heads: [0, 2, 3, 4, 8]
+	Trans: []
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8]]
+Parser state: 9
+	Heads: [0, 2, 3, 4, 8]
+	Trans: [9]
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8]]
+Parser state: 10
+	Heads: [0, 2, 3, 4, 8]
+	Trans: [10]
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8]]
+Parser state: 11
+	Heads: [0, 2, 3, 4, 8, 11]
+	Trans: [10]
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8]]
+Parser state: 12
+	Heads: [0, 2, 3, 4, 8, 12]
+	Trans: []
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8], [8, 9, 10, 12]]
+Parser state: 13
+	Heads: [0, 2, 3, 4, 8, 12, 13]
+	Trans: []
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8], [8, 9, 10, 12]]
+Parser state: 14
+	Heads: [0, 2, 3, 4, 8, 12, 13, 14]
+	Trans: []
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8], [8, 9, 10, 12]]
+Preliminary Arcs: [[0, 1, 2], [4, 5, 6, 8], [8, 9, 10, 12]]
+Beginning parse: parse0_GL
+Label: parse0_GL
+	Basic: [0, 14]
+	Arcs:  [[0, 1, 2], [4, 5, 6, 8], [8, 9, 10, 12], [0, 3], [0, 8]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14
+	      	  S2  E4  E3  E1  E3  E4  E4  E3  E1  E4  E4  E3  E3  E3  S1
+	      	   1   5   4   3   4   5   5   6   2   4   4   5   3   4   0
+List of S3 candidates: [4, 12, 13]
+Building parses for S3 candidate: 4, scale degree 5
+Beginning parse: parse0_BL
+Label: parse0_BL
+	Basic: [0, 4, 14]
+	Arcs:  [[0, 1, 2], [0, 3], [4, 5, 6, 8], [4, 12], [8, 9, 10, 12], [0, 4, 14]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14
+	      	  S2  E4  E3  E1  S3  E4  E4  E3  E3  E4  E4  E3  E1  E3  S1
+	      	   1   5   4   3   2   5   5   6   4   5   5   6   3   4   0
+Building parses for S3 candidate: 12, scale degree 5
+Beginning parse: parse1_BL
+Label: parse1_BL
+	Basic: [0, 12, 14]
+	Arcs:  [[0, 1, 2], [0, 3], [0, 8], [4, 5, 6, 8], [8, 9, 10, 12], [0, 12, 14]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14
+	      	  S2  E4  E3  E1  E3  E4  E4  E3  E1  E4  E4  E3  S3  E3  S1
+	      	   1   6   5   4   5   6   6   7   3   4   4   5   2   3   0
+Building parses for S3 candidate: 13, scale degree 5
+Beginning parse: parse2_BL
+Label: parse2_BL
+	Basic: [0, 13, 14]
+	Arcs:  [[0, 1, 2], [0, 3], [0, 8], [4, 5, 6, 8], [8, 9, 10, 12], [0, 13, 14]]
+	Rules:	   0   1   2   3   4   5   6   7   8   9  10  11  12  13  14
+	      	  S2  E4  E3  E1  E3  E4  E4  E3  E1  E4  E4  E3  E3  S3  S1
+	      	   1   6   5   4   5   6   6   7   3   5   5   6   4   2   0
+List of S2 candidates: [2, 13]
+Building parses for S2 candidate: 2, scale degree 3
+Beginning parse: parse0_PL
+Beginning parse: parse1_PL
+Beginning parse: parse2_PL
+Beginning parse: parse3_PL
+Beginning parse: parse4_PL
+Beginning parse: parse5_PL
+Beginning parse: parse6_PL
+Beginning parse: parse7_PL
+Beginning parse: parse8_PL
+Building parses for S2 candidate: 13, scale degree 5
+Beginning parse: parse9_PL
+Beginning parse: parse10_PL
+Beginning parse: parse11_PL
+Beginning parse: parse12_PL
+Beginning parse: parse13_PL
+Beginning parse: parse14_PL
+Beginning parse: parse15_PL
+Beginning parse: parse16_PL
+Beginning parse: parse17_PL
