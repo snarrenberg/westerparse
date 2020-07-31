@@ -58,7 +58,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
-    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
+#    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
 #    source = 'TestScoresXML/ThirdSpecies05.musicxml'    # completion of Westergaard p. 136 exercise 4
 #    source = 'TestScoresXML/ThirdSpecies06.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies07.musicxml'    # vl errors
@@ -70,7 +70,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
-#    source = 'TestScoresXML/FourthSpecies20.musicxml'
+    source = 'TestScoresXML/FourthSpecies20.musicxml'
 #    source = 'TestScoresXML/FourthSpecies21.musicxml'
 #    source = 'TestScoresXML/FourthSpecies22.musicxml'
 

@@ -535,10 +535,11 @@ class Parser():
                 # TODO First look for 'resolution'.
                 self.notes[idx].rule.name = 'L0'
         elif openTransitions:
+            mns = [str(self.notes[t].measureNumber) for t in openTransitions]
+            mns = ', '.join(mns)
             error = (f'There are unclosed transitions in '
                      'the following measures: '
-                     + {(', '.join([t.measureNumber for t
-                                    in openTransitions]))})
+                     + f'{mns}')
             self.errors.append(error)
         self.arcs = arcs
         self.openHeads = openHeads
@@ -2172,7 +2173,6 @@ class Parser():
                                         basicArcCand[x+1] = b.index
                 # Check to make sure the basic step motion is complete.
                 if len(basicArcCand) != (self.S2Value+1):
-                    # TODO Report specific Note/Pitch of failed S2 candidate.
                     error = ('No basic step motion found from this S2 '
                              'candidate:' + str(self.S2Value+1) + '.')
                     self.errors.append(error)
@@ -2585,7 +2585,8 @@ class Parser():
         def gatherRuleLabels(self):
             self.ruleLabels = []
             for elem in self.notes:
-                self.ruleLabels.append((elem.index, elem.rule.name, elem.rule.level))
+                if not elem.tie or elem.tie.type == 'start':
+                    self.ruleLabels.append((elem.index, elem.rule.name, elem.rule.level))
             return
 
         def gatherParentheses(self):

@@ -1,0 +1,6 @@
+PARSE REPORT
+Key inferred by program: D minor
+Line Parsing Errors
+	Part 1 is not generable. The following errors were found:
+			There are unclosed transitions in the following measures: 6
+	Part 2 is generable as a bass line.
