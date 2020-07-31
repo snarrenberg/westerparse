@@ -535,10 +535,10 @@ class Parser():
                 # TODO First look for 'resolution'.
                 self.notes[idx].rule.name = 'L0'
         elif openTransitions:
-            # TODO Convert to measures, note that indexes in fourth species
-            # are for each individual half note, not each tied combination.
-            error = ('There are unclosed transitions in the line at '
-                     'the following positions: ' + str(openTransitions))
+            error = (f'There are unclosed transitions in '
+                     'the following measures: '
+                     + {(', '.join([t.measureNumber for t
+                                    in openTransitions]))})
             self.errors.append(error)
         self.arcs = arcs
         self.openHeads = openHeads
@@ -2419,15 +2419,16 @@ class Parser():
         def integrateSecondaryWithPrimary(self):
             """Revise an intepretation to make it tighter, more efficient,
             more coherent. Connect secondary structures to elements of the
-            basic structure where possible.
+            basic structure where possible. [Not yet implemented.]
             """
             # TODO Implement Westergaard preferences for coherent
             # interpretations, pp. 63ff.
             pass
 
         def assignSecondaryRules(self):
-            # Find any note that does not yet have a rule assigned
-            # and is not tied over.
+            """Find any note that does not yet have a rule assigned and 
+            determine the appropriate rule based on its dependency.
+            """
             for i in self.notes:
                 idl = i.dependency.lefthead
                 idr = i.dependency.righthead
@@ -2848,7 +2849,12 @@ class Parser():
                         spans.remove(span)
                         if rightEdge - (leftEdge+2) > 1:
                             spans.append((leftEdge+2, rightEdge))
+                    # TEMP: set dummy level to avoid loop
+                    else:
+                        for i in range(leftEdge+1, rightEdge):
+                            self.notes[i].rule.level = 88
 
+            # Run the method's core function
             spancount = len(spans)
             while spancount > 0:
                 processSpan(spans[0], spans, dependentArcs)
