@@ -784,13 +784,6 @@ class Parser():
                               j.csd.direction
                               in ['descending', 'bidirectional'],
                               h.dependency.dependents == []]
-                    logger.debug(f'Trying to connect to transition {t} '
-                                 'which has the following dependency: '
-                                 f'{h.dependency.lefthead}'
-                                 f'{h.dependency.righthead}'
-                                 f'{h.dependency.dependents}'
-                                 f'{rules1}, {rules2}'
-                                 )
                     # TODO The rules need to take into account where h is
                     # coming from ... WP021 ... and in whether it must continue
                     # in a particular direction or can be diverted back
@@ -2517,15 +2510,30 @@ class Parser():
                     i.rule.name = 'x'
 
         def testLocalResolutions(self):
+            """For any note identified as a local insertion (rule L3), 
+            determine whether it is subsequently displaced stepwise to a 
+            tonic triad pitch. Record an error if not.
+            """
             for i in self.notes:
                 if i.rule.name == 'L3':
                     remainder = [n for n in self.notes if n.index > i.index]
                     resolved = False
                     for r in remainder:
-                        # TODO Test for directionality.
-                        if isDirectedStep(i, r):
+                        if isTriadMember(i, 0):
                             resolved = True
                             break
+                        elif isDirectedStep(i, r):
+                            if isTriadMember(r, 0):
+                                resolved = True
+                                break
+                            else:
+                                new_remainder = [n for n in self.notes
+                                                 if n.index > r.index]
+                                for s in new_remainder:
+                                    if (isDirectedStep(r, s)
+                                       and isTriadMember(s, 0)):
+                                        resolved = True
+                                break
                     if not resolved:
                         error = ('The local insertion ' + i.nameWithOctave +
                                  'in measure ' + str(i.measureNumber) +
