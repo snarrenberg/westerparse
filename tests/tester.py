@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
 #    source = 'TestScoresXML/BachKunst.musicxml'
 #    source = 'TestScoresXML/WTC_I,_Fugue_in_C_Subject.musicxml'
-    source = 'TestScoresXML/WTC_I,_Fugue_in_d_sharp,_subject.musicxml' # fails K-S key assignment
+#    source = 'TestScoresXML/WTC_I,_Fugue_in_d_sharp,_subject.musicxml' # fails K-S key assignment
 #    source = 'TestScoresXML/WTC_I,_Fugue_in_F_sharp,_Subject.musicxml'
 
 #    source = 'TestScoresXML/BeethovenOdeToJoy4thPhrase.musicxml'
@@ -109,9 +109,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/WestergaardP111c.musicxml'
 #    source = 'TestScoresXML/WestergaardP111d.musicxml'
 #    source = 'TestScoresXML/Westergaard105.musicxml'
-#    source = 'TestScoresXML/Westergaard106f.musicxml'
-#    source = 'TestScoresXML/Westergaard115i.musicxml'
-#    source = 'TestScoresXML/Westergaard143.musicxml'
+    source = 'TestScoresXML/Westergaard106f.musicxml'
 #    source = 'TestScoresXML/Westergaard161a.musicxml'
 #    source = 'TestScoresXML/Westergaard113k.musicxml'
 #    source = 'TestScoresXML/Westergaard100k.musicxml'

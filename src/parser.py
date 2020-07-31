@@ -2840,6 +2840,12 @@ class Parser():
                         spans.remove(span)
                         if rightEdge - (leftEdge+1) > 1:
                             spans.append((leftEdge+1, rightEdge))
+                    elif isPermissibleConsonance(leftEdge,
+                                               rightEdge-1, rightEdge):
+                        self.notes[rightEdge-1].rule.level = nextLevel
+                        spans.remove(span)
+                        if (rightEdge-1) - leftEdge > 1:
+                            spans.append((leftEdge, rightEdge-1))
                     elif (length(span) > 3
                           and isPermissibleConsonance(leftEdge,
                                                       leftEdge+1, leftEdge+2)
@@ -2858,6 +2864,7 @@ class Parser():
             # Run the method's core function
             spancount = len(spans)
             while spancount > 0:
+                logger.debug(f'span = {spans[0]}')
                 processSpan(spans[0], spans, dependentArcs)
                 spancount = len(spans)
                 spans.sort()
