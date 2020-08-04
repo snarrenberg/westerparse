@@ -87,7 +87,7 @@ the result would have taken the form of a simple text report:
 
    PARSE REPORT
    Key inferred by program: D minor
-   'The line is generable as a primary line.'
+   The line is generable as a primary line.
 
 But since the keyword :literal:`show` was set to 'show', the program will
 display the interpretations in a notation program.
@@ -144,10 +144,14 @@ Then begin using :literal:`westerparse`:
 
 >>> import westerparse
 >>> source = '../docs/samplefiles/FuxDorian.musicxml'
->>> westerparse.evaluateLines(source, show='show', partLineType='primary', report=True)
+>>> westerparse.evaluateLines(source, 
+...                           show='show',
+...                           partLineType='primary',
+...                           report=True)
 
-   Your MusicXML viewer (Finale, NotePad, MuseScore) should open and display 
-   two parses of the line, and a parse report should print in your terminal window.
+   Your MusicXML viewer (Finale, NotePad, MuseScore) should open and display
+   two parses of the line, and a parse report should print in your
+   terminal window.
             
 How to Get Support
 ------------------
