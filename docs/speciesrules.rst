@@ -1,11 +1,14 @@
 The Westergaard Rules
 =====================
 
-This document contains only the rules for simple species counterpoint.
+This document contains only the rules for simple counterpoint in first,
+second, third, and fourth.
 
 Monotriadic Lines
 -----------------
 
+(Note: The S-rules and E-rules correspond to Westergaard's A-rules
+and B-rules.)
 
 **Rules of Basic Structure**
 
@@ -104,7 +107,7 @@ First Species in Two Parts
 #. Prefer imperfect consonances.
 #. Prefer to use a fifth or octave in the midst of the composition only
    where the emphasis provided by that interval will help to stress
-   a pitch that belongs to the background structure.
+   a pitch that belongs to the basic structure.
 #. Avoid unisons except in the first and last measures.
 #. Avoid intervals larger than a tenth.
 
@@ -155,7 +158,7 @@ Second Species in Two Parts
      off-the-beat half notes are approached from opposite directions.
    * Parallel octaves related by any other interval may occur if either
 
-     #. the two off-the-beat half notes are ap- proached from opposite
+     #. the two off-the-beat half notes are approached from opposite
         directions, or
      #. the first off-the-beat half note is left by step.
 
@@ -337,7 +340,7 @@ Fourth Species: Two Lines
    successions of intervals against the whole note:
 
    * 7–6, 9–8, and 4–3 for suspensions in the upper line, and
-   * 2–3, augmented 4–5, (but not perfect 4–5), and augmented or diminished
+   * 2–3, augmented 4–5 (but not perfect 4–5), and augmented or diminished
      5–6 for suspensions in the lower line.
 
 *Forbidden Forms of Motion*
@@ -413,9 +416,9 @@ First Species: Three Lines
 
 *Bass Leaps of a Fourth*
 
-#. Leaps of a fourth in the bass: there must be a note in one of the upper
-   lines that sounds simultaneously with one of the notes forming the fourth
-   and creates a second or seventh with the other note forming the fourth.
+#. There must be a note in one of the upper lines that sounds simultaneously
+   with one of the notes forming the fourth and creates a second or seventh
+   with the other note forming the fourth.
 
 *Sonority*
 

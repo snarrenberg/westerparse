@@ -14,7 +14,7 @@ of Westergaard's textbook, *An Introduction to Tonal Theory*
 (New York: Norton, 1975).  This portion of Westergaard's text develops
 a theory of species counterpoint for classically tonal music.  An innovative
 feature of the approach is the set of rules that define the closed tonal
-line.  In effect, these line-generating rules implement the prolongational
+line.  In effect, these line-generating rules implement the generative
 model of tonal syntax originally developed by Heinrich Schenker.  Westergaard
 was also interested in how the notes in one line interact with the notes in
 another, and he had many interesting insights into how listeners use the
