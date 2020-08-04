@@ -1,7 +1,7 @@
 WesterParse Web Site
 ====================
 
-.. image:: images/WesterParseWebFlow.png
+.. figure:: images/WesterParseWebFlow.png
    :width: 400
    :alt: WesterParse Web Flow Chart
    :align: center
@@ -78,8 +78,9 @@ the web page in the are below the composition.  WesterParse often considers
 dozens of different interpretations for each line of composition, but then
 sifts through them to select the most plausible interpretations.
 
-If the user has composed counterpoint in two or three parts, the user can
-have WesterParse check the voice leading. This, too, will generate a report.
+*Voice Leading* --- If the user has composed counterpoint in two or
+three parts, the user can have WesterParse check the voice leading.
+This, too, will generate a report.
 Ideally, the user wants to see the following report:
 
 .. code-block:: shell
@@ -98,5 +99,6 @@ In less than ideal circumstances, the user may encounter a report such as this:
 	  Forbidden parallel motion to fifth going into bar 4.
 		 Prohibited leap of a fourth in bars 2 to 3.
 
-At any point, the user has the option of downloading the composition in the
-form of a MusicXML file. 
+*File Download* --- At any point, the user has the option of downloading
+the composition in the form of a MusicXML file.  This file can then be opened
+and edited in any music notation program (e.g., MuseScore, Finale, StaffPad).
