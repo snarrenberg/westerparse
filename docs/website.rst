@@ -6,9 +6,9 @@ WesterParse Web Site
    :alt: WesterParse Web Flow Chart
    :align: center
    :figwidth: 400
-  
+   
    How WesterParse works behind the scenes on the web site.
-  
+   
    ..
 
 
@@ -20,9 +20,20 @@ URL: https://ada.artsci.wustl.edu/westerparse/
 The web interface was created by Stephen Pentecost, Senior Digital 
 Humanities Specialist at Washington University in St. Louis.  
 
-The user can create compositions of one, two, or three lines.  After
-completing a composition, the user can have the syntax of each line
-evaluated by WesterParse.  The result is displayed beneath the music.
+*Initial setup* --- The user decides the number of lines (1, 2, or 3), the key
+signature, the time signature, and the number of measures. Once editing mode
+is entered, the user may add or delete measures, but the other options cannot
+be edited. The user may also enter an exercise name and their own name; these
+will be added to the score as title and composer, respectively.
+
+*Composition* --- Upon pressing Create Score, the web enters the edit screen,
+and the user can now commence with adding notes to the score.
+To make corrections, press the Change Notes button.  To return to composing,
+press Add Notes..
+
+*Syntax Parsing* --- After completing a composition, the user can have
+WesterParse evaluate the syntax of each line.
+The result is displayed beneath the music.
 For example:
 
 .. code-block:: shell
@@ -87,4 +98,5 @@ In less than ideal circumstances, the user may encounter a report such as this:
 	  Forbidden parallel motion to fifth going into bar 4.
 		 Prohibited leap of a fourth in bars 2 to 3.
 
-At any point, the user has the option of downloading
+At any point, the user has the option of downloading the composition in the
+form of a MusicXML file. 
