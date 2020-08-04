@@ -55,7 +55,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/SecondSpecies21.musicxml' # not generable
 #    source = 'TestScoresXML/SecondSpecies22.musicxml' # not generable
 
-#    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
+    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'    
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/WestergaardP111c.musicxml'
 #    source = 'TestScoresXML/WestergaardP111d.musicxml'
 #    source = 'TestScoresXML/Westergaard105.musicxml'
-    source = 'TestScoresXML/Westergaard106f.musicxml'
+#    source = 'TestScoresXML/Westergaard106f.musicxml'
 #    source = 'TestScoresXML/Westergaard161a.musicxml'
 #    source = 'TestScoresXML/Westergaard113k.musicxml'
 #    source = 'TestScoresXML/Westergaard100k.musicxml'
@@ -131,8 +131,8 @@ if __name__ == "__main__":
 #    source = '../examples/corpus/WP021.musicxml'
 #    source = '../examples/corpus/WP013.musicxml'
 
-
 #    source = 'TestScoresXML/2020_07_27T22_03_17_936Z.musicxml'
+#    source = 'TestScoresXML/2020_07_31T21_35_42_273Z.musicxml'
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
 

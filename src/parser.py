@@ -2603,15 +2603,8 @@ class Parser():
             structural level of each note.
             """
             # TODO This works for now, but is not optimal.
-            # Does not work for this line:
-            #     BL in major:
-            #     1 5 4 3 1 -7 -5 1 6 5 4 3 2 1
-            #     arcs = [[0, 1, 13], [1, 2, 3], [1, 8, 9],
-            #     [1, 10, 11, 12, 13], [4, 5, 7]]
             # There needs to be a more robust way of evaluating insertions,
             # not just left-to-right.
-            # Also may not work for complicated, poorly interpreted
-            # third species lines.
 
             # Assign levels to notes in the basic arc.
             for n in self.notes:
@@ -2630,8 +2623,6 @@ class Parser():
 
             # A span is defined by two notes: initial and final.
             # The rootSpan extends from the first to the last note of a line.
-            # TODO Consider using some kind of root node pair:
-            # leftRoot, rightRoot, or just None.
             rootSpan = (self.notes[0].index, self.notes[-1].index)
 
             # The length of a span = final.index - initial-index.
@@ -2781,25 +2772,25 @@ class Parser():
                 #     (b) Calculate rule levels for members of the branch.
                 # Termini levels of cross branch are already set,
                 # so just set level of inner elements.
-                if crossBranch:
+                if crossBranch is not None:
                     dependentArcs.remove(crossBranch)
                     for i in crossBranch[1:-1]:
                         self.notes[i].rule.level = nextLevel
                 # One terminus level is already set, so set level of the
                 # other terminus and the inner elements.
-                elif rightBranch:
+                elif rightBranch is not None:
                     dependentArcs.remove(rightBranch)
                     self.notes[rightBranch[-1]].rule.level = nextLevel
                     for i in rightBranch[1:-1]:
                         self.notes[i].rule.level = nextLevel + 1
-                elif leftBranch:
+                elif leftBranch is not None:
                     dependentArcs.remove(leftBranch)
                     self.notes[leftBranch[0]].rule.level = nextLevel
                     for i in leftBranch[1:-1]:
                         self.notes[i].rule.level = nextLevel + 1
                 # No terminus level is already set, so set level of the left
                 # terminus, then the right, and then the inner elements.
-                elif interBranch:
+                elif interBranch is not None:
                     dependentArcs.remove(interBranch)
                     self.notes[interBranch[0]].rule.level = nextLevel
                     self.notes[interBranch[-1]].rule.level = nextLevel + 1
@@ -2831,9 +2822,44 @@ class Parser():
                 # TODO This is a temporary solution.
                 # Need an algorithm that finds the best of
                 # the many possible solutions, not necessarily left to right;
-                # e.g., look for repetitions of leftEdge.
-                if not(crossBranch or rightBranch
-                       or leftBranch or interBranch):
+                if (crossBranch is None and rightBranch is None
+                   and leftBranch is None and interBranch is None):
+                    # New solution: start by finding generable insertions in the span
+                    validInserts = []
+                    for i in range(leftEdge+1, rightEdge):
+                        if isPermissibleConsonance(leftEdge, i, rightEdge):
+                            validInserts.append(i)
+                    logger.debug(f'possible insertions in span between '
+                                 f'{leftEdge} and {rightEdge}: {validInserts}')
+                    # TODO continue with writing the new solution
+                    # find the invalid insertions and test them given the various
+                    # possibilities for segmenting the span using validInserts
+                    # test each invalid against each of the valids
+                    # x ..... y1 ... y2 ...... z
+                    # x ... w y1
+                    # x ... w .......y2
+                    # x ..........w..y2
+                    # x        y1.w..y2
+                    def gatherPartitions(span):
+                        spanTree = []
+                        l = span[0]
+                        r = span[1]
+                        if r - l == 1:
+                            return
+                        elif r - l > 1:
+                            for i in range(l+1, r):
+                                if isPermissibleConsonance(l, i, r):
+                                    spanTree.append(i)
+                                    gatherPartitions((l, i))
+                                    gatherPartitions((i, r))
+                                    print(f'testing {i} in ({l}, {r})')
+                                else:
+                                    break
+                            return spanTree
+                    st = gatherPartitions((leftEdge, rightEdge))
+                    print(st)
+
+                    # current solution:
                     if isPermissibleConsonance(leftEdge,
                                                leftEdge+1, rightEdge):
                         self.notes[leftEdge+1].rule.level = nextLevel
@@ -2864,7 +2890,6 @@ class Parser():
             # Run the method's core function
             spancount = len(spans)
             while spancount > 0:
-                logger.debug(f'span = {spans[0]}')
                 processSpan(spans[0], spans, dependentArcs)
                 spancount = len(spans)
                 spans.sort()

@@ -16,6 +16,7 @@ and local contexts.
 
 from music21 import *
 import itertools
+import logging
 
 import vlChecker
 import parser
@@ -25,6 +26,21 @@ import rule
 import dependency
 import consecutions
 from utilities import pairwise
+
+# -----------------------------------------------------------------------------
+# LOGGER
+# -----------------------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# logging handlers
+f_handler = logging.FileHandler('parser.txt', mode='w')
+f_handler.setLevel(logging.DEBUG)
+# logging formatters
+f_formatter = logging.Formatter('%(message)s')
+f_handler.setFormatter(f_formatter)
+# add handlers to logger
+logger.addHandler(f_handler)
 
 # -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
@@ -368,6 +384,7 @@ class GlobalContext(Context):
         # of non-triadic collections.
         harmErrorList = []
         for harm in self.localHarmonyDict.items():
+            logger.debug(f'local harmony = {harm[1]}')
             if not parser.isTriadicSet(harm[1]):
                 mn = (harm[0] + measureSpan) / measureSpan
                 harmErrorList.append('{:2.0f}'.format(mn))
