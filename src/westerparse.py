@@ -10,7 +10,7 @@
 WesterParse
 ===========
 
-The main program script.
+This is the main program module.
 
 WesterParse allows a user to test a species counterpoint exercise
 for conformity with the rules of line construction and voice leading

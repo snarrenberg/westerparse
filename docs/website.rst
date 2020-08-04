@@ -108,7 +108,9 @@ In less than ideal circumstances, the user may encounter a report such as this:
  	 The following voice-leading errors were found:
 		
 		 Forbidden parallel motion to octave going into bar 2.
+	  
 	  Forbidden parallel motion to fifth going into bar 4.
+		 
 		 Prohibited leap of a fourth in bars 2 to 3.
 
 File Download
