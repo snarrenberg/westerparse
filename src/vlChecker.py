@@ -1694,11 +1694,11 @@ def checkFourthLeapsInBass(score, analyzer):
 
         if impliedSixFour and bn1Meas == bn2Meas:
             error = ('Prohibited leap of a fourth in bar '
-                     + str(bn1Meas))
+                     + str(bn1Meas) + '.')
             vlErrors.append(error)
         elif impliedSixFour and bn1Meas != bn2Meas:
             error = ('Prohibited leap of a fourth in bars '
-                     + str(bn1Meas) + ' to ' + str(bn2Meas))
+                     + str(bn1Meas) + ' to ' + str(bn2Meas) + '.')
             vlErrors.append(error)
 #        return impliedSixFour
 
