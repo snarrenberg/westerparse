@@ -7,6 +7,8 @@ WesterParse Web Site
   :align: center
   
   How WesterParse works behind the scenes on the web site.
+  
+  ..
 
 
 Westegaardian Species Counterpoint Online
