@@ -2840,24 +2840,6 @@ class Parser():
                     # x ... w .......y2
                     # x ..........w..y2
                     # x        y1.w..y2
-                    def gatherPartitions(span):
-                        spanTree = []
-                        l = span[0]
-                        r = span[1]
-                        if r - l == 1:
-                            return
-                        elif r - l > 1:
-                            for i in range(l+1, r):
-                                if isPermissibleConsonance(l, i, r):
-                                    spanTree.append(i)
-                                    gatherPartitions((l, i))
-                                    gatherPartitions((i, r))
-                                    print(f'testing {i} in ({l}, {r})')
-                                else:
-                                    break
-                            return spanTree
-                    st = gatherPartitions((leftEdge, rightEdge))
-                    print(st)
 
                     # current solution:
                     if isPermissibleConsonance(leftEdge,

@@ -23,7 +23,9 @@ The user can create compositions of one, two, or three lines.  After completing 
 composition, the user can have each line evaluated by WesterParse.  The result
 is displayed beneath the music.  For example:
 
-:literal:`PARSE REPORT
-Key inferred by program: C major
-The line is generable as a primary line but not as a bass line.`
+.. code-block:: shell
+
+   PARSE REPORT
+   Key inferred by program: C major
+   The line is generable as a primary line but not as a bass line.
 
