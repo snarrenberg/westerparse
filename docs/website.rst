@@ -15,14 +15,15 @@ WesterParse Web Site
 Westegaardian Species Counterpoint Online
 -----------------------------------------
 
-https://ada.artsci.wustl.edu/westerparse/
+URL: https://ada.artsci.wustl.edu/westerparse/
 
 The web interface was created by Stephen Pentecost, Senior Digital 
 Humanities Specialist at Washington University in St. Louis.  
 
-The user can create compositions of one, two, or three lines.  After completing a
-composition, the user can have each line evaluated by WesterParse.  The result
-is displayed beneath the music.  For example:
+The user can create compositions of one, two, or three lines.  After
+completing a composition, the user can have the syntax of each line
+evaluated by WesterParse.  The result is displayed beneath the music.
+For example:
 
 .. code-block:: shell
 
@@ -45,10 +46,26 @@ errors of composition, if possible. For example:
 .. code-block:: shell
 
    Line Parsing Errors
-  	The following linear errors were found when attempting
-  	to interpret the line:
+   The following linear errors were found when attempting
+   to interpret the line:
 			
-			   The non-tonic-triad pitch D4 in measure 4 cannot be generated.
+			The non-tonic-triad pitch D4 in measure 4 cannot be generated.
+
+If the composition is a single line, the user may select a type of line
+(primary, bass, or generic). When the Evaluate Line button is pressed,
+WesterParse will look only to see whether the line can be evaluated using
+the selected type.
+
+If the composition consists of two parts, WesterParse will try to
+parse the upper line as a primary line and the lower line as a bass line.
+And if the composition has three parts, it will try to parse at least one of
+the upper lines as a primary line and the lower line as a bass line.
+
+If the Display Parse option is enabled, the user can have WesterParse prepare
+up to three possible parses of the composition, which will be displayed on
+the web page in the are below the composition.  WesterParse often considers
+dozens of different interpretations for each line of composition, but then
+sifts through them to select the most plausible interpretations.
 
 If the user has composed counterpoint in two or three parts, the user can
 have WesterParse check the voice leading. This, too, will generate a report.
@@ -66,7 +83,8 @@ In less than ideal circumstances, the user may encounter a report such as this:
 
  	 The following voice-leading errors were found:
 		
-		    Forbidden parallel motion to octave going into bar 2.
-	    	Forbidden parallel motion to fifth going into bar 4.
-		    Prohibited leap of a fourth in bars 2 to 3.
+		 Forbidden parallel motion to octave going into bar 2.
+	  Forbidden parallel motion to fifth going into bar 4.
+		 Prohibited leap of a fourth in bars 2 to 3.
 
+At any point, the user has the option of downloading
