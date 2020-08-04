@@ -3,7 +3,7 @@
 WesterParse
 ===========
 
-Peter Westergaard significantly improved the pedagogical discipline of
+Peter Westergaard enhanced the pedagogical discipline of
 species counterpoint by formulating a syntax for contrapuntal
 lines and explicating the cognitive issues involved in how listeners
 parse the syntax of such lines.  Hence the name of this program,
@@ -27,7 +27,8 @@ activating each rule.
 There are two main components to WesterParse: a *parser* that evaluates
 the structure of musical lines used in species counterpoint, and
 a *checker* that evaluates the voice leading of species counterpoint
-compositions.
+compositions. For more information, see :doc:`Getting Started <start>` and
+:doc:`User's Guide <userguide>`.
 
 One task of music theory is to model the procedural knowledge of
 stylistically competent listeners.  In his textbook, Westergaard focused

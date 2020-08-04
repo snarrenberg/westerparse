@@ -122,28 +122,31 @@ Install ``music21``.
    $ pip install music21
    
 And then configure ``music21`` to use a musicxml viewer like MuseScore. 
-See the instructions on the `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
+See the instructions on the
+`music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
-Download the latest WesterParse release from `GitHub <https://github.com/snarrenberg/westerparse/releases>`_,
-place it in a directory of your choice, and unzip it. For example:
+Download the latest WesterParse release from
+`GitHub <https://github.com/snarrenberg/westerparse/releases>`_,
+place it in a directory of your choice, and unzip it.  For example:
 
 .. code-block:: shell
 
    $  tar -xvf westerparse-1.0.4alpha.tar.gz
 
-Navigate to the src directory inside westerparse and start python.
+Navigate to the :literal:`src` directory inside :literal:`westerparse`
+and start :literal:`python`.
 
 .. code-block:: shell
 
    $ python
    
-Then begin using westerparse:
+Then begin using :literal:`westerparse`:
 
 >>> import westerparse
 >>> source = '../docs/samplefiles/FuxDorian.musicxml'
 >>> westerparse.evaluateLines(source, show='show', partLineType='primary', report=True)
 
-   Your musicxml viewer (Finale, NotePad, MuseScore) should open and display 
+   Your MusicXML viewer (Finale, NotePad, MuseScore) should open and display 
    two parses of the line, and a parse report should print in your terminal window.
             
 How to Get Support
