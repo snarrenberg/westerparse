@@ -189,6 +189,8 @@ if __name__ == "__main__":
 												westerparse.evaluateLines(source, show='show', partSelection=1, partLineType='generic')
 								elif verify == 29:
 												westerparse.evaluateLines(source, show=None, partSelection=1, partLineType='generic')
+								elif verify == 30:
+												westerparse.evaluateLines(source, show=None, partSelection=None, partLineType='generic')
 								else:
 												print('ERROR: No valid evaluation option selected.')
 												
@@ -205,7 +207,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 30)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)

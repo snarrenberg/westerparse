@@ -239,11 +239,21 @@ def parseContext(context,
     context.errorsDict = {}
     for part in context.parts:
         context.errorsDict[part.name] = {}
+
+    # validate part selection and line type selection
     try:
         partsForParsing = validatePartSelection(context, partSelection)
     except ContextError as ce:
         ce.logerror()
         raise EvaluationException
+    try:
+        lineTypeSelection = validateLineTypeSelection(context, 
+                                                      partSelection,
+                                                      partLineType)
+    except ContextError as ce:
+        ce.logerror()
+        raise EvaluationException
+
     # Run the parser and collect errors.
     for part in partsForParsing:
         # Set the part's lineType if given by the user.
@@ -537,6 +547,20 @@ def validatePartSelection(context, partSelection):
     elif partSelection is None:
         partsSelected = context.parts
     return partsSelected
+
+
+def validateLineTypeSelection(context, partSelection, partLineType):
+    if partLineType is not None:
+        if len(context.parts) == 1 or partSelection is not None:
+            return
+        else:
+            pass
+        raise ContextError(
+            'Context Error: You have selected the following line type: '
+            + f'{partLineType}. \nHowever, line type selection is only permitted '
+            + 'when the source is a single line \nor there is a valid '
+            + 'part selection.'
+            )
 
 
 def parsePart(part, context):

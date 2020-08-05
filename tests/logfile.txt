@@ -1,0 +1,3 @@
+Context Error: You have selected the following line type: generic. 
+However, line type selection is only permitted when the source is a single line 
+or there is a corresponding part selection.
