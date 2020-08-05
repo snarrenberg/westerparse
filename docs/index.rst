@@ -21,7 +21,7 @@ another, and he had many interesting insights into how listeners use the
 rules as they negotiate the interpretation of two or more lines unfolding
 simultaneously.  WesterParse already incorporates many of the cognitive
 preferences identified by Westergaard.  The plan is ultimately to include
-all of the preference rules as well as giving users the option of
+all of the preference rules as well as to give users the option of
 activating each rule.
 
 There are two main components to WesterParse: a *parser* that evaluates
@@ -34,9 +34,9 @@ One task of music theory is to model the procedural knowledge of
 stylistically competent listeners.  In his textbook, Westergaard focused
 on developing a shared metalanguage for discussing classically tonal music.
 (See the figure below.)  WesterParse provides many additional refinements
-to this metalanguage, such as the articulation of syntactic memory
+to this metalanguage, such as the concept of dynamic syntactic memory
 units (in the form of lists for tracking open heads and transitions) and
-various methods for retrospectively reinterpreting syntactic structure to
+methodologies for retrospectively reinterpreting syntactic structure to
 cope with novel events.
 
 

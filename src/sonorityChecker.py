@@ -88,8 +88,8 @@ imperfectSeriesLimit = 3
     # report if too many intervals larger than 12th?
     # report if any intervals equal to or greater than 15th
 # first species:
-    # consecutive imperfect consonances, with or without
-    # change of direction
+    # DONE consecutive imperfect consonances, with or without
+    # DONE change of direction
 # second species: dissonance off beat
     # count offbeat dissonances, prefer, say, percentage greater than 50%
 # third species: dissonance off beat
@@ -530,7 +530,8 @@ def getDensityRating(score, beatPosition=None,
 
 def checkImperfectSequences(score, analyzer, numPair):
     # original written by Tony Li
-    vPairList = analyzer.getVerticalPairs(score, numPair[0], numPair[1])
+    # use for first species in two parts
+    vps = analyzer.getVerticalPairs(score, numPair[0], numPair[1])
     maxThirdsStreak = 0
     maxThirdsSeries = 0
     maxSixthsStreak = 0
@@ -539,19 +540,19 @@ def checkImperfectSequences(score, analyzer, numPair):
     #     streak = with change of direction
     #     series = without a change of direction
     n = 0
-    while n < len(vPairList):
-        if vPairList[n] is not None:
-            itvl = interval.Interval(vPairList[n][0], vPairList[n][1])
+    while n < len(vps):
+        if vps[n] is not None:
+            itvl = interval.Interval(vps[n][0], vps[n][1])
             if itvl.simpleName in {'m3', 'M3', 'm6', 'M6'}:
                 streak = 1
                 series = 1
                 done = False
                 intSize = itvl.generic.directed  # 3 or 6
                 while not done:
-                    if n < len(vPairList) - 1:
+                    if n < len(vps) - 1:
                         n += 1
-                        newInt = interval.Interval(vPairList[n][0],
-                                                   vPairList[n][1])
+                        newInt = interval.Interval(vps[n][0],
+                                                   vps[n][1])
                         if (newInt.simpleName in {'m3', 'M3', 'm6', 'M6'}
                            and newInt.generic.directed == intSize):
                             streak += 1
@@ -559,10 +560,10 @@ def checkImperfectSequences(score, analyzer, numPair):
                             if streak >= 3:
                                 #Check for a change of direction
                                 rules = [
-                                    (vPairList[n][0] > vPairList[n-1][0]
-                                     and vPairList[n-1][0] < vPairList[n-2][0]),
-                                    (vPairList[n][0] < vPairList[n-1][0]
-                                     and vPairList[n-1][0] > vPairList[n-2][0])
+                                    (vps[n][0] > vps[n-1][0]
+                                     and vps[n-1][0] < vps[n-2][0]),
+                                    (vps[n][0] < vps[n-1][0]
+                                     and vps[n-1][0] > vps[n-2][0])
                                      ]
                                 if any(rules):
                                     series = streak - 1
@@ -604,25 +605,25 @@ def checkImperfectSequences(score, analyzer, numPair):
     if maxThirdsSeries > imperfectSeriesLimit:
         error = ('The maximum number of parallel thirds in the same '
                  'direction is ' + str(maxThirdsSeries)
-                 + ', which exceeds the limit of '
+                 + ', \nwhich exceeds the recommended limit of '
                  + str(imperfectSeriesLimit) + '.')
         pferrors.append(error)
     if maxThirdsStreak > imperfectStreakLimit:
         error = ('The maximum number of parallel thirds with a change '
                  'of direction is ' + str(maxThirdsStreak)
-                 + ', which exceeds the limit of '
+                 + ', \nwhich exceeds the recommended limit of '
                  + str(imperfectStreakLimit) + '.')
         pferrors.append(error)
     if maxSixthsSeries > imperfectSeriesLimit:
         error = ('The maximum number of parallel sixths in the same '
                  'direction is ' + str(maxSixthsSeries)
-                 + ', which exceeds the limit of '
+                 + ', \nwhich exceeds the recommended limit of '
                  + str(imperfectSeriesLimit) + '.')
         pferrors.append(error)
     if maxSixthsStreak > imperfectStreakLimit:
         error = ('The maximum number of parallel sixths with a change '
                  'of direction is ' + str(maxSixthsStreak)
-                 + ', which exceeds the limit of '
+                 + ', \nwhich exceeds the recommended limit of '
                  + str(imperfectStreakLimit) + '.')
         pferrors.append(error)
 

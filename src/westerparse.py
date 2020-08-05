@@ -239,36 +239,6 @@ def parseContext(context,
     context.errorsDict = {}
     for part in context.parts:
         context.errorsDict[part.name] = {}
-
-    # determine which parts to parse
-    # and return a slice of context.parts
-#     def validatePartSelection(context, partSelection):
-#         if partSelection is not None:
-#             try:
-#                 context.parts[partSelection]
-#             except IndexError:
-#                 if len(context.parts) == 1:
-#                     pts = ' part'
-#                 else:
-#                     pts = ' parts'
-#                 raise ContextError(
-#                     'Context Error: The composition has only '
-#                     + str(len(context.parts)) + pts
-#                     + ', so the part selection must fall in the range of 0-'
-#                     + str(len(context.parts)-1)
-#                     + '. Hence the selection of part '
-#                     + str(partSelection) + ' is invalid.')
-#             else:
-#                 if partSelection >= 0:
-#                     partsSelected = context.parts[partSelection:partSelection+1]
-#                 else:
-#                     partsSelected = context.parts[partSelection::partSelection-1]
-#         elif len(context.parts) == 1:
-#             partsSelected = context.parts[0:1]
-#         elif partSelection is None:
-#             partsSelected = context.parts
-#         return partsSelected
-# 
     try:
         partsForParsing = validatePartSelection(context, partSelection)
     except ContextError as ce:
