@@ -102,10 +102,10 @@ display the interpretations in a notation program.
 
 
 The annotations indicate the syntactic function of each note by referring
-to the rule of construction that generates the particular note under this 
+to the rule of construction that generates that particular note under this 
 particular interpretation of the line.
 (The rule labels are provided in :doc:`The Westergaard Rules <speciesrules>`.)
-The slurs bind notes together into syntactic units such as passing and
+The slurs bind notes together into syntactic units, such as passing and
 neighboring motions.  Notes shown in blue belong to the basic structure
 of the line.
 
