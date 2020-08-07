@@ -208,7 +208,7 @@ def testValidatedKey(score, keynote, mode):
         if partErrors:
             partErrorStr = ('\nProblems found in ' + part.name
                             + '. Given key = ' + keynote + ' '
-                            + mode + '.\n' + partErrors + '.')
+                            + mode + '.\n' + partErrors)
         userKeyErrors = userKeyErrors + partErrorStr
 
     if len(userKeyErrors) > 0:
