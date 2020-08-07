@@ -44,7 +44,7 @@ class ConcreteScaleDegree:
     # the CSD.value of C4 is 0, though we call it 'scale degree 1'
     # the CSD.value of D4 is 1, though we call it 'scale degree 2'
     # the CSD.value of B3 is -1, though we call it 'scale degree 7'
-    # CSDs also have a Direction property
+    # CSDs also have a direction attribute
 
     # Uses music21's scale.MajorScale or scale.MelodicMinorScale
 
