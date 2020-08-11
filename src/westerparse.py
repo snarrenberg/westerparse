@@ -587,7 +587,6 @@ def parsePart(part, context):
     for each line type, if at all. Collect a list of parsing errors.
     """
     # Run the parser.
-    logger.debug(f'Part {part.partNum} line types: {part.lineType}')
     partParser = parser.Parser(part, context)
     # Sort out the interpretations of the part.
     part.parses = partParser.parses
@@ -601,9 +600,6 @@ def parsePart(part, context):
     # Gather errors, if any.
     part.errors = partParser.errors
     part.typeErrorsDict = partParser.typeErrorsDict
-    logger.debug(f'Part {part.partNum} is primary: {part.isPrimary}'
-                 + f'\nPart {part.partNum} is bass: {part.isBass}'
-                 + f'\nPart {part.partNum} is generic: {part.isGeneric}')
 
 
 def selectedPreferredParseSets(context, show):
@@ -615,7 +611,6 @@ def selectedPreferredParseSets(context, show):
     between global structures in the parts. [This currently works
     only for two-part counterpoint.]
     """
-
     # TODO need to refine the preferences substantially
     if len(context.parts) > 1:
         # Select uppermost part that isPrimary as the primaryPart.
