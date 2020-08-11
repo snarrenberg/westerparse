@@ -41,6 +41,20 @@ import vlChecker
 from context import *
 from utilities import pairwise
 
+# -----------------------------------------------------------------------------
+# LOGGER
+# -----------------------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# logging handlers
+f_handler = logging.FileHandler('westerparse.txt', mode='w')
+f_handler.setLevel(logging.DEBUG)
+# logging formatters
+f_formatter = logging.Formatter('%(message)s')
+f_handler.setFormatter(f_formatter)
+# add handlers to logger
+logger.addHandler(f_handler)
 
 # -----------------------------------------------------------------------------
 # OPERATIONAL VARIABLES
@@ -573,6 +587,7 @@ def parsePart(part, context):
     for each line type, if at all. Collect a list of parsing errors.
     """
     # Run the parser.
+    logger.debug(f'Part {part.partNum} line types: {part.lineType}')
     partParser = parser.Parser(part, context)
     # Sort out the interpretations of the part.
     part.parses = partParser.parses
@@ -586,6 +601,9 @@ def parsePart(part, context):
     # Gather errors, if any.
     part.errors = partParser.errors
     part.typeErrorsDict = partParser.typeErrorsDict
+    logger.debug(f'Part {part.partNum} is primary: {part.isPrimary}'
+                 + f'\nPart {part.partNum} is bass: {part.isBass}'
+                 + f'\nPart {part.partNum} is generic: {part.isGeneric}')
 
 
 def selectedPreferredParseSets(context, show):

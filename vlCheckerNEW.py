@@ -6,7 +6,8 @@
 # -----------------------------------------------------------------------------
 """Take a score (source) with two or more parts (lines)
 and examine the local counterpoint 
-for conformity with Westergaard's rules of species counterpoint."""
+for conformity with Westergaard's rules of species counterpoint.
+"""
 
 # NB: vlq parts and score Parts are numbered top to bottom
 # NB: vPair parts are numbered bottom to top
@@ -33,6 +34,8 @@ vlErrors = []
 # -----------------------------------------------------------------------------
 # MAIN FUNCTIONS
 # -----------------------------------------------------------------------------
+
+
 def voiceLeadingAnalyzer(context):
     """A function for processing and reporting on voice leading 
     in species counterpoint, in both simple and mixed species 

@@ -72,17 +72,12 @@ addLocalRepetitions = True
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 # logging handlers
-c_handler = logging.StreamHandler()
-c_handler.setLevel(logging.ERROR)
 f_handler = logging.FileHandler('parser.txt', mode='w')
 f_handler.setLevel(logging.DEBUG)
 # logging formatters
-c_formatter = logging.Formatter('%(message)s')
-c_handler.setFormatter(c_formatter)
 f_formatter = logging.Formatter('%(message)s')
 f_handler.setFormatter(f_formatter)
 # add handlers to logger
-logger.addHandler(c_handler)
 logger.addHandler(f_handler)
 
 # -----------------------------------------------------------------------------
@@ -195,6 +190,7 @@ class Parser():
         cond3 = self.notes[0].csd.value % 7 == 0
         cond4 = self.notes[-1].csd.value % 7 == 0
         cond5 = self.notes[-1].csd.value == 0
+        cond6 = self.notes[-1].csd.value == 7
         if not cond1 and not cond2:
             error = ('Generic structure error: The line is not bounded '
                      'by tonic-triad pitches and hence not a valid '
@@ -213,6 +209,11 @@ class Parser():
         if cond1 and cond5:
             for n in self.notes[:-1]:
                 if n.csd.value in [2, 4, 7]:
+                    self.part.lineTypes.append('primary')
+                    break
+        elif cond1 and cond6:
+            for n in self.notes[:-1]:
+                if n.csd.value + 7 in [2, 4, 7]:
                     self.part.lineTypes.append('primary')
                     break
 
@@ -2829,6 +2830,10 @@ class Parser():
                     for i in range(leftEdge+1, rightEdge):
                         if isPermissibleConsonance(leftEdge, i, rightEdge):
                             validInserts.append(i)
+                    # look only at notes that are not tied-over
+                    validInserts = [i for i in validInserts
+                                    if not self.notes[i].tie
+                                    or self.notes[i].tie.type == 'start']
                     logger.debug(f'possible insertions in span between '
                                  f'{leftEdge} and {rightEdge}: {validInserts}')
                     # TODO continue with writing the new solution

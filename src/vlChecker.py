@@ -99,6 +99,7 @@ or :py:func:'fourthSpeciesControlOfDissonance'.
 
 import itertools
 import unittest
+import logging
 
 from music21 import *
 
@@ -107,6 +108,21 @@ import context
 import theoryAnalyzerWP
 import theoryResultWP
 from utilities import *
+
+# -----------------------------------------------------------------------------
+# LOGGER
+# -----------------------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# logging handlers
+f_handler = logging.FileHandler('vl.txt', mode='w')
+f_handler.setLevel(logging.DEBUG)
+# logging formatters
+f_formatter = logging.Formatter('%(message)s')
+f_handler.setFormatter(f_formatter)
+# add handlers to logger
+logger.addHandler(f_handler)
 
 
 # -----------------------------------------------------------------------------
@@ -992,11 +1008,14 @@ def fourthSpeciesControlOfDissonance(score, analyzer,
                 # will be checked later.
                 # If the first vInt is consonant, the speciesNote
                 # might be dissonant.
-                rules = [not isVerticalDissonance(vlq.v1n1, vlq.v2n1),
-                         isVerticalDissonance(vlq.v1n2, vlq.v2n2),
+                cond1 = [isVerticalDissonance(vlq.v1n2, vlq.v2n2)]
+                cond2 = [not isVerticalDissonance(vlq.v1n1, vlq.v2n1),
                          speciesNote.consecutions.leftType == 'step',
                          speciesNote.consecutions.rightType == 'step']
-                if not all(rules):
+                if all(cond1) and not all(cond2):
+                    logger.debug(f'{isVerticalDissonance(vlq.v1n1, vlq.v2n1)}'
+                                 f'{isVerticalDissonance(vlq.v1n2, vlq.v2n2)}'
+                                 )
                     error = ('Dissonance off the beat in bar '
                              + str(speciesNote.measureNumber)
                              + ' is not approached and left by step.')
