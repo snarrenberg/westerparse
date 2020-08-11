@@ -58,6 +58,7 @@ import dependency
 # variables set by user
 selectPreferredParses = True
 getStructuralLevels = True
+showWestergaardInterpretations = False
 
 # for third species
 localNeighborsOnly = False
@@ -1601,6 +1602,7 @@ class Parser():
                 self.buildParse(s2cand, lineType, parsecounter,
                                 buildErrors=[])
 
+
     def buildParse(self, cand, lineType, parsecounter,
                    buildErrors, method=None):
         """Sets up the basic features of the parse object
@@ -1735,6 +1737,8 @@ class Parser():
                                         for lbl in self.ruleLabels])
                              )
             logger.debug(parseData)
+            if showWestergaardInterpretations:
+                self.displayWestergaardParse()
                              
         def arcMerge(self, arc1, arc2):
             """Combine two passing motions that share an inner
@@ -2886,7 +2890,7 @@ class Parser():
                               if n.rule.level is not None]
             generationTable = [n.rule.level for n in self.notes]
 
-        def displayFullParse(self):
+        def displayWestergaardParse(self):
             """Create a multileveled illustration of a parse of the sort
             used in Westergaard's book. [Under developement]
             """
@@ -2909,16 +2913,21 @@ class Parser():
             for num, part in enumerate(illustration.parts):
                 part.partNum = num
             # Create a measure in each part of the illustration.
-            measures = len(notes)
-            n = measures
+#            measures = len(notes)
+#            n = measures
 
             # Add each note to the correct levels.
+            # TODO Add tied-over notes
             def addNoteToIllustration(note, illustration):
                 lev = note.rule.level
-                meas = note.index+1
+#                meas = note.index+1
                 for part in illustration.parts:
                     if lev == part.partNum:
                         part.insert(note.offset, note)
+                        if note.tie:
+                            if note.tie.type == 'start':
+                                tiedOver = notes[note.index+1]
+                                part.insert(tiedOver.offset, tiedOver)
 #                        part.measure(str(meas)).append(note)
 # need to figure in the note offset
                     if lev < part.partNum:
@@ -2931,7 +2940,8 @@ class Parser():
 
             illustration.show()
             # Exit after showing the first parse, for testing.
-            exit()
+#            exit()
+
 
     def testGenerabilityFromLevels(parse):
         """Given a parse in which rule levels have been assigned
@@ -2945,6 +2955,7 @@ class Parser():
         if parse.lineType == 'generic':
             pass
         pass
+
 
     def collectParses(self):
         """Collect all the attempted parses of a line in the
@@ -2999,6 +3010,7 @@ class Parser():
             self.isGeneric = True
         else:
             self.isGeneric = False
+
 
     def selectPreferredParses(self):
         """Given a list of successful interpretations from :py:class:`~Parser`,
@@ -3618,7 +3630,7 @@ class Test(unittest.TestCase):
     def test_setDependencyLevels(self):
         pass
 
-    def test_displayFullParse(self):
+    def test_displayWestergaardParse(self):
         pass
 
     def test_testGenerabilityFromLevels(self):

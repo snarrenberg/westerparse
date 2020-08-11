@@ -1,8 +1,0 @@
-Part 0 line types: None
-Part 0 is primary: True
-Part 0 is bass: False
-Part 0 is generic: True
-Part 1 line types: None
-Part 1 is primary: True
-Part 1 is bass: True
-Part 1 is generic: True

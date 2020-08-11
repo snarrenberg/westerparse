@@ -191,7 +191,7 @@ if __name__ == "__main__":
 								elif verify == 29:
 												westerparse.evaluateLines(source, show=None, partSelection=1, partLineType='generic')
 								elif verify == 30:
-												westerparse.evaluateLines(source, show=None, partSelection=None, partLineType='generic')
+												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
 								else:
 												print('ERROR: No valid evaluation option selected.')
 												
