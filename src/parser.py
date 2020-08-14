@@ -2914,7 +2914,7 @@ class Parser():
                 part.partNum = num
             # Create a measure in each part of the illustration.
 #            measures = len(notes)
-#            n = measures
+#            n = measures			
 
             # Add each note to the correct levels.
             # TODO Add tied-over notes
