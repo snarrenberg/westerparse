@@ -51,6 +51,7 @@ Label: parse0_GL
 	Arcs:  [[2, 4, 6, 10], [12, 14, 16], [16, 18, 19], [0, 10]]
 	Rules:	   0   2   4   6   8  10  12  14  16  18  19
 	      	  S2  E3  E4  E4  E3  E1  E3  E4  E3  E2  S1
+	      	   1   3   4   4   5   2   4   5   3   4   0
 List of S2 candidates: [0, 2, 10, 12]
 Building parses for S2 candidate: 0, scale degree 5
 Beginning parse: parse0_PL
@@ -94,6 +95,7 @@ Label: parse29_PL
 	Arcs:  [[2, 4, 6, 10], [12, 14, 19], [16, 18, 19]]
 	Rules:	   0   2   4   6   8  10  12  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  S2  S3  E3  E2  S1
+	      	   3   4   6   6   7   5   1   2   3   4   0
 Beginning parse: parse30_PL
 Beginning parse: parse31_PL
 Beginning parse: parse32_PL
@@ -106,6 +108,7 @@ Label: parse33_PL
 	Arcs:  [[2, 4, 6, 10], [12, 14, 19], [16, 18, 19]]
 	Rules:	   0   2   4   6   8  10  12  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  S2  S3  E3  E2  S1
+	      	   3   4   6   6   7   5   1   2   3   4   0
 Beginning parse: parse34_PL
 Beginning parse: parse35_PL
 Method 8 for creating basic step motion.
@@ -116,6 +119,7 @@ Label: parse35_PL
 	Arcs:  [[2, 4, 6, 10], [16, 18, 19], [12, 14, 19]]
 	Rules:	   0   2   4   6   8  10  12  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  S2  S3  E3  E2  S1
+	      	   3   4   6   6   7   5   1   2   3   4   0
 PARSE DEBUG REPORT: Part 2 of 2 parts
 Line types: ['generic', 'bass', 'primary']
 Parser state: 0
@@ -169,6 +173,7 @@ Label: parse0_GL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  E3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S3 candidates: [6]
 Building parses for S3 candidate: 6, scale degree 5
 Beginning parse: parse0_BL
@@ -177,6 +182,7 @@ Label: parse0_BL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10], [0, 6, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  S3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S2 candidates: [1, 6, 8]
 Building parses for S2 candidate: 1, scale degree 3
 Beginning parse: parse0_PL
@@ -189,6 +195,7 @@ Label: parse1_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Beginning parse: parse2_PL
 Beginning parse: parse3_PL
 Beginning parse: parse4_PL
@@ -202,6 +209,7 @@ Label: parse6_PL
 	Arcs:  [[1, 2, 10], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  S3  E3   x  E3  E3  E4  E4  E4  S1
+	      	   3   1   2   4   5   6   3   4   4   4   0
 Beginning parse: parse7_PL
 Beginning parse: parse8_PL
 Method 8 for creating basic step motion.
@@ -212,6 +220,7 @@ Label: parse8_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Building parses for S2 candidate: 6, scale degree 5
 Beginning parse: parse9_PL
 Beginning parse: parse10_PL
@@ -225,6 +234,7 @@ Label: parse12_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse13_PL
 Beginning parse: parse14_PL
 Method 5 for creating basic step motion.
@@ -235,6 +245,7 @@ Label: parse14_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse15_PL
 Beginning parse: parse16_PL
 Beginning parse: parse17_PL
@@ -246,6 +257,7 @@ Label: parse17_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Building parses for S2 candidate: 8, scale degree 3
 Beginning parse: parse18_PL
 Method 0 for creating basic step motion.
@@ -256,6 +268,7 @@ Label: parse18_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse19_PL
 Beginning parse: parse20_PL
 Beginning parse: parse21_PL
@@ -270,6 +283,7 @@ Label: parse24_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse25_PL
 Beginning parse: parse26_PL
 Method 8 for creating basic step motion.
@@ -280,6 +294,7 @@ Label: parse26_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 PARSE DEBUG REPORT: Part 1 of 2 parts
 Line types: ['generic', 'primary']
 Parser state: 0
@@ -337,6 +352,7 @@ Label: parse0_GL
 	Arcs:  [[2, 4, 6, 10], [6, 8, 9], [12, 14, 16], [16, 18, 19], [0, 10]]
 	Rules:	   0   2   4   6   8   9  10  12  14  16  18  19
 	      	  S2  E3  E4  E4  E4  E3  E1  E3  E4  E3  E2  S1
+	      	   1   3   4   4   6   5   2   4   5   3   4   0
 List of S2 candidates: [0, 2, 10, 12]
 Building parses for S2 candidate: 0, scale degree 5
 Beginning parse: parse0_PL
@@ -380,6 +396,7 @@ Label: parse29_PL
 	Arcs:  [[2, 4, 6, 10], [6, 8, 9], [12, 14, 19], [16, 18, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  14  16  18  19
 	      	  E3  E3  E4  E4  E4  E3  E3  S2  S3  E3  E2  S1
+	      	   3   4   6   6   8   7   5   1   2   3   4   0
 Beginning parse: parse30_PL
 Beginning parse: parse31_PL
 Beginning parse: parse32_PL
@@ -392,6 +409,7 @@ Label: parse33_PL
 	Arcs:  [[2, 4, 6, 10], [6, 8, 9], [12, 14, 19], [16, 18, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  14  16  18  19
 	      	  E3  E3  E4  E4  E4  E3  E3  S2  S3  E3  E2  S1
+	      	   3   4   6   6   8   7   5   1   2   3   4   0
 Beginning parse: parse34_PL
 Beginning parse: parse35_PL
 Method 8 for creating basic step motion.
@@ -402,6 +420,7 @@ Label: parse35_PL
 	Arcs:  [[2, 4, 6, 10], [6, 8, 9], [16, 18, 19], [12, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  14  16  18  19
 	      	  E3  E3  E4  E4  E4  E3  E3  S2  S3  E3  E2  S1
+	      	   3   4   6   6   8   7   5   1   2   3   4   0
 PARSE DEBUG REPORT: Part 2 of 2 parts
 Line types: ['generic', 'bass', 'primary']
 Parser state: 0
@@ -455,6 +474,7 @@ Label: parse0_GL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  E3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S3 candidates: [6]
 Building parses for S3 candidate: 6, scale degree 5
 Beginning parse: parse0_BL
@@ -463,6 +483,7 @@ Label: parse0_BL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10], [0, 6, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  S3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S2 candidates: [1, 6, 8]
 Building parses for S2 candidate: 1, scale degree 3
 Beginning parse: parse0_PL
@@ -475,6 +496,7 @@ Label: parse1_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Beginning parse: parse2_PL
 Beginning parse: parse3_PL
 Beginning parse: parse4_PL
@@ -488,6 +510,7 @@ Label: parse6_PL
 	Arcs:  [[1, 2, 10], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  S3  E3   x  E3  E3  E4  E4  E4  S1
+	      	   3   1   2   4   5   6   3   4   4   4   0
 Beginning parse: parse7_PL
 Beginning parse: parse8_PL
 Method 8 for creating basic step motion.
@@ -498,6 +521,7 @@ Label: parse8_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Building parses for S2 candidate: 6, scale degree 5
 Beginning parse: parse9_PL
 Beginning parse: parse10_PL
@@ -511,6 +535,7 @@ Label: parse12_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse13_PL
 Beginning parse: parse14_PL
 Method 5 for creating basic step motion.
@@ -521,6 +546,7 @@ Label: parse14_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse15_PL
 Beginning parse: parse16_PL
 Beginning parse: parse17_PL
@@ -532,6 +558,7 @@ Label: parse17_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Building parses for S2 candidate: 8, scale degree 3
 Beginning parse: parse18_PL
 Method 0 for creating basic step motion.
@@ -542,6 +569,7 @@ Label: parse18_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse19_PL
 Beginning parse: parse20_PL
 Beginning parse: parse21_PL
@@ -556,6 +584,7 @@ Label: parse24_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse25_PL
 Beginning parse: parse26_PL
 Method 8 for creating basic step motion.
@@ -566,6 +595,7 @@ Label: parse26_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 PARSE DEBUG REPORT: Part 1 of 2 parts
 Line types: ['generic', 'primary']
 Parser state: 0
@@ -627,6 +657,7 @@ Label: parse0_GL
 	Arcs:  [[2, 4, 6, 8], [10, 12, 13, 14, 16], [16, 18, 19], [0, 8], [0, 10]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  S2  E3  E4  E4  E1  E3  E1  E4  E4  E4  E3  E2  S1
+	      	   1   4   5   5   3   4   2   4   4   4   3   4   0
 List of S2 candidates: [0, 2, 8, 9, 10, 13]
 Building parses for S2 candidate: 0, scale degree 5
 Beginning parse: parse0_PL
@@ -646,6 +677,7 @@ Label: parse8_PL
 	Arcs:  [[0, 8], [0, 10], [2, 4, 6, 8], [16, 18, 19], [0, 12, 13, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  S2  E3  E4  E4  E1  E3  E1  S3  S3  S3  E3  E2  S1
+	      	   1   5   6   6   4   5   3   2   2   2   3   4   0
 Building parses for S2 candidate: 2, scale degree 8
 Beginning parse: parse9_PL
 Beginning parse: parse10_PL
@@ -664,6 +696,7 @@ Label: parse17_PL
 	Arcs:  [[16, 18, 19], [2, 4, 6, 10, 12, 13, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  S2  S3  S3  E3  E3  S3  S3  S3  S3  E3  E2  S1
+	      	   3   1   2   2   3   4   2   2   2   2   3   4   0
 Building parses for S2 candidate: 8, scale degree 5
 Beginning parse: parse18_PL
 Beginning parse: parse19_PL
@@ -682,6 +715,7 @@ Label: parse26_PL
 	Arcs:  [[2, 4, 6, 8], [8, 10], [16, 18, 19], [8, 12, 13, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  E3  E4  E4  S2  E3  E1  S3  S3  S3  E3  E2  S1
+	      	   3   4   5   5   1   4   3   2   2   2   3   4   0
 Building parses for S2 candidate: 9, scale degree 3
 Beginning parse: parse27_PL
 Beginning parse: parse28_PL
@@ -700,6 +734,7 @@ Label: parse35_PL
 	Arcs:  [[2, 4, 6, 8], [9, 13], [10, 12, 13], [16, 18, 19], [9, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  E3  E4  E4  E3  S2  E3  E4  E1  S3  E3  E2  S1
+	      	   3   4   6   6   5   1   4   5   3   2   3   4   0
 Building parses for S2 candidate: 10, scale degree 5
 Beginning parse: parse36_PL
 Beginning parse: parse37_PL
@@ -715,6 +750,7 @@ Label: parse41_PL
 	Arcs:  [[2, 4, 6, 8], [16, 18, 19], [10, 12, 13, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  S2  S3  S3  S3  E3  E2  S1
+	      	   3   4   6   6   5   6   1   2   2   2   3   4   0
 Beginning parse: parse42_PL
 Beginning parse: parse43_PL
 Beginning parse: parse44_PL
@@ -726,6 +762,7 @@ Label: parse44_PL
 	Arcs:  [[2, 4, 6, 8], [16, 18, 19], [10, 12, 13, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  S2  S3  S3  S3  E3  E2  S1
+	      	   3   4   6   6   5   6   1   2   2   2   3   4   0
 Building parses for S2 candidate: 13, scale degree 3
 Beginning parse: parse45_PL
 Beginning parse: parse46_PL
@@ -738,6 +775,7 @@ Label: parse47_PL
 	Arcs:  [[2, 4, 6, 8], [10, 12, 13], [13, 14, 19], [16, 18, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  E3  E4  S2  S3  E3  E2  S1
+	      	   3   5   7   7   6   7   4   5   1   2   3   4   0
 Beginning parse: parse48_PL
 Beginning parse: parse49_PL
 Beginning parse: parse50_PL
@@ -750,6 +788,7 @@ Label: parse51_PL
 	Arcs:  [[2, 4, 6, 8], [10, 12, 13], [13, 14, 19], [16, 18, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  E3  E4  S2  S3  E3  E2  S1
+	      	   3   5   7   7   6   7   4   5   1   2   3   4   0
 Beginning parse: parse52_PL
 Beginning parse: parse53_PL
 Method 8 for creating basic step motion.
@@ -760,6 +799,7 @@ Label: parse53_PL
 	Arcs:  [[2, 4, 6, 8], [10, 12, 13], [16, 18, 19], [13, 14, 19]]
 	Rules:	   0   2   4   6   8   9  10  12  13  14  16  18  19
 	      	  E3  E3  E4  E4  E3  E3  E3  E4  S2  S3  E3  E2  S1
+	      	   3   5   7   7   6   7   4   5   1   2   3   4   0
 PARSE DEBUG REPORT: Part 2 of 2 parts
 Line types: ['generic', 'bass', 'primary']
 Parser state: 0
@@ -813,6 +853,7 @@ Label: parse0_GL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  E3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S3 candidates: [6]
 Building parses for S3 candidate: 6, scale degree 5
 Beginning parse: parse0_BL
@@ -821,6 +862,7 @@ Label: parse0_BL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10], [0, 6, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  S3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S2 candidates: [1, 6, 8]
 Building parses for S2 candidate: 1, scale degree 3
 Beginning parse: parse0_PL
@@ -833,6 +875,7 @@ Label: parse1_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Beginning parse: parse2_PL
 Beginning parse: parse3_PL
 Beginning parse: parse4_PL
@@ -846,6 +889,7 @@ Label: parse6_PL
 	Arcs:  [[1, 2, 10], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  S3  E3   x  E3  E3  E4  E4  E4  S1
+	      	   3   1   2   4   5   6   3   4   4   4   0
 Beginning parse: parse7_PL
 Beginning parse: parse8_PL
 Method 8 for creating basic step motion.
@@ -856,6 +900,7 @@ Label: parse8_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Building parses for S2 candidate: 6, scale degree 5
 Beginning parse: parse9_PL
 Beginning parse: parse10_PL
@@ -869,6 +914,7 @@ Label: parse12_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse13_PL
 Beginning parse: parse14_PL
 Method 5 for creating basic step motion.
@@ -879,6 +925,7 @@ Label: parse14_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse15_PL
 Beginning parse: parse16_PL
 Beginning parse: parse17_PL
@@ -890,6 +937,7 @@ Label: parse17_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Building parses for S2 candidate: 8, scale degree 3
 Beginning parse: parse18_PL
 Method 0 for creating basic step motion.
@@ -900,6 +948,7 @@ Label: parse18_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse19_PL
 Beginning parse: parse20_PL
 Beginning parse: parse21_PL
@@ -914,6 +963,7 @@ Label: parse24_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse25_PL
 Beginning parse: parse26_PL
 Method 8 for creating basic step motion.
@@ -924,6 +974,7 @@ Label: parse26_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 PARSE DEBUG REPORT: Part 1 of 2 parts
 Line types: ['generic', 'primary']
 Parser state: 0
@@ -1024,6 +1075,7 @@ Label: parse0_GL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  E3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S3 candidates: [6]
 Building parses for S3 candidate: 6, scale degree 5
 Beginning parse: parse0_BL
@@ -1032,6 +1084,7 @@ Label: parse0_BL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10], [0, 6, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  S3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S2 candidates: [1, 6, 8]
 Building parses for S2 candidate: 1, scale degree 3
 Beginning parse: parse0_PL
@@ -1044,6 +1097,7 @@ Label: parse1_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Beginning parse: parse2_PL
 Beginning parse: parse3_PL
 Beginning parse: parse4_PL
@@ -1057,6 +1111,7 @@ Label: parse6_PL
 	Arcs:  [[1, 2, 10], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  S3  E3   x  E3  E3  E4  E4  E4  S1
+	      	   3   1   2   4   5   6   3   4   4   4   0
 Beginning parse: parse7_PL
 Beginning parse: parse8_PL
 Method 8 for creating basic step motion.
@@ -1067,6 +1122,7 @@ Label: parse8_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Building parses for S2 candidate: 6, scale degree 5
 Beginning parse: parse9_PL
 Beginning parse: parse10_PL
@@ -1080,6 +1136,7 @@ Label: parse12_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse13_PL
 Beginning parse: parse14_PL
 Method 5 for creating basic step motion.
@@ -1090,6 +1147,7 @@ Label: parse14_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse15_PL
 Beginning parse: parse16_PL
 Beginning parse: parse17_PL
@@ -1101,6 +1159,7 @@ Label: parse17_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Building parses for S2 candidate: 8, scale degree 3
 Beginning parse: parse18_PL
 Method 0 for creating basic step motion.
@@ -1111,6 +1170,7 @@ Label: parse18_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse19_PL
 Beginning parse: parse20_PL
 Beginning parse: parse21_PL
@@ -1125,6 +1185,7 @@ Label: parse24_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse25_PL
 Beginning parse: parse26_PL
 Method 8 for creating basic step motion.
@@ -1135,6 +1196,7 @@ Label: parse26_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 PARSE DEBUG REPORT: Part 1 of 2 parts
 Line types: ['generic', 'bass', 'primary']
 Parser state: 0
@@ -1188,6 +1250,7 @@ Label: parse0_GL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  E3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S3 candidates: [6]
 Building parses for S3 candidate: 6, scale degree 5
 Beginning parse: parse0_BL
@@ -1196,6 +1259,7 @@ Label: parse0_BL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10], [0, 6, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  S2  E3  E4  E3  E2  E1  S3  E4  E4  E4  S1
+	      	   1   3   7   6   5   4   2   3   3   3   0
 List of S2 candidates: [1, 6, 8]
 Building parses for S2 candidate: 1, scale degree 3
 Beginning parse: parse0_PL
@@ -1208,6 +1272,7 @@ Label: parse1_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Beginning parse: parse2_PL
 Beginning parse: parse3_PL
 Beginning parse: parse4_PL
@@ -1221,6 +1286,7 @@ Label: parse6_PL
 	Arcs:  [[1, 2, 10], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  S3  E3   x  E3  E3  E4  E4  E4  S1
+	      	   3   1   2   4   5   6   3   4   4   4   0
 Beginning parse: parse7_PL
 Beginning parse: parse8_PL
 Method 8 for creating basic step motion.
@@ -1231,6 +1297,7 @@ Label: parse8_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [1, 8], [6, 7, 8], [1, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  S2  E4  E3  E2  E1  E3  E4  E1  S3  S1
+	      	   3   1   7   6   5   4   5   6   3   2   0
 Building parses for S2 candidate: 6, scale degree 5
 Beginning parse: parse9_PL
 Beginning parse: parse10_PL
@@ -1244,6 +1311,7 @@ Label: parse12_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse13_PL
 Beginning parse: parse14_PL
 Method 5 for creating basic step motion.
@@ -1254,6 +1322,7 @@ Label: parse14_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Beginning parse: parse15_PL
 Beginning parse: parse16_PL
 Beginning parse: parse17_PL
@@ -1265,6 +1334,7 @@ Label: parse17_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  S2  S3  S3  S3  S1
+	      	   3   4   8   7   6   5   1   2   2   2   0
 Building parses for S2 candidate: 8, scale degree 3
 Beginning parse: parse18_PL
 Method 0 for creating basic step motion.
@@ -1275,6 +1345,7 @@ Label: parse18_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse19_PL
 Beginning parse: parse20_PL
 Beginning parse: parse21_PL
@@ -1289,6 +1360,7 @@ Label: parse24_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 Beginning parse: parse25_PL
 Beginning parse: parse26_PL
 Method 8 for creating basic step motion.
@@ -1299,6 +1371,7 @@ Label: parse26_PL
 	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [8, 9, 10]]
 	Rules:	   0   1   2   3   4   5   6   7   8   9  10
 	      	  E3  E3  E4  E3  E2  E1  E3  E4  S2  S3  S1
+	      	   3   5   9   8   7   6   4   5   1   2   0
 PARSE DEBUG REPORT: Part 2 of 2 parts
 Line types: ['generic', 'bass', 'primary']
 Parser state: 0
@@ -1346,363 +1419,3 @@ Parser state: 19
 	Trans: [4]
 	Arcs:  [[6, 8, 10], [12, 14, 16], [12, 18, 19]]
 Preliminary Arcs: [[6, 8, 10], [12, 14, 16], [12, 18, 19]]
-PARSE DEBUG REPORT: Part 1 of 2 parts
-Line types: ['generic', 'primary']
-Parser state: 0
-	Heads: [0]
-	Trans: []
-	Arcs:  []
-Parser state: 1
-	Heads: [0, 1]
-	Trans: []
-	Arcs:  []
-Parser state: 2
-	Heads: [0]
-	Trans: [2]
-	Arcs:  []
-Parser state: 3
-	Heads: [0]
-	Trans: []
-	Arcs:  [[0, 2, 3]]
-Parser state: 4
-	Heads: [0, 4]
-	Trans: []
-	Arcs:  [[0, 2, 3]]
-Preliminary Arcs: [[0, 2, 3]]
-Beginning parse: parse0_GL
-Label: parse0_GL
-	Basic: [0, 4]
-	Arcs:  [[0, 2, 3]]
-	Rules:	   0   1   2   3   4
-	      	  S2  E3  E2  E1  S1
-List of S2 candidates: [0]
-Building parses for S2 candidate: 0, scale degree 3
-Beginning parse: parse0_PL
-Beginning parse: parse1_PL
-Beginning parse: parse2_PL
-Beginning parse: parse3_PL
-Beginning parse: parse4_PL
-Beginning parse: parse5_PL
-Beginning parse: parse6_PL
-Beginning parse: parse7_PL
-Method 7 for creating basic step motion.
-	Basic arc: [0, 2, 4]
-	Arcs:      [[0, 2, 4]]
-Label: parse7_PL
-	Basic: [0, 2, 4]
-	Arcs:  [[0, 2, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  E3  S3  E3  S1
-Beginning parse: parse8_PL
-Method 8 for creating basic step motion.
-	Basic arc: [0, 2, 4]
-	Arcs:      [[0, 2, 4]]
-Label: parse8_PL
-	Basic: [0, 2, 4]
-	Arcs:  [[0, 2, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  E3  S3  E3  S1
-PARSE DEBUG REPORT: Part 2 of 2 parts
-Line types: ['generic', 'bass', 'primary']
-Parser state: 0
-	Heads: [0]
-	Trans: []
-	Arcs:  []
-Parser state: 1
-	Heads: [0, 1]
-	Trans: []
-	Arcs:  []
-Parser state: 2
-	Heads: [0, 1]
-	Trans: [2]
-	Arcs:  []
-Parser state: 3
-	Heads: [0, 1, 3]
-	Trans: []
-	Arcs:  [[1, 2, 3]]
-Parser state: 4
-	Heads: [0, 1, 3, 4]
-	Trans: []
-	Arcs:  [[1, 2, 3]]
-Preliminary Arcs: [[1, 2, 3]]
-Beginning parse: parse0_GL
-Label: parse0_GL
-	Basic: [0, 4]
-	Arcs:  [[1, 2, 3]]
-	Rules:	   0   1   2   3   4
-	      	  S2  E3  E4  E3  S1
-List of S3 candidates: [3]
-Building parses for S3 candidate: 3, scale degree 5
-Beginning parse: parse0_BL
-Label: parse0_BL
-	Basic: [0, 3, 4]
-	Arcs:  [[1, 2, 3], [0, 3, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  E3  E4  S3  S1
-List of S2 candidates: []
-PARSE DEBUG REPORT: Part 1 of 2 parts
-Line types: ['generic', 'primary']
-Parser state: 0
-	Heads: [0]
-	Trans: []
-	Arcs:  []
-Parser state: 1
-	Heads: [0]
-	Trans: [1]
-	Arcs:  []
-Parser state: 2
-	Heads: [0, 2]
-	Trans: []
-	Arcs:  [[0, 1, 2]]
-Parser state: 3
-	Heads: [0, 2]
-	Trans: [3]
-	Arcs:  [[0, 1, 2]]
-Parser state: 4
-	Heads: [0, 2]
-	Trans: []
-	Arcs:  [[0, 1, 2], [2, 3, 4]]
-Preliminary Arcs: [[0, 1, 2], [2, 3, 4]]
-Beginning parse: parse0_GL
-Label: parse0_GL
-	Basic: [0, 4]
-	Arcs:  [[0, 1, 2], [2, 3, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  E4  E3  E2  S1
-List of S2 candidates: [0]
-Building parses for S2 candidate: 0, scale degree 3
-Beginning parse: parse0_PL
-Beginning parse: parse1_PL
-Beginning parse: parse2_PL
-Method 2 for creating basic step motion.
-	Basic arc: [0, 1, 4]
-	Arcs:      [[0, 1, 4], [2, 3, 4]]
-Label: parse2_PL
-	Basic: [0, 1, 4]
-	Arcs:  [[0, 1, 4], [2, 3, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  S3  E3  E2  S1
-Beginning parse: parse3_PL
-Beginning parse: parse4_PL
-Beginning parse: parse5_PL
-Beginning parse: parse6_PL
-Method 6 for creating basic step motion.
-	Basic arc: [0, 1, 4]
-	Arcs:      [[0, 1, 4], [2, 3, 4]]
-Label: parse6_PL
-	Basic: [0, 1, 4]
-	Arcs:  [[0, 1, 4], [2, 3, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  S3  E3  E2  S1
-Beginning parse: parse7_PL
-Beginning parse: parse8_PL
-Method 8 for creating basic step motion.
-	Basic arc: [0, 1, 4]
-	Arcs:      [[2, 3, 4], [0, 1, 4]]
-Label: parse8_PL
-	Basic: [0, 1, 4]
-	Arcs:  [[2, 3, 4], [0, 1, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  S3  E3  E2  S1
-PARSE DEBUG REPORT: Part 2 of 2 parts
-Line types: ['generic', 'bass', 'primary']
-Parser state: 0
-	Heads: [0]
-	Trans: []
-	Arcs:  []
-Parser state: 1
-	Heads: [0, 1]
-	Trans: []
-	Arcs:  []
-Parser state: 2
-	Heads: [0, 1]
-	Trans: [2]
-	Arcs:  []
-Parser state: 3
-	Heads: [0, 1]
-	Trans: []
-	Arcs:  [[1, 2, 3]]
-Parser state: 4
-	Heads: [0, 1, 4]
-	Trans: []
-	Arcs:  [[1, 2, 3]]
-Preliminary Arcs: [[1, 2, 3]]
-Beginning parse: parse0_GL
-Label: parse0_GL
-	Basic: [0, 4]
-	Arcs:  [[1, 2, 3]]
-	Rules:	   0   1   2   3   4
-	      	  S2  E3  E2  E1  S1
-List of S3 candidates: [1]
-Building parses for S3 candidate: 1, scale degree 5
-Beginning parse: parse0_BL
-Label: parse0_BL
-	Basic: [0, 1, 4]
-	Arcs:  [[1, 2, 3], [0, 1, 4]]
-	Rules:	   0   1   2   3   4
-	      	  S2  S3  E2  E1  S1
-List of S2 candidates: [1]
-Building parses for S2 candidate: 1, scale degree 5
-Beginning parse: parse0_PL
-Beginning parse: parse1_PL
-Beginning parse: parse2_PL
-Beginning parse: parse3_PL
-Beginning parse: parse4_PL
-Beginning parse: parse5_PL
-Beginning parse: parse6_PL
-Beginning parse: parse7_PL
-Beginning parse: parse8_PL
-PARSE DEBUG REPORT: Part 1 of 2 parts
-Line types: ['generic', 'bass', 'primary']
-Parser state: 0
-	Heads: [0]
-	Trans: []
-	Arcs:  []
-Parser state: 1
-	Heads: [0, 1]
-	Trans: []
-	Arcs:  []
-Parser state: 2
-	Heads: [0, 1]
-	Trans: [2]
-	Arcs:  []
-Parser state: 3
-	Heads: [0, 1, 3]
-	Trans: []
-	Arcs:  [[1, 2, 3]]
-Parser state: 4
-	Heads: [0, 1]
-	Trans: [4]
-	Arcs:  [[1, 2, 3]]
-Parser state: 5
-	Heads: [0, 1]
-	Trans: []
-	Arcs:  [[1, 2, 3], [1, 4, 5]]
-Parser state: 6
-	Heads: [0, 1, 6]
-	Trans: []
-	Arcs:  [[1, 2, 3], [1, 4, 5]]
-Parser state: 7
-	Heads: [0, 1, 6]
-	Trans: [7]
-	Arcs:  [[1, 2, 3], [1, 4, 5]]
-Parser state: 8
-	Heads: [0, 1, 6]
-	Trans: []
-	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8]]
-Preliminary Arcs: [[1, 2, 3], [1, 4, 5], [6, 7, 8]]
-Beginning parse: parse0_GL
-Label: parse0_GL
-	Basic: [0, 8]
-	Arcs:  [[1, 2, 3], [1, 4, 5], [6, 7, 8], [0, 6]]
-	Rules:	   0   1   2   3   4   5   6   7   8
-	      	  S2  E3  E4  E3  E2  E1  E1  E2  S1
-List of S3 candidates: []
-List of S2 candidates: [1]
-Building parses for S2 candidate: 1, scale degree 3
-Beginning parse: parse0_PL
-Beginning parse: parse1_PL
-Beginning parse: parse2_PL
-Beginning parse: parse3_PL
-Beginning parse: parse4_PL
-Beginning parse: parse5_PL
-Beginning parse: parse6_PL
-Beginning parse: parse7_PL
-Method 7 for creating basic step motion.
-	Basic arc: [1, 4, 8]
-	Arcs:      [[1, 2, 3], [1, 4, 8], [6, 7, 8]]
-Label: parse7_PL
-	Basic: [1, 4, 8]
-	Arcs:  [[1, 2, 3], [1, 4, 8], [6, 7, 8]]
-	Rules:	   0   1   2   3   4   5   6   7   8
-	      	  E3  S2  E4  E3  S3  E3  E3  E2  S1
-Beginning parse: parse8_PL
-Method 8 for creating basic step motion.
-	Basic arc: [1, 4, 8]
-	Arcs:      [[1, 2, 3], [6, 7, 8], [1, 4, 8]]
-Label: parse8_PL
-	Basic: [1, 4, 8]
-	Arcs:  [[1, 2, 3], [6, 7, 8], [1, 4, 8]]
-	Rules:	   0   1   2   3   4   5   6   7   8
-	      	  E3  S2  E4  E3  S3  E3  E3  E2  S1
-PARSE DEBUG REPORT: Part 2 of 2 parts
-Line types: ['generic', 'bass', 'primary']
-Parser state: 0
-	Heads: [0]
-	Trans: []
-	Arcs:  []
-Parser state: 1
-	Heads: [0, 1]
-	Trans: []
-	Arcs:  []
-Parser state: 2
-	Heads: [0, 1]
-	Trans: [2]
-	Arcs:  []
-Parser state: 3
-	Heads: [0, 1, 3]
-	Trans: [2]
-	Arcs:  []
-Parser state: 4
-	Heads: [0, 1, 3]
-	Trans: [2, 4]
-	Arcs:  []
-Parser state: 5
-	Heads: [0, 1, 5]
-	Trans: []
-	Arcs:  [[3, 4, 5], [1, 2, 5]]
-Parser state: 6
-	Heads: [0, 1, 5]
-	Trans: [6]
-	Arcs:  [[3, 4, 5], [1, 2, 5]]
-Parser state: 7
-	Heads: [0, 1, 5]
-	Trans: []
-	Arcs:  [[3, 4, 5], [1, 2, 5], [5, 6, 7]]
-Parser state: 8
-	Heads: [0, 1, 5, 8]
-	Trans: []
-	Arcs:  [[3, 4, 5], [1, 2, 5], [5, 6, 7]]
-Preliminary Arcs: [[3, 4, 5], [1, 2, 5], [5, 6, 7]]
-Beginning parse: parse0_GL
-Label: parse0_GL
-	Basic: [0, 8]
-	Arcs:  [[1, 2, 5], [3, 4, 5], [5, 6, 7]]
-	Rules:	   0   1   2   3   4   5   6   7   8
-	      	  S2  E3  E2  E3  E4  E1  E2  E1  S1
-List of S3 candidates: [1, 5]
-Building parses for S3 candidate: 1, scale degree 5
-Beginning parse: parse0_BL
-Label: parse0_BL
-	Basic: [0, 1, 8]
-	Arcs:  [[1, 2, 5], [3, 4, 5], [5, 6, 7], [0, 1, 8]]
-	Rules:	   0   1   2   3   4   5   6   7   8
-	      	  S2  S3  E2  E3  E4  E1  E2  E1  S1
-Building parses for S3 candidate: 5, scale degree 5
-Beginning parse: parse1_BL
-Label: parse1_BL
-	Basic: [0, 5, 8]
-	Arcs:  [[1, 2, 5], [3, 4, 5], [5, 6, 7], [0, 5, 8]]
-	Rules:	   0   1   2   3   4   5   6   7   8
-	      	  S2  E3  E2  E3  E4  S3  E2  E1  S1
-List of S2 candidates: [1, 5]
-Building parses for S2 candidate: 1, scale degree 5
-Beginning parse: parse0_PL
-Beginning parse: parse1_PL
-Beginning parse: parse2_PL
-Beginning parse: parse3_PL
-Beginning parse: parse4_PL
-Beginning parse: parse5_PL
-Beginning parse: parse6_PL
-Beginning parse: parse7_PL
-Beginning parse: parse8_PL
-Building parses for S2 candidate: 5, scale degree 5
-Beginning parse: parse9_PL
-Beginning parse: parse10_PL
-Beginning parse: parse11_PL
-Beginning parse: parse12_PL
-Beginning parse: parse13_PL
-Beginning parse: parse14_PL
-Beginning parse: parse15_PL
-Beginning parse: parse16_PL
-Beginning parse: parse17_PL

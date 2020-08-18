@@ -667,7 +667,7 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
         # BUILD the interpretation
         # Arcs, rules, and parens are tied to note indexes in the line,
         # and these are then attached to notes in the source part.
-        gatherArcs(context.parts[parse.partNum], parse.arcs)
+        gatherArcs(context.parts[parse.partNum], parse.arcs, parse.arcBasic)
         assignRules(context.parts[parse.partNum], parse.ruleLabels)
         assignParentheses(context.parts[parse.partNum], parse.parentheses)
 
@@ -814,7 +814,7 @@ def logInterpretations(context, partSelection):
 # -----------------------------------------------------------------------------
 
 
-def gatherArcs(source, arcs):
+def gatherArcs(source, arcs, arcBasic):
     """
     Given a fully parsed line (an interpretation), sort through the arcs and
     create a music21 spanner (tie/slur) to represent each arc.
@@ -831,7 +831,14 @@ def gatherArcs(source, arcs):
     for arc in arcs:
         arcBuild(source, arc)
     # TODO Set up separate function for the basic arc.
-    # consider using spanner.Line() in place of spanner.Slur()
+    if arcBasic is not None:
+        pass
+        # consider using spanner.Line() in place of spanner.Slur(), as follows:
+#        UrArc = spanner.Line(lineType='solid', startHeight=25, tick='down')
+#        source.insert(0, UrArc)
+#        for ind in arcBasic:
+#            obj = source.recurse().notes[ind]
+#            UrArc.addSpannedElements(obj)
 
 
 def arcBuild(source, arc):
