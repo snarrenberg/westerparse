@@ -128,13 +128,13 @@ if __name__ == "__main__":
 #    source = '../examples/corpus/Westergaard057b.musicxml'
 #    source = '../examples/corpus/WP302.musicxml'
 #    source = 'TestScoresXML/SecondSpecies33.musicxml'
-#    source = '../examples/corpus/WP021.musicxml'
+    source = '../examples/corpus/WP022.musicxml'
 #    source = '../examples/corpus/WP013.musicxml'
 
 #    source = 'TestScoresXML/2020_07_27T22_03_17_936Z.musicxml'
 #    source = 'TestScoresXML/2020_07_31T21_35_42_273Z.musicxml'
 #    source = 'TestScoresXML/2020_08_11T16_59_58_638Z.musicxml'
-    source = 'TestScoresXML/WP023.musicxml'
+#    source = 'TestScoresXML/WP023.musicxml'
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
 
@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 5)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
