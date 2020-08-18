@@ -693,9 +693,9 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
             content.write('musicxml.png', fp=filename)
         elif show == 'showWestergaardParse':
             pass
-            # using parser.displayWestergaardParse
             # TODO Activate function for displaying layered representations of
             # a parsed line, perhaps for one line only.
+            # use parser.displayWestergaardParse
 
     if partSelection is not None:
         part = context.parts[partSelection]
