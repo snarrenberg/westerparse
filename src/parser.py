@@ -72,7 +72,7 @@ addLocalRepetitions = True
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-#logger.setLevel(logging.ERROR)
+# logger.setLevel(logging.ERROR)
 # logging handlers
 f_handler = logging.FileHandler('parser.txt', mode='w')
 f_handler.setLevel(logging.DEBUG)
@@ -86,10 +86,11 @@ logger.addHandler(f_handler)
 # MAIN CLASSES
 # -----------------------------------------------------------------------------
 
+
 class Parser():
     """
-    The main engine of the parser. 
-    
+    The main engine of the parser.
+
     The bulk of the parser's work is done by :py:func:`~parseTransition`.
     After a preliminary parse of the line, the parser decides on a set
     of possible structural interpretations and creates a
@@ -229,7 +230,7 @@ class Parser():
         """
         # Initialize the buffer, stack, and arcs
         g_buffer = [n for n in self.notes
-                      if not n.tie or n.tie.type == 'start']
+                    if not n.tie or n.tie.type == 'start']
         g_stack = []
         arcs = []
         # Initialize the lists of open heads and transitions
@@ -305,7 +306,7 @@ class Parser():
                     # Set the local harmony.
                     if i.index == 0:
                         l_harmonyStart = [p for p
-                                             in self.part.tonicTriad.pitches]
+                                          in self.part.tonicTriad.pitches]
                     elif i.beat == 1.0 and i.index > 0:
                         l_harmonyStart = (
                             self.context.localHarmonyDict[i.offset]
@@ -367,7 +368,7 @@ class Parser():
                                                 in l_openHeads[1:]
                                                 if head > h]
                                 l_openHeads = ([firstHead]
-                                                  + revisedHeads)
+                                               + revisedHeads)
                         logger.debug(f'Parser state: {y.index}'
                                      '--after adding local repetitions--'
                                      f'\n\tRevised Loc Arcs:  {l_arcs}')
@@ -377,8 +378,8 @@ class Parser():
                     # TODO: reset dependencies in local passing arcs.
                     if localNeighborsOnly:
                         l_arcs = [arc for arc in l_arcs if
-                                     (isNeighboringArc(arc, self.notes) or
-                                      isRepetitionArc(arc, self.notes))]
+                                  (isNeighboringArc(arc, self.notes) or
+                                   isRepetitionArc(arc, self.notes))]
                         logger.debug(f'Parser state: {y.index}'
                                      '--after limiting to local neighbors--'
                                      f'\n\tRevised Loc Arcs:  {l_arcs}')
@@ -481,7 +482,7 @@ class Parser():
                 # Then proceed through the rest of the local context.
                 while g_buffer[0].index < localEnd:
                     shiftBuffer(g_stack, g_buffer)
-                    if g_stack[-1].index  not in l_openHeads:
+                    if g_stack[-1].index not in l_openHeads:
                         g_stack.pop(-1)
 
                 # Restore the open locals to the buffer.
@@ -546,7 +547,6 @@ class Parser():
             self.errors.append(error)
         self.arcs = arcs
         self.openHeads = openHeads
-
 
     def showPartialParse(self, stackTop, bufferBottom, arcs,
                          openHeads, openTransitions):
@@ -1176,8 +1176,6 @@ class Parser():
                                 openTransitions.remove(t)
                                 openHeads.append(j.index)
                                 arcGenerateTransition(t, part, arcs)
-                            
-                    
             else:
                 openHeads.append(j.index)
 
@@ -1603,7 +1601,6 @@ class Parser():
                 self.buildParse(s2cand, lineType, parsecounter,
                                 buildErrors=[])
 
-
     def buildParse(self, cand, lineType, parsecounter,
                    buildErrors, method=None):
         """Sets up the basic features of the parse object
@@ -1724,23 +1721,23 @@ class Parser():
             parseData = ('Label: ' + self.label
                          + '\n\tBasic: ' + str(self.arcBasic)
                          + '\n\tArcs:  ' + str(self.arcs)
-                         + '\n\tRules:\t' 
-                         + ''.join(['{:4d}'.format(lbl[0]) 
+                         + '\n\tRules:\t'
+                         + ''.join(['{:4d}'.format(lbl[0])
                                     for lbl in self.ruleLabels])
-                         + '\n\t      \t' 
+                         + '\n\t      \t'
                          + ''.join(['{:>4}'.format(lbl[1])
                                     for lbl in self.ruleLabels])
                          )
             if getStructuralLevels:
                 parseData = (parseData
-                             + '\n\t      \t' 
+                             + '\n\t      \t'
                              + ''.join(['{:4d}'.format(lbl[2])
                                         for lbl in self.ruleLabels])
                              )
             logger.debug(parseData)
             if showWestergaardInterpretations:
                 self.displayWestergaardParse()
-                             
+
         def arcMerge(self, arc1, arc2):
             """Combine two passing motions that share an inner
             node and direction."""
@@ -2237,8 +2234,8 @@ class Parser():
                          + '\n\tBasic arc: ' + str(self.arcBasic)
                          + '\n\tArcs:      ' + str(self.arcs))
 
-               # TODO: Reset Note attributes.
-                # Look for secondary structures between S nodes.
+            # TODO: Reset Note attributes.
+            # Look for secondary structures between S nodes.
 
         def parseBass(self):
             """Test whether a specific dominant pitch can function as S3."""
@@ -2249,7 +2246,8 @@ class Parser():
             # See whether any open heads can be attached as repetitions
             # of S2 or S3.
             self.attachOpenheadsToStructuralLefthead(0, self.S3Index)
-            self.attachOpenheadsToStructuralLefthead(self.S3Index, self.S1Index)
+            self.attachOpenheadsToStructuralLefthead(self.S3Index,
+                                                     self.S1Index)
 
             # TODO Figure out and explain why it is necessary
             # to look for crossed arcs here.
@@ -2432,7 +2430,7 @@ class Parser():
             pass
 
         def assignSecondaryRules(self):
-            """Find any note that does not yet have a rule assigned and 
+            """Find any note that does not yet have a rule assigned and
             determine the appropriate rule based on its dependency.
             """
             for i in self.notes:
@@ -2517,8 +2515,8 @@ class Parser():
                     i.rule.name = 'x'
 
         def testLocalResolutions(self):
-            """For any note identified as a local insertion (rule L3), 
-            determine whether it is subsequently displaced stepwise to a 
+            """For any note identified as a local insertion (rule L3),
+            determine whether it is subsequently displaced stepwise to a
             tonic triad pitch. Record an error if not.
             """
             for i in self.notes:
@@ -2592,7 +2590,8 @@ class Parser():
             self.ruleLabels = []
             for elem in self.notes:
                 if not elem.tie or elem.tie.type == 'start':
-                    self.ruleLabels.append((elem.index, elem.rule.name, elem.rule.level))
+                    self.ruleLabels.append((elem.index, elem.rule.name,
+                                            elem.rule.level))
             return
 
         def gatherParentheses(self):
@@ -2740,14 +2739,14 @@ class Parser():
                         if (arc[0] == leftEdge
                            and rightBranch is None
                            and isPermissibleInsertion(leftEdge, arc[-1],
-                                                       rightEdge)):
+                                                      rightEdge)):
                             rightBranch = arc
                         # See if there's a longer right branch available.
                         if (arc[0] == leftEdge
                            and rightBranch
                            and length(arc) > length(rightBranch)
                            and isPermissibleInsertion(leftEdge, arc[-1],
-                                                       rightEdge)):
+                                                      rightEdge)):
                             rightBranch = arc
                 # Look for left branches if the right edge has been
                 # generated and there is no right branch.
@@ -2757,14 +2756,14 @@ class Parser():
                         if (arc[-1] == rightEdge
                            and leftBranch is None
                            and isPermissibleInsertion(leftEdge, arc[0],
-                                                       rightEdge)):
+                                                      rightEdge)):
                             leftBranch = arc
                         # See if there's a longer left branch available.
                         if (arc[-1] == rightEdge
                            and leftBranch
                            and length(arc) > length(leftBranch)
                            and isPermissibleInsertion(leftEdge, arc[0],
-                                                       rightEdge)):
+                                                      rightEdge)):
                             leftBranch = arc
                 # Look for inter branch if no cross branches
                 # or left or right branches.
@@ -2858,7 +2857,7 @@ class Parser():
                         b = segment[1]
                         insertionList = []
                         for i in range(a+1, b):
-                            cond = [not self.notes[i].tie 
+                            cond = [not self.notes[i].tie
                                     or self.notes[i].tie.type == 'start',
                                     isPermissibleInsertion(a, i, b)]
                             if all(cond):
@@ -2878,7 +2877,7 @@ class Parser():
                         b = segment[1]
                         noteCount = 0
                         for i in range(a+1, b):
-                            cond = [not self.notes[i].tie 
+                            cond = [not self.notes[i].tie
                                     or self.notes[i].tie.type == 'start']
                             if all(cond):
                                 noteCount += 1
@@ -2984,7 +2983,7 @@ class Parser():
                 part.partNum = num
             # Create a measure in each part of the illustration.
 #            measures = len(notes)
-#            n = measures			
+#            n = measures
 
             # Add each note to the correct levels.
             # TODO Add tied-over notes
@@ -3012,7 +3011,6 @@ class Parser():
             # Exit after showing the first parse, for testing.
 #            exit()
 
-
     def testGenerabilityFromLevels(parse):
         """Given a parse in which rule levels have been assigned
         (perhaps by the student), determine whether the line is generable
@@ -3025,7 +3023,6 @@ class Parser():
         if parse.lineType == 'generic':
             pass
         pass
-
 
     def collectParses(self):
         """Collect all the attempted parses of a line in the
@@ -3080,7 +3077,6 @@ class Parser():
             self.isGeneric = True
         else:
             self.isGeneric = False
-
 
     def selectPreferredParses(self):
         """Given a list of successful interpretations from :py:class:`~Parser`,
@@ -3635,6 +3631,7 @@ def arcLength(arc):
 
 # -----------------------------------------------------------------------------
 
+
 class Test(unittest.TestCase):
 
     def runTest(self):
@@ -3807,7 +3804,7 @@ class Test(unittest.TestCase):
     def test_isEmbeddedInOtherArc(self):
         arc = [4, 8, 20]
         arcs = [[0, 1, 2], [4, 14, 20]]
-        self.assertTrue(isEmbeddedInOtherArc(arc, arcs, 
+        self.assertTrue(isEmbeddedInOtherArc(arc, arcs,
                                              startIndex=0, stopIndex=20))
 
     def test_conflictsWithOtherArc(self):
@@ -3845,6 +3842,7 @@ class Test(unittest.TestCase):
         arc = [4, 5, 7, 10]
         self.assertTrue((arcLength(arc) == 6))
 # -----------------------------------------------------------------------------
+
 
 if __name__ == '__main__':
     unittest.main()
