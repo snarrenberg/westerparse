@@ -831,6 +831,7 @@ def gatherArcs(source, arcs):
     for arc in arcs:
         arcBuild(source, arc)
     # TODO Set up separate function for the basic arc.
+    # consider using spanner.Line() in place of spanner.Slur()
 
 
 def arcBuild(source, arc):
