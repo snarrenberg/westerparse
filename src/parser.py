@@ -57,7 +57,7 @@ import dependency
 
 # variables set by user
 selectPreferredParses = True
-getStructuralLevels = False
+getStructuralLevels = True
 showWestergaardInterpretations = False
 
 # for third species
@@ -2626,21 +2626,23 @@ class Parser():
             # The rootSpan extends from the first to the last note of a line.
             rootSpan = (self.notes[0].index, self.notes[-1].index)
 
-            # TODO Revise to accommodate fourth species, where the span
-            # between consecutive notes may be 2 or 1
-            
-            # The length of a span = final.index - initial-index.
-            # The span between consecutive notes is 1,
-            # so only spans of length > 1 are fillable.
-            def length(span):
-                length = span[-1] - span[0]
-                return length
+            # The length of a span = the number of intervening new notes
+            # The span between consecutive notes is 0,
+            # so only spans of length > 0 are fillable.
+            def spanLength(span):
+                spannedNotes = 0
+                for n in self.notes:
+                    cond = [not n.tie or n.tie.type == 'start',
+                            span[0] < n.index < span[-1]]
+                    if all(cond):
+                        spannedNotes += 1
+                return spannedNotes
 
-            # Given an arc, divide it into fillable segments (length > 1).
+            # Given an arc, divide it into fillable segments (length > 0).
             def addSpansFromArc(arc, spans):
                 segments = pairwise(arc)
                 for segment in segments:
-                    if length(segment) > 1:
+                    if spanLength(segment) > 0:
                         spans.append(segment)
 
             # Create a list to hold all the fillable spans.
@@ -2652,11 +2654,11 @@ class Parser():
             # a span after the basic arc, but Westergaard allows it.)
             if self.arcBasic[0] != rootSpan[0]:
                 span = (0, self.arcBasic[0])
-                if length(span) > 1:
+                if spanLength(span) > 0:
                     spans.append(span)
             if self.arcBasic[-1] != rootSpan[-1]:
                 span = (self.arcBasic[-1], rootSpan[1])
-                if length(span) > 1:
+                if spanLength(span) > 0:
                     spans.append(span)
 
             # Add any spans in the basic arc.
@@ -2747,7 +2749,7 @@ class Parser():
                         # See if there's a longer right branch available.
                         if (arc[0] == leftEdge
                            and rightBranch
-                           and length(arc) > length(rightBranch)
+                           and arcLength(arc) > arcLength(rightBranch)
                            and isPermissibleInsertion(leftEdge, arc[-1],
                                                       rightEdge)):
                             rightBranch = arc
@@ -2764,7 +2766,7 @@ class Parser():
                         # See if there's a longer left branch available.
                         if (arc[-1] == rightEdge
                            and leftBranch
-                           and length(arc) > length(leftBranch)
+                           and arcLength(arc) > arcLength(leftBranch)
                            and isPermissibleInsertion(leftEdge, arc[0],
                                                       rightEdge)):
                             leftBranch = arc
@@ -2781,7 +2783,7 @@ class Parser():
                         if (arc[0] > leftEdge
                            and arc[-1] < rightEdge
                            and interBranch
-                           and length(arc) > length(interBranch)):
+                           and arcLength(arc) > arcLength(interBranch)):
                             interBranch = arc
 
                 # (2) Process any branches that have been found in the span:
@@ -2821,17 +2823,17 @@ class Parser():
                     addSpansFromArc(crossBranch, spans)
                 if rightBranch:
                     addSpansFromArc(rightBranch, spans)
-                    if rightEdge - rightBranch[-1] > 1:
+                    if spanLength((rightBranch[-1], rightEdge)) > 0:
                         spans.append((rightBranch[-1], rightEdge))
                 if leftBranch:
-                    if leftBranch[0] - leftEdge > 1:
+                    if spanLength((leftEdge, leftBranch[0])) > 0:
                         spans.append((leftEdge, leftBranch[0]))
                     addSpansFromArc(leftBranch, spans)
                 if interBranch:
-                    if interBranch[0] - leftEdge > 1:
+                    if spanLength((leftEdge, interBranch[0])) > 0:
                         spans.append((leftEdge, interBranch[0]))
                     addSpansFromArc(interBranch, spans)
-                    if rightEdge - interBranch[-1] > 1:
+                    if spanLength((interBranch[-1], rightEdge)) > 0:
                         spans.append((interBranch[-1], rightEdge))
 
                 # (4) Process a span that contains only inserted
@@ -2848,7 +2850,6 @@ class Parser():
                     tree = [a, b]
                     insertionDict = {}
                     # other variables: segment, result, i, node
-                    logger.debug(f'tree = {tree}')
 
                     def getSegmentFromStack(segmentStack):
                         if len(segmentStack) > 0:
