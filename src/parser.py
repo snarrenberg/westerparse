@@ -57,7 +57,7 @@ import dependency
 
 # variables set by user
 selectPreferredParses = True
-getStructuralLevels = True
+getStructuralLevels = False
 showWestergaardInterpretations = False
 
 # for third species
@@ -2626,6 +2626,9 @@ class Parser():
             # The rootSpan extends from the first to the last note of a line.
             rootSpan = (self.notes[0].index, self.notes[-1].index)
 
+            # TODO Revise to accommodate fourth species, where the span
+            # between consecutive notes may be 2 or 1
+            
             # The length of a span = final.index - initial-index.
             # The span between consecutive notes is 1,
             # so only spans of length > 1 are fillable.
@@ -2845,6 +2848,7 @@ class Parser():
                     tree = [a, b]
                     insertionDict = {}
                     # other variables: segment, result, i, node
+                    logger.debug(f'tree = {tree}')
 
                     def getSegmentFromStack(segmentStack):
                         if len(segmentStack) > 0:
