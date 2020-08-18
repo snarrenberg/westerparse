@@ -71,8 +71,8 @@ addLocalRepetitions = True
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-#logger.setLevel(logging.DEBUG)
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.ERROR)
 # logging handlers
 f_handler = logging.FileHandler('parser.txt', mode='w')
 f_handler.setLevel(logging.DEBUG)
@@ -2608,10 +2608,6 @@ class Parser():
             """Review a completed parse and determine the
             structural level of each note.
             """
-            # TODO This works for now, but is not optimal.
-            # There needs to be a more robust way of evaluating insertions,
-            # not just left-to-right.
-
             # Assign levels to notes in the basic arc.
             for n in self.notes:
                 if n.rule.name == 'S1':
@@ -2666,7 +2662,7 @@ class Parser():
 
             # For testing whether an insertion conforms
             # to the intervallic constraints:
-            def isPermissibleConsonance(x, y, z):
+            def isPermissibleInsertion(x, y, z):
                 # Checks the insertion of y between x and z indexes.
                 insertion = self.notes[y]
                 left = self.notes[x]
@@ -2694,12 +2690,25 @@ class Parser():
                 rightEdgeLevel = self.notes[span[1]].rule.level
 
                 # Infer next level from span edges.
-                if leftEdgeLevel and rightEdgeLevel:
-                    nextLevel = max(leftEdgeLevel, rightEdgeLevel) + 1
-                elif leftEdgeLevel and not rightEdgeLevel:
-                    nextLevel = leftEdgeLevel + 1
-                elif not leftEdgeLevel and rightEdgeLevel:
-                    nextLevel = rightEdgeLevel + 1
+#                if leftEdgeLevel and rightEdgeLevel:
+#                    nextLevel = max(leftEdgeLevel, rightEdgeLevel) + 1
+#                elif leftEdgeLevel and not rightEdgeLevel:
+#                    nextLevel = leftEdgeLevel + 1
+#                elif not leftEdgeLevel and rightEdgeLevel:
+#                    nextLevel = rightEdgeLevel + 1
+
+                def getNextLevel(span):
+                    leftEdgeLevel = self.notes[span[0]].rule.level
+                    rightEdgeLevel = self.notes[span[1]].rule.level
+                    if leftEdgeLevel and rightEdgeLevel:
+                        nextLevel = max(leftEdgeLevel, rightEdgeLevel) + 1
+                    elif leftEdgeLevel and not rightEdgeLevel:
+                        nextLevel = leftEdgeLevel + 1
+                    elif not leftEdgeLevel and rightEdgeLevel:
+                        nextLevel = rightEdgeLevel + 1
+                    return nextLevel
+
+                nextLevel = getNextLevel(span)
 
                 # (1) Search for possible branches across or within the span.
                 # A dependent arc can fit into a span in one of four ways:
@@ -2730,14 +2739,14 @@ class Parser():
                         # Look for a right branch.
                         if (arc[0] == leftEdge
                            and rightBranch is None
-                           and isPermissibleConsonance(leftEdge, arc[-1],
+                           and isPermissibleInsertion(leftEdge, arc[-1],
                                                        rightEdge)):
                             rightBranch = arc
                         # See if there's a longer right branch available.
                         if (arc[0] == leftEdge
                            and rightBranch
                            and length(arc) > length(rightBranch)
-                           and isPermissibleConsonance(leftEdge, arc[-1],
+                           and isPermissibleInsertion(leftEdge, arc[-1],
                                                        rightEdge)):
                             rightBranch = arc
                 # Look for left branches if the right edge has been
@@ -2747,14 +2756,14 @@ class Parser():
                     for arc in dependentArcs:
                         if (arc[-1] == rightEdge
                            and leftBranch is None
-                           and isPermissibleConsonance(leftEdge, arc[0],
+                           and isPermissibleInsertion(leftEdge, arc[0],
                                                        rightEdge)):
                             leftBranch = arc
                         # See if there's a longer left branch available.
                         if (arc[-1] == rightEdge
                            and leftBranch
                            and length(arc) > length(leftBranch)
-                           and isPermissibleConsonance(leftEdge, arc[0],
+                           and isPermissibleInsertion(leftEdge, arc[0],
                                                        rightEdge)):
                             leftBranch = arc
                 # Look for inter branch if no cross branches
@@ -2825,59 +2834,117 @@ class Parser():
 
                 # (4) Process a span that contains only inserted
                 # pitches and no arcs.
-                # TODO This is a temporary solution.
-                # Need an algorithm that finds the best of
-                # the many possible solutions, not necessarily left to right;
                 if (crossBranch is None and rightBranch is None
                    and leftBranch is None and interBranch is None):
-                    # New solution: start by finding generable insertions in the span
-                    validInserts = []
-                    for i in range(leftEdge+1, rightEdge):
-                        if isPermissibleConsonance(leftEdge, i, rightEdge):
-                            validInserts.append(i)
-                    # look only at notes that are not tied-over
-                    validInserts = [i for i in validInserts
-                                    if not self.notes[i].tie
-                                    or self.notes[i].tie.type == 'start']
-                    logger.debug(f'possible insertions in span between '
-                                 f'{leftEdge} and {rightEdge}: {validInserts}')
-                    # TODO continue with writing the new solution
-                    # find the invalid insertions and test them given the various
-                    # possibilities for segmenting the span using validInserts
-                    # test each invalid against each of the valids
-                    # x ..... y1 ... y2 ...... z
-                    # x ... w y1
-                    # x ... w .......y2
-                    # x ..........w..y2
-                    # x        y1.w..y2
 
-                    # current solution:
-                    if isPermissibleConsonance(leftEdge,
-                                               leftEdge+1, rightEdge):
-                        self.notes[leftEdge+1].rule.level = nextLevel
-                        spans.remove(span)
-                        if rightEdge - (leftEdge+1) > 1:
-                            spans.append((leftEdge+1, rightEdge))
-                    elif isPermissibleConsonance(leftEdge,
-                                               rightEdge-1, rightEdge):
-                        self.notes[rightEdge-1].rule.level = nextLevel
-                        spans.remove(span)
-                        if (rightEdge-1) - leftEdge > 1:
-                            spans.append((leftEdge, rightEdge-1))
-                    elif (length(span) > 3
-                          and isPermissibleConsonance(leftEdge,
-                                                      leftEdge+1, leftEdge+2)
-                          and isPermissibleConsonance(leftEdge,
-                                                      leftEdge+2, rightEdge)):
-                        self.notes[leftEdge+2].rule.level = nextLevel
-                        self.notes[leftEdge+1].rule.level = nextLevel + 1
-                        spans.remove(span)
-                        if rightEdge - (leftEdge+2) > 1:
-                            spans.append((leftEdge+2, rightEdge))
-                    # TEMP: set dummy level to avoid loop
-                    else:
-                        for i in range(leftEdge+1, rightEdge):
-                            self.notes[i].rule.level = 88
+                    # initialize the process
+                    a = leftEdge
+                    b = rightEdge
+                    # stack, tree, dictionary
+                    segmentStack = []
+                    segmentStack.append((a, b))
+                    tree = [a, b]
+                    insertionDict = {}
+                    # other variables: segment, result, i, node
+
+                    def getSegmentFromStack(segmentStack):
+                        if len(segmentStack) > 0:
+                            return segmentStack.pop()
+                        else:
+                            return 'finished'
+
+                    def findSegmentInsertions(segment):
+                        a = segment[0]
+                        b = segment[1]
+                        insertionList = []
+                        for i in range(a+1, b):
+                            cond = [not self.notes[i].tie 
+                                    or self.notes[i].tie.type == 'start',
+                                    isPermissibleInsertion(a, i, b)]
+                            if all(cond):
+                                insertionList.insert(0, i)
+                        return insertionList
+
+                    def getSegmentInsertion(segment, dict):
+                        newInsertion = None
+                        if segment in insertionDict:
+                            insertionList = dict[segment]
+                            if len(insertionList) > 0:
+                                newInsertion = insertionList.pop()
+                        return newInsertion
+
+                    def segmentContentSize(segment):
+                        a = segment[0]
+                        b = segment[1]
+                        noteCount = 0
+                        for i in range(a+1, b):
+                            cond = [not self.notes[i].tie 
+                                    or self.notes[i].tie.type == 'start']
+                            if all(cond):
+                                noteCount += 1
+                        return noteCount
+
+                    def addSegmentsToStack(segment, i, segmentStack):
+                        a = segment[0]
+                        b = segment[1]
+                        if segmentContentSize((i, b)) > 0:
+                            segmentStack.append((i, b))
+                        if segmentContentSize((a, i)) > 0:
+                            segmentStack.append((a, i))
+
+                    def getSegmentFromTreeTop(tree):
+                        segment = None
+                        top = tree[-1]
+                        for n in reversed(tree):
+                            if top > n:
+                                segment = (n, top)
+                                break
+                        return segment
+
+                    def removeSegmentWithNode(node, segmentStack):
+                        for segment in segmentStack:
+                            if segment[0] == node or segment[-1] == node:
+                                segmentStack.remove(segment)
+                                break
+
+                    def setLevelsFromTree(tree):
+                        paredTree = tree[2:]
+                        seg = [tree[0], tree[1]]
+                        for i in paredTree:
+                            for s in seg:
+                                if s > i:
+                                    idx = seg.index(s)
+                                    seg.insert(idx, i)
+                                    nextLevel = getNextLevel((seg[idx-1],
+                                                              seg[idx+1]))
+                                    self.notes[seg[idx]].rule.level = nextLevel
+                                    break
+
+                    def processInsertionSegment(segment):
+                        i = getSegmentInsertion(segment, insertionDict)
+                        if i is not None:
+                            tree.append(i)
+                            addSegmentsToStack(segment, i, segmentStack)
+                            segment = getSegmentFromStack(segmentStack)
+                            if segment != 'finished':
+                                result = findSegmentInsertions(segment)
+                                insertionDict[segment] = result
+                        elif i is None:
+                            node = tree.pop()
+                            removeSegmentWithNode(node, segmentStack)
+                            segment = getSegmentFromTreeTop(tree)
+                        if segment != 'finished':
+                            processInsertionSegment(segment)
+                        else:
+                            setLevelsFromTree(tree)
+                            if len(tree) == segmentContentSize((tree[0],
+                                                                tree[1])) + 2:
+                            spans.remove(span)
+
+                    segment = getSegmentFromStack(segmentStack)
+                    result = findSegmentInsertions(segment)
+                    insertionDict[segment] = result
+                    processInsertionSegment(segment)
 
             # Run the method's core function
             spancount = len(spans)

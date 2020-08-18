@@ -133,7 +133,8 @@ if __name__ == "__main__":
 
 #    source = 'TestScoresXML/2020_07_27T22_03_17_936Z.musicxml'
 #    source = 'TestScoresXML/2020_07_31T21_35_42_273Z.musicxml'
-    source = 'TestScoresXML/2020_08_11T16_59_58_638Z.musicxml'
+#    source = 'TestScoresXML/2020_08_11T16_59_58_638Z.musicxml'
+    source = 'TestScoresXML/WP023.musicxml'
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
 
