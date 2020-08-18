@@ -193,13 +193,19 @@ class GlobalContext(Context):
             offDom = kwargs['offsetDominant']
             offClosTon = kwargs['offsetClosingTonic']
             if offPre is None:
-                initialTonicSpan = makeLocalContext(cxt.score, 0.0, offPre, 'initial tonic')
-                predominantSpan = makeLocalContext(cxt.score, offPre, offDom, 'predominant')
+                initialTonicSpan = makeLocalContext(cxt.score, 0.0, offPre,
+                                                    'initial tonic')
+                predominantSpan = makeLocalContext(cxt.score, offPre, offDom,
+                                                   'predominant')
             else:
-                initialTonicSpan = makeLocalContext(cxt.score, 0.0, offDom, 'initial tonic')
+                initialTonicSpan = makeLocalContext(cxt.score, 0.0, offDom,
+                                                    'initial tonic')
                 predominantSpan = None
-            dominantSpan = makeLocalContext(cxt.score, offDom, offClosTon, 'dominant')
-            closingTonicSpan = makeLocalContext(cxt.score, offClosTon, offClosTon+4.0, 'closing tonic')
+            dominantSpan = makeLocalContext(cxt.score, offDom,
+                                            offClosTon, 'dominant')
+            closingTonicSpan = makeLocalContext(cxt.score, offClosTon,
+                                                offClosTon+4.0,
+                                                'closing tonic')
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
@@ -211,7 +217,7 @@ class GlobalContext(Context):
         if thirdSpeciesPart:
             try:
                 self.getLocalOnbeatHarmonies()
-            except ContextError as ce:    
+            except ContextError as ce:
                 ce.logerror()
                 raise EvaluationException()
                 return
@@ -267,7 +273,8 @@ class GlobalContext(Context):
             keyAccidental = '-' + self.key.getTonic().accidental.name
         else:
             keyAccidental = ''
-        self.key.nameString = self.key.getTonic().step + keyAccidental + ' ' + self.key.mode
+        self.key.nameString = (self.key.getTonic().step
+                               + keyAccidental + ' ' + self.key.mode)
 
     def setupPartsTonality(self):
         # Set part properties: part number, tonic degree,
@@ -376,8 +383,8 @@ class GlobalContext(Context):
                                 if (resolution.isNote and
                                    resolution.offset > offsetStart and
                                    parser.isStepDown(elem, resolution)):
-                                       # resolution = part.scale.next(elem, 'descending')
-                                       harmonicEssentials.append(resolution.pitch)
+                                    # resolution = part.scale.next(elem, 'descending')
+                                    harmonicEssentials.append(resolution.pitch)
                 self.localHarmonyDict[offsetStart] = harmonicEssentials
 
         # Test the local harmonies for triadicity. Collect measure numbers
@@ -436,7 +443,7 @@ class GlobalContext(Context):
                     if offsetStart <= note.offset <= offsetEnd:
                         newpart.append(note)
                 # Part-related parsing initialization:
-                # newpart.buffer = [n for n in part.flat.notes 
+                # newpart.buffer = [n for n in part.flat.notes
                 #                   if not n.tie or n.tie.type == 'start']
                 #                   # and n.tie.type != 'stop'
                 # newpart.stack = []

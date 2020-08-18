@@ -10,8 +10,8 @@
 Key Finder
 ==========
 
-The Key Finder examines a music21 Stream and either validates a key provided by the user
-or infers an appropriate key.
+The Key Finder examines a music21 Stream and either validates
+a key provided by the user or infers an appropriate key.
 
 Key inference begins by examining each part in the context to
 determine the scales in which the following criteria are met:

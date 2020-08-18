@@ -26,7 +26,7 @@ The main scripts are:
 >>> evaluateLines(source)
 >>> evaluateCounterpoint(source)
 
-For more information on how to use these scripts, see 
+For more information on how to use these scripts, see
 :doc:`User's Guide to WesterParse <userguide>`.
 """
 
@@ -261,7 +261,7 @@ def parseContext(context,
         ce.logerror()
         raise EvaluationException
     try:
-        lineTypeSelection = validateLineTypeSelection(context, 
+        lineTypeSelection = validateLineTypeSelection(context,
                                                       partSelection,
                                                       partLineType)
     except ContextError as ce:
@@ -447,7 +447,7 @@ def parseContext(context,
                     for err in context.errorsDict[part.name]['parser errors']:
                         error = error + '\n\t\t\t' + str(err)
                     if not context.errorsDict[part.name]['parser errors']:
-                        error = error  + '\n\t\t\tUnspecified error.'
+                        error = error + '\n\t\t\tUnspecified error.'
                 try:
                     context.errorsDict[part.name]['primary']
                 except KeyError:
@@ -796,20 +796,18 @@ def logInterpretations(context, partSelection):
             for prse in part.parses:
                 parseData = ('Label: ' + prse.label
                              + '\n\tArcs:  ' + str(prse.arcs)
-                             + '\n\tRules:\t' 
-                             + ''.join(['{:4d}'.format(lbl[0]) 
+                             + '\n\tRules:\t'
+                             + ''.join(['{:4d}'.format(lbl[0])
                                         for lbl in prse.ruleLabels])
-                             + '\n\t      \t' 
+                             + '\n\t      \t'
                              + ''.join(['{:>4}'.format(lbl[1])
                                         for lbl in prse.ruleLabels])
-                             + '\n\t      \t' 
+                             + '\n\t      \t'
                              + ''.join(['{:4d}'.format(lbl[2])
                                         for lbl in prse.ruleLabels])
                              )
                 logInfo.append(parseData)
     print('\n'.join(logInfo))
-
-
 
 # -----------------------------------------------------------------------------
 # OPERATIONAL SCRIPTS FOR PARSING DISPLAY

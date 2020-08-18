@@ -1852,7 +1852,7 @@ class Test(unittest.TestCase):
         B4 = note.Note('B4')
         C5 = note.Note('C5')
         D5 = note.Note('D5')
-    
+
         a = voiceLeading.VoiceLeadingQuartet(C5, D5, A4, D5)
         self.assertTrue(isSimilarUnison(a))
 
@@ -1950,6 +1950,7 @@ class Test(unittest.TestCase):
         pass
 
 # -----------------------------------------------------------------------------
+
 
 if __name__ == '__main__':
     unittest.main()
