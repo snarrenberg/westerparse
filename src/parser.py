@@ -2936,14 +2936,16 @@ class Parser():
                         if segment != 'finished':
                             processInsertionSegment(segment)
                         else:
+                            # finish off processing the span then remove
                             setLevelsFromTree(tree)
                             if len(tree) == segmentContentSize((tree[0],
                                                                 tree[1])) + 2:
-                            spans.remove(span)
-
+                                spans.remove(span)
+                    # start the process
                     segment = getSegmentFromStack(segmentStack)
                     result = findSegmentInsertions(segment)
                     insertionDict[segment] = result
+                    # continue with recursive process until finished
                     processInsertionSegment(segment)
 
             # Run the method's core function
