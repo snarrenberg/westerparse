@@ -693,8 +693,9 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
             content.write('musicxml.png', fp=filename)
         elif show == 'showWestergaardParse':
             pass
-            # TODO Create a function for displaying layered representation of
-            # a parsed line, for one line only.
+            # using parser.displayWestergaardParse
+            # TODO Activate function for displaying layered representations of
+            # a parsed line, perhaps for one line only.
 
     if partSelection is not None:
         part = context.parts[partSelection]
@@ -742,7 +743,6 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
                 selectOutput(part, show)
 
     elif len(context.parts) == 2 and partSelection is None:
-        # TODO Transfer this testing to the verify function.
         upperPart = context.parts[0]
         lowerPart = context.parts[1]
         for PI in upperPart.Pinterps:
@@ -756,7 +756,6 @@ def showInterpretations(context, show, partSelection=None, partLineType=None):
         upperPart = context.parts[0]
         innerPart = context.parts[1]
         lowerPart = context.parts[2]
-
         if upperPart.isPrimary:
             upperPartPreferredInterps = upperPart.Pinterps
         else:
