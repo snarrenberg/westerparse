@@ -2693,14 +2693,6 @@ class Parser():
                 leftEdgeLevel = self.notes[span[0]].rule.level
                 rightEdgeLevel = self.notes[span[1]].rule.level
 
-                # Infer next level from span edges.
-#                if leftEdgeLevel and rightEdgeLevel:
-#                    nextLevel = max(leftEdgeLevel, rightEdgeLevel) + 1
-#                elif leftEdgeLevel and not rightEdgeLevel:
-#                    nextLevel = leftEdgeLevel + 1
-#                elif not leftEdgeLevel and rightEdgeLevel:
-#                    nextLevel = rightEdgeLevel + 1
-
                 def getNextLevel(span):
                     leftEdgeLevel = self.notes[span[0]].rule.level
                     rightEdgeLevel = self.notes[span[1]].rule.level
