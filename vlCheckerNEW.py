@@ -3,6 +3,8 @@
 # Purpose:      Framework for analyzing voice leading in species counterpoint
 #
 # Author:       Robert Snarrenberg
+# Copyright:    (c) 2020 by Robert Snarrenberg
+# License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """Take a score (source) with two or more parts (lines)
 and examine the local counterpoint 
@@ -12,24 +14,46 @@ for conformity with Westergaard's rules of species counterpoint.
 # NB: vlq parts and score Parts are numbered top to bottom
 # NB: vPair parts are numbered bottom to top
 
+import itertools
+import unittest
+import logging
+
 from music21 import *
+
 import csd
 import context
 import theoryAnalyzerWP
 import theoryResultWP
-import itertools
+
+# -----------------------------------------------------------------------------
+# LOGGER
+# -----------------------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+# logging handlers
+f_handler = logging.FileHandler('vl.txt', mode='w')
+f_handler.setLevel(logging.DEBUG)
+# logging formatters
+f_formatter = logging.Formatter('%(message)s')
+f_handler.setFormatter(f_formatter)
+# add handlers to logger
+logger.addHandler(f_handler)
+
+# -----------------------------------------------------------------------------
+# MODULE VARIABLES
+# -----------------------------------------------------------------------------
 
 # variables set by instructor
 allowSecondSpeciesBreak = True
 checkSonorities = False
 
+vlErrors = []
+
 # settings for testing
 paceUnit = 4.0 # pace unit for first-species notes, in quarter-note lengths
 # TODO may be able to infer pace unit from meter for species counterpoint
 #    paceUnit = xxxxx.getContextByClass('Measure').barDuration.quarterLength
-# 
-
-vlErrors = []
 
 # -----------------------------------------------------------------------------
 # MAIN FUNCTIONS

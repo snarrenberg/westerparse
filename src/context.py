@@ -477,9 +477,7 @@ def assignSpecies(part):
     # For the parser: fifth-species contexts have to permit local decorations.
     meas = len(part.getElementsByClass('Measure'))
     notecount = 0
-    if meas < 3:
-        species = 'fifth'
-        return species
+    species = None
     for m in range(2, meas):
         npm = len(part.measure(m).notes)
         notecount += npm
@@ -496,10 +494,7 @@ def assignSpecies(part):
         species = 'third'
     else:
         species = 'fifth'
-    if species:
-        return species
-    else:
-        return None
+    return species
 
 # -----------------------------------------------------------------------------
 
