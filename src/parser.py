@@ -58,7 +58,7 @@ import dependency
 # variables set by user
 selectPreferredParses = True
 getStructuralLevels = True
-showWestergaardInterpretations = False
+showWestergaardInterpretations = True
 
 # for third species
 localNeighborsOnly = False
@@ -2958,17 +2958,21 @@ class Parser():
 
         def displayWestergaardParse(self):
             """Create a multileveled illustration of a parse of the sort
-            used in Westergaard's book. [Under developement]
+            used in Westergaard's book.  Activate by setting global variable
+            showWestergaardInterpretations to True.  Will eventually be added
+            as a parse display option.
             """
+            # TODO activate as a display option in
+            # westerparse.showInterpretations()
             # Given a parsed part, with rule dependencies set:
             illustration = stream.Score()
             notes = self.notes
             # Determine the maximum number of levels in the parse.
-            levels = [n.rule.level for n in notes]
+            levels = [n.rule.level for n in notes 
+                      if not n.tie or n.tie.type == 'start']
             if None in levels:
                 print('Parse incomplete. Some notes not assigned to levels.')
                 return
-#                exit()
             maxLevel = max(levels)
             # Create a part in the illustration for each level
             # and assign it a number.
@@ -2978,31 +2982,32 @@ class Parser():
                 n += -1
             for num, part in enumerate(illustration.parts):
                 part.partNum = num
-            # Create a measure in each part of the illustration.
-#            measures = len(notes)
-#            n = measures
 
             # Add each note to the correct levels.
-            # TODO Add tied-over notes
-            def addNoteToIllustration(note, illustration):
-                lev = note.rule.level
-#                meas = note.index+1
+            def addNoteToIllustration(n, illustration):
+                lev = n.rule.level
                 for part in illustration.parts:
                     if lev == part.partNum:
-                        part.insert(note.offset, note)
-                        if note.tie:
-                            if note.tie.type == 'start':
-                                tiedOver = notes[note.index+1]
+                        newNote = note.Note()
+                        newNote.pitch = n.pitch
+                        newNote.duration = n.duration
+                        newNote.lyric = n.rule.name
+                        part.insert(n.offset, newNote)
+                        if n.tie:
+                            if n.tie.type == 'start':
+                                newNote.tie = tie.Tie('start')
+                                tiedOver = notes[n.index+1]
                                 part.insert(tiedOver.offset, tiedOver)
-#                        part.measure(str(meas)).append(note)
-# need to figure in the note offset
                     if lev < part.partNum:
-                        part.insert(note.offset, note)
-#                        part.measure(str(meas)).append(note)
-# need to figure in the note offset
+                        part.insert(n.offset, n)
+                        if n.tie:
+                            if n.tie.type == 'start':
+                                tiedOver = notes[n.index+1]
+                                part.insert(tiedOver.offset, tiedOver)
             # Populate the illustration parts.
             for n in notes:
-                addNoteToIllustration(n, illustration)
+                if not n.tie or n.tie.type == 'start':
+                    addNoteToIllustration(n, illustration)
 
             illustration.show()
             # Exit after showing the first parse, for testing.
