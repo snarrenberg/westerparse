@@ -84,7 +84,7 @@ class EvaluationException(Exception):
 # -----------------------------------------------------------------------------
 
 
-class Context():
+class Context:
     """An object for representing a span of a composition
     and for storing objects that represent smaller spans.
     """
