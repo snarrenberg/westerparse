@@ -48,7 +48,6 @@ import logging
 import unittest
 
 from music21 import *
-
 from utilities import pairwise
 import dependency
 # -----------------------------------------------------------------------------
@@ -58,7 +57,7 @@ import dependency
 # variables set by user
 selectPreferredParses = True
 getStructuralLevels = True
-showWestergaardInterpretations = True
+showWestergaardInterpretations = False
 
 # for third species
 localNeighborsOnly = False
@@ -87,7 +86,7 @@ logger.addHandler(f_handler)
 # -----------------------------------------------------------------------------
 
 
-class Parser():
+class Parser:
     """
     The main engine of the parser.
 
@@ -558,7 +557,7 @@ class Parser():
         if openHeads:
             for h in openHeads:
                 self.notes[h].style.color = 'purple'
-        context.gatherArcs(self.part, arcs)
+        westerparse.gatherArcs(self.part, arcs)
         self.part.show()
         for n in self.notes:
             n.style.color = 'black'
@@ -1666,6 +1665,22 @@ class Parser():
             self.stack = []
             self.errors = []
 
+            self.label = None
+            self.notes = None
+            self.lineType = None
+            self.arcs = []
+            self.method = None
+            self.S1Index = None
+            self.S2Index = None
+            self.S2Degree = None
+            self.S2Value = None
+            self.S3Index = None
+            self.S3Indexes = None
+            self.S3Final = None
+            self.S3Initial = None
+            self.S3PenultCands = None
+            self.species = None
+
         def __repr__(self):
             return self.label
 
@@ -2162,16 +2177,16 @@ class Parser():
                                     # Grab the a head if possible.
                                     if a.csd.value == j.csd.value:
                                         j.dependency.lefthead = a.index
-                                        arcGenerateRepetition(j.index, notes,
-                                                              arcs)
+                                        arcGenerateRepetition(j.index, self.notes,
+                                                              self.arcs)
                                         j.rule.name = 'E1'
                                         self.arcEmbed(arc, [a.index, j.index])
                                         basicArcCand[prevS+1] = a.index
                                     # Settle for the b head if possible.
                                     elif b.csd.value == j.csd.value:
                                         j.dependency.lefthead = b.index
-                                        arcGenerateRepetition(j.index, notes,
-                                                              arcs)
+                                        arcGenerateRepetition(j.index, self.notes,
+                                                              self.arcs)
                                         j.rule.name = 'E1'
                                         basicArcCand[x+1] = b.index
                 # Check to make sure the basic step motion is complete.
@@ -3778,9 +3793,6 @@ class Test(unittest.TestCase):
         pass
 
     def test_removeDependenciesFromArc(self):
-        pass
-
-    def test_addDependenciesFromArc(self):
         pass
 
     def test_addDependenciesFromArc(self):

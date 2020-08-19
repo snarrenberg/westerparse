@@ -146,56 +146,56 @@ if __name__ == "__main__":
     verify = 1
 
     def tester(source, verify):
-								if verify == 1: # tests for generability as any type of line
-												westerparse.evaluateLines(source, show=None)
-								elif verify == 2:
-												westerparse.evaluateCounterpoint(source, report=True)
-								
-								elif verify == 10: # tests for generability as harmonic counterpoint
-												westerparse.evaluateLines(source, show=None, harmonicSpecies=True, offsetPredominant=36.0, offsetDominant=44.0, offsetClosingTonic=48.0, keynote='E', mode='major')
+        if verify == 1: # tests for generability as any type of line
+            westerparse.evaluateLines(source, show=None)
+        elif verify == 2:
+            westerparse.evaluateCounterpoint(source, report=True)
+        
+        elif verify == 10: # tests for generability as harmonic counterpoint
+            westerparse.evaluateLines(source, show=None, harmonicSpecies=True, offsetPredominant=36.0, offsetDominant=44.0, offsetClosingTonic=48.0, keynote='E', mode='major')
 
-								elif verify == 3:
-												westerparse.evaluateLines(source, show=None)
-												westerparse.evaluateCounterpoint(source, report=True)
-								elif verify == 4:
-												westerparse.evaluateLines(source, show='show')
-												westerparse.evaluateCounterpoint(source, report=True)
-								elif verify == 41:
-												westerparse.evaluateLines(source, show='writeToLocal')
-												westerparse.evaluateCounterpoint(source, report=True)
+        elif verify == 3:
+            westerparse.evaluateLines(source, show=None)
+            westerparse.evaluateCounterpoint(source, report=True)
+        elif verify == 4:
+            westerparse.evaluateLines(source, show='show')
+            westerparse.evaluateCounterpoint(source, report=True)
+        elif verify == 41:
+            westerparse.evaluateLines(source, show='writeToLocal')
+            westerparse.evaluateCounterpoint(source, report=True)
 
-								elif verify == 5:
-												westerparse.evaluateLines(source, show='show')
-								elif verify == 51:
-												westerparse.evaluateLines(source, show='writeToLocal')
-								elif verify == 52:
-												westerparse.evaluateLines(source, show='writeToPng')
+        elif verify == 5:
+            westerparse.evaluateLines(source, show='show')
+        elif verify == 51:
+            westerparse.evaluateLines(source, show='writeToLocal')
+        elif verify == 52:
+            westerparse.evaluateLines(source, show='writeToPng')
 
-								elif verify == 6:
-												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
-								elif verify == 16:
-												westerparse.evaluateLines(source, show='show', partSelection=0, partLineType='primary')
-								elif verify == 7:
-												westerparse.evaluateLines(source, show=None, partSelection=-1, partLineType='bass')
-								elif verify == 17:
-												westerparse.evaluateLines(source, show='show', partSelection=-1, partLineType='bass')
-								elif verify == 8:
-												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
-								elif verify == 18:
-												westerparse.evaluateLines(source, show='show', partSelection=0, partLineType='generic')
-								elif verify == 9:
-												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType=None)
-								elif verify == 19:
-												westerparse.evaluateLines(source, show='show', partSelection=0, partLineType=None)
-								elif verify == 28:
-												westerparse.evaluateLines(source, show='show', partSelection=1, partLineType='generic')
-								elif verify == 29:
-												westerparse.evaluateLines(source, show=None, partSelection=1, partLineType='generic')
-								elif verify == 30:
-												westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
-								else:
-												print('ERROR: No valid evaluation option selected.')
-												
+        elif verify == 6:
+            westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
+        elif verify == 16:
+            westerparse.evaluateLines(source, show='show', partSelection=0, partLineType='primary')
+        elif verify == 7:
+            westerparse.evaluateLines(source, show=None, partSelection=-1, partLineType='bass')
+        elif verify == 17:
+            westerparse.evaluateLines(source, show='show', partSelection=-1, partLineType='bass')
+        elif verify == 8:
+            westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
+        elif verify == 18:
+            westerparse.evaluateLines(source, show='show', partSelection=0, partLineType='generic')
+        elif verify == 9:
+            westerparse.evaluateLines(source, show=None, partSelection=0, partLineType=None)
+        elif verify == 19:
+            westerparse.evaluateLines(source, show='show', partSelection=0, partLineType=None)
+        elif verify == 28:
+            westerparse.evaluateLines(source, show='show', partSelection=1, partLineType='generic')
+        elif verify == 29:
+            westerparse.evaluateLines(source, show=None, partSelection=1, partLineType='generic')
+        elif verify == 30:
+            westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='generic')
+        else:
+            print('ERROR: No valid evaluation option selected.')
+            
     def reporter(source, verify):
         print('Input:', source)
         cxt = context.makeGlobalContext(source)
@@ -203,9 +203,9 @@ if __name__ == "__main__":
         for part in cxt.parts:
             print('Part', part.partNum, 'species:', part.species)
         tester(source, verify)
-												
+            
     def vltester(source, keynote, mode):
-												westerparse.evaluateCounterpoint(source, report=True, keynote=keynote, mode=mode, validateKey=False)
+            westerparse.evaluateCounterpoint(source, report=True, keynote=keynote, mode=mode, validateKey=False)
 
 
 #    vltester(source, keynote='C', mode='major')

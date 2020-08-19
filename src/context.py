@@ -15,7 +15,6 @@ and local contexts.
 """
 
 from music21 import *
-import itertools
 import logging
 
 import vlChecker
@@ -91,8 +90,8 @@ class Context():
     """
 
     def __init__(self, music21Stream):
-        self.scale
-        self.triad
+        self.scale = None
+        self.triad = None
         self.harmonyStart = None
         self.harmonyEnd = None
         self.offset = None
@@ -193,17 +192,17 @@ class GlobalContext(Context):
             offDom = kwargs['offsetDominant']
             offClosTon = kwargs['offsetClosingTonic']
             if offPre is None:
-                initialTonicSpan = makeLocalContext(cxt.score, 0.0, offPre,
+                initialTonicSpan = self.makeLocalContext(self.score, 0.0, offPre,
                                                     'initial tonic')
-                predominantSpan = makeLocalContext(cxt.score, offPre, offDom,
+                predominantSpan = self.makeLocalContext(self.score, offPre, offDom,
                                                    'predominant')
             else:
-                initialTonicSpan = makeLocalContext(cxt.score, 0.0, offDom,
+                initialTonicSpan = self.makeLocalContext(self.score, 0.0, offDom,
                                                     'initial tonic')
                 predominantSpan = None
-            dominantSpan = makeLocalContext(cxt.score, offDom,
+            dominantSpan = self.makeLocalContext(self.score, offDom,
                                             offClosTon, 'dominant')
-            closingTonicSpan = makeLocalContext(cxt.score, offClosTon,
+            closingTonicSpan = self.makeLocalContext(self.score, offClosTon,
                                                 offClosTon+4.0,
                                                 'closing tonic')
 
@@ -452,6 +451,8 @@ class GlobalContext(Context):
                 # newpart.openTransitions = []
             self.localContexts[cxt.offset] = cxt
 
+    def makeLocalContext(self, score, start, stop, name):
+        pass
 # -----------------------------------------------------------------------------
 # HELPER SCRIPTS
 # -----------------------------------------------------------------------------
