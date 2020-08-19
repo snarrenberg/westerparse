@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # Name:         context.py
-# Purpose:      Framework for analyzing species counterpoint
+# Purpose:      Framework for analyzing species counterpoint.
 #
 # Author:       Robert Snarrenberg
 # Copyright:    (c) 2020 by Robert Snarrenberg
