@@ -31,9 +31,10 @@ notes in two parts:
    * v1: n1, n2
    * v2: n1, n2
 
-[Note: Part-ordering in music21's definition VLQ is not fixed (i.e., voice 1 is
-not always the top or bottom voice). Tony Li wrote a new method for getting
-VLQs that fixes this problem: v1 is always the top voice.]
+[Note: Part-ordering in music21's definition VLQ is not fixed (i.e.,
+voice 1 is not always the top or bottom voice).  Tony Li wrote a new
+method for getting VLQs that fixes this problem:
+v1 is always the top voice.]
 
 The numbering of parts in vPairs and VLQs is, unfortunately,
 not consistent.  This reflects a conceptual

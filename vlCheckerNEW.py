@@ -51,7 +51,7 @@ checkSonorities = False
 vlErrors = []
 
 # settings for testing
-paceUnit = 4.0 # pace unit for first-species notes, in quarter-note lengths
+# paceUnit = 4.0 # pace unit for first-species notes, in quarter-note lengths
 # TODO may be able to infer pace unit from meter for species counterpoint
 #    paceUnit = xxxxx.getContextByClass('Measure').barDuration.quarterLength
 
@@ -77,6 +77,8 @@ def voiceLeadingAnalyzer(context):
     # using revised versions of music21 theory modules
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(context.score)
+
+    paceUnit = context.score.getContextByClass('Measure').barDuration.quarterLength
 
     voiceLeadingErrors = checkVoiceLeading(context.score, analytics)
     checkFourthLeapsInBass(context.score, analytics)
@@ -122,7 +124,6 @@ def getAllPartNumPairs(score):
     return partNumPairs    
     
 
-
 # -----------------------------------------------------------------------------
 # METHODS FOR EVALUATING VOICE LEADING, BY SPECIES
 # -----------------------------------------------------------------------------
@@ -130,14 +131,19 @@ def getAllPartNumPairs(score):
 def species(note):
     if note.quarterLength == paceUnit:
         return 'first'
+    # consider adding criteria for second and fourth species in
+    # triple meter: 2*(paceUnit/3)
     if note.quarterLength == paceUnit/2 and note.isNote and not note.tie:
         return 'second'
     if note.quarterLength == paceUnit/2 and note.isNote and note.tie:
         return 'fourth'
     if note.quarterLength >= paceUnit/3 and note.isNote:
         return 'third'                    
+    if note.quarterLength >= paceUnit/4 and note.isNote:
+        return 'third'
     if note.quarterLength == paceUnit/2 and note.isNote and note.tie:
         return 'fourth'
+
 
 def checkConsecutions(score):
     for part in score.parts:
@@ -160,6 +166,7 @@ def checkConsecutions(score):
                     if n.consecutions.rightType == 'same':
                         error = 'Direct repetition around bar ' + str(n.measureNumber)
                         vlErrors.append(error)
+
 
 def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
     # TODO rewrite based on parser's lineType value
@@ -207,23 +214,30 @@ def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
     else:
         pass
 
+
 def checkVoiceLeading(score, analyzer):
     # assume that parts are properly sorted high to low
     # verticality objects are numbered high to low
     # check voice leading by rhythmic situation
     partNumPairs = getAllPartNumPairs(score)
-    vertList = analyzer.getVerticalities(score, classFilterList=('Note', 'Rest'))
-
-
+    vertList = analyzer.getVerticalities(score, classFilterList=('Note',
+                                                                 'Rest'))
     # collect the relevant nonconsecutive verticalities
-    # determine the species of a part at each downbeat, to eventually allow for lines in fifth species
+    # determine the species of a part at each downbeat, to eventually
+    # allow for lines in fifth species
 
+    # voiceleading.Verticality.contentDict consists of partNums as keys and
+    # lists of m21Objects as values
+    # e.g., voiceLeading.Verticality({0:[note.Note('A4')], 1: [note.Note('F2')]})
+    # in species counterpoint, the lists are always just single notes,
+    # so list[0] suffices as reference
 
     for vert in vertList[0:3]:
         firstSpeciesParts = []
         secondSpeciesParts = []
         thirdSpeciesParts = []
         fourthSpeciesParts = []
+        # k = partNum, v = noteList
         for k,v in vert.contentDict.items():
             if species(v[0]) == 'first':
                 firstSpeciesParts.append(k)

@@ -3,12 +3,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../src'))
 
-from music21 import *
 import westerparse
-import signal
-import time
-import os
-import glob 
 
 if __name__ == "__main__":
     # self_test code
@@ -126,7 +121,7 @@ if __name__ == "__main__":
 
 
 #    source = '../examples/corpus/Westergaard057b.musicxml'
-    source = '../examples/corpus/WP402.musicxml'
+    source = '../examples/corpus/WP401.musicxml'
 #    source = 'TestScoresXML/SecondSpecies33.musicxml'
 #    source = '../examples/corpus/WP022.musicxml'
 #    source = '../examples/corpus/WP013.musicxml'
@@ -198,7 +193,7 @@ if __name__ == "__main__":
             
     def reporter(source, verify):
         print('Input:', source)
-        cxt = context.makeGlobalContext(source)
+        cxt = westerparse.makeGlobalContext(source)
         print('Inferred key:', cxt.key.nameString)
         for part in cxt.parts:
             print('Part', part.partNum, 'species:', part.species)
