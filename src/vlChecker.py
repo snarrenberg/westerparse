@@ -56,7 +56,10 @@ While most of the rules for intervals between consecutive notes are
 handled by the rules of linear syntax, there is one such rule
 that has a contrapuntal component: the rule
 that prohibits the implication of a six-four chord by controlling the
-situations in which the bass leaps a perfect fourth.
+situations in which the bass leaps a perfect fourth. (Another rule in
+this implementation (but not found in Westeraard) also has a contrapuntal
+aspect: the global rule that ensures a step connection from the
+penultimate measure to the final pitch of a primary line.)
 
 The rules controlling leaps of a fourth in the bass, dissonance,
 and motion are absolutes, hence any infractions automatically
@@ -78,7 +81,7 @@ The rules for forbidden forms of motion vary with the rhythmic situation:
 Many of the rules apply across species.  For example, the rules of
 first species, originally formulated for consecutive beats
 (on the beat to on the beat) apply in all species
-wherever both lines move to new notes on the beat.
+whenever both lines move to new notes on the beat.
 This happens regularly in first, second, and third species,
 and at the end of fourth species, where the syncopations are
 broken.
