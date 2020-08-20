@@ -327,7 +327,7 @@ class Parser:
                     l_buffer.insert(0, i)
 
                     # Add first local note to local heads.
-                    l_openHeads = [i.index]
+                    l_openHeads.append(i.index)
 
                     # Scan local context.
                     ln = len(l_buffer)
