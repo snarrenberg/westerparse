@@ -1617,7 +1617,7 @@ class Parser:
         newParse.tonic = self.part.tonic
         newParse.mode = self.part.mode
         newParse.partNum = self.part.partNum
-        newParse.notes = copy.deepcopy(self.notes)
+        newParse.notes = copy.deepcopy(self.notes.stream())
         newParse.errors = buildErrors
         newParse.notes[newParse.S1Index].rule.name = 'S1'
         newParse.method = method
