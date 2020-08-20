@@ -909,8 +909,6 @@ class Test(unittest.TestCase):
     def test_evaluateLines(self):
         source = '../examples/corpus/WP100.musicxml'
         self.assertTrue(evaluateLines(source))
-        #evaluateLines(source)
-
 
 # -----------------------------------------------------------------------------
 
