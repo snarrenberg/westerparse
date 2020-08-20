@@ -114,14 +114,16 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
 #    source = 'TestScoresXML/chorale066.6.musicxml'
+    source = 'TestScoresXML/Christus_der_ist_mein_Leben.musicxml'
 
 #    source = 'TestScoresXML/'
     
 #    source = 'TestScoresXML/Third_Species_Line_Test_0.musicxml'
 
+#    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
 
-#    source = '../examples/corpus/Westergaard057b.musicxml'
-    source = '../examples/corpus/WP301.musicxml'
+    #    source = '../examples/corpus/Westergaard057b.musicxml'
+#    source = '../examples/corpus/WP304.musicxml'
 #    source = 'TestScoresXML/SecondSpecies33.musicxml'
 #    source = '../examples/corpus/WP022.musicxml'
 #    source = '../examples/corpus/WP013.musicxml'
@@ -210,6 +212,12 @@ if __name__ == "__main__":
         elif verify == 30:
             westerparse.evaluateLines(source, show=None,
                                       partSelection=0, partLineType='generic')
+        elif verify == 101:
+            westerparse.evaluateLines(source, show=None,
+                                      harmonicSpecies=True,
+                                      offsetPredominant=10.1,
+                                      offsetDominant=11.1,
+                                      offsetClosingTonic=12.1)
         else:
             print('ERROR: No valid evaluation option selected.')
             
