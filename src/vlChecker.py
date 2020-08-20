@@ -1783,6 +1783,8 @@ def makeVLQsFromVertPair(vertPair, partNumPairs):
     return vlqList
 
 # -----------------------------------------------------------------------------
+# TESTS
+# -----------------------------------------------------------------------------
 
 
 class Test(unittest.TestCase):

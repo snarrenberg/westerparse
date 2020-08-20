@@ -145,6 +145,7 @@ def evaluateLines(source,
         parseContext(cxt, show, partSelection, partLineType)
         if show is None or report is True:
             print(cxt.parseReport)
+        return True
     except EvaluationException as fce:
         fce.show()
     if logParses:
@@ -894,6 +895,21 @@ def assignParentheses(source, parentheses):
                 elem.noteheadParenthesis = parens[1]
             else:
                 pass
+
+# -----------------------------------------------------------------------------
+# TESTS
+# -----------------------------------------------------------------------------
+
+
+class Test(unittest.TestCase):
+
+    def runTest(self):
+        pass
+
+    def test_evaluateLines(self):
+        source = '../examples/corpus/WP100.musicxml'
+        self.assertTrue(evaluateLines(source))
+        #evaluateLines(source)
 
 
 # -----------------------------------------------------------------------------
