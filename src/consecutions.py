@@ -30,7 +30,7 @@ from music21 import *
 # -----------------------------------------------------------------------------
 
 
-class Consecutions():
+class Consecutions:
     """An object holding the generic types of melodic consecution
     for a note to the left and right (approach and departure):
     the interval, its direction, (-1, 0, 1) and the consecution type
