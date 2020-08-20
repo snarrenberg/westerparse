@@ -190,7 +190,7 @@ class Dependency():
     def departure(self):
         return self._departure
 
-    @approach.setter
+    @departure.setter
     def departure(self, d):
         if d not in self.validDirections:
             exc = 'not a valid direction: %s' % d
