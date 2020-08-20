@@ -356,13 +356,13 @@ def parseContext(context,
 
             elif partSelection is None and len(context.parts) > 1:
                 upperPrimary = False
-                subsidiaryUpperLines = []
+                genericUpperLines = []
                 lowerBass = False
                 for part in context.parts[0:-1]:
                     if part.isPrimary:
                         upperPrimary = True
                     else:
-                        subsidiaryUpperLines.append(part.name)
+                        genericUpperLines.append(part.name)
                 if context.parts[-1].isBass:
                     lowerBass = True
                 if upperPrimary and lowerBass:
@@ -384,11 +384,11 @@ def parseContext(context,
                         error = ('\tNo upper line is generable as a '
                                  'primary line. \nBut the lower line '
                                  'is generable as a bass line.')
-                    for sul in subsidiaryUpperLines:
-                        if context.errorsDict[sul]:
+                    for gul in genericUpperLines:
+                        if context.errorsDict[gul]:
                             error = (error + '\n\tThe following linear '
-                                     'errors were found in ' + sul + ':')
-                            for err in context.errorsDict[sul]['primary']:
+                                     'errors were found in ' + gul + ':')
+                            for err in context.errorsDict[gul]['primary']:
                                 error = error + '\n\t\t\t' + str(err)
                     raise ContextError(error)
                 elif upperPrimary and not lowerBass:
@@ -420,7 +420,7 @@ def parseContext(context,
                         if context.errorsDict[part.name]:
                             error = (error + '\n\tThe following linear '
                                      'errors were found in ' + part.name + ':')
-                            for err in context.errorsDict[sul]['primary']:
+                            for err in context.errorsDict[part.name]['primary']:
                                 error = error + '\n\t\t\t' + str(err)
                     bln = context.parts[-1].name
                     if context.errorsDict[bln]:
