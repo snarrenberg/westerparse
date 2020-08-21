@@ -2138,9 +2138,6 @@ class Parser:
                         # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
                         basicArcCand.append(j.index)
-# 2020-07-28 removed the repetition condition: too restrictive, see Fux Ionian
-#                        if not isLocalRepetition(j.index, self.notes, self.arcs):
-#                            basicArcCand.append(j.index)
                     elif isStepDown(j, h) and j.csd.value == self.S2Value:
                         # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
