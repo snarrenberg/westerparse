@@ -127,6 +127,7 @@ def getConsecutions(idx, part):
     if not already extant.
     """
     if part.recurse.notes(idx).consecutions is None:
+        n = part.recurse().notes[idx]
         if idx == 0:
             nLeft = None
         else:
