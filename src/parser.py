@@ -271,7 +271,7 @@ class Parser:
             pass
 
         elif self.part.species in ['third', 'fifth']:
-            # Set variables for parsing the local context.
+            # Set global variables for parsing the local context.
             # (1) Admit local repetitions:
             #     addLocalRepetitions = True/False
             # (2) Limit local elaborations to neighboring and restrict
@@ -2985,9 +2985,6 @@ class Parser:
             # Determine the maximum number of levels in the parse.
             levels = [n.rule.level for n in notes 
                       if not n.tie or n.tie.type == 'start']
-            if None in levels:
-                print('Parse incomplete. Some notes not assigned to levels.')
-                return
             maxLevel = max(levels)
             # Create a part in the illustration for each level
             # and assign it a number.
