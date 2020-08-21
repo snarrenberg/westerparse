@@ -21,10 +21,6 @@ dependent (the passing tone) but no left- or righthead.
 An anticipation stores a reference to a righthead, but has no
 lefthead and no dependents."""
 
-
-# TODO left, right, approach, departure -- these are now handled in Consecutions,
-# and aren't used in the program, so maybe delete them
-
 from music21 import *
 
 
@@ -36,7 +32,7 @@ class DependencyException(Exception):
 # -----------------------------------------------------------------------------
 
 
-class Dependency():
+class Dependency:
     """An object for storing the dependencies of a note in a line"""
     # TODO change directions to music21-compatible format: [-1, 0, 1]
     # TODO retain None as a possible direction?
@@ -198,19 +194,19 @@ class Dependency():
             raise DependencyException(exc)
         self._departure = d
 
-    @property
-    def dependents(self):
-        return self._dependents
-
-    @dependents.setter
-    def dependents(self, n):
-        if n != []:
-            try:
-                n.isClassOrSubclass((note.Note,))
-            except:
-                exc = 'not a valid dependency object: %s' % n
-                raise DependencyException(exc)
-        self._dependents = n
+    # @property
+    # def dependents(self):
+    #     return self._dependents
+    #
+    # @dependents.setter
+    # def dependents(self, n):
+    #     if n != []:
+    #         try:
+    #             n.isClassOrSubclass((note.Note,))
+    #         except:
+    #             exc = 'not a valid dependency object: %s' % n
+    #             raise DependencyException(exc)
+    #     self._dependents = n
 
 # -----------------------------------------------------------------------------
 
