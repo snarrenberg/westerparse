@@ -10,8 +10,9 @@
 Dependency
 ==========
 
-The Dependency class stores syntactic dependency relationships among notes in the form
-of references to a lefthand head, a righthand head, and dependents.
+The Dependency class stores syntactic dependency relationships among
+notes in the form of references to a lefthand head, a righthand head,
+and dependents.
 
 A passing tone in the space of a third, for example, stores a
 reference to a lefthead and a righthead, but not to any dependents.
