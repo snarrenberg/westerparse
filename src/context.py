@@ -31,7 +31,7 @@ from utilities import pairwise
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.DEBUG)
 # logging handlers
 f_handler = logging.FileHandler('parser.txt', mode='w')
 f_handler.setLevel(logging.DEBUG)
@@ -390,7 +390,7 @@ class GlobalContext(Context):
         # of non-triadic collections.
         harmErrorList = []
         for harm in self.localHarmonyDict.items():
-            logger.debug(f'local harmony = {harm[1]}')
+            logging.debug(f'local harmony = {harm[1]}')
             if not parser.isTriadicSet(harm[1]):
                 mn = (harm[0] + measureSpan) / measureSpan
                 harmErrorList.append('{:2.0f}'.format(mn))
