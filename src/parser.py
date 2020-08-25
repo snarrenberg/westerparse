@@ -66,12 +66,11 @@ addLocalRepetitions = True
 
 
 # -----------------------------------------------------------------------------
-# LOGGER
+# logging
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-# logger.setLevel(logging.ERROR)
+logger.setLevel(logging.ERROR)
 # logging handlers
 f_handler = logging.FileHandler('parser.txt', mode='w')
 f_handler.setLevel(logging.DEBUG)
@@ -160,14 +159,14 @@ class Parser:
             self.part.lineTypes = []
             self.inferLineTypes()
         # log result
-        logger.debug(f'PARSE DEBUG REPORT: Part {self.part.partNum+1} of '
+        logging.debug(f'PARSE DEBUG REPORT: Part {self.part.partNum+1} of '
                      f'{len(self.context.parts)} parts')
-        logger.debug(f'Line types: {self.part.lineTypes}')
+        logging.debug(f'Line types: {self.part.lineTypes}')
 
         # STEP ONE: Operate the preliminary parser.
         self.preParseLine()
         # log result
-        logger.debug(f'Preliminary Arcs: {self.arcs}')
+        logging.debug(f'Preliminary Arcs: {self.arcs}')
 
         # Interrupt parser if preliminary parsing is unsuccessful.
         # and report errors
@@ -244,7 +243,7 @@ class Parser:
            not self.context.harmonicSpecies):
             # Run the line scanner.
             n = len(g_buffer)
-            logger.debug(f'Parser state: 0'
+            logging.debug(f'Parser state: 0'
                          f'\n\tHeads: {openHeads}'
                          f'\n\tTrans: {openTransitions}'
                          f'\n\tArcs:  {arcs}')
@@ -258,7 +257,7 @@ class Parser:
                                      harmonyStart, harmonyEnd, openHeads,
                                      openTransitions, arcs)
                 # log result
-                logger.debug(f'Parser state: {j.index}'
+                logging.debug(f'Parser state: {j.index}'
                              f'\n\tHeads: {openHeads}'
                              f'\n\tTrans: {openTransitions}'
                              f'\n\tArcs:  {arcs}')
@@ -280,7 +279,7 @@ class Parser:
             # (3) Attempt to extend local arcs beyond local context:
             #     extendLocalArcs = True/False
 
-            logger.debug(f'Parser state: 0'
+            logging.debug(f'Parser state: 0'
                          f'\n\tHeads: {openHeads}'
                          f'\n\tTrans: {openTransitions}'
                          f'\n\tArcs:  {arcs}')
@@ -343,7 +342,7 @@ class Parser:
                             l_openHeads, l_openTransitions,
                             l_arcs
                             )
-                        logger.debug(f'Parser state: {y.index}'
+                        logging.debug(f'Parser state: {y.index}'
                                      f'\n\tLoc Heads: {l_openHeads}'
                                      f'\n\tLoc Trans: {l_openTransitions}'
                                      f'\n\tLoc Arcs:  {l_arcs}')
@@ -369,7 +368,7 @@ class Parser:
                                                 if head > h]
                                 l_openHeads = ([firstHead]
                                                + revisedHeads)
-                        logger.debug(f'Parser state: {y.index}'
+                        logging.debug(f'Parser state: {y.index}'
                                      '--after adding local repetitions--'
                                      f'\n\tRevised Loc Arcs:  {l_arcs}')
 
@@ -380,7 +379,7 @@ class Parser:
                         l_arcs = [arc for arc in l_arcs if
                                   (isNeighboringArc(arc, self.notes) or
                                    isRepetitionArc(arc, self.notes))]
-                        logger.debug(f'Parser state: {y.index}'
+                        logging.debug(f'Parser state: {y.index}'
                                      '--after limiting to local neighbors--'
                                      f'\n\tRevised Loc Arcs:  {l_arcs}')
 
@@ -471,7 +470,7 @@ class Parser:
                                         if i.index < h < j.index:
                                             l_openHeads.remove(h)
 
-                        logger.debug(f'Parser state: {y.index}'
+                        logging.debug(f'Parser state: {y.index}'
                                      '--after extending local arcs--'
                                      f'\n\tRevised Loc Arcs:  {l_arcs}')
                 # Copy local arcs to global arcs.
@@ -501,7 +500,7 @@ class Parser:
                 while g_buffer[0].index < localEnd:
                     i = g_stack[-1]
                     j = g_buffer[0]
-                    logger.debug(f'Parser state: {j.index}'
+                    logging.debug(f'Parser state: {j.index}'
                                  '--before parsing local heads in global context--'
                                  f'--transition: {i.index}-{j.index}--'
                                  f'\n\tHeads: {openHeads}'
@@ -511,7 +510,7 @@ class Parser:
                                          self.part, i, j,
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
-                    logger.debug(f'Parser state: {j.index}'
+                    logging.debug(f'Parser state: {j.index}'
                                  '--after parsing local heads--'
                                  f'\n\tHeads: {openHeads}'
                                  f'\n\tTrans: {openTransitions}'
@@ -522,7 +521,7 @@ class Parser:
                 if g_buffer[0].index == localEnd:
                     i = g_stack[-1]
                     j = g_buffer[0]
-                    logger.debug(f'Parser state: {j.index}'
+                    logging.debug(f'Parser state: {j.index}'
                                  '--before parsing into next local span--'
                                  f'\n\tHeads: {openHeads}'
                                  f'\n\tTrans: {openTransitions}'
@@ -531,7 +530,7 @@ class Parser:
                                          self.part, i, j,
                                          harmonyStart, harmonyEnd, openHeads,
                                          openTransitions, arcs)
-                    logger.debug(f'Parser state: {j.index}'
+                    logging.debug(f'Parser state: {j.index}'
                                  '--after parsing into next local span--'
                                  f'\n\tHeads: {openHeads}'
                                  f'\n\tTrans: {openTransitions}'
@@ -718,7 +717,7 @@ class Parser:
 
         # CASE ONE: Both pitches are harmonic and consonant.
         if all(case1):
-            logger.debug('Parse transition: case 1')
+            logging.debug('Parse transition: case 1')
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
                     harmonyStart.append(j.pitch)
@@ -763,7 +762,7 @@ class Parser:
         # CASE TWO: Transition through end of this bar
         # to the harmony of the next.
         elif all(case2):
-            logger.debug('Parse transition: case 2')
+            logging.debug('Parse transition: case 2')
             if i.index in openTransitions:
                 i.dependency.righthead = j.index
                 j.dependency.dependents.append(i.index)
@@ -782,7 +781,7 @@ class Parser:
 
         # CASE THREE: Step from harmonic to nonharmonic pitch.
         elif all(case3):
-            logger.debug('Parse transition: case 3')
+            logging.debug('Parse transition: case 3')
             if openTransitions:
                 for t in reversed(openTransitions):
                     h = self.notes[t]
@@ -876,7 +875,7 @@ class Parser:
 
         # CASE FOUR: Step from nonharmonic to harmonic pitch.
         elif all(case4):
-            logger.debug('Parse transition: case 4')
+            logging.debug('Parse transition: case 4')
             # Complete the local harmony if possible.
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
@@ -1031,7 +1030,7 @@ class Parser:
 
         # CASE FIVE: Step from nonharmonic to nonharmonic.
         elif all(case5):
-            logger.debug('Parse transition: case 5')
+            logging.debug('Parse transition: case 5')
             if (i.csd.direction == j.csd.direction or
                i.csd.direction == 'bidirectional' and
                j.csd.direction == 'ascending'):
@@ -1159,7 +1158,7 @@ class Parser:
 
         # CASE SIX: Skip from nonharmonic to harmonic.
         elif all(case6):
-            logger.debug('Parse transition: case 6')
+            logging.debug('Parse transition: case 6')
             openLocals = []
             if i.dependency.lefthead is None:
                 # look for a lefthead
@@ -1194,7 +1193,7 @@ class Parser:
 
         # CASE SEVEN: Skip from harmonic to nonharmonic.
         elif all(case7):
-            logger.debug('Parse transition: case 7')
+            logging.debug('Parse transition: case 7')
             if openTransitions:
                 # A. See whether j continues a transition in progress.
                 continuesTransition = False
@@ -1423,7 +1422,7 @@ class Parser:
 
         # CASE EIGHT: Skip from nonharmonic to nonharmonic.
         elif all(case8):
-            logger.debug('Parse transition: case 8')
+            logging.debug('Parse transition: case 8')
             openLocals = []
             if self.part.species not in ['third', 'fifth']:
                 if i.index == j.index-1:
@@ -1453,7 +1452,7 @@ class Parser:
 
         # CASE NINE: Linear unison between nonharmonic pitches.
         elif all(case9):
-            logger.debug('Parse transition: case 9')
+            logging.debug('Parse transition: case 9')
            # TODO: Double check this error, might be too simple.
             if i.index == j.index - 1 or i.measureNumber != j.measureNumber:
                 error = ('Repetition of a non-tonic-triad pitch: '
@@ -1464,7 +1463,7 @@ class Parser:
 
         # CASE TEN: Dissonant skip between nonharmonic pitches.
         elif all(case10):
-            logger.debug('Parse transition: case 10')
+            logging.debug('Parse transition: case 10')
             if i.index == j.index-1:
                 error = ('Nongenerable dissonant leap between '
                          + i.nameWithOctave + ' and '
@@ -1479,14 +1478,14 @@ class Parser:
 
         # CASE ELEVEN: Nongenerable skip.
         elif all(case11):
-            logger.debug('Parse transition: case 11')
+            logging.debug('Parse transition: case 11')
             error = ('Nongenerable leap between ' + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
 
         # CASE TWELVE: Leap larger than an octave.
         elif all(case12):
-            logger.debug('Parse transition: case 12')
+            logging.debug('Parse transition: case 12')
             error = ('Leap larger than an octave between '
                      + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
@@ -1559,12 +1558,12 @@ class Parser:
                     buildError = ('Bass structure error: '
                                   'No candidate for S3 detected.')
                     buildErrors.append(buildError)
-                logger.debug(f'List of S3 candidates: '
+                logging.debug(f'List of S3 candidates: '
                              f'{[s.index for s in s3cands]}')
 
                 if buildErrors == []:
                     for cand in s3cands:
-                        logger.debug(f'Building parses for S3 candidate: '
+                        logging.debug(f'Building parses for S3 candidate: '
                                      f'{cand.index}, scale degree '
                                      f'{cand.csd.degree}')
                         self.buildParse(cand, lineType,
@@ -1594,7 +1593,7 @@ class Parser:
                     buildError = ('Primary structure error: '
                                   'No candidate for S2 detected.')
                     buildErrors.append(buildError)
-                logger.debug(f'List of S2 candidates: '
+                logging.debug(f'List of S2 candidates: '
                              f'{[s.index for s in s2cands]}')
 
                 # Create a Parse object for each S2cand
@@ -1603,7 +1602,7 @@ class Parser:
                 methods = 9
                 if buildErrors == []:
                     for cand in s2cands:
-                        logger.debug(f'Building parses for S2 candidate: '
+                        logging.debug(f'Building parses for S2 candidate: '
                                      f'{cand.index}, scale degree '
                                      f'{cand.csd.degree}')
                         for m in range(0, methods):
@@ -1721,7 +1720,7 @@ class Parser:
               currently disabled.]
             """
             # log message
-            logger.debug('Beginning parse: ' + str(self.label))
+            logging.debug('Beginning parse: ' + str(self.label))
 
             if self.lineType == 'primary':
                 self.parsePrimary()
@@ -1769,7 +1768,7 @@ class Parser:
                              + ''.join(['{:4d}'.format(lbl[2])
                                         for lbl in self.ruleLabels])
                              )
-            logger.debug(parseData)
+            logging.debug(parseData)
             if showWestergaardInterpretations:
                 self.displayWestergaardParse()
 
@@ -2262,7 +2261,7 @@ class Parser:
                     self.arcs.append(self.arcBasic)
                     addDependenciesFromArc(self.notes, self.arcBasic)
 
-            logger.debug('Method ' + str(self.method)
+            logging.debug('Method ' + str(self.method)
                          + ' for creating basic step motion.'
                          + '\n\tBasic arc: ' + str(self.arcBasic)
                          + '\n\tArcs:      ' + str(self.arcs))
