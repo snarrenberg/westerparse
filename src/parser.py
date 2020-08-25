@@ -2144,9 +2144,10 @@ class Parser:
                     h = self.notes[basicArcCand[-1]]
                     # Look for descending steps to S1.
                     if isStepDown(j, h) and j.csd.value < self.S2Value:
-                        # Skip the pitch if it is a repetition
+                        # Skip the pitch if it is a local repetition
                         # (prefer the lefthead).
-                        basicArcCand.append(j.index)
+                        if not isLocalRepetition(j.index, self.notes, self.arcs):
+                            basicArcCand.append(j.index)
                     elif isStepDown(j, h) and j.csd.value == self.S2Value:
                         # Skip the pitch if it is a repetition
                         # (prefer the lefthead).
