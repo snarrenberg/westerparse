@@ -390,7 +390,11 @@ class Parser:
                         # Try to extend local arcs leftward
                         # if lefthead in open transitions.
                         for arc in l_arcs:
-                            if arc[0] in openTransitions:
+                            if (arc[0] in openTransitions
+                                    and not isEmbeddedInOtherArc(arc,
+                                                                 l_arcs,
+                                                                 startIndex=0,
+                                                                 stopIndex=99)):
                                 lh = self.notes[arc[0]].dependency.lefthead
                                 # Get all of the global notes connected to
                                 # the open transition.
