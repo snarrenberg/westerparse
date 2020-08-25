@@ -349,8 +349,9 @@ class Parser:
                                      f'\n\tLoc Arcs:  {l_arcs}')
                     # Break upon finding errors.
                     # TODO: Collect errors and continue?
-                        if self.errors:
-                            break
+# 2020-08-24 commented out the break condition
+#                        if self.errors:
+#                            break
 
                     # Look for unattached local repetitions of first open head.
                     if addLocalRepetitions:
@@ -757,6 +758,7 @@ class Parser:
         # CASE TWO: Transition through end of this bar
         # to the harmony of the next.
         elif all(case2):
+            logger.debug('parsing into next harmonic span')
             if i.index in openTransitions:
                 i.dependency.righthead = j.index
                 j.dependency.dependents.append(i.index)
@@ -769,6 +771,9 @@ class Parser:
                        == i.dependency.lefthead):
                         self.notes[d].dependency.righthead = j.index
                 arcGenerateTransition(i.index, part, arcs)
+                logging.debug(f'evaluating transition to {j.index}'
+                              'in the next local span'
+                              f'\n\topen trans = {openTransitions}')
 
         # CASE THREE: Step from harmonic to nonharmonic pitch.
         elif all(case3):
@@ -1399,7 +1404,7 @@ class Parser:
                             self.errors.append(error)
 
                     # C. If neither of these works, return an error.
-                    else:
+                    elif self.part.species not in ['third', 'fifth']:
                         error = ('The non-tonic-triad pitch '
                                  + j.nameWithOctave + ' in measure '
                                  + str(j.measureNumber)
