@@ -53,12 +53,12 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'
-    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
+#    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
 #    source = 'TestScoresXML/ThirdSpecies05.musicxml'    # completion of Westergaard p. 136 exercise 4
-#    source = 'TestScoresXML/ThirdSpecies06.musicxml'    
+#    source = 'TestScoresXML/ThirdSpecies06.musicxml'
 #    source = 'TestScoresXML/ThirdSpecies07.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
-#    source = 'TestScoresXML/ThirdSpecies09.musicxml'    
+#    source = 'TestScoresXML/ThirdSpecies09.musicxml'
 #    source = 'TestScoresXML/ThirdSpecies040.musicxml'
 
 #    source = 'TestScoresXML/FourthSpecies01.musicxml'
@@ -237,7 +237,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 5)
+    tester(source, 1)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
