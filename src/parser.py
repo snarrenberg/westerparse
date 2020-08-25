@@ -718,6 +718,7 @@ class Parser:
 
         # CASE ONE: Both pitches are harmonic and consonant.
         if all(case1):
+            logger.debug('Parse transition: case 1')
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
                     harmonyStart.append(j.pitch)
@@ -762,7 +763,7 @@ class Parser:
         # CASE TWO: Transition through end of this bar
         # to the harmony of the next.
         elif all(case2):
-            logger.debug('parsing into next harmonic span')
+            logger.debug('Parse transition: case 2')
             if i.index in openTransitions:
                 i.dependency.righthead = j.index
                 j.dependency.dependents.append(i.index)
@@ -781,6 +782,7 @@ class Parser:
 
         # CASE THREE: Step from harmonic to nonharmonic pitch.
         elif all(case3):
+            logger.debug('Parse transition: case 3')
             if openTransitions:
                 for t in reversed(openTransitions):
                     h = self.notes[t]
@@ -874,6 +876,7 @@ class Parser:
 
         # CASE FOUR: Step from nonharmonic to harmonic pitch.
         elif all(case4):
+            logger.debug('Parse transition: case 4')
             # Complete the local harmony if possible.
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
@@ -1028,6 +1031,7 @@ class Parser:
 
         # CASE FIVE: Step from nonharmonic to nonharmonic.
         elif all(case5):
+            logger.debug('Parse transition: case 5')
             if (i.csd.direction == j.csd.direction or
                i.csd.direction == 'bidirectional' and
                j.csd.direction == 'ascending'):
@@ -1155,6 +1159,7 @@ class Parser:
 
         # CASE SIX: Skip from nonharmonic to harmonic.
         elif all(case6):
+            logger.debug('Parse transition: case 6')
             openLocals = []
             if i.dependency.lefthead is None:
                 # look for a lefthead
@@ -1189,6 +1194,7 @@ class Parser:
 
         # CASE SEVEN: Skip from harmonic to nonharmonic.
         elif all(case7):
+            logger.debug('Parse transition: case 7')
             if openTransitions:
                 # A. See whether j continues a transition in progress.
                 continuesTransition = False
@@ -1417,6 +1423,7 @@ class Parser:
 
         # CASE EIGHT: Skip from nonharmonic to nonharmonic.
         elif all(case8):
+            logger.debug('Parse transition: case 8')
             openLocals = []
             if self.part.species not in ['third', 'fifth']:
                 if i.index == j.index-1:
@@ -1446,7 +1453,8 @@ class Parser:
 
         # CASE NINE: Linear unison between nonharmonic pitches.
         elif all(case9):
-            # TODO: Double check this error, might be too simple.
+            logger.debug('Parse transition: case 9')
+           # TODO: Double check this error, might be too simple.
             if i.index == j.index - 1 or i.measureNumber != j.measureNumber:
                 error = ('Repetition of a non-tonic-triad pitch: '
                          + i.nameWithOctave + '.')
@@ -1456,6 +1464,7 @@ class Parser:
 
         # CASE TEN: Dissonant skip between nonharmonic pitches.
         elif all(case10):
+            logger.debug('Parse transition: case 10')
             if i.index == j.index-1:
                 error = ('Nongenerable dissonant leap between '
                          + i.nameWithOctave + ' and '
@@ -1470,12 +1479,14 @@ class Parser:
 
         # CASE ELEVEN: Nongenerable skip.
         elif all(case11):
+            logger.debug('Parse transition: case 11')
             error = ('Nongenerable leap between ' + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
 
         # CASE TWELVE: Leap larger than an octave.
         elif all(case12):
+            logger.debug('Parse transition: case 12')
             error = ('Leap larger than an octave between '
                      + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
