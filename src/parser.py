@@ -293,7 +293,7 @@ class Parser:
                 j = g_buffer[0]
 
                 # Parse the local span whenever i falls
-                # at the start of the measure.
+                # at the start of the line or measure.
                 localStart = g_stack[-1].index
                 localEnd = 0
                 if i.beat == 1.0 or i.index == 0:
