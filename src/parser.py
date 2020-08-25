@@ -271,7 +271,7 @@ class Parser:
             pass
 
         elif self.part.species in ['third', 'fifth']:
-            # Set global variables for parsing the local context.
+            # Global variables for modifying the local parse:
             # (1) Admit local repetitions:
             #     addLocalRepetitions = True/False
             # (2) Limit local elaborations to neighboring and restrict
