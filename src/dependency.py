@@ -194,19 +194,19 @@ class Dependency:
             raise DependencyException(exc)
         self._departure = d
 
-    # @property
-    # def dependents(self):
-    #     return self._dependents
-    #
-    # @dependents.setter
-    # def dependents(self, n):
-    #     if n != []:
-    #         try:
-    #             n.isClassOrSubclass((note.Note,))
-    #         except:
-    #             exc = 'not a valid dependency object: %s' % n
-    #             raise DependencyException(exc)
-    #     self._dependents = n
+    @property
+    def dependents(self):
+        return self._dependents
+
+    @dependents.setter
+    def dependents(self, n):
+        if n != []:
+            try:
+                n.isClassOrSubclass((note.Note,))
+            except:
+                exc = 'not a valid dependency object: %s' % n
+                raise DependencyException(exc)
+        self._dependents = n
 
 # -----------------------------------------------------------------------------
 
