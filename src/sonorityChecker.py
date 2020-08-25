@@ -51,11 +51,11 @@ imperfectSeriesLimit = 3
 # implement interest rules
     # look for narrow ambitus
     # look for monotony of various types
-        # repeated pitches
+        # linear: repeated pitches
             # consecutive (limit in outer voices)
-        # lack of steps
-        # lack of skips
-        # lack of intervallic variety
+        # linear: lack of steps
+        # linear: lack of skips
+        # sonority: lack of intervallic variety
         # etc.
         # repeated sonority: consecutive, nonconsecutive
 
@@ -392,7 +392,7 @@ def isOnbeatVerticality(verticality):
     # does not work!!!
     vnotes = verticality.getObjectsByClass('Note')
     isOnbeat = True
-    print(vert.offset)
+    print(verticality.offset)
     for note in vnotes:
         print(note)
         if note.beat != 1.0:
