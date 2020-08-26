@@ -486,7 +486,7 @@ class Parser:
                 # Then proceed through the rest of the local context.
                 while g_buffer[0].index < localEnd:
                     shiftBuffer(g_stack, g_buffer)
-                    if g_stack[-1].index not in l_openHeads:
+                    if g_stack[-1].index not in l_openHeads and g_stack[-1].index not in l_openTransitions:
                         g_stack.pop(-1)
 
                 # Restore the open locals to the buffer.
@@ -549,6 +549,7 @@ class Parser:
                      'the following measures: '
                      + f'{mns}')
             self.errors.append(error)
+            logger.debug(f'{error}')
         self.arcs = arcs
         self.openHeads = openHeads
 
