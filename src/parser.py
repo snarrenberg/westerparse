@@ -1554,11 +1554,22 @@ class Parser:
                         continue
                     elif i.csd.value % 7 == 4:
                         s3cands.append(i)
+                # add sd5s near the end of a third-species line
+                # TODO make this a less brute force method
+                # for finding a structural dominant bass pitch
+                if self.part.species in ['third', 'fifth']:
+                    meas = len(self.part.getElementsByClass('Measure'))
+                    for n in self.notes:
+                        cond = [n.csd.value % 7 == 4,
+                                meas-3 < n.measureNumber < meas]
+                        if all(cond):
+                            # TODO avoid duplicating cands already on list
+                            s3cands.append(n)
                 if not s3cands:
                     buildError = ('Bass structure error: '
                                   'No candidate for S3 detected.')
                     buildErrors.append(buildError)
-                logger.debug(f'List of S3 candidates: '
+                logger.debug(f'List of bass S3 candidates: '
                              f'{[s.index for s in s3cands]}')
 
                 if buildErrors == []:
@@ -1593,7 +1604,7 @@ class Parser:
                     buildError = ('Primary structure error: '
                                   'No candidate for S2 detected.')
                     buildErrors.append(buildError)
-                logger.debug(f'List of S2 candidates: '
+                logger.debug(f'List of primary S2 candidates: '
                              f'{[s.index for s in s2cands]}')
 
                 # Create a Parse object for each S2cand
@@ -1616,6 +1627,7 @@ class Parser:
             elif lineType == 'generic':  # for generic lines, first note is S2
                 s2cand = buffer[0]
                 stack = buffer
+                logger.debug(f'Building parses for generic line')
                 self.buildParse(s2cand, lineType, parsecounter,
                                 buildErrors=[])
 
@@ -1668,6 +1680,8 @@ class Parser:
         # And return the results to the Parser.
         self.parses.append(newParse)
         self.parseErrorsDict.update({newParse.label: newParse.errors})
+#        logger.debug(f'Errors for {newParse.label}: '
+#                     f'\n{newParse.errors}')
 
     class Parse():
         """An object for holding one interpretation of
