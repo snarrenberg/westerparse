@@ -1563,8 +1563,10 @@ class Parser:
                         cond = [n.csd.value % 7 == 4,
                                 meas-3 < n.measureNumber < meas]
                         if all(cond):
-                            # TODO avoid duplicating cands already on list
-                            s3cands.append(n)
+                            # do not duplicate cands already on list
+                            s3indexes = [c.index for c in s3cands]
+                            if n.index not in s3indexes:
+                                s3cands.append(n)
                 if not s3cands:
                     buildError = ('Bass structure error: '
                                   'No candidate for S3 detected.')
