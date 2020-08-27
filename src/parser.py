@@ -357,8 +357,11 @@ class Parser:
                     if addLocalRepetitions:
                         firstHead = l_openHeads[0]
                         for h in l_openHeads[1:]:
+                            # check whether any open transitions intervene
+                            interTrans = [t for t in l_openTransitions if t < h]
                             if (self.notes[h].csd.value
-                               == self.notes[firstHead].csd.value):
+                                    == self.notes[firstHead].csd.value
+                                    and not interTrans):
                                 self.notes[h].dependency.lefthead = firstHead
                                 self.notes[firstHead].dependency.dependents.append(h)
                                 arcGenerateRepetition(h, self.part,
@@ -453,11 +456,14 @@ class Parser:
                             for pair in pairs:
                                 i = self.notes[pair[0]]
                                 j = self.notes[pair[1]]
+                                interTrans = [t for t in l_openTransitions if
+                                              i.index < t < j.index]
                                 rules = [
                                     i.csd.value == j.csd.value,
                                     i.measureNumber == j.measureNumber,
                                     not isEmbeddedInArcs(pair[0], l_arcs),
-                                    not isEmbeddedInArcs(pair[1], l_arcs)
+                                    not isEmbeddedInArcs(pair[1], l_arcs),
+                                    not interTrans
                                     ]
                                 if all(rules):
                                     j.dependency.lefthead = i.index
@@ -731,7 +737,7 @@ class Parser:
                 # See if j resolves the most recent open transition.
                 for t in reversed(openTransitions):
                     h = self.notes[t]
-                    if isDiatonicStep(h, j):
+                    if isDirectedStep(h, j):
                         # add the new arc only if it doesn't contradict
                         # an existing arc
                         testArc = [h.dependency.lefthead, h.index, j.index]
@@ -948,6 +954,8 @@ class Parser:
                             j.dependency.dependents.append(i.index)
                             openTransitions.remove(i.index)
                             arcGenerateTransition(i.index, part, arcs)
+                        else:
+                            openHeads.append(j.index)
                     elif isDiatonicStep(h, j) and t != i.index:
                         if (isStepUp(h, j)
                            and h.csd.direction
@@ -1032,7 +1040,7 @@ class Parser:
 
         # CASE FIVE: Step from nonharmonic to nonharmonic.
         elif all(case5):
-            logger.debug('Parse transition: case 5')
+            logger.debug(f'Parse transition: case 5')
             if (i.csd.direction == j.csd.direction or
                i.csd.direction == 'bidirectional' and
                j.csd.direction == 'ascending'):
@@ -1134,12 +1142,14 @@ class Parser:
                 if i.csd.value % 7 == 6 and j.csd.value % 7 == 5:
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
+                    openTransitions.remove(i.index)
                     openTransitions.append(j.index)
                 else:
                     j.dependency.lefthead = i.dependency.lefthead
                     i.dependency.dependents.append(j.index)
                     j.dependency.dependents.append(i.index)
                     self.notes[j.dependency.lefthead].dependency.dependents.append(j.index)
+                    openTransitions.remove(i.index)
                     openTransitions.append(j.index)
             elif (i.csd.direction == 'bidirectional'
                   and j.csd.direction == 'descending'):
