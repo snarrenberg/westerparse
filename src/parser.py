@@ -1694,8 +1694,6 @@ class Parser:
         # And return the results to the Parser.
         self.parses.append(newParse)
         self.parseErrorsDict.update({newParse.label: newParse.errors})
-#        logger.debug(f'Errors for {newParse.label}: '
-#                     f'\n{newParse.errors}')
 
     class Parse():
         """An object for holding one interpretation of
