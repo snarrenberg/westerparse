@@ -34,7 +34,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Generic01.musicxml'
 #    source = 'TestScoresXML/Generic02.musicxml'
 
-#    source = 'TestScoresXML/FirstSpecies01.musicxml'
+    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
 #    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/SecondSpecies21.musicxml' # not generable
 #    source = 'TestScoresXML/SecondSpecies22.musicxml' # not generable
 
-    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
+#    source = 'TestScoresXML/ThirdSpecies01.musicxml'    # vl errors
 #    source = 'TestScoresXML/ThirdSpecies02.musicxml'
 #    source = 'TestScoresXML/ThirdSpecies03.musicxml'
 #    source = 'TestScoresXML/ThirdSpecies04.musicxml'    # vl error
@@ -111,6 +111,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Westergaard100k.musicxml'
 #    source = 'TestScoresXML/Westergaard107a.musicxml'
 #    source = 'TestScoresXML/Westergaard121a.musicxml'
+#    source = 'TestScoresXML/2020_08_26T17_50_33_151Z.musicxml'
 
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
@@ -127,12 +128,12 @@ if __name__ == "__main__":
 #    source = '../examples/corpus/WP304.musicxml'
 #    source = 'TestScoresXML/SecondSpecies33.musicxml'
 #    source = '../examples/corpus/WP022.musicxml'
-#    source = '../examples/corpus/WP013.musicxml'
+#    source = '../examples/corpus/WP024.musicxml'
+#    source = '../examples/corpus/WP309.musicxml'
 
-#    source = 'TestScoresXML/2020_07_27T22_03_17_936Z.musicxml'
+    #    source = 'TestScoresXML/2020_07_27T22_03_17_936Z.musicxml'
 #    source = 'TestScoresXML/2020_07_31T21_35_42_273Z.musicxml'
 #    source = 'TestScoresXML/2020_08_11T16_59_58_638Z.musicxml'
-#    source = 'TestScoresXML/WP023.musicxml'
 
 #    source = '/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/music21/corpus/essenFolksong/zuccal0.abc'
 
@@ -237,7 +238,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 5)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
