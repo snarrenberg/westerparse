@@ -378,11 +378,11 @@ def parseContext(context,
                 # ERRORS
                 elif not upperPrimary and lowerBass:
                     if len(context.parts) == 2:
-                        error = ('\tThe upper line is not generable '
+                        error = ('The upper line is not generable '
                                  'as a primary line. \nBut the lower '
                                  'line is generable as a bass line.')
                     else:
-                        error = ('\tNo upper line is generable as a '
+                        error = ('No upper line is generable as a '
                                  'primary line. \nBut the lower line '
                                  'is generable as a bass line.')
                     for gul in genericUpperLines:
@@ -394,11 +394,11 @@ def parseContext(context,
                     raise ContextError(error)
                 elif upperPrimary and not lowerBass:
                     if len(context.parts) == 2:
-                        error = ('\tThe upper line is generable as a '
+                        error = ('The upper line is generable as a '
                                  'primary line. \nBut the lower line '
                                  'is not generable as a bass line.')
                     else:
-                        error = ('\tAt least one upper line is generable '
+                        error = ('At least one upper line is generable '
                                  'as a primary line. \nBut the lower line '
                                  'is not generable as a bass line.')
                     bln = context.parts[-1].name
@@ -410,11 +410,11 @@ def parseContext(context,
                     raise ContextError(error)
                 elif not upperPrimary and not lowerBass:
                     if len(context.parts) == 2:
-                        error = ('\tThe upper line is not generable as a '
+                        error = ('The upper line is not generable as a '
                                  'primary line. \nNor is the lower line '
                                  'generable as a bass line.')
                     else:
-                        error = ('\tNo upper line is generable as '
+                        error = ('No upper line is generable as '
                                  'a primary line. \nNor is the lower '
                                  'line generable as a bass line.')
                     for part in context.parts[:-1]:
