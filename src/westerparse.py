@@ -30,15 +30,15 @@ For more information on how to use these scripts, see
 :doc:`User's Guide to WesterParse <userguide>`.
 """
 
-import time
 import logging
+import time
 import unittest
 
 from music21 import *
 
-import parser
-import vlChecker
 from context import *
+from westerparse import parser
+from westerparse import vlChecker
 from utilities import pairwise
 
 # -----------------------------------------------------------------------------
@@ -89,6 +89,9 @@ def evaluateLines(source,
 
        None -- Default option. A text report is generated in lieu of a
        display in musical notation.
+
+       `show` -- Parses will be displayed using the music notation application
+       that the user has configured for music21.
 
        `writeToServer` -- Reserved for use by the WesterParse web site
        to write parses to musicxml files, which are then displayed in
