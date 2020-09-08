@@ -37,8 +37,8 @@ import unittest
 from music21 import *
 
 from context import *
-from westerparse import parser
-from westerparse import vlChecker
+import parser
+import vlChecker
 from utilities import pairwise
 
 # -----------------------------------------------------------------------------
