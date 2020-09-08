@@ -238,7 +238,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 5)
+    tester(source, 1)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
