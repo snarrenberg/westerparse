@@ -36,7 +36,7 @@ import unittest
 
 from music21 import *
 
-from context import *
+from context import ContextError, EvaluationException
 import parser
 import vlChecker
 from utilities import pairwise
