@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='westerparse',
-    version='1.0.6',
+    version='1.1.0alpha',
     description='An application for evaluating Westergaardian species counterpoint',
     long_description=long_description,
     long_description_content_type='text/markdown', 
@@ -18,7 +18,7 @@ setup(
                    'Operating System :: OS Independent',
                    'License :: OSI Approved :: BSD License',
     ],
-    package_dir={'westerparse': 'src'},
+    package_dir={'westerparse': 'westerparse'},
     packages=['westerparse'], 
     include_package_data=True,
     python_requires='>=3.5, <4',
