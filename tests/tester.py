@@ -61,7 +61,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'
 #    source = 'TestScoresXML/ThirdSpecies040.musicxml'
 
-    source = 'TestScoresXML/FourthSpecies01.musicxml'
+#    source = 'TestScoresXML/FourthSpecies01.musicxml'
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
@@ -98,6 +98,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
 #    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
 #    source = 'TestScoresXML/2020_08_24T20_39_55_774Z.musicxml'
+    source = 'TestScoresXML/2020_09_11T14_43_44_987Z.musicxml'
 
 
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
