@@ -469,11 +469,10 @@ def parseContext(context,
                 raise ContextError(error)
             else:
                 for part in context.parts[:-1]:
-                    if context.errorsDict[part.name] == {} and part.isPrimary:
+                    if part.isPrimary:
                         error = (error + '\n\t' + part.name +
                                  ' is generable as a primary line.')
-                    elif (context.errorsDict[part.name] == {}
-                          and not part.isPrimary and part.isGeneric):
+                    elif (not part.isPrimary and part.isGeneric):
                         error = (error + '\n\t' + part.name +
                                  ' is generable as a generic line.')
                     else:
@@ -495,7 +494,7 @@ def parseContext(context,
                         for err in context.errorsDict[part.name]['primary']:
                             error = error + '\n\t\t\t' + str(err)
                 for part in context.parts[-1:]:
-                    if context.errorsDict[part.name] == {} and part.isBass:
+                    if part.isBass:
                         error = (error + '\n\t' + part.name +
                                  ' is generable as a bass line.')
                     else:
