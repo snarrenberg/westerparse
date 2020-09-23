@@ -175,7 +175,7 @@ def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
         if vlErrors == []:
             result = ('No voice-leading errors found.\n')
         else:
-            result = ('Voice Leading Report \n\n\tThe following '
+            result = ('VOICE LEADING REPORT \nThe following '
                       'voice-leading errors were found:')
             for error in vlErrors:
                 result = result + '\n\t\t' + error
