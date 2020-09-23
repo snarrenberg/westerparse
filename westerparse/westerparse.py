@@ -684,16 +684,14 @@ def showInterpretations(cxt, show, partSelection=None, partLineType=None):
             print(filename)
         elif show == 'writeToCorpusServer':
             timestamp = str(time.time())
-            filename = ('./media/temp/'
+            filename = ('./media/tmp/'
                         + 'parser_output_' + timestamp + '.musicxml')
             content.write('musicxml', filename)
-            print(filename)
         elif show == 'writeToLocal':
             timestamp = str(time.time())
             filename = ('parses_from_context/'
                         + 'parser_output_' + timestamp + '.musicxml')
             content.write('musicxml', filename)
-            print(filename)
         elif show == 'writeToPng':
             timestamp = str(time.time())
             filename = ('tempimages/'
