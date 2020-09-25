@@ -466,11 +466,11 @@ def isVoiceOverlap(vlq):
 
 def isVoiceCrossing(vlq):
     """Input a VLQ and determine whether
-    the voices cross: v1n1 > v2n1 and v1n2 < v2n2.
+    the voices cross: v1n1 < v2n1 and v1n2 < v2n2.
     """
-    rules = [vlq.v1n1.pitch > vlq.v2n1.pitch,
+    rules = [vlq.v1n1.pitch < vlq.v2n1.pitch,
              vlq.v1n2.pitch < vlq.v2n2.pitch]
-    if all(rules):
+    if any(rules):
         return True
     else:
         return False
