@@ -159,6 +159,7 @@ class GlobalContext(Context):
         self.errors = []
 
         # (1) Verify that there are parts populated with notes.
+        # TODO: only check selected parts
         try:
             validateParts(self.score)
         except ContextError as ce:
