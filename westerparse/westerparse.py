@@ -568,7 +568,7 @@ def validatePartSelection(cxt, partSelection):
 def validateLineTypeSelection(cxt, partSelection, partLineType):
     if partLineType is not None:
         if len(cxt.parts) == 1 or partSelection is not None:
-            return
+            return True
         else:
             pass
         raise context.ContextError(
@@ -857,6 +857,7 @@ def arcBuild(source, arc):
         slurStyle = 'solid'
     thisSlur = spanner.Slur()
     thisSlur.lineType = slurStyle
+    thisSlur.placement = 'above'
     source.insert(0, thisSlur)
     for ind in arc:
         obj = source.recurse().notes[ind]
