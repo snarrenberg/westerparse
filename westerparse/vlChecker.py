@@ -487,6 +487,26 @@ def isCrossRelation(vlq):
     else:
         return False
 
+
+def isDisplaced(vlq):
+    """Input a VLQ and determine whether either of the pitches in the first
+     verticality is displaced by a pitch in the second verticality.
+     The test determines whether the simple interval of any contiguous
+     or consecutive
+     interval is not in the list: 'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'.
+     """
+    intervals = [interval.Interval(vlq.v1n1, vlq.v1n2).simpleName,
+                 interval.Interval(vlq.v1n1, vlq.v2n1).simpleName,
+                 interval.Interval(vlq.v2n1, vlq.v2n2).simpleName,
+                 interval.Interval(vlq.v2n1, vlq.v1n2).simpleName]
+    displacements = [i for i in intervals if i
+                     not in ['P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6', 'P8']]
+    if displacements == []:
+        return False
+    else:
+        return True
+
+
 # Methods for notes
 
 
@@ -1188,6 +1208,10 @@ def firstSpeciesForbiddenMotions(score, analyzer,
     vlqList = analyzer.getVLQs(score, partNum1, partNum2)
     for vlq in vlqList:
         forbiddenMotionsOntoBeatWithoutSyncope(score, vlq, partNum1, partNum2)
+    checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
+                                                   partNum1,
+                                                   partNum2)
+
 
 
 def secondSpeciesForbiddenMotions(score, analyzer,
@@ -1451,6 +1475,35 @@ def fourthSpeciesForbiddenMotions(score, analyzer,
         if speciesNote.tie is None and speciesNote.beat > 1.0:
             forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                                                    partNum1, partNum2)
+
+
+def checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
+                                            partNum1=None,
+                                            partNum2=None):
+    """Check for restrictions on nonconsecutive parallel unisons
+    and octaves in first species."""
+    vPairList = analyzer.getVerticalPairs(score, partNum1, partNum2)
+    vPairTriples = [[vPairList[i], vPairList[i + 1], vPairList[i + 2]] for i in
+           range(len(vPairList) - 2)]
+    for vpt in vPairTriples:
+        if isUnison(vpt[0][0], vpt[0][1]) or isOctave(vpt[0][0], vpt[0][1]):
+            vlq1 = makeVLQfromVertPairs(vpt[0], vpt[2])
+            p_int = None
+            if isParallelUnison(vlq1):
+                p_int = 'unisons'
+            elif isParallelOctave(vlq1):
+                p_int = 'octaves'
+            if p_int:
+                vlq2 = makeVLQfromVertPairs(vpt[0], vpt[1])
+                if vlq2 is not None:
+                    if isDisplaced(vlq2):
+                        pass
+                    else:
+                        bar1 = vpt[0][0].measureNumber
+                        bar2 = vpt[2][0].measureNumber
+                        error = (f'Non-consecutive parallel {p_int} in bars {bar1}'
+                             f' and {bar2}.')
+                    vlErrors.append(error)
 
 
 def checkSecondSpeciesNonconsecutiveUnisons(score, analyzer,
@@ -1780,6 +1833,21 @@ def makeVLQsFromVertPair(vertPair, partNumPairs):
                             voiceLeading.VoiceLeadingQuartet(v1n1, v1n2,
                                                              v2n1, v2n2)))
     return vlqList
+
+
+def makeVLQfromVertPairs(vpair1, vpair2):
+    v1n1 = vpair1[0]
+    v1n2 = vpair2[0]
+    v2n1 = vpair1[1]
+    v2n2 = vpair2[1]
+    # Do not make a VLQ if one note is a rest.
+    if v1n1.isRest or v1n2.isRest or v2n1.isRest or v2n2.isRest:
+        vlq = None
+    else:
+        vlq = voiceLeading.VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2)
+
+    return vlq
+
 
 # -----------------------------------------------------------------------------
 # TESTS
