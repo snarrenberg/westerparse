@@ -1503,7 +1503,7 @@ def checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
                         bar2 = vpt[2][0].measureNumber
                         error = (f'Non-consecutive parallel {p_int} in bars {bar1}'
                              f' and {bar2}.')
-                    vlErrors.append(error)
+                        vlErrors.append(error)
 
 
 def checkSecondSpeciesNonconsecutiveUnisons(score, analyzer,
