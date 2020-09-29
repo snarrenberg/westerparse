@@ -168,7 +168,7 @@ def checkConsecutions(score):
                         vlErrors.append(error)
 
 
-def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
+def checkFinalStep(score, analyzer, partNum1=0, partNum2=None):
     # TODO rewrite based on parser's lineType value
     # determine whether the the upper part is a primary upper line
     # if score.parts[partNum1].isPrimary == True:
