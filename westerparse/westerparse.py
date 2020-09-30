@@ -839,6 +839,7 @@ def gatherArcs(source, arcs, arcBasic):
     if arcBasic is not None:
         pass
         # consider using spanner.Line() in place of spanner.Slur(), as follows:
+        # problem: cannot adjust the horizontal length of this spanner
 #        UrArc = spanner.Line(lineType='solid', startHeight=25, tick='down')
 #        source.insert(0, UrArc)
 #        for ind in arcBasic:
@@ -878,7 +879,7 @@ def assignRules(source, rules):
             if index == rule[0]:
                 elem.lyric = rule[1]
                 if elem.lyric is not None and elem.lyric[0] == 'S':
-                    elem.style.color = 'blue'
+                    elem.style.color = 'red'
                 else:
                     elem.style.color = 'black'
             else:
