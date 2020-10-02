@@ -157,6 +157,10 @@ class GlobalContext(Context):
         self.score.measures = len(self.parts[0].getElementsByClass('Measure'))
         self.score.errors = []
         self.errors = []
+        if kwargs.get('harmonicSpecies'):
+            self.harmonicSpecies = kwargs['harmonicSpecies']
+        else:
+            self.harmonicSpecies = False
 
         # (1) Verify that there are parts populated with notes.
         # TODO: only check selected parts
@@ -184,28 +188,40 @@ class GlobalContext(Context):
         self.localContexts = {}
 
         # TODO Move harmonic species span stuff to a different place.
-        if kwargs.get('harmonicSpecies'):
-            self.harmonicSpecies = kwargs['harmonicSpecies']
-        else:
-            self.harmonicSpecies = False
-        if kwargs.get('harmonicSpecies'):
+        if self.harmonicSpecies:
+            offPre = kwargs['offsetPredominant']
+            offDom = kwargs['offsetDominant']
+            offClosTon = kwargs['offsetClosingTonic']
+            self.harmonicDict = {
+                'offsetInitialTonic': 0.0,
+                'offsetPredominant': offPre,
+                'offsetDominant': offDom,
+                'offsetClosingTonic': offClosTon,
+            }
+
+        if self.harmonicSpecies:
             offPre = kwargs['offsetPredominant']
             offDom = kwargs['offsetDominant']
             offClosTon = kwargs['offsetClosingTonic']
             if offPre is None:
-                initialTonicSpan = self.makeLocalContext(self.score, 0.0, offPre,
-                                                    'initial tonic')
-                predominantSpan = self.makeLocalContext(self.score, offPre, offDom,
-                                                   'predominant')
+                initialTonicSpan = self.makeLocalContext(self.score,
+                                                         0.0, offPre,
+                                                         'initial tonic')
+                predominantSpan = self.makeLocalContext(self.score,
+                                                        offPre, offDom,
+                                                        'predominant')
             else:
-                initialTonicSpan = self.makeLocalContext(self.score, 0.0, offDom,
-                                                    'initial tonic')
+                initialTonicSpan = self.makeLocalContext(self.score,
+                                                         0.0, offDom,
+                                                         'initial tonic')
                 predominantSpan = None
-            dominantSpan = self.makeLocalContext(self.score, offDom,
-                                            offClosTon, 'dominant')
-            closingTonicSpan = self.makeLocalContext(self.score, offClosTon,
-                                                offClosTon+4.0,
-                                                'closing tonic')
+            dominantSpan = self.makeLocalContext(self.score,
+                                                 offDom, offClosTon,
+                                                 'dominant')
+            closingTonicSpan = self.makeLocalContext(self.score,
+                                                     offClosTon,
+                                                     offClosTon+4.0,
+                                                     'closing tonic')
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
@@ -252,9 +268,10 @@ class GlobalContext(Context):
         # Setup key, using information provided by user or inferred from parts.
         knote = kwargs.get('keynote')
         kmode = kwargs.get('mode')
+        kharm = self.harmonicSpecies
         # (1a) If user provides key, validate and test.
         if knote and kmode:
-            self.key = keyFinder.testKey(self.score, knote, kmode)
+            self.key = keyFinder.testKey(self.score, knote, kmode, kharm)
             if not self.key:
                 raise EvaluationException
                 return
@@ -497,6 +514,25 @@ def assignSpecies(part):
     else:
         species = 'fifth'
     return species
+
+
+def validateHarmonicSegmentation(offPre, offDom, offClosTon, measLen):
+    """Get the offsets for the beginnings of harmonic spans and
+    calcluate whether the segmentation conforms to the rules for
+    harmonic species."""
+    # e.g. 32.0, 36.0, 44.0, 4.0
+    totalLength = offClosTon + measLen
+    if offPre is not None:
+        spanA = offPre
+        spanB = totalLength - offPre
+    else:
+        spanA = offDom
+        spanB = totalLength - offDom
+    if spanA < spanB:
+        error = ('The initial tonic span is too short.')
+        return error
+
+
 
 # -----------------------------------------------------------------------------
 
