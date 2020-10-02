@@ -20,10 +20,10 @@ import logging
 
 from music21 import *
 
-import csd
-import context
-import theoryAnalyzerWP
-import theoryResultWP
+# from westerparse import csd
+from westerparse import context
+from westerparse import theoryAnalyzerWP
+# from westerparse import theoryResultWP
 
 # -----------------------------------------------------------------------------
 # LOGGER
@@ -52,8 +52,9 @@ vlErrors = []
 
 # settings for testing
 # paceUnit = 4.0 # pace unit for first-species notes, in quarter-note lengths
-# TODO may be able to infer pace unit from meter for species counterpoint
-#    paceUnit = xxxxx.getContextByClass('Measure').barDuration.quarterLength
+# TODO infer pace unit from meter for species counterpoint
+#   paceUnit = xxxxx.getContextByClass('Measure').barDuration.quarterLength
+#   find the slowest moving line and take it as the Cf?
 
 # -----------------------------------------------------------------------------
 # MAIN FUNCTIONS
@@ -66,7 +67,6 @@ def voiceLeadingAnalyzer(context):
     in two to four parts."""
 
     # list of errors for reporting
-    voiceLeadingErrors = []
     sonorityErrors = []
     
     if len(context.parts) == 1:
