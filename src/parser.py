@@ -203,21 +203,31 @@ class Parser:
             self.part.lineTypes.append('generic')
         # Make some educated guesses as to whether
         # the line can be a bass line or primary line.
-        if cond3 and cond4:
+        if (cond3 and cond4
+                and (len(self.context.parts) == 1
+                        or (len(self.context.parts) > 1
+                            and self.part == self.context.parts[-1]))):
             for n in self.notes[1:-1]:
                 if n.csd.value % 7 == 4:
                     self.part.lineTypes.append('bass')
                     break
-        if cond1 and cond5:
+        if (cond1 and cond5
+            and (len(self.context.parts) == 1
+                 or (len(self.context.parts) > 1
+                     and self.part != self.context.parts[-1]))):
             for n in self.notes[:-1]:
                 if n.csd.value in [2, 4, 7]:
                     self.part.lineTypes.append('primary')
                     break
-        elif cond1 and cond6:
+        elif (cond1 and cond6
+              and (len(self.context.parts) == 1
+                   or (len(self.context.parts) > 1
+                       and self.part != self.context.parts[-1]))):
             for n in self.notes[:-1]:
                 if n.csd.value + 7 in [2, 4, 7]:
                     self.part.lineTypes.append('primary')
                     break
+
 
     def preParseLine(self):
         """
