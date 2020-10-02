@@ -171,6 +171,8 @@ class Parser:
         self.preParseLine()
         # log result
         logger.debug(f'Preliminary Arcs: {self.arcs}')
+        # TODO show preliminary parse during testing phase
+        # self.showPartialParse(self.notes[0], self.notes[-1], self.arcs, [], [])
 
         # Interrupt parser if preliminary parsing is unsuccessful.
         # and report errors
@@ -179,7 +181,10 @@ class Parser:
 
         # STEP TWO: Determine the set of possible basic structures,
         # and parse for each possibility.
-        self.prepareParses()
+        if self.context.harmonicSpecies:
+            self.prepareHarmonicParses()
+        else:
+            self.prepareMonotriadicParses()
 
         # STEP THREE: Gather all the valid interpretations
         # of the part by line type.
@@ -206,17 +211,26 @@ class Parser:
             self.part.lineTypes.append('generic')
         # Make some educated guesses as to whether
         # the line can be a bass line or primary line.
-        if cond3 and cond4:
+        if (cond3 and cond4
+                and (len(self.context.parts) == 1
+                        or (len(self.context.parts) > 1
+                            and self.part == self.context.parts[-1]))):
             for n in self.notes[1:-1]:
                 if n.csd.value % 7 == 4:
                     self.part.lineTypes.append('bass')
                     break
-        if cond1 and cond5:
+        if (cond1 and cond5
+            and (len(self.context.parts) == 1
+                 or (len(self.context.parts) > 1
+                     and self.part != self.context.parts[-1]))):
             for n in self.notes[:-1]:
                 if n.csd.value in [2, 4, 7]:
                     self.part.lineTypes.append('primary')
                     break
-        elif cond1 and cond6:
+        elif (cond1 and cond6
+              and (len(self.context.parts) == 1
+                   or (len(self.context.parts) > 1
+                       and self.part != self.context.parts[-1]))):
             for n in self.notes[:-1]:
                 if n.csd.value + 7 in [2, 4, 7]:
                     self.part.lineTypes.append('primary')
@@ -269,8 +283,100 @@ class Parser:
                 if self.errors:
                     break
 
-        # TODO Figure out how to parse harmonic species.
+        # TODO Method for parsing harmonic species.
         elif self.context.harmonicSpecies:
+            logger.debug(f'Parser state: 0'
+                         f'\n\tHeads: {openHeads}'
+                         f'\n\tTrans: {openTransitions}'
+                         f'\n\tArcs:  {arcs}')
+            # Scan each harmonic context in turn.
+            offPre = self.context.harmonicDict['offsetPredominant']
+            offDom = self.context.harmonicDict['offsetDominant']
+            offClosTon = self.context.harmonicDict['offsetClosingTonic']
+            # create the buffer and reference harmonies for each harmonic span
+            harmonicSpans = []  # (buffer, harmonyStart, harmonyEnd, harmonyName)
+            if offPre is not None:
+                Ti_buffer = [n for n in self.notes
+                             if ((not n.tie or n.tie.type == 'start')
+                             and n.offset <= offPre)]
+                P_buffer = [n for n in self.notes
+                             if ((not n.tie or n.tie.type == 'start')
+                             and offPre <= n.offset <= offDom)]
+                D_buffer = [n for n in self.notes
+                             if ((not n.tie or n.tie.type == 'start')
+                                 and offDom <= n.offset <= offClosTon)]
+                harmonicSpans.append((Ti_buffer,
+                                      [p for p in self.part.tonicTriad.pitches],
+                                      [p for p in self.part.predominantTriad.pitches],
+                                      'initial tonic'))
+                harmonicSpans.append((P_buffer,
+                                      [p for p in self.part.predominantTriad.pitches],
+                                      [p for p in self.part.dominantTriad.pitches],
+                                      'predominant'))
+                harmonicSpans.append((D_buffer,
+                                      [p for p in self.part.dominantTriad.pitches],
+                                      [p for p in self.part.tonicTriad.pitches],
+                                      'dominant'))
+            else:
+                Ti_buffer = [n for n in self.notes
+                             if ((not n.tie or n.tie.type == 'start')
+                             and n.offset <= offDom)]
+                D_buffer = [n for n in self.notes
+                             if ((not n.tie or n.tie.type == 'start')
+                                 and offDom <= n.offset <= offClosTon)]
+                harmonicSpans.append((Ti_buffer,
+                                      [p for p in self.part.tonicTriad.pitches],
+                                      [p for p in self.part.dominantTriad.pitches],
+                                      'initial tonic'))
+                harmonicSpans.append((D_buffer,
+                                      [p for p in self.part.dominantTriad.pitches],
+                                      [p for p in self.part.tonicTriad.pitches],
+                                      'dominant'))
+
+            # now parse each harmonic span
+            for h_span in harmonicSpans:
+                h_stack = []
+                h_buffer = h_span[0]
+                h_harmonyStart = h_span[1]
+                h_harmonyEnd = h_span[2]
+                h_openHeads = []
+                # add index of first note of buffer to open heads
+                # if it is harmonic
+                if isHarmonic(h_span[0][0], h_span[1]):
+                    h_openHeads.append(h_span[0][0].index)
+                h_openTransitions = []
+                n = len(h_buffer)
+                while n > 1:
+                    shiftBuffer(h_stack, h_buffer)
+                    n = len(h_buffer)
+                    i = h_stack[-1]
+                    j = h_buffer[0]
+                    # Parse the transition i-j.
+                    self.parseTransition(h_stack, h_buffer, self.part, i, j,
+                                         h_harmonyStart, h_harmonyEnd, h_openHeads,
+                                         h_openTransitions, arcs)
+                    # log result
+                    logger.debug(f'Parser state: {j.index}'
+                                 f'\n\tLocal Harmonic Heads: {h_openHeads}'
+                                 f'\n\tLocal Harmonic Trans: {h_openTransitions}'
+                                 f'\n\tArcs:  {arcs}')
+                    # Break upon finding errors.
+                    if self.errors:
+                        break
+                    if n == 1:
+                        if h_span[3] == 'initial tonic':
+                            self.T_openHeads = h_openHeads
+                        elif h_span[3] == 'predominant':
+                            self.P_openHeads = h_openHeads
+                        elif h_span[3] == 'dominant':
+                            self.D_openHeads = h_openHeads
+
+
+
+            # TODO select S2cand and S3cands from the relevant harmonic spans
+            # TODO create entirely new method for preparing parses
+            # prepareMonotriadicParses
+            # prepareHarmonicParses
             pass
 
         elif self.part.species in ['third', 'fifth']:
@@ -689,7 +795,8 @@ class Parser:
                   and isHarmonic(j, harmonyStart)),
                  (isLinearConsonance(i, j)
                   or isLinearUnison(i, j))]
-        case2 = [self.part.species in ['third', 'fifth'],
+        case2 = [(self.part.species in ['third', 'fifth']
+                  or self.context.harmonicSpecies),
                  not isHarmonic(i, harmonyStart),
                  isHarmonic(j, harmonyEnd),
                  isDiatonicStep(i, j),
@@ -728,7 +835,7 @@ class Parser:
 
         # CASE ONE: Both pitches are harmonic and consonant.
         if all(case1):
-            logger.debug('Parse transition: case 1')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 1')
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
                     harmonyStart.append(j.pitch)
@@ -773,7 +880,7 @@ class Parser:
         # CASE TWO: Transition through end of this bar
         # to the harmony of the next.
         elif all(case2):
-            logger.debug('Parse transition: case 2')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 2')
             if i.index in openTransitions:
                 i.dependency.righthead = j.index
                 j.dependency.dependents.append(i.index)
@@ -786,13 +893,13 @@ class Parser:
                        == i.dependency.lefthead):
                         self.notes[d].dependency.righthead = j.index
                 arcGenerateTransition(i.index, part, arcs)
-                logger.debug(f'evaluating transition to {j.index}'
+                logger.debug(f'evaluating transition to {j.index} '
                               'in the next local span'
                               f'\n\topen trans = {openTransitions}')
 
         # CASE THREE: Step from harmonic to nonharmonic pitch.
         elif all(case3):
-            logger.debug('Parse transition: case 3')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 3')
             if openTransitions:
                 for t in reversed(openTransitions):
                     h = self.notes[t]
@@ -886,7 +993,7 @@ class Parser:
 
         # CASE FOUR: Step from nonharmonic to harmonic pitch.
         elif all(case4):
-            logger.debug('Parse transition: case 4')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 4')
             # Complete the local harmony if possible.
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
@@ -1043,7 +1150,7 @@ class Parser:
 
         # CASE FIVE: Step from nonharmonic to nonharmonic.
         elif all(case5):
-            logger.debug(f'Parse transition: case 5')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 5')
             if (i.csd.direction == j.csd.direction or
                i.csd.direction == 'bidirectional' and
                j.csd.direction == 'ascending'):
@@ -1173,7 +1280,7 @@ class Parser:
 
         # CASE SIX: Skip from nonharmonic to harmonic.
         elif all(case6):
-            logger.debug('Parse transition: case 6')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 6')
             openLocals = []
             if i.dependency.lefthead is None:
                 # look for a lefthead
@@ -1208,7 +1315,7 @@ class Parser:
 
         # CASE SEVEN: Skip from harmonic to nonharmonic.
         elif all(case7):
-            logger.debug('Parse transition: case 7')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 7')
             if openTransitions:
                 # A. See whether j continues a transition in progress.
                 continuesTransition = False
@@ -1437,7 +1544,7 @@ class Parser:
 
         # CASE EIGHT: Skip from nonharmonic to nonharmonic.
         elif all(case8):
-            logger.debug('Parse transition: case 8')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 8')
             openLocals = []
             if self.part.species not in ['third', 'fifth']:
                 if i.index == j.index-1:
@@ -1467,7 +1574,7 @@ class Parser:
 
         # CASE NINE: Linear unison between nonharmonic pitches.
         elif all(case9):
-            logger.debug('Parse transition: case 9')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 9')
            # TODO: Double check this error, might be too simple.
             if i.index == j.index - 1 or i.measureNumber != j.measureNumber:
                 error = ('Repetition of a non-tonic-triad pitch: '
@@ -1478,7 +1585,7 @@ class Parser:
 
         # CASE TEN: Dissonant skip between nonharmonic pitches.
         elif all(case10):
-            logger.debug('Parse transition: case 10')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 10')
             if i.index == j.index-1:
                 error = ('Nongenerable dissonant leap between '
                          + i.nameWithOctave + ' and '
@@ -1493,7 +1600,7 @@ class Parser:
 
         # CASE ELEVEN: Nongenerable skip.
         elif all(case11):
-            logger.debug('Parse transition: case 11')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 11')
             error = ('Nongenerable leap between ' + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
@@ -1506,10 +1613,11 @@ class Parser:
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
 
-    def prepareParses(self):
+    def prepareMonotriadicParses(self):
         """
         After preliminary parsing is completed, determines possibiities
-        for basic structures based on available line types and parse the
+        for basic structures in a monotriadic line based on available
+        line types and parses the
         line using each candidate for basic structure. The results are
         collected in self.parses.
 
@@ -1647,6 +1755,107 @@ class Parser:
                 logger.debug(f'Building parses for generic line')
                 self.buildParse(s2cand, lineType, parsecounter,
                                 buildErrors=[])
+
+
+    def prepareHarmonicParses(self):
+        """After preliminary parsing is completed, determines possibiities
+        for basic structures in a harmonically progressive line based on
+        available line types and parses the
+        line using each candidate for basic structure. The results are
+        collected in self.parses."""
+        for lineType in self.part.lineTypes:
+            # Look for S2 or S3 candidate notes in the given line type
+            # and build parse objects for each candidate.
+            # Assign a label and counter to each parse object.
+            parsecounter = 0
+            if lineType == 'bass':
+                buildErrors = []
+                if self.notes[0].csd.value % 7 != 0:
+                    buildError = ('Bass structure error: The line '
+                                  'does not begin on the tonic degree.')
+                    buildErrors.append(buildError)
+                if self.notes[-1].csd.value % 7 != 0:
+                    buildError = ('Bass structure error: The line '
+                                  'does not end on the tonic degree.')
+                    buildErrors.append(buildError)
+                buffer = [self.notes[head] for head in self.D_openHeads]
+                stack = []
+                s3cands = [self.notes[head] for head in self.D_openHeads
+                           if self.notes[head].csd.value % 7 == 4]
+                if not s3cands:
+                    buildError = ('Bass structure error: '
+                                  'No candidate for S3 detected.')
+                    buildErrors.append(buildError)
+                logger.debug(f'List of bass S3 candidates: '
+                             f'{[s.index for s in s3cands]}')
+                # create list of S4 candidates
+                if self.context.harmonicDict['offsetPredominant'] is not None:
+                    s4cands = [self.notes[head] for head in self.P_openHeads
+                           if self.notes[head].csd.value % 7 in {1, 3, 5}]
+                # TODO pass this list to the build parse and test for
+                # compliance with the rules
+
+                s3s4Pairs = []
+                S1 = self.notes[-1]
+                for S3 in s3cands:
+                    for S4 in s4cands:
+                        rules = [
+                            isDiatonicStep(S4, S1) or isDiatonicStep(S4, S3)]
+                        if all(rules):
+                            s3s4Pairs.append((S3, S4))
+
+
+
+                if buildErrors == []:
+                    for cand in s3cands:
+                        logger.debug(f'Building parses for S3 candidate: '
+                                     f'{cand.index}, scale degree '
+                                     f'{cand.csd.degree}')
+                        self.buildParse(cand, lineType,
+                                        parsecounter, buildErrors=[])
+                        parsecounter += 1
+                # If the build as type fails, collect errors in dictionary.
+                else:
+                    self.typeErrorsDict[lineType] = buildErrors
+
+            elif lineType == 'primary':
+                buildErrors = []
+                if self.notes[-1].csd.value % 7 != 0:
+                    buildError = ('Primary structure error: The line '
+                                  'does not end on the tonic degree.')
+                    buildErrors.append(buildError)
+                t = self.notes[-1].csd.value
+                s2cands = [self.notes[head] for head in self.T_openHeads
+                           if self.notes[head].csd.value in {2+t, 4+t, 7+t}]
+                if not s2cands:
+                    buildError = ('Primary structure error: '
+                                  'No candidate for S2 detected.')
+                    buildErrors.append(buildError)
+                logger.debug(f'List of primary S2 candidates: '
+                             f'{[s.index for s in s2cands]}')
+
+                # Create a Parse object for each S2cand
+                # and then turn over further processes to each Parse object,
+                # using a series of methods to infer a basic step motion.
+                methods = 9
+                if buildErrors == []:
+                    for cand in s2cands:
+                        logger.debug(f'Building parses for S2 candidate: '
+                                     f'{cand.index}, scale degree '
+                                     f'{cand.csd.degree}')
+                        for m in range(0, methods):
+                            self.buildParse(cand, lineType, parsecounter,
+                                            buildErrors=[], method=m)
+                            parsecounter += 1  # update numbering of parses
+                # If the build as type fails, collect errors in dictionary.
+                else:
+                    self.typeErrorsDict[lineType] = buildErrors
+                # TODO test for compliance with rules after generating a
+                # a complete parse, since the rules involve interaction
+                # with the global structure of the bass line
+
+
+
 
     def buildParse(self, cand, lineType, parsecounter,
                    buildErrors, method=None):
