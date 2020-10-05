@@ -157,6 +157,7 @@ class GlobalContext(Context):
         self.score.measures = len(self.parts[0].getElementsByClass('Measure'))
         self.score.errors = []
         self.errors = []
+        self.errorsDict = {}
         if kwargs.get('harmonicSpecies'):
             self.harmonicSpecies = kwargs['harmonicSpecies']
         else:
