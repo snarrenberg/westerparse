@@ -283,6 +283,8 @@ def parseContext(cxt,
         # Collect errors.
         if part.errors:
             cxt.errorsDict[part.name]['parser errors'] = part.errors
+        else:
+            cxt.errorsDict[part.name]['parser errors'] = []
         if part.typeErrorsDict:
             for key, value in part.typeErrorsDict.items():
                 cxt.errorsDict[part.name][key] = value
@@ -645,6 +647,22 @@ def selectedPreferredParseSets(cxt, show):
         for pair in domOffsetDiffList:
             if abs(pair[0]) == abs(lowestDifference):
                 preferredGlobals.append(pair[1])
+
+        if preferredGlobals and cxt.harmonicSpecies:
+            for prse in preferredGlobals:
+                offInitTon = cxt.harmonicDict['offsetInitialTonic']
+                offPredom = cxt.harmonicDict['offsetPredominant']
+                offDom = cxt.harmonicDict['offsetDominant']
+                offClosTon = cxt.harmonicDict['offsetClosingTonic']
+                # print(primPart.notes[S3Final].offset)
+
+                # TODO implement preference rules for global coordination of linear structures
+                # Check for span placement and consonance of primary upper line notes
+                # bass line pitches have already been checked
+
+                pass
+
+
         for pair in preferredGlobals:
             primPart.Pinterps = [pair[0]]
             bassPart.Binterps = [pair[1]]
