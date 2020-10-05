@@ -152,7 +152,7 @@ if __name__ == "__main__":
             westerparse.evaluateCounterpoint(source, report=True)
         
         elif verify == 10: # tests for generability as harmonic counterpoint
-            westerparse.evaluateLines(source, show=None,
+            westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
                                       offsetPredominant=36.0,
                                       offsetDominant=44.0,

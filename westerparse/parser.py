@@ -1943,6 +1943,7 @@ class Parser:
             self.S3Final = None
             self.S3Initial = None
             self.S3PenultCands = None
+            self.arcbasic = None
             self.species = None
             self.harmonicSpecies = False
 

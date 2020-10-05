@@ -39,6 +39,7 @@ from music21 import *
 from westerparse import context
 from westerparse import parser
 from westerparse import vlChecker
+from westerparse import theoryAnalyzerWP
 
 # -----------------------------------------------------------------------------
 # LOGGER
@@ -59,7 +60,7 @@ logger.addHandler(f_handler)
 # OPERATIONAL VARIABLES
 # -----------------------------------------------------------------------------
 
-selectPreferredParseSets = False
+selectPreferredParseSets = True
 logParses = False
 
 # -----------------------------------------------------------------------------
@@ -627,20 +628,20 @@ def selectedPreferredParseSets(cxt, show):
         # Select lowest part as the bassPart.
         bassPart = cxt.parts[-1]
 
-        primaryS3Finals = [i.S3Final for i
-                           in primPart.interpretations['primary']]
-        bassS3s = [i.S3Index for i in bassPart.interpretations['bass']]
+#        primaryS3Finals = [i.S3Final for i
+#                           in primPart.interpretations['primary']]
+#        bassS3s = [i.S3Index for i in bassPart.interpretations['bass']]
         preferredGlobals = []
         domOffsetDiffList = []  # structural Dominant Offset Differences List
-        lowestDifference = 100
+        lowestDifference = 1000
         for interpPrimary in primPart.interpretations['primary']:
             for interpBass in bassPart.interpretations['bass']:
                 a = primPart.recurse().flat.notes[interpPrimary.S3Final].offset
                 b = bassPart.recurse().flat.notes[interpBass.S3Index].offset
                 domOffsetDiff = (a - b)
                 if abs(domOffsetDiff) < lowestDifference:
-                    lowestDifference = domOffsetDiff
-                domOffsetDiffList.append((domOffsetDiff, (interpPrimary,
+                    lowestDifference = abs(domOffsetDiff)
+                domOffsetDiffList.append((abs(domOffsetDiff), (interpPrimary,
                                                           interpBass)))
 #                    if interpBass.S3Index == interpPrimary.S3Final:
 #                        preferredGlobals.append((interpPrimary, interpBass))
@@ -648,19 +649,99 @@ def selectedPreferredParseSets(cxt, show):
             if abs(pair[0]) == abs(lowestDifference):
                 preferredGlobals.append(pair[1])
 
+        nonharmonicParses = []
         if preferredGlobals and cxt.harmonicSpecies:
             for prse in preferredGlobals:
                 offInitTon = cxt.harmonicDict['offsetInitialTonic']
                 offPredom = cxt.harmonicDict['offsetPredominant']
                 offDom = cxt.harmonicDict['offsetDominant']
                 offClosTon = cxt.harmonicDict['offsetClosingTonic']
-                # print(primPart.notes[S3Final].offset)
 
-                # TODO implement preference rules for global coordination of linear structures
+                # implement preference rules for global coordination of linear structures
                 # Check for span placement and consonance of primary upper line notes
                 # bass line pitches have already been checked
 
-                pass
+                def getBassNote(upperNote, context):
+                    analyzer = theoryAnalyzerWP.Analyzer()
+                    analyzer.addAnalysisData(context.score)
+                    verts = analyzer.getVerticalities(context.score)
+                    bassNote = None
+                    for vert in verts:
+                        if upperNote in vert.objects:
+                            bassNote = vert.objects[-1]
+                    return bassNote
+
+                SList = prse[0].arcBasic
+                # set primary line type: 3line, 5line, 8line
+                SLine = str(len(SList)) + 'line'
+                # set number of required structural consonances
+                if len(SList) == 3:
+                    structConsReq = 3
+                else:
+                    structConsReq = 4
+                # count the structural consonance
+                structuralConsonances = 0
+                for s in SList:
+                    u = primPart.recurse().notes[s]
+                    b = getBassNote(u, cxt)
+                    if vlChecker.isConsonanceAboveBass(b, u):
+                        structuralConsonances += 1
+                # check harmonic placement of structural pitches
+                harmonicCoordination = True
+                # check placement of S1
+                if offPredom is not None:
+                    if not (offInitTon
+                            <= primPart.recurse().notes[SList[0]].offset
+                            < offPredom):
+                        harmonicCoordination = False
+                        break
+                else:
+                    if not (offInitTon
+                            <= primPart.recurse().notes[
+                                SList[0]].offset
+                            < offPredom):
+                        harmonicCoordination = False
+                        break
+                # check placement of predominant
+                predomSIndexList = []
+                structuralPredominant = False
+                if SLine == '3line':
+                    predomSIndexList = [SList[-2]]
+                elif SLine == '5line':
+                    predomSIndexList = [SList[-4], SList[-2]]
+                elif SLine == '8line':
+                    predomSIndexList = [SList[-6], SList[-4], SList[-2]]
+                if offPredom is not None:
+                    for psi in predomSIndexList:
+                        u = primPart.recurse().notes[psi]
+                        b = getBassNote(u, cxt)
+                        if ((offPredom
+                             <= primPart.recurse().notes[psi].offset
+                             < offDom)
+                                and vlChecker.isConsonanceAboveBass(b, u)):
+                            structuralPredominant = True
+                            break
+                if not structuralPredominant:
+                    harmonicCoordination = False
+                    break
+                # check placement of dominant
+                if offPredom is None:
+                    u = primPart.recurse().notes[SList[-1]]
+                    b = getBassNote(u, cxt)
+                    if ((offDom
+                         <= primPart.recurse().notes[SList[-1]].offset
+                         < offClosTon)
+                            and vlChecker.isConsonanceAboveBass(b, u)):
+                        harmonicCoordination = False
+                        break
+
+                # add pair to removal list if coordination tests not passed
+                if not (structuralConsonances >= structConsReq
+                        and harmonicCoordination):
+                    nonharmonicParses.append(prse)
+
+        preferredGlobals = [prse for prse in preferredGlobals
+                            if prse not in nonharmonicParses]
 
 
         for pair in preferredGlobals:
