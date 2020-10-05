@@ -1807,12 +1807,13 @@ class Parser:
 
 
                 if buildErrors == []:
-                    for cand in s3cands:
+                    for candPair in s3s4Pairs:
                         logger.debug(f'Building parses for S3 candidate: '
-                                     f'{cand.index}, scale degree '
-                                     f'{cand.csd.degree}')
-                        self.buildParse(cand, lineType,
-                                        parsecounter, buildErrors=[])
+                                     f'{candPair[0].index}, scale degree '
+                                     f'{candPair[0].csd.degree}')
+                        self.buildParse(candPair[0], lineType,
+                                        parsecounter, buildErrors=[],
+                                        s4cand=candPair[1])
                         parsecounter += 1
                 # If the build as type fails, collect errors in dictionary.
                 else:
@@ -1858,7 +1859,7 @@ class Parser:
 
 
     def buildParse(self, cand, lineType, parsecounter,
-                   buildErrors, method=None):
+                   buildErrors, method=None, s4cand=None):
         """Sets up the basic features of the parse object
         and then executes the parsing process.
         Uses deep copies of the arcs and notes, as the list of arcs and the
@@ -1878,6 +1879,7 @@ class Parser:
         newParse.errors = buildErrors
         newParse.notes[newParse.S1Index].rule.name = 'S1'
         newParse.method = method
+        newParse.harmonicSpecies = self.context.harmonicSpecies
         # Prepare the basic structure information.
         if lineType == 'bass':
             newParse.label = 'parse' + str(parsecounter) + '_BL'
@@ -1887,6 +1889,11 @@ class Parser:
             newParse.S3Value = cand.csd.value
             newParse.notes[newParse.S2Index].rule.name = 'S2'
             newParse.notes[newParse.S3Index].rule.name = 'S3'
+            if s4cand is not None:
+                newParse.S4Index = s4cand.index
+                newParse.S4Degree = s4cand.csd.degree
+                newParse.S4Value = s4cand.csd.value
+                newParse.notes[newParse.S4Index].rule.name = 'S4'
         elif lineType == 'primary':
             newParse.label = 'parse' + str(parsecounter) + '_PL'
             newParse.S2Index = cand.index
@@ -1937,6 +1944,7 @@ class Parser:
             self.S3Initial = None
             self.S3PenultCands = None
             self.species = None
+            self.harmonicSpecies = False
 
         def __repr__(self):
             return self.label
@@ -2447,7 +2455,7 @@ class Parser:
                 # Check to make sure the basic step motion is complete.
                 if len(basicArcCand) != (self.S2Value+1):
                     error = ('No basic step motion found from this S2 '
-                             'candidate:' + str(self.S2Value+1) + '.')
+                             'candidate: ' + str(self.S2Value+1) + '.')
                     self.errors.append(error)
                     return
                 else:
@@ -2455,7 +2463,7 @@ class Parser:
 
             if self.arcBasic is None:
                 error = ('No basic step motion found from this S2 '
-                         'candidate:' + str(self.S2Value+1) + '.')
+                         'candidate: ' + str(self.S2Value+1) + '.')
                 self.errors.append(error)
                 return
             # If a basic arc is created, set the rule labels for S3 notes.
@@ -2752,7 +2760,8 @@ class Parser:
                             i.rule.name = 'E3'
                             i.noteheadParenthesis = True
                         elif (not isTriadMember(i, 0) and
-                              self.species in ['third', 'fifth']):
+                              (self.species in ['third', 'fifth']
+                              or self.harmonicSpecies)):
                             i.rule.name = 'L3'
                             i.noteheadParenthesis = True
                         else:
@@ -2766,7 +2775,8 @@ class Parser:
                             i.rule.name = 'E3'
                             i.noteheadParenthesis = True
                         elif (not isTriadMember(i, 0) and
-                              self.species in ['third', 'fifth']):
+                              (self.species in ['third', 'fifth']
+                               or self.harmonicSpecies)):
                             i.rule.name = 'L3'
                             i.noteheadParenthesis = True
                         else:
@@ -3346,6 +3356,17 @@ class Parser:
             self.isGeneric = True
         else:
             self.isGeneric = False
+
+        # TODO If no parses were successful, return the errors:
+        if not self.parses:
+            errors = [self.parseErrorsDict[key]
+                      for key in self.parseErrorsDict]
+            for error in errors:
+                if error not in self.errors:
+                    self.errors.append(error)
+            #for key in self.parseErrorsDict:
+            #    print()
+            pass
 
     def selectPreferredParses(self):
         """Given a list of successful interpretations from :py:class:`~Parser`,
