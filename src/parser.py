@@ -2245,7 +2245,7 @@ class Parser:
                 # Check to make sure the basic step motion is complete.
                 if len(basicArcCand) != (self.S2Value+1):
                     error = ('No basic step motion found from this S2 '
-                             'candidate:' + str(self.S2Value+1) + '.')
+                             'candidate: ' + str(self.S2Value+1) + '.')
                     self.errors.append(error)
                     return
                 else:
@@ -2253,7 +2253,7 @@ class Parser:
 
             if self.arcBasic is None:
                 error = ('No basic step motion found from this S2 '
-                         'candidate:' + str(self.S2Value+1) + '.')
+                         'candidate: ' + str(self.S2Value+1) + '.')
                 self.errors.append(error)
                 return
             # If a basic arc is created, set the rule labels for S3 notes.
