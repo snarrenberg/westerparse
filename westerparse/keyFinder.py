@@ -382,7 +382,8 @@ def getPartKeysUsingScale(part):
         terminals = terminalsTest(residueInit, residueFin, thisMinorTriad)
         scalars = scaleTest(chromaResidues, thisMinorScale)
         # EXEMPT THIRD SPECIES LINES FROM LEAPS TEST.
-        if part.species not in ['first', 'second', 'fourth']:
+        if (part.harmonicSpecies
+                or part.species not in ['first', 'second', 'fourth']):
             leaps = True
         else:
             leaps = leapTestWeak(leapPairResidues, thisMinorTriad)
@@ -391,7 +392,7 @@ def getPartKeysUsingScale(part):
 
         terminals = terminalsTest(residueInit, residueFin, thisMajorTriad)
         scalars = scaleTest(chromaResidues, thisMajorScale)
-        if part.species not in ['first', 'second', 'fourth']:
+        if (part.harmonicSpecies or part.species not in ['first', 'second', 'fourth']):
             leaps = True
         else:
             leaps = leapTestWeak(leapPairResidues, thisMajorTriad)
