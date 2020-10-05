@@ -2470,10 +2470,10 @@ class Parser:
             else:
                 for n in self.arcBasic[1:-1]:
                     self.notes[n].rule.name = 'S3'
-            S3Indexes = [note.index for note in self.notes
+            self.S3Indexes = [note.index for note in self.notes
                          if note.rule.name == 'S3']
-            self.S3Initial = min(S3Indexes)
-            self.S3Final = max(S3Indexes)
+            self.S3Initial = min(self.S3Indexes)
+            self.S3Final = max(self.S3Indexes)
 
             # If there are open heads before onset of S3 that have the
             # same pitch as S2, attach them as repetitions of S2
