@@ -3145,6 +3145,16 @@ class Parser:
         else:
             self.isGeneric = False
 
+        # If no parses were successful, return the errors:
+        if not self.parses:
+            errors = [self.parseErrorsDict[key]
+                      for key in self.parseErrorsDict]
+            # Eliminate duplicate errors
+            for error in errors:
+                if error not in self.errors:
+                    self.errors.append(error)
+
+
     def selectPreferredParses(self):
         """Given a list of successful interpretations from :py:class:`~Parser`,
         remove those that do not conform to cognitive preference rules.
