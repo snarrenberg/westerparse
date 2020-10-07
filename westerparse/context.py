@@ -155,6 +155,7 @@ class GlobalContext(Context):
         self.score = score
         self.parts = self.score.parts
         self.score.measures = len(self.parts[0].getElementsByClass('Measure'))
+        self.barDuration = self.parts[0].getElementsByClass('Measure')[0].barDuration.quarterLength
         self.score.errors = []
         self.errors = []
         self.errorsDict = {}
@@ -190,39 +191,19 @@ class GlobalContext(Context):
 
         # TODO Move harmonic species span stuff to a different place.
         if self.harmonicSpecies:
-            offPre = kwargs['offsetPredominant']
-            offDom = kwargs['offsetDominant']
-            offClosTon = kwargs['offsetClosingTonic']
+            if kwargs.get('startPredominant'):
+                offPre = (kwargs['startPredominant'] -1) * self.barDuration
+            else:
+                offPre = None
+            if kwargs.get('startDominant'):
+                offDom = (kwargs['startDominant'] -1) * self.barDuration
+            offClosTon = (self.score.measures -1) * self.barDuration
             self.harmonicDict = {
                 'offsetInitialTonic': 0.0,
                 'offsetPredominant': offPre,
                 'offsetDominant': offDom,
                 'offsetClosingTonic': offClosTon,
             }
-
-        if self.harmonicSpecies:
-            offPre = kwargs['offsetPredominant']
-            offDom = kwargs['offsetDominant']
-            offClosTon = kwargs['offsetClosingTonic']
-            if offPre is None:
-                initialTonicSpan = self.makeLocalContext(self.score,
-                                                         0.0, offPre,
-                                                         'initial tonic')
-                predominantSpan = self.makeLocalContext(self.score,
-                                                        offPre, offDom,
-                                                        'predominant')
-            else:
-                initialTonicSpan = self.makeLocalContext(self.score,
-                                                         0.0, offDom,
-                                                         'initial tonic')
-                predominantSpan = None
-            dominantSpan = self.makeLocalContext(self.score,
-                                                 offDom, offClosTon,
-                                                 'dominant')
-            closingTonicSpan = self.makeLocalContext(self.score,
-                                                     offClosTon,
-                                                     offClosTon+4.0,
-                                                     'closing tonic')
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
@@ -264,6 +245,8 @@ class GlobalContext(Context):
                 note.rule = rule.Rule()
                 # Assign a Dependency object to each Note.
                 note.dependency = dependency.Dependency()
+            # Set up harmonic species property
+            part.harmonicSpecies = self.harmonicSpecies
 
     def setupTonalityGeneral(self, **kwargs):
         # Setup key, using information provided by user or inferred from parts.

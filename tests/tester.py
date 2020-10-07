@@ -69,7 +69,14 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/FourthSpecies21.musicxml'
 #    source = 'TestScoresXML/FourthSpecies22.musicxml'
 
-    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
+#    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
+#    source = 'TestScoresXML/HarmonicSecondSpecies02.musicxml'
+    source = 'TestScoresXML/HarmonicSecondSpecies03.musicxml'  # 8, 14
+#    source = 'TestScoresXML/harmonic_species1.musicxml'
+#    source = 'TestScoresXML/harmonic_species2.musicxml'  # 11, 13
+#    source = 'TestScoresXML/harmonic_species2_mistakes.musicxml'
+#    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
+#    source = 'TestScoresXML/harmonic_species3_mistakes.musicxml'
 
 #    source = 'TestScoresXML/CombinedSpecies1234.musicxml'
 
@@ -154,10 +161,17 @@ if __name__ == "__main__":
         elif verify == 10: # tests for generability as harmonic counterpoint
             westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
-                                      offsetPredominant=36.0,
-                                      offsetDominant=44.0,
-                                      offsetClosingTonic=48.0,
-                                      keynote='E', mode='major')
+                                      startPredominant=8,
+                                      startDominant=14)
+
+
+        elif verify == 11:
+            westerparse.evaluateLines(source, show='show',
+                                      partSelection=0,
+                                      partLineType='primary',
+                                      harmonicSpecies=True,
+                                      startPredominant=8,
+                                      startDominant=14)
 
         elif verify == 3:
             westerparse.evaluateLines(source, show=None)

@@ -1758,10 +1758,9 @@ class Parser:
 
 
     def prepareHarmonicParses(self):
-        """After preliminary parsing is completed, determines possibiities
-        for basic structures in a harmonically progressive line based on
-        available line types and parses the
-        line using each candidate for basic structure. The results are
+        """After preliminary parsing is completed, determine possibiities
+        for basic structures in a harmonically progressive line using
+        each structural head candidate. The results are
         collected in self.parses."""
         for lineType in self.part.lineTypes:
             # Look for S2 or S3 candidate notes in the given line type
@@ -1838,7 +1837,7 @@ class Parser:
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
                 # using a series of methods to infer a basic step motion.
-                methods = 9
+                methods = 10
                 if buildErrors == []:
                     for cand in s2cands:
                         logger.debug(f'Building parses for S2 candidate: '
@@ -1854,8 +1853,6 @@ class Parser:
                 # TODO test for compliance with rules after generating a
                 # a complete parse, since the rules involve interaction
                 # with the global structure of the bass line
-
-
 
 
     def buildParse(self, cand, lineType, parsecounter,
@@ -2082,6 +2079,16 @@ class Parser:
                 arc1[-1] = arc2[-1]
                 addDependenciesFromArc(self.notes, arc1)
 
+        def arcExtend(self, arc, extension):
+            """Lengthen an arc by adding a note at extension index to
+            the right or left."""
+            removeDependenciesFromArc(self.notes, arc)
+            if extension < arc[0]:
+                arc.insert(0, extension)
+            elif extension > arc[-1]:
+                arc.append(extension)
+            addDependenciesFromArc(self.notes, arc)
+
         def parsePrimary(self):
             """
             Use one of eight methods to find a basic step motion
@@ -2106,6 +2113,8 @@ class Parser:
             #. Reinterpret the line, looking for a descending step motion
                from S2 and then parsing the remaining notes.
                The least reliable method.
+            #. If the line is harmonic species, look for series of arcs that
+               can be merged into a basic step motion.
             """
             # Once all preliminary parsing is done,
             # prepare for assigning basic structure
@@ -2209,6 +2218,8 @@ class Parser:
                 for counter1, arc1 in enumerate(self.arcs):
                     rules1 = [arc1[0] == self.S2Index,
                               self.notes[arc1[0]].csd.value == 7,
+                              (self.notes[arc1[0]].csd.value
+                               > self.notes[arc1[-1]].csd.value),
                               not arc1[-1] == self.S1Index]
                     if all(rules1):
                         arcSegments.append(arc1)
@@ -2218,44 +2229,34 @@ class Parser:
                             # Look for two passing motions to merge.
                             # TODO Write rules to handle cases where there
                             # are several possibilities.
-                            rules2a = [
-                                arc1[-1] == arc2[0],
+                            rules2 = [
+                                # arc2 attaches to or is later than arc1
+                                arc1[-1] <= arc2[0],
                                 arc2[-1] != self.S1Index,
+                                # arc1 is descending
                                 (self.notes[arc1[0]].csd.value
                                  > self.notes[arc1[-1]].csd.value),
+                                # arc2 is descending
                                 (self.notes[arc2[0]].csd.value
                                  > self.notes[arc2[-1]].csd.value),
-                                (self.notes[arc2[-1]].csd.value
-                                 > self.notes[-1].csd.value)
-                                ]
-                            rules2b = [
-                                arc1[-1] < arc2[0],
-                                arc2[-1] != self.S1Index,
-                                (self.notes[arc1[0]].csd.value
-                                 > self.notes[arc1[-1]].csd.value),
-                                (self.notes[arc2[0]].csd.value
-                                 > self.notes[arc2[-1]].csd.value),
+                                # arc1 is higher than arc2
+                                (self.notes[arc1[-1]].csd.value
+                                > self.notes[arc2[0]].csd.value),
+                                # arc2 is non final
                                 (self.notes[arc2[-1]].csd.value
                                  > self.notes[-1].csd.value),
+                                # arc2 is not embedded in another arc
                                 not isEmbeddedInOtherArc(arc2, self.arcs,
                                                          startIndex=arc1[-1])
-                                ]
-                            if all(rules2a) or all(rules2b):
+                            ]
+                            if all(rules2):
                                 arcSegments.append(arc2)
                                 for arc3 in self.arcs[counter2+1:]:
                                     # Look for two passing motions to merge.
                                     # TODO Write rules to handle cases
                                     # where there are several possibilities.
-                                    rules3a = [
-                                        arc2[-1] == arc3[0],
-                                        arc3[-1] == self.S1Index,
-                                        (self.notes[arc2[0]].csd.value
-                                         > self.notes[arc2[-1]].csd.value),
-                                        (self.notes[arc3[0]].csd.value
-                                         > self.notes[arc3[-1]].csd.value)
-                                        ]
-                                    rules3b = [
-                                        arc2[-1] < arc3[0],
+                                    rules3 = [
+                                        arc2[-1] <= arc3[0],
                                         arc3[-1] == self.S1Index,
                                         (self.notes[arc2[0]].csd.value
                                          > self.notes[arc2[-1]].csd.value),
@@ -2266,7 +2267,7 @@ class Parser:
                                             self.arcs,
                                             startIndex=arc2[-1])
                                         ]
-                                    if all(rules3a) or all(rules3b):
+                                    if all(rules3):
                                         arcSegments.append(arc3)
                         if len(arcSegments) == 3:
                             arc1 = arcSegments[0]
@@ -2461,6 +2462,80 @@ class Parser:
                     return
                 else:
                     self.arcBasic = list(reversed(basicArcCand))
+
+            # METHOD 9
+            # Additional possibilities for long lines in harmonic species.
+            # Look for arcs to combine into 5-lines or 8-lines
+            # 8-6, 6-4, 4-2, 1
+            # 8-4, 4-2, 1
+            # 5-2, 1
+            # 5, 4-2, 1
+            elif self.method == 9:
+                eightSixArcs = []
+                eightFourArcs = []
+                sixFourArcs = []
+                fourTwoArcs = []
+                fiveTwoArcs = []
+                for arc in self.arcs:
+                    rules1 = [arc[0] == self.S2Index,
+                             self.notes[arc[0]].csd.value == 7,
+                             self.notes[arc[-1]].csd.value == 5]
+                    rules2 = [arc[0] == self.S2Index,
+                             self.notes[arc[0]].csd.value == 7,
+                             self.notes[arc[-1]].csd.value == 3]
+                    rules3 = [self.notes[arc[0]].csd.value == 5,
+                             self.notes[arc[-1]].csd.value == 3]
+                    rules4 = [self.notes[arc[0]].csd.value == 3,
+                             self.notes[arc[-1]].csd.value == 1]
+                    rules5 = [arc[0] == self.S2Index,
+                             self.notes[arc[0]].csd.value == 4,
+                             self.notes[arc[-1]].csd.value == 1]
+                    if all(rules1):
+                        eightSixArcs.append(arc)
+                    elif all(rules2):
+                        eightFourArcs.append(arc)
+                    elif all(rules3):
+                        sixFourArcs.append(arc)
+                    elif all(rules4):
+                        fourTwoArcs.append(arc)
+                    elif all(rules5):
+                        fiveTwoArcs.append(arc)
+
+                arcBasicCandidates = []
+                if eightSixArcs and sixFourArcs and fourTwoArcs:
+                    for arc1 in eightSixArcs:
+                         for arc2 in sixFourArcs:
+                             for arc3 in fourTwoArcs:
+                                self.arcMerge(arc1, arc2)
+                                self.arcMerge(arc1, arc3)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if eightFourArcs and fourTwoArcs:
+                    for arc1 in eightFourArcs:
+                         for arc2 in fourTwoArcs:
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if fiveTwoArcs:
+                    for arc1 in fiveTwoArcs:
+                        self.arcMerge(arc1, [self.S1Index])
+                        arcBasicCandidates.append(arc1)
+                if self.S2Value == 4 and fourTwoArcs:
+                    for arc1 in fiveTwoArcs:
+                        self.arcExtend(arc1, self.S2Index)
+                        self.arcExtend(arc1, self.S1Index)
+                        arcBasicCandidates.append(arc1)
+
+                if not arcBasicCandidates:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+                if arcBasicCandidates:
+                    # print('harmonic basic arcs', arcBasicCandidates)
+                    # TODO handle the results
+                    pass
 
             if self.arcBasic is None:
                 error = ('No basic step motion found from this S2 '

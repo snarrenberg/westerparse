@@ -135,6 +135,11 @@ def evaluateLines(source,
 
     Other keywords: `keynote` and `mode` -- The user can use these to
     force the parser to interpret the input in a particular key.
+
+    For harmonically progressive species, the user can specify when
+    the predominant and dominant spans begin, using the keywords
+    `startDominant` and, if needed, `startPredominant`, with values
+     given as measure numbers.
     """
     context.clearLogfile('logfile.txt')
     if partLineType == 'any' or '':
