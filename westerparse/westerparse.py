@@ -657,10 +657,10 @@ def selectedPreferredParseSets(cxt, show):
         nonharmonicParses = []
         if preferredGlobals and cxt.harmonicSpecies:
             for prse in preferredGlobals:
-                offInitTon = cxt.harmonicDict['offsetInitialTonic']
-                offPredom = cxt.harmonicDict['offsetPredominant']
-                offDom = cxt.harmonicDict['offsetDominant']
-                offClosTon = cxt.harmonicDict['offsetClosingTonic']
+                offInitTon = cxt.harmonicSpanDict['offsetInitialTonic']
+                offPredom = cxt.harmonicSpanDict['offsetPredominant']
+                offDom = cxt.harmonicSpanDict['offsetDominant']
+                offClosTon = cxt.harmonicSpanDict['offsetClosingTonic']
 
                 # implement preference rules for global coordination of linear structures
                 # Check for span placement and consonance of primary upper line notes

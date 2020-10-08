@@ -198,7 +198,7 @@ class GlobalContext(Context):
             if kwargs.get('startDominant'):
                 offDom = (kwargs['startDominant'] -1) * self.barDuration
             offClosTon = (self.score.measures -1) * self.barDuration
-            self.harmonicDict = {
+            self.harmonicSpanDict = {
                 'offsetInitialTonic': 0.0,
                 'offsetPredominant': offPre,
                 'offsetDominant': offDom,
