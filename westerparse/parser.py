@@ -257,6 +257,7 @@ class Parser:
         harmonyStart = [p for p in self.part.tonicTriad.pitches]
         harmonyEnd = [p for p in self.part.tonicTriad.pitches]
 
+        # Method for pre-parsing monotriadic species other than third or fifth
         if (self.part.species in ['first', 'second', 'fourth'] and
            not self.context.harmonicSpecies):
             # Run the line scanner.
@@ -283,16 +284,16 @@ class Parser:
                 if self.errors:
                     break
 
-        # TODO Method for parsing harmonic species.
+        # Method for pre-parsing harmonic species.
         elif self.context.harmonicSpecies:
             logger.debug(f'Parser state: 0'
                          f'\n\tHeads: {openHeads}'
                          f'\n\tTrans: {openTransitions}'
                          f'\n\tArcs:  {arcs}')
             # Scan each harmonic context in turn.
-            offPre = self.context.harmonicDict['offsetPredominant']
-            offDom = self.context.harmonicDict['offsetDominant']
-            offClosTon = self.context.harmonicDict['offsetClosingTonic']
+            offPre = self.context.harmonicSpanDict['offsetPredominant']
+            offDom = self.context.harmonicSpanDict['offsetDominant']
+            offClosTon = self.context.harmonicSpanDict['offsetClosingTonic']
             # create the buffer and reference harmonies for each harmonic span
             harmonicSpans = []  # (buffer, harmonyStart, harmonyEnd, harmonyName)
             if offPre is not None:
@@ -371,14 +372,12 @@ class Parser:
                         elif h_span[3] == 'dominant':
                             self.D_openHeads = h_openHeads
 
-
-
             # TODO select S2cand and S3cands from the relevant harmonic spans
-            # TODO create entirely new method for preparing parses
+            # TODO create entirely new methods for preparing parses
             # prepareMonotriadicParses
             # prepareHarmonicParses
-            pass
 
+        # Method for parsing monotriadic third species (fifth is aspirational)
         elif self.part.species in ['third', 'fifth']:
             # Global variables for modifying the local parse:
             # (1) Admit local repetitions:
@@ -458,9 +457,6 @@ class Parser:
                                      f'\n\tLoc Arcs:  {l_arcs}')
                     # Break upon finding errors.
                     # TODO: Collect errors and continue?
-# 2020-08-24 commented out the break condition
-#                        if self.errors:
-#                            break
 
                     # Look for unattached local repetitions of first open head.
                     if addLocalRepetitions:
@@ -1788,7 +1784,7 @@ class Parser:
                 logger.debug(f'List of bass S3 candidates: '
                              f'{[s.index for s in s3cands]}')
                 # create list of S4 candidates
-                if self.context.harmonicDict['offsetPredominant'] is not None:
+                if self.context.harmonicSpanDict['offsetPredominant'] is not None:
                     s4cands = [self.notes[head] for head in self.P_openHeads
                            if self.notes[head].csd.value % 7 in {1, 3, 5}]
                 # TODO pass this list to the build parse and test for
@@ -1802,8 +1798,6 @@ class Parser:
                             isDiatonicStep(S4, S1) or isDiatonicStep(S4, S3)]
                         if all(rules):
                             s3s4Pairs.append((S3, S4))
-
-
 
                 if buildErrors == []:
                     for candPair in s3s4Pairs:
@@ -2906,7 +2900,9 @@ class Parser:
             for arc1 in self.arcs:
                 for arc2 in self.arcs:
                     rules1 = [arc1[-1] == arc2[0],
-                              self.notes[arc1[-1]].rule.name[0] != 'S']
+                              self.notes[arc1[-1]].rule.name[0] != 'S',
+                              isLinearConsonance(self.notes[arc1[0]],
+                                                 self.notes[arc2[-1]])]
                     # TODO Consider changing the conditions
                     # to isPassingArc and in same direction.
                     rules2 = [self.notes[arc1[0]].csd.value
