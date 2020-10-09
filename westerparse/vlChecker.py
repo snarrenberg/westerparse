@@ -463,6 +463,7 @@ def isVoiceOverlap(vlq):
     else:
         return False
 
+
 def isVoiceCrossing(vlq):
     """Input a VLQ and determine whether
     the voices cross: v1n1 < v2n1 or v1n2 < v2n2.
@@ -709,7 +710,7 @@ def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
     # TODO Rewrite based on parser's lineType value. Part ID is no longer valid.
     # Determine whether the the upper part is a primary upper line.
     #     if score.parts[partNum1].isPrimary == True:
-    if score.parts[partNum1].id == 'Primary Upper Line':
+    if score.parts[partNum1]:
         # Assume there is no acceptable final step connection until proven true.
         finalStepConnection = False
         # Get the last note of the primary upper line.
@@ -1178,10 +1179,16 @@ def forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                      + str(vlq.v2n2.measureNumber) + '.')
             vlErrors.append(alert)
     if isCrossRelation(vlq):
+        # TODO add permissions for second (and third?) species, ITT, p. 115
         if len(score.parts) < 3:
-            error = ('Cross relation going into bar '
-                     + str(vlq.v2n2.measureNumber) + '.')
-            vlErrors.append(error)
+            cond1 = [score.parts[partNum1].species == 'second',
+                     isDiatonicStep(vlq.v1n1, vlq.v1n2)]
+            cond2 = [score.parts[partNum2].species == 'second',
+                     isDiatonicStep(vlq.v2n1, vlq.v2n2)]
+            if not (all(cond1) or all(cond2)):
+                error = ('Cross relation going into bar '
+                         + str(vlq.v2n2.measureNumber) + '.')
+                vlErrors.append(error)
         else:
             # Test for step motion in another part.
             crossStep = False
