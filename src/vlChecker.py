@@ -1178,10 +1178,16 @@ def forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                      + str(vlq.v2n2.measureNumber) + '.')
             vlErrors.append(alert)
     if isCrossRelation(vlq):
+        # TODO add permissions for second (and third?) species, ITT, p. 115
         if len(score.parts) < 3:
-            error = ('Cross relation going into bar '
-                     + str(vlq.v2n2.measureNumber) + '.')
-            vlErrors.append(error)
+            cond1 = [score.parts[partNum1].species == 'second',
+                     isDiatonicStep(vlq.v1n1, vlq.v1n2)]
+            cond2 = [score.parts[partNum2].species == 'second',
+                     isDiatonicStep(vlq.v2n1, vlq.v2n2)]
+            if not (all(cond1) or all(cond2)):
+                error = ('Cross relation going into bar '
+                         + str(vlq.v2n2.measureNumber) + '.')
+                vlErrors.append(error)
         else:
             # Test for step motion in another part.
             crossStep = False
