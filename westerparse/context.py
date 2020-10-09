@@ -198,12 +198,22 @@ class GlobalContext(Context):
             if kwargs.get('startDominant'):
                 offDom = (kwargs['startDominant'] -1) * self.barDuration
             offClosTon = (self.score.measures -1) * self.barDuration
-            self.harmonicSpanDict = {
-                'offsetInitialTonic': 0.0,
-                'offsetPredominant': offPre,
-                'offsetDominant': offDom,
-                'offsetClosingTonic': offClosTon,
-            }
+            try:
+                validateHarmonicSegmentation(offPre,
+                                             offDom,
+                                             offClosTon,
+                                             self.barDuration)
+            except ContextError as ce:
+                ce.logerror()
+                raise EvaluationException
+                return
+            else:
+                self.harmonicSpanDict = {
+                    'offsetInitialTonic': 0.0,
+                    'offsetPredominant': offPre,
+                    'offsetDominant': offDom,
+                    'offsetClosingTonic': offClosTon,
+                }
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
@@ -500,12 +510,12 @@ def assignSpecies(part):
     return species
 
 
-def validateHarmonicSegmentation(offPre, offDom, offClosTon, measLen):
-    """Get the offsets for the beginnings of harmonic spans and
+def validateHarmonicSegmentation(offPre, offDom, offClosTon, barDuration):
+    """Use the offsets for the beginnings of harmonic spans and
     calcluate whether the segmentation conforms to the rules for
     harmonic species."""
     # e.g. 32.0, 36.0, 44.0, 4.0
-    totalLength = offClosTon + measLen
+    totalLength = offClosTon + barDuration
     if offPre is not None:
         spanA = offPre
         spanB = totalLength - offPre
@@ -514,7 +524,7 @@ def validateHarmonicSegmentation(offPre, offDom, offClosTon, measLen):
         spanB = totalLength - offDom
     if spanA < spanB:
         error = ('The initial tonic span is too short.')
-        return error
+        raise ContextError(error)
 
 
 

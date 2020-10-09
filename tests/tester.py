@@ -1,4 +1,4 @@
-#!/Users/snarrenberg/opt/anaconda3/envs/westerparse/bin/python
+ #!/Users/snarrenberg/opt/anaconda3/envs/westerparse/bin/python
 #import os
 #import sys
 #sys.path.insert(0, os.path.abspath('../westerparse'))
@@ -71,11 +71,11 @@ if __name__ == "__main__":
 
 #    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
 #    source = 'TestScoresXML/HarmonicSecondSpecies02.musicxml'
-    source = 'TestScoresXML/HarmonicSecondSpecies03.musicxml'  # 8, 14
+#    source = 'TestScoresXML/HarmonicSecondSpecies03.musicxml'  # 8, 14
 #    source = 'TestScoresXML/harmonic_species1.musicxml'
 #    source = 'TestScoresXML/harmonic_species2.musicxml'  # 11, 13
 #    source = 'TestScoresXML/harmonic_species2_mistakes.musicxml'
-#    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
+    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
 #    source = 'TestScoresXML/harmonic_species3_mistakes.musicxml'
 
 #    source = 'TestScoresXML/CombinedSpecies1234.musicxml'
@@ -159,10 +159,10 @@ if __name__ == "__main__":
             westerparse.evaluateCounterpoint(source, report=True)
         
         elif verify == 10: # tests for generability as harmonic counterpoint
-            westerparse.evaluateLines(source, show='show',
+            westerparse.evaluateLines(source, show=None,
                                       harmonicSpecies=True,
-                                      startPredominant=8,
-                                      startDominant=14)
+                                      startPredominant=7,
+                                      startDominant=9)
 
 
         elif verify == 11:
@@ -170,8 +170,8 @@ if __name__ == "__main__":
                                       partSelection=0,
                                       partLineType='primary',
                                       harmonicSpecies=True,
-                                      startPredominant=8,
-                                      startDominant=14)
+                                      startPredominant=7,
+                                      startDominant=9)
 
         elif verify == 3:
             westerparse.evaluateLines(source, show=None)

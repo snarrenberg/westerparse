@@ -170,7 +170,7 @@ class Parser:
         # STEP ONE: Operate the preliminary parser.
         self.preParseLine()
         # log result
-        logger.debug(f'Preliminary Arcs: {self.arcs}')
+        logger.debug(f'\nPreliminary Arcs: {self.arcs}\n')
         # TODO show preliminary parse during testing phase
         # self.showPartialParse(self.notes[0], self.notes[-1], self.arcs, [], [])
 
@@ -1784,11 +1784,12 @@ class Parser:
                 logger.debug(f'List of bass S3 candidates: '
                              f'{[s.index for s in s3cands]}')
                 # create list of S4 candidates
-                if self.context.harmonicSpanDict['offsetPredominant'] is not None:
+                if (self.context.harmonicSpanDict['offsetPredominant']
+                        is not None):
                     s4cands = [self.notes[head] for head in self.P_openHeads
-                           if self.notes[head].csd.value % 7 in {1, 3, 5}]
-                # TODO pass this list to the build parse and test for
-                # compliance with the rules
+                               if (self.notes[head].csd.value % 7 in {1, 3, 5}
+                               and self.notes[head].offset
+                               < self.context.harmonicSpanDict['offsetDominant'])]
 
                 s3s4Pairs = []
                 S1 = self.notes[-1]
@@ -1827,6 +1828,16 @@ class Parser:
                     buildErrors.append(buildError)
                 logger.debug(f'List of primary S2 candidates: '
                              f'{[s.index for s in s2cands]}')
+
+                # create list of S3 candidates in the predominant span
+                if (self.context.harmonicSpanDict['offsetPredominant']
+                        is not None):
+                    s3Pcands = [self.notes[head] for head in self.P_openHeads
+                               if (self.notes[head].csd.value in {1+t, 3+t, 5+t}
+                               and self.notes[head].offset
+                               < self.context.harmonicSpanDict['offsetDominant'])]
+                    print('S3 P cands', s3Pcands)
+
 
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
