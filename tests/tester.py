@@ -75,7 +75,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/harmonic_species1.musicxml'
 #    source = 'TestScoresXML/harmonic_species2.musicxml'  # 11, 13
 #    source = 'TestScoresXML/harmonic_species2_mistakes.musicxml'
-    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
+#    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
 #    source = 'TestScoresXML/harmonic_species3_mistakes.musicxml'
 
 #    source = 'TestScoresXML/CombinedSpecies1234.musicxml'
@@ -120,6 +120,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Westergaard107a.musicxml'
 #    source = 'TestScoresXML/Westergaard121a.musicxml'
 #    source = 'TestScoresXML/2020_08_26T17_50_33_151Z.musicxml'
+    source = 'TestScoresXML/2020_10_11T20_10_52_188Z.musicxml'
 
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
@@ -163,7 +164,6 @@ if __name__ == "__main__":
                                       harmonicSpecies=True,
                                       startPredominant=7,
                                       startDominant=9)
-
 
         elif verify == 11:
             westerparse.evaluateLines(source, show='show',
@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 10)
+    tester(source, 5)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
