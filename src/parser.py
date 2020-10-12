@@ -1331,9 +1331,19 @@ class Parser:
                                         openTransitions.append(idx)
                                         self.notes[idx].dependency.righthead = None
                                         self.notes[arc[-1]].dependency.dependents.remove(idx)
-                                    openHeads.remove(arc[-1])
+                                    if arc[-1] in openHeads:
+                                        openHeads.remove(arc[-1])
                             openTransitions = sorted(openTransitions)
-                            break
+                            for t in openTransitions:
+                                if j.dependency.lefthead < t < j.index:
+                                    error = ('The non-tonic-triad pitch '
+                                             + j.nameWithOctave + ' in measure '
+                                             + str(j.measureNumber)
+                                             + ' cannot be generated.')
+                                    self.errors.append(error)
+                                else:
+                                    break
+                        # (Search 2) Look for possible step-related transition
                         # (Search 2) Look for possible step-related transition
                         # that was previously integrated into a neighbor arc;
                         # look for sd7 as lower neighbor or sd6 as upper
