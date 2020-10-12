@@ -1410,6 +1410,10 @@ class Parser:
                             if all(rules):
                                 leftheadCandidates.append(term)
                         if leftheadCandidates:
+                            # TODO Why look only at the first candidate?
+                            # TODO It is not safe to assume that the new
+                            # lefthead will be valid: test before
+                            # reinterpreting
                             newLefthead = leftheadCandidates[0]
                             j.dependency.lefthead = newLefthead
                             openHeads.append(newLefthead)
@@ -1427,9 +1431,18 @@ class Parser:
                                         openTransitions.append(idx)
                                         self.notes[idx].dependency.righthead = None
                                         self.notes[arc[-1]].dependency.dependents.remove(idx)
-                                    openHeads.remove(arc[-1])
+                                    if arc[-1] in openHeads:
+                                        openHeads.remove(arc[-1])
                             openTransitions = sorted(openTransitions)
-                            break
+                            for t in openTransitions:
+                                if j.dependency.lefthead < t < j.index:
+                                    error = ('The non-tonic-triad pitch '
+                                             + j.nameWithOctave + ' in measure '
+                                             + str(j.measureNumber)
+                                             + ' cannot be generated.')
+                                    self.errors.append(error)
+                                else:
+                                    break
                         # (Search 2) Look for possible step-related transition
                         # that was previously integrated into a neighbor arc;
                         # look for sd7 as lower neighbor or sd6 as upper
@@ -1836,7 +1849,8 @@ class Parser:
                                if (self.notes[head].csd.value in {1+t, 3+t, 5+t}
                                and self.notes[head].offset
                                < self.context.harmonicSpanDict['offsetDominant'])]
-                    print('S3 P cands', s3Pcands)
+                    # print('S3 P cands', s3Pcands)
+                    # TODO continue with method
 
 
                 # Create a Parse object for each S2cand
@@ -2469,14 +2483,19 @@ class Parser:
                     self.arcBasic = list(reversed(basicArcCand))
 
             # METHOD 9
+            # TODO convert these into separate methods
             # Additional possibilities for long lines in harmonic species.
             # Look for arcs to combine into 5-lines or 8-lines
             # 8-6, 6-4, 4-2, 1
             # 8-4, 4-2, 1
+            # 8-5, 5-2, 1
             # 5-2, 1
             # 5, 4-2, 1
+            # Also test for position in harmonic spans:
+            # S2 is already drawn from T-buffer, so only need to check S3s
             elif self.method == 9:
                 eightSixArcs = []
+                eightFiveArcs = []
                 eightFourArcs = []
                 sixFourArcs = []
                 fourTwoArcs = []
@@ -2487,24 +2506,29 @@ class Parser:
                              self.notes[arc[-1]].csd.value == 5]
                     rules2 = [arc[0] == self.S2Index,
                              self.notes[arc[0]].csd.value == 7,
+                             self.notes[arc[-1]].csd.value == 4]
+                    rules3 = [arc[0] == self.S2Index,
+                             self.notes[arc[0]].csd.value == 7,
                              self.notes[arc[-1]].csd.value == 3]
-                    rules3 = [self.notes[arc[0]].csd.value == 5,
+                    rules4 = [self.notes[arc[0]].csd.value == 5,
                              self.notes[arc[-1]].csd.value == 3]
-                    rules4 = [self.notes[arc[0]].csd.value == 3,
+                    rules5 = [self.notes[arc[0]].csd.value == 4,
                              self.notes[arc[-1]].csd.value == 1]
-                    rules5 = [arc[0] == self.S2Index,
-                             self.notes[arc[0]].csd.value == 4,
+                    rules6 = [arc[0] == self.S2Index,
+                             self.notes[arc[0]].csd.value == 3,
                              self.notes[arc[-1]].csd.value == 1]
                     if all(rules1):
                         eightSixArcs.append(arc)
-                    elif all(rules2):
+                    if all(rules2):
+                        eightFiveArcs.append(arc)
+                    if all(rules3):
                         eightFourArcs.append(arc)
-                    elif all(rules3):
+                    if all(rules4):
                         sixFourArcs.append(arc)
-                    elif all(rules4):
-                        fourTwoArcs.append(arc)
-                    elif all(rules5):
+                    if all(rules5):
                         fiveTwoArcs.append(arc)
+                    if all(rules6):
+                        fourTwoArcs.append(arc)
 
                 arcBasicCandidates = []
                 if eightSixArcs and sixFourArcs and fourTwoArcs:
@@ -2515,6 +2539,12 @@ class Parser:
                                 self.arcMerge(arc1, arc3)
                                 self.arcExtend(arc1, self.S1Index)
                                 arcBasicCandidates.append(arc1)
+                if eightFiveArcs and fiveTwoArcs:
+                    for arc1 in eightFiveArcs:
+                         for arc2 in fiveTwoArcs:
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
                 if eightFourArcs and fourTwoArcs:
                     for arc1 in eightFourArcs:
                          for arc2 in fourTwoArcs:
@@ -2523,8 +2553,9 @@ class Parser:
                                 arcBasicCandidates.append(arc1)
                 if fiveTwoArcs:
                     for arc1 in fiveTwoArcs:
-                        self.arcMerge(arc1, [self.S1Index])
-                        arcBasicCandidates.append(arc1)
+                        if self.S2Index == arc1[0]:
+                            self.arcMerge(arc1, [self.S1Index])
+                            arcBasicCandidates.append(arc1)
                 if self.S2Value == 4 and fourTwoArcs:
                     for arc1 in fiveTwoArcs:
                         self.arcExtend(arc1, self.S2Index)
@@ -2538,8 +2569,9 @@ class Parser:
                     return
 
                 if arcBasicCandidates:
-                    # print('harmonic basic arcs', arcBasicCandidates)
+                    logger.debug(f'Harmonic basic arcs: {arcBasicCandidates}')
                     # TODO handle the results
+                    self.arcBasic = arcBasicCandidates[0]
                     pass
 
             if self.arcBasic is None:
