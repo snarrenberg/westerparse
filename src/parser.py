@@ -2008,53 +2008,46 @@ class Parser:
                 for counter1, arc1 in enumerate(self.arcs):
                     rules1 = [arc1[0] == self.S2Index,
                               self.notes[arc1[0]].csd.value == 7,
+                              (self.notes[arc1[0]].csd.value
+                               > self.notes[arc1[-1]].csd.value),
                               not arc1[-1] == self.S1Index]
                     if all(rules1):
                         arcSegments.append(arc1)
                         # Look rightward for another arc from same degree
                         # that is also nonfinal
-                        for counter2, arc2 in enumerate(self.arcs[counter1+1:]):
+                        for counter2, arc2 in enumerate(
+                                self.arcs[counter1 + 1:]):
                             # Look for two passing motions to merge.
                             # TODO Write rules to handle cases where there
                             # are several possibilities.
-                            rules2a = [
-                                arc1[-1] == arc2[0],
+                            rules2 = [
+                                # arc2 attaches to or is later than arc1
+                                arc1[-1] <= arc2[0],
                                 arc2[-1] != self.S1Index,
+                                # arc1 is descending
                                 (self.notes[arc1[0]].csd.value
                                  > self.notes[arc1[-1]].csd.value),
+                                # arc2 is descending
                                 (self.notes[arc2[0]].csd.value
                                  > self.notes[arc2[-1]].csd.value),
-                                (self.notes[arc2[-1]].csd.value
-                                 > self.notes[-1].csd.value)
-                                ]
-                            rules2b = [
-                                arc1[-1] < arc2[0],
-                                arc2[-1] != self.S1Index,
-                                (self.notes[arc1[0]].csd.value
-                                 > self.notes[arc1[-1]].csd.value),
-                                (self.notes[arc2[0]].csd.value
-                                 > self.notes[arc2[-1]].csd.value),
+                                # arc1 is higher than arc2
+                                (self.notes[arc1[-1]].csd.value
+                                 > self.notes[arc2[0]].csd.value),
+                                # arc2 is non final
                                 (self.notes[arc2[-1]].csd.value
                                  > self.notes[-1].csd.value),
+                                # arc2 is not embedded in another arc
                                 not isEmbeddedInOtherArc(arc2, self.arcs,
                                                          startIndex=arc1[-1])
-                                ]
-                            if all(rules2a) or all(rules2b):
+                            ]
+                            if all(rules2):
                                 arcSegments.append(arc2)
-                                for arc3 in self.arcs[counter2+1:]:
+                                for arc3 in self.arcs[counter2 + 1:]:
                                     # Look for two passing motions to merge.
                                     # TODO Write rules to handle cases
                                     # where there are several possibilities.
-                                    rules3a = [
-                                        arc2[-1] == arc3[0],
-                                        arc3[-1] == self.S1Index,
-                                        (self.notes[arc2[0]].csd.value
-                                         > self.notes[arc2[-1]].csd.value),
-                                        (self.notes[arc3[0]].csd.value
-                                         > self.notes[arc3[-1]].csd.value)
-                                        ]
-                                    rules3b = [
-                                        arc2[-1] < arc3[0],
+                                    rules3 = [
+                                        arc2[-1] <= arc3[0],
                                         arc3[-1] == self.S1Index,
                                         (self.notes[arc2[0]].csd.value
                                          > self.notes[arc2[-1]].csd.value),
@@ -2064,8 +2057,8 @@ class Parser:
                                             arc3,
                                             self.arcs,
                                             startIndex=arc2[-1])
-                                        ]
-                                    if all(rules3a) or all(rules3b):
+                                    ]
+                                    if all(rules3):
                                         arcSegments.append(arc3)
                         if len(arcSegments) == 3:
                             arc1 = arcSegments[0]
