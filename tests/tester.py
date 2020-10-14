@@ -34,7 +34,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Generic01.musicxml'
 #    source = 'TestScoresXML/Generic02.musicxml'
 
-    source = 'TestScoresXML/FirstSpecies01.musicxml'
+#    source = 'TestScoresXML/FirstSpecies01.musicxml'
 #    source = 'TestScoresXML/FirstSpecies02.musicxml'
 #    source = 'TestScoresXML/FirstSpecies03.musicxml'
 #    source = 'TestScoresXML/FirstSpecies04.musicxml'
@@ -98,6 +98,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
 #    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
 #    source = 'TestScoresXML/2020_08_24T20_39_55_774Z.musicxml'
+    source = 'TestScoresXML/2020_10_14T16_31_54_122Z.musicxml'
 
 
 #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
