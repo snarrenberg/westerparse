@@ -1759,7 +1759,7 @@ class Parser:
                     self.typeErrorsDict[lineType] = buildErrors
 
             elif lineType == 'generic':  # for generic lines, first note is S2
-                s2cand = buffer[0]
+                s2cand = self.notes[0]
                 stack = buffer
                 logger.debug(f'Building parses for generic line')
                 self.buildParse(s2cand, lineType, parsecounter,
