@@ -2574,6 +2574,45 @@ class Parser:
                     self.arcBasic = arcBasicCandidates[0]
                     pass
 
+            # METHOD 20: 8-6, 6-4, 4-2, 1
+            elif self.method == 20:
+                eightSixArcs = []
+                sixFourArcs = []
+                fourTwoArcs = []
+                # offPre = self.context.harmonicSpanDict['offsetPredominant'])
+                # offDom = self.context.harmonicSpanDict['offsetDominant'])
+                for arc in self.arcs:
+                    rules1 = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 7,
+                              self.notes[arc[-1]].csd.value == 5]
+                    rules2 = [self.notes[arc[0]].csd.value == 5,
+                              self.notes[arc[-1]].csd.value == 3]
+                              # offPre <= self.notes[arc[0]].offset < offDom]
+                    rules3 = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 3,
+                              self.notes[arc[-1]].csd.value == 1]
+                              # offPre <= self.notes[arc[0]].offset <= offDom]
+
+                if all(rules1):
+                    eightSixArcs.append(arc)
+                if all(rules2):
+                    sixFourArcs.append(arc)
+                if all(rules3):
+                    fourTwoArcs.append(arc)
+
+                arcBasicCandidates = []
+                if eightSixArcs and sixFourArcs and fourTwoArcs:
+                    for arc1 in eightSixArcs:
+                        for arc2 in sixFourArcs:
+                            if arc2[0] >= arc1[-1]:
+                                for arc3 in fourTwoArcs:
+                                    if arc3[0] >= arc2[-1]:
+                                        self.arcMerge(arc1, arc2)
+                                        self.arcMerge(arc1, arc3)
+                                        self.arcExtend(arc1, self.S1Index)
+                                        arcBasicCandidates.append(arc1)
+
+            # report error if no basic arc found after method is applied:
             if self.arcBasic is None:
                 error = ('No basic step motion found from this S2 '
                          'candidate: ' + str(self.S2Value+1) + '.')
@@ -3551,48 +3590,64 @@ class Parser:
         S3PenultCands = [interp.arcBasic[-2] for interp in self.Pinterps]
 
         # Bass lines:
-        labelsToPurge = []
         lowfives = [interp for interp in self.Binterps
                     if self.notes[interp.S3Index].csd.value == -3]
         highfives = [interp for interp in self.Binterps
                      if self.notes[interp.S3Index].csd.value == 4]
-        lowfiveCands = [interp.arcBasic[1] for interp in lowfives]
-        highfiveCands = [interp.arcBasic[1] for interp in highfives]
         # Choose an S3 that's integrated or immediately preceding.
         # Given two options, choose the later if there is a
         # potential repetition of S2 between them.
         # Can this be negotiated earlier in the parse?
 
         # Currently there is no preference where S3 occurs in a bass line.
-        # TODO: Eventually this must be replaced by a preference for
+        # TODO: Eventually this must be supplemented by a preference for
         # consonant coordination with an S3 in the upper line:
         # either simultaneous with or subsequent to sd2.
 
         # If there are several candidates for high or low five,
         # prefer ones in which S3 occurs past the midway point of the line.
+        # TODO define midpoint by offset??
+        labelsToPurge = []
         linemidpoint = len(self.notes)/2
         if len(highfives) > 1:
             for interp in highfives:
                 if interp.S3Index < linemidpoint:
                     labelsToPurge.append(interp.label)
+        if len(labelsToPurge) == len(highfives):
+            pass
+        else:
+            highfives = [interp for interp in highfives
+                             if interp not in labelsToPurge]
+        labelsToPurge = []
         if len(lowfives) > 1:
             for interp in lowfives:
                 if interp.S3Index < linemidpoint:
                     labelsToPurge.append(interp.label)
+        if len(labelsToPurge) == len(lowfives):
+            pass
+        else:
+            lowfives = [interp for interp in lowfives
+                             if interp not in labelsToPurge]
+        resultantInterps = highfives + lowfives
         self.Binterps = [interp for interp in self.Binterps
-                         if interp.label not in labelsToPurge]
+                         if interp in resultantInterps]
 
         # If there are still several candidates for S3,
         # prefer ones in which S3 occurs on the beat.
         allfivesOnbeat = [five for five in self.Binterps
                           if self.notes[five.S3Index].beat == 1.0]
+        labelsToPurge = []
         if (len(self.Binterps) > len(allfivesOnbeat)
            and len(allfivesOnbeat) != 0):
             for interp in self.Binterps:
                 if self.notes[interp.S3Index].beat != 1.0:
                     labelsToPurge.append(interp.label)
-        self.Binterps = [interp for interp in self.Binterps
-                         if interp.label not in labelsToPurge]
+        # don't purge labels if the result is null
+        if len(labelsToPurge) == len(self.Binterps):
+            pass
+        else:
+            self.Binterps = [interp for interp in self.Binterps
+                             if interp.label not in labelsToPurge]
 
         # If there are two candidates for S3 and
         # one can be an immediate repetition, prefer that one.
