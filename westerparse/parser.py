@@ -995,9 +995,13 @@ class Parser:
                 if j.pitch not in harmonyStart:
                     harmonyStart.append(j.pitch)
             # TODO 2020-07-08: Isn't i already on the list of open transitions?
+            #   2020-10-14: not if there was no lefthead to be found?
             if not openTransitions:
                 # If step up or down, i.csd.direction must match
-                # direction of step.
+                # direction of step in order to connect to j.
+                # TODO just appending to open transitions wihout
+                #   finding a lefthead is dangerous, i.e., unresolved
+                #   leaving None as i.dependency.lefthead
                 if (isStepUp(i, j)
                    and i.csd.direction
                    not in ['ascending', 'bidirectional']):
@@ -1020,8 +1024,8 @@ class Parser:
                             i.dependency.righthead = j.index
                             j.dependency.dependents.append(i.index)
                             # Add dependents that aren't repetitions.
-                            # TODO limit to depends that should belong to the
-                            # new arc.
+                            # TODO limit to dependents that should belong to the
+                            #   new arc.
                             for d in i.dependency.dependents:
                                 if self.notes[d].csd.value != i.csd.value:
                                     self.notes[d].dependency.righthead = j.index
@@ -1041,8 +1045,8 @@ class Parser:
                             i.dependency.righthead = j.index
                             j.dependency.dependents.append(i.index)
                             # Add dependents that aren't repetitions.
-                            # TODO limit to depends that should belong to the
-                            # new arc.
+                            # TODO limit to dependents that should belong to the
+                            #   new arc.
                             for d in i.dependency.dependents:
                                 if self.notes[d].csd.value != i.csd.value:
                                     self.notes[d].dependency.righthead = j.index
@@ -1079,7 +1083,7 @@ class Parser:
                                 if d < h.index and isStepUp(self.notes[d], h):
                                     self.notes[d].dependency.righthead = j.index
                                     # TODO Remove condition if there's no reason
-                                    # why d is not still in openTransitions
+                                    #   why d is not still in openTransitions
                                     openTransitions[:] = [trans for trans
                                                           in openTransitions
                                                           if trans != d]
@@ -1106,8 +1110,8 @@ class Parser:
                                    and isStepDown(self.notes[d], h)):
                                     self.notes[d].dependency.righthead = j.index
                                     # TODO: d was probably removed from open
-                                    # transitions somewhere prior to this
-                                    # so this may be entirely unnecessary.
+                                    #   transitions somewhere prior to this
+                                    #   so this may be entirely unnecessary.
                                     openTransitions[:] = [trans for trans
                                                           in openTransitions
                                                           if trans != d]
@@ -1856,7 +1860,7 @@ class Parser:
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
                 # using a series of methods to infer a basic step motion.
-                methods = 10
+                methods = 19
                 if buildErrors == []:
                     for cand in s2cands:
                         logger.debug(f'Building parses for S2 candidate: '
@@ -1896,6 +1900,8 @@ class Parser:
         newParse.notes[newParse.S1Index].rule.name = 'S1'
         newParse.method = method
         newParse.harmonicSpecies = self.context.harmonicSpecies
+        if self.context.harmonicSpecies:
+            newParse.harmonicSpanDict = self.context.harmonicSpanDict
         # Prepare the basic structure information.
         if lineType == 'bass':
             newParse.label = 'parse' + str(parsecounter) + '_BL'
@@ -2483,123 +2489,35 @@ class Parser:
                     self.arcBasic = list(reversed(basicArcCand))
 
             # METHOD 9
-            # TODO convert these into separate methods
-            # Additional possibilities for long lines in harmonic species.
-            # Look for arcs to combine into 5-lines or 8-lines
             # 8-6, 6-4, 4-2, 1
-            # 8-4, 4-2, 1
-            # 8-5, 5-2, 1
-            # 5-2, 1
-            # 5, 4-2, 1
-            # Also test for position in harmonic spans:
-            # S2 is already drawn from T-buffer, so only need to check S3s
-            elif self.method == 9:
+            # TODO what if offPre is None???
+            elif self.method == 9 and self.S2Value == 7:
                 eightSixArcs = []
-                eightFiveArcs = []
-                eightFourArcs = []
                 sixFourArcs = []
                 fourTwoArcs = []
-                fiveTwoArcs = []
-                for arc in self.arcs:
-                    rules1 = [arc[0] == self.S2Index,
-                             self.notes[arc[0]].csd.value == 7,
-                             self.notes[arc[-1]].csd.value == 5]
-                    rules2 = [arc[0] == self.S2Index,
-                             self.notes[arc[0]].csd.value == 7,
-                             self.notes[arc[-1]].csd.value == 4]
-                    rules3 = [arc[0] == self.S2Index,
-                             self.notes[arc[0]].csd.value == 7,
-                             self.notes[arc[-1]].csd.value == 3]
-                    rules4 = [self.notes[arc[0]].csd.value == 5,
-                             self.notes[arc[-1]].csd.value == 3]
-                    rules5 = [self.notes[arc[0]].csd.value == 4,
-                             self.notes[arc[-1]].csd.value == 1]
-                    rules6 = [arc[0] == self.S2Index,
-                             self.notes[arc[0]].csd.value == 3,
-                             self.notes[arc[-1]].csd.value == 1]
-                    if all(rules1):
-                        eightSixArcs.append(arc)
-                    if all(rules2):
-                        eightFiveArcs.append(arc)
-                    if all(rules3):
-                        eightFourArcs.append(arc)
-                    if all(rules4):
-                        sixFourArcs.append(arc)
-                    if all(rules5):
-                        fiveTwoArcs.append(arc)
-                    if all(rules6):
-                        fourTwoArcs.append(arc)
-
-                arcBasicCandidates = []
-                if eightSixArcs and sixFourArcs and fourTwoArcs:
-                    for arc1 in eightSixArcs:
-                         for arc2 in sixFourArcs:
-                             for arc3 in fourTwoArcs:
-                                self.arcMerge(arc1, arc2)
-                                self.arcMerge(arc1, arc3)
-                                self.arcExtend(arc1, self.S1Index)
-                                arcBasicCandidates.append(arc1)
-                if eightFiveArcs and fiveTwoArcs:
-                    for arc1 in eightFiveArcs:
-                         for arc2 in fiveTwoArcs:
-                                self.arcMerge(arc1, arc2)
-                                self.arcExtend(arc1, self.S1Index)
-                                arcBasicCandidates.append(arc1)
-                if eightFourArcs and fourTwoArcs:
-                    for arc1 in eightFourArcs:
-                         for arc2 in fourTwoArcs:
-                                self.arcMerge(arc1, arc2)
-                                self.arcExtend(arc1, self.S1Index)
-                                arcBasicCandidates.append(arc1)
-                if fiveTwoArcs:
-                    for arc1 in fiveTwoArcs:
-                        if self.S2Index == arc1[0]:
-                            self.arcMerge(arc1, [self.S1Index])
-                            arcBasicCandidates.append(arc1)
-                if self.S2Value == 4 and fourTwoArcs:
-                    for arc1 in fiveTwoArcs:
-                        self.arcExtend(arc1, self.S2Index)
-                        self.arcExtend(arc1, self.S1Index)
-                        arcBasicCandidates.append(arc1)
-
-                if not arcBasicCandidates:
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
                     error = ('No composite step motion found from '
                              'this S2 candidate: ' + str(self.S2Value+1) + '.')
                     self.errors.append(error)
                     return
-
-                if arcBasicCandidates:
-                    logger.debug(f'Harmonic basic arcs: {arcBasicCandidates}')
-                    # TODO handle the results
-                    self.arcBasic = arcBasicCandidates[0]
-                    pass
-
-            # METHOD 20: 8-6, 6-4, 4-2, 1
-            elif self.method == 20:
-                eightSixArcs = []
-                sixFourArcs = []
-                fourTwoArcs = []
-                # offPre = self.context.harmonicSpanDict['offsetPredominant'])
-                # offDom = self.context.harmonicSpanDict['offsetDominant'])
                 for arc in self.arcs:
                     rules1 = [arc[0] == self.S2Index,
                               self.notes[arc[0]].csd.value == 7,
                               self.notes[arc[-1]].csd.value == 5]
                     rules2 = [self.notes[arc[0]].csd.value == 5,
-                              self.notes[arc[-1]].csd.value == 3]
-                              # offPre <= self.notes[arc[0]].offset < offDom]
+                              self.notes[arc[-1]].csd.value == 3,
+                              offPre <= self.notes[arc[0]].offset < offDom]
                     rules3 = [arc[0] == self.S2Index,
                               self.notes[arc[0]].csd.value == 3,
                               self.notes[arc[-1]].csd.value == 1]
-                              # offPre <= self.notes[arc[0]].offset <= offDom]
-
-                if all(rules1):
-                    eightSixArcs.append(arc)
-                if all(rules2):
-                    sixFourArcs.append(arc)
-                if all(rules3):
-                    fourTwoArcs.append(arc)
-
+                    if all(rules1):
+                        eightSixArcs.append(arc)
+                    if all(rules2):
+                        sixFourArcs.append(arc)
+                    if all(rules3):
+                        fourTwoArcs.append(arc)
                 arcBasicCandidates = []
                 if eightSixArcs and sixFourArcs and fourTwoArcs:
                     for arc1 in eightSixArcs:
@@ -2611,6 +2529,324 @@ class Parser:
                                         self.arcMerge(arc1, arc3)
                                         self.arcExtend(arc1, self.S1Index)
                                         arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 10: 8-4, 4-2D, 1
+            elif self.method == 10 and self.S2Value == 7:
+                eightFourArcs = []
+                fourTwoArcs = []
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+                for arc in self.arcs:
+                    rules1 = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 7,
+                              self.notes[arc[-1]].csd.value == 3,
+                              offPre <= self.notes[arc[0]].offset < offDom]
+                    rules3 = [self.notes[arc[0]].csd.value == 3,
+                              self.notes[arc[-1]].csd.value == 1,
+                              offDom <= self.notes[arc[0]].offset]
+                    if all(rules1):
+                        eightFourArcs.append(arc)
+                    if all(rules3):
+                        fourTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if eightFourArcs and fourTwoArcs:
+                    for arc1 in eightFourArcs:
+                        for arc2 in fourTwoArcs:
+                            if arc2[0] >= arc1[-1]:
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 11: 8-4, 4-2, 1
+            elif self.method == 11 and self.S2Value == 7:
+                eightFourArcs = []
+                fourTwoArcs = []
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+                for arc in self.arcs:
+                    rules1 = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 7,
+                              self.notes[arc[-1]].csd.value == 3,
+                              offPre <= self.notes[arc[0]].offset < offDom]
+                    rules3 = [self.notes[arc[0]].csd.value == 3,
+                              self.notes[arc[-1]].csd.value == 1,
+                              offPre <= self.notes[arc[0]].offset < offDom]
+                    if all(rules1):
+                        eightFourArcs.append(arc)
+                    if all(rules3):
+                        fourTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if eightFourArcs and fourTwoArcs:
+                    for arc1 in eightFourArcs:
+                        for arc2 in fourTwoArcs:
+                            if arc2[0] >= arc1[-1]:
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 12: 8-5,--, 5-2, 1
+            elif self.method == 12 and self.S2Value == 7:
+                eightFiveArcs = []
+                fiveTwoArcs = []
+                offDom = self.harmonicSpanDict['offsetDominant']
+                for arc in self.arcs:
+                    rules1 = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 7,
+                              self.notes[arc[-1]].csd.value == 4]
+                    rules3 = [self.notes[arc[0]].csd.value == 4,
+                              self.notes[arc[-1]].csd.value == 1,
+                              offDom <= self.notes[arc[-1]].offset]
+                    if all(rules1):
+                        eightFiveArcs.append(arc)
+                    if all(rules3):
+                        fiveTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if eightFiveArcs and fiveTwoArcs:
+                    for arc1 in eightFiveArcs:
+                        for arc2 in fiveTwoArcs:
+                            if arc2[0] >= arc1[-1]:
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 13: 8-5,4-2, 1
+            # 2 occurs in the domiant
+            elif self.method == 13 and self.S2Value == 7:
+                eightFiveArcs = []
+                fourTwoArcs = []
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    return
+                for arc in self.arcs:
+                    rules1 = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 7,
+                              self.notes[arc[-1]].csd.value == 4]
+                    rules3 = [self.notes[arc[0]].csd.value == 3,
+                              self.notes[arc[-1]].csd.value == 1,
+                              offPre <= self.notes[arc[0]].offset,
+                              offDom <= self.notes[arc[-1]].offset]
+                    if all(rules1):
+                        eightFiveArcs.append(arc)
+                    if all(rules3):
+                        fourTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if eightFiveArcs and fourTwoArcs:
+                    for arc1 in eightFiveArcs:
+                        for arc2 in fourTwoArcs:
+                            if arc2[0] >= arc1[-1]:
+                                self.arcExtend(arc1, arc2[0])
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 14: 8-5,4-2, 1
+            # 2 occurs in the predomiant
+            elif self.method == 14 and self.S2Value == 7:
+                eightFiveArcs = []
+                fourTwoArcs = []
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+                for arc in self.arcs:
+                    rules1 = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 7,
+                              self.notes[arc[-1]].csd.value == 4]
+                    rules3 = [self.notes[arc[0]].csd.value == 3,
+                              self.notes[arc[-1]].csd.value == 1,
+                              offPre <= self.notes[arc[0]].offset,
+                              self.notes[arc[-1]].offset < offDom]
+                    if all(rules1):
+                        eightFiveArcs.append(arc)
+                    if all(rules3):
+                        fourTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if eightFiveArcs and fourTwoArcs:
+                    for arc1 in eightFiveArcs:
+                        for arc2 in fourTwoArcs:
+                            if arc2[0] >= arc1[-1]:
+                                self.arcExtend(arc1, arc2[0])
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 15: 5-2, 1
+            # 2 occurs in the preDom
+            elif self.method == 15 and self.S2Value == 4:
+                fiveTwoArcs = []
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+                for arc in self.arcs:
+                    rules = [arc[0] == self.S2Index,
+                              self.notes[arc[0]].csd.value == 4,
+                              self.notes[arc[-1]].csd.value == 1,
+                              offPre <= self.notes[arc[0]].offset < offDom]
+                    if all(rules):
+                        fiveTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if fiveTwoArcs:
+                    for arc1 in fiveTwoArcs:
+                        self.arcExtend(arc1, self.S1Index)
+                        arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 16: 5-2, 1
+            # 2 occurs in the dominant
+            elif self.method == 16 and self.S2Value == 4:
+                fiveTwoArcs = []
+                offDom = self.harmonicSpanDict['offsetDominant']
+                for arc in self.arcs:
+                    rules = [arc[0] == self.S2Index,
+                             self.notes[arc[0]].csd.value == 4,
+                             self.notes[arc[-1]].csd.value == 1,
+                             offDom <= self.notes[arc[0]].offset]
+                    if all(rules):
+                        fiveTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if fiveTwoArcs:
+                    for arc1 in fiveTwoArcs:
+                        self.arcExtend(arc1, self.S1Index)
+                        arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 17: 5, 4-2, 1
+            # 2 occurs in the predominant
+            elif self.method == 17 and self.S2Value == 4:
+                fourTwoArcs = []
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+                for arc in self.arcs:
+                    rules = [self.notes[arc[0]].csd.value == 3,
+                             self.notes[arc[-1]].csd.value == 1,
+                             offPre <= self.notes[arc[0]].offset < offDom]
+                    if all(rules):
+                        fourTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if self.S2Value == 4 and fourTwoArcs:
+                    for arc1 in fourTwoArcs:
+                        self.arcExtend(arc1, self.S2Index)
+                        self.arcExtend(arc1, self.S1Index)
+                        arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 18: 5, 4-2, 1
+            # 2 occurs in the dominant
+            elif self.method == 18 and self.S2Value == 4:
+                fourTwoArcs = []
+                offDom = self.harmonicSpanDict['offsetDominant']
+                for arc in self.arcs:
+                    rules = [self.notes[arc[0]].csd.value == 3,
+                             self.notes[arc[-1]].csd.value == 1,
+                             offDom <= self.notes[arc[0]].offset]
+                    if all(rules):
+                        fourTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if self.S2Value == 4 and fourTwoArcs:
+                    for arc1 in fourTwoArcs:
+                        self.arcExtend(arc1, self.S2Index)
+                        self.arcExtend(arc1, self.S1Index)
+                        arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
 
             # report error if no basic arc found after method is applied:
             if self.arcBasic is None:

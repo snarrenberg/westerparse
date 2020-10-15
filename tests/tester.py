@@ -69,13 +69,13 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/FourthSpecies21.musicxml'
 #    source = 'TestScoresXML/FourthSpecies22.musicxml'
 
-#    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
-#    source = 'TestScoresXML/HarmonicSecondSpecies02.musicxml'
-#    source = 'TestScoresXML/HarmonicSecondSpecies03.musicxml'  # 8, 14
-#    source = 'TestScoresXML/harmonic_species1.musicxml'
+#    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml' # 10, 12
+#    source = 'TestScoresXML/HarmonicSecondSpecies02.musicxml' # 8, 10
+#   source = 'TestScoresXML/HarmonicSecondSpecies03.musicxml'  # 8, 14 initial tonic too short
+#    source = 'TestScoresXML/harmonic_species1.musicxml' # 8, 10
 #    source = 'TestScoresXML/harmonic_species2.musicxml'  # 11, 13
 #    source = 'TestScoresXML/harmonic_species2_mistakes.musicxml'
-#    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
+    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
 #    source = 'TestScoresXML/harmonic_species3_mistakes.musicxml'
 
 #    source = 'TestScoresXML/CombinedSpecies1234.musicxml'
@@ -122,8 +122,8 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_08_26T17_50_33_151Z.musicxml'
 #    source = 'TestScoresXML/2020_10_11T20_10_52_188Z.musicxml'
 #    source = 'TestScoresXML/2020_10_14T00_42_54_913Z.musicxml'
-    source = 'TestScoresXML/2020_10_14T16_31_54_122Z.musicxml'
-
+#    source = 'TestScoresXML/2020_10_14T16_31_54_122Z.musicxml'
+#    source = 'TestScoresXML/2020_10_14T19_23_30_946Z.musicxml'
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
 #    source = 'TestScoresXML/chorale066.6.musicxml'
@@ -162,7 +162,7 @@ if __name__ == "__main__":
             westerparse.evaluateCounterpoint(source, report=True)
         
         elif verify == 10: # tests for generability as harmonic counterpoint
-            westerparse.evaluateLines(source, show=None,
+            westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
                                       startPredominant=7,
                                       startDominant=9)
@@ -255,7 +255,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 1)
+    tester(source, 10)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
