@@ -655,8 +655,15 @@ def selectedPreferredParseSets(cxt, show):
                 preferredGlobals.append(pair[1])
 
         nonharmonicParses = []
-        if preferredGlobals and cxt.harmonicSpecies:
-            for prse in preferredGlobals:
+        # TODO evaluate all pairings, not just the preferred ones
+        #   create a list of all pairings???
+        allGlobals = []
+        for interpPrimary in primPart.interpretations['primary']:
+            for interpBass in bassPart.interpretations['bass']:
+                allGlobals.append((interpPrimary, interpBass))
+
+        if allGlobals and cxt.harmonicSpecies:
+            for prse in allGlobals:
                 offInitTon = cxt.harmonicSpanDict['offsetInitialTonic']
                 offPredom = cxt.harmonicSpanDict['offsetPredominant']
                 offDom = cxt.harmonicSpanDict['offsetDominant']
@@ -745,7 +752,8 @@ def selectedPreferredParseSets(cxt, show):
                         and harmonicCoordination):
                     nonharmonicParses.append(prse)
 
-        preferredGlobals = [prse for prse in preferredGlobals
+        if cxt.harmonicSpecies:
+            preferredGlobals = [prse for prse in allGlobals
                             if prse not in nonharmonicParses]
 
 

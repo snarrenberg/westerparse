@@ -1860,13 +1860,13 @@ class Parser:
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
                 # using a series of methods to infer a basic step motion.
-                methods = 19
+                methods = 21
                 if buildErrors == []:
                     for cand in s2cands:
                         logger.debug(f'Building parses for S2 candidate: '
                                      f'{cand.index}, scale degree '
                                      f'{cand.csd.degree}')
-                        for m in range(0, methods):
+                        for m in range(9, methods):
                             self.buildParse(cand, lineType, parsecounter,
                                             buildErrors=[], method=m)
                             parsecounter += 1  # update numbering of parses
@@ -2305,7 +2305,7 @@ class Parser:
             # METHOD 5
             # Take an existing 5-4-3 arc (the longest spanned, if more than one)
             # and try to find a connection -2-1 to complete a basic arc.
-            elif self.method == 5 and self.S2Value == 4:
+            elif self.method == 5 and self.S2Value % 7 == 4:
                 fiveThreeArcs = []
                 for arc in self.arcs:
                     rules = [arc[0] == self.S2Index,
@@ -2406,7 +2406,8 @@ class Parser:
             #             Westergaard070g.musicxml
             # TODO Prefer S2 on beat in third species,
             # if there are two candidates in the same bar.
-            elif self.method == 8:
+            # TODO currently turned off for harmonic species
+            elif self.method == 8 and not self.harmonicSpecies:
                 # Refill buffer with context from S2 to end of line.
                 self.buffer = [n for n in self.notes[self.S2Index:]
                                if not n.tie or n.tie.type == 'start']
@@ -2734,7 +2735,7 @@ class Parser:
 
             # METHOD 15: 5-2, 1
             # 2 occurs in the preDom
-            elif self.method == 15 and self.S2Value == 4:
+            elif self.method == 15 and self.S2Value % 7 == 4:
                 fiveTwoArcs = []
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
@@ -2766,7 +2767,7 @@ class Parser:
 
             # METHOD 16: 5-2, 1
             # 2 occurs in the dominant
-            elif self.method == 16 and self.S2Value == 4:
+            elif self.method == 16 and self.S2Value % 7 == 4:
                 fiveTwoArcs = []
                 offDom = self.harmonicSpanDict['offsetDominant']
                 for arc in self.arcs:
@@ -2792,7 +2793,7 @@ class Parser:
 
             # METHOD 17: 5, 4-2, 1
             # 2 occurs in the predominant
-            elif self.method == 17 and self.S2Value == 4:
+            elif self.method == 17 and self.S2Value % 7 == 4:
                 fourTwoArcs = []
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
@@ -2824,7 +2825,7 @@ class Parser:
 
             # METHOD 18: 5, 4-2, 1
             # 2 occurs in the dominant
-            elif self.method == 18 and self.S2Value == 4:
+            elif self.method == 18 and self.S2Value % 7 == 4:
                 fourTwoArcs = []
                 offDom = self.harmonicSpanDict['offsetDominant']
                 for arc in self.arcs:
@@ -2845,6 +2846,52 @@ class Parser:
                 else:
                     error = ('No composite step motion found from '
                              'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 19: 3, 2, 1
+            # 2 occurs in the predominant
+            elif self.method == 19 and self.S2Value % 7 == 2:
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(self.S2Value+1) + '.')
+                    self.errors.append(error)
+                    return
+                s3cands = [n.index for n in self.notes
+                           if (offPre <= n.offset < offDom
+                               and n.csd.value == self.S2Value - 1)]
+                if s3cands:
+                    for idx in s3cands:
+                        # take the earliest non-embedded sd2
+                        if not isEmbeddedInArcs(idx, self.arcs):
+                            self.arcBasic = [self.S2Index, idx, self.S1Index]
+                            break
+                if self.arcBasic is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(
+                        self.S2Value + 1) + '.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 20: 3, 2, 1
+            # 2 occurs in the dominant
+            elif self.method == 20 and self.S2Value % 7 == 2:
+                offDom = self.harmonicSpanDict['offsetDominant']
+                s3cands = [n.index for n in self.notes
+                           if (offDom <= n.offset
+                               and n.csd.value == self.S2Value - 1)]
+                if s3cands:
+                    for idx in s3cands:
+                        # take the earliest non-embedded sd2
+                        if not isEmbeddedInArcs(idx, self.arcs):
+                            self.arcBasic = [self.S2Index, idx, self.S1Index]
+                            break
+                if self.arcBasic is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: ' + str(
+                        self.S2Value + 1) + '.')
                     self.errors.append(error)
                     return
 
