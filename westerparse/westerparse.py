@@ -711,7 +711,7 @@ def selectedPreferredParseSets(cxt, show):
                     if not (offInitTon
                             <= primPart.recurse().notes[
                                 SList[0]].offset
-                            < offPredom):
+                            < offDom):
                         harmonicCoordination = False
                         break
                 # check placement of predominant

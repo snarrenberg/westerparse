@@ -75,7 +75,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/harmonic_species1.musicxml' # 8, 10
 #    source = 'TestScoresXML/harmonic_species2.musicxml'  # 11, 13
 #    source = 'TestScoresXML/harmonic_species2_mistakes.musicxml'
-    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
+#    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
 #    source = 'TestScoresXML/harmonic_species3_mistakes.musicxml'
 
 #    source = 'TestScoresXML/CombinedSpecies1234.musicxml'
@@ -124,6 +124,9 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_10_14T00_42_54_913Z.musicxml'
 #    source = 'TestScoresXML/2020_10_14T16_31_54_122Z.musicxml'
 #    source = 'TestScoresXML/2020_10_14T19_23_30_946Z.musicxml'
+#    source = 'TestScoresXML/2020_10_21T16_30_34_038Z.musicxml'
+    source = 'TestScoresXML/2020_10_22T17_09_42_328Z.musicxml'
+
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
 #    source = 'TestScoresXML/chorale066.6.musicxml'
@@ -164,8 +167,8 @@ if __name__ == "__main__":
         elif verify == 10: # tests for generability as harmonic counterpoint
             westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
-                                      startPredominant=7,
-                                      startDominant=9)
+                                      startPredominant=6,
+                                      startDominant=8)
 
         elif verify == 11:
             westerparse.evaluateLines(source, show='show',
@@ -255,7 +258,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 10)
+    tester(source, 2)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)

@@ -333,6 +333,10 @@ class Parser:
                                       [p for p in self.part.dominantTriad.pitches],
                                       [p for p in self.part.tonicTriad.pitches],
                                       'dominant'))
+            # create lists to pass heads and transitions
+            # from one span to the next
+            openTransitions = []
+            openHeads = []
 
             # now parse each harmonic span
             for h_span in harmonicSpans:
@@ -345,7 +349,10 @@ class Parser:
                 # if it is harmonic
                 if isHarmonic(h_span[0][0], h_span[1]):
                     h_openHeads.append(h_span[0][0].index)
-                h_openTransitions = []
+                # TODO grab open trans from prior spans
+                h_openTransitions = [h for h in openTransitions]
+                if h_openTransitions:
+                    h_openHeads = openHeads + h_openHeads
                 n = len(h_buffer)
                 while n > 1:
                     shiftBuffer(h_stack, h_buffer)
@@ -369,8 +376,17 @@ class Parser:
                             self.T_openHeads = h_openHeads
                         elif h_span[3] == 'predominant':
                             self.P_openHeads = h_openHeads
+                            # if there are unclosed transitions, copy them on
+                            # for processing in the next harmonic span, along
+                            # with open heads to which they might attach
+                            openTransitions = h_openTransitions
+                            if openTransitions:
+                                openHeads = h_openHeads
                         elif h_span[3] == 'dominant':
                             self.D_openHeads = h_openHeads
+                            openTransitions = h_openTransitions
+                            if openTransitions:
+                                openHeads = h_openHeads
 
             # TODO select S2cand and S3cands from the relevant harmonic spans
             # TODO create entirely new methods for preparing parses
@@ -791,12 +807,13 @@ class Parser:
                   and isHarmonic(j, harmonyStart)),
                  (isLinearConsonance(i, j)
                   or isLinearUnison(i, j))]
-        case2 = [(self.part.species in ['third', 'fifth']
-                  or self.context.harmonicSpecies),
+        case2 = [self.part.species in ['third', 'fifth'],
                  not isHarmonic(i, harmonyStart),
                  isHarmonic(j, harmonyEnd),
                  isDiatonicStep(i, j),
                  buffer[-1].index == j.index]
+        case2H = [self.context.harmonicSpecies,
+                  buffer[-1].index == j.index]
         case3 = [isHarmonic(i, harmonyStart),
                  not isHarmonic(j, harmonyStart),
                  isDiatonicStep(i, j),
@@ -893,7 +910,41 @@ class Parser:
                               'in the next local span'
                               f'\n\topen trans = {openTransitions}')
 
-        # CASE THREE: Step from harmonic to nonharmonic pitch.
+        elif all(case2H):
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 2H')
+            if openTransitions:
+                logger.debug(f'evaluating transitions to {j.index} '
+                              'in the next harmonic span'
+                              f'\n\topen trans = {openTransitions}')
+                for t in reversed(openTransitions):
+                    h = self.notes[t]
+                    rules = [isDiatonicStep(h, j)]
+                    if all(rules):
+                        h.dependency.righthead = j.index
+                        if h.dependency.dependents:
+                            for d in h.dependency.dependents:
+                                self.notes[d].dependency.righthead = j.index
+                        j.dependency.dependents.append(h.index)
+                        openTransitions.remove(h.index)
+                        arcGenerateTransition(h.index, part, arcs)
+                    else:
+                        error = ('Unresolved transitions in the '
+                                 + 'harmonic span: '
+                                 + f'{h.nameWithOctave} in bar '
+                                 + f'{h.measureNumber}.')
+                        self.errors.append(error)
+                        return
+            if not isHarmonic(j, harmonyEnd):
+                openTransitions.append(j.index)
+                # if j.dependency.lefthead is None:
+                #     error = ('This note does not belong to the '
+                #              + 'harmony of the span: '
+                #              + f'{j.nameWithOctave} in bar '
+                #              + f'{j.measureNumber}.')
+                #     self.errors.append(error)
+                #     return
+
+# CASE THREE: Step from harmonic to nonharmonic pitch.
         elif all(case3):
             logger.debug(f'Parse transition {i.index}-{j.index}: case 3')
             if openTransitions:
@@ -1160,18 +1211,39 @@ class Parser:
                         if not isDiatonicStep(h, i):
                             openHeads.remove(t)
                         elif isDiatonicStep(h, i):
-                            h.dependency.dependents.append(i.index)
-                            h.dependency.dependents.append(j.index)
-                            i.dependency.dependents.append(j.index)
-                            j.dependency.dependents.append(i.index)
-                            i.dependency.lefthead = h.index
-                            j.dependency.lefthead = h.index
-                            # TODO: I don't think i.index has in all cases
-                            # been added to openTransitions.
-                            if i.index in openTransitions:
-                                openTransitions.remove(i.index)
-                            openTransitions.append(j.index)
-                            break
+                            # in harmonic species, look for transitions from
+                            # head in prior harmonic span extending into this
+                            # span
+                            # if found, remove open heads from prior span
+                            if self.context.harmonicSpecies:
+                                if (getStepDirection(h, i)
+                                        == getStepDirection(i, j)):
+                                    h.dependency.dependents.append(i.index)
+                                    h.dependency.dependents.append(j.index)
+                                    i.dependency.dependents.append(j.index)
+                                    j.dependency.dependents.append(i.index)
+                                    i.dependency.lefthead = h.index
+                                    j.dependency.lefthead = h.index
+                                    if i.index in openTransitions:
+                                        openTransitions.remove(i.index)
+                                    openTransitions.append(j.index)
+                                    # TODO reconsider whether it's necessary
+                                    #   to empty the list of open heads
+                                    openHeads = []
+                                    break
+                            else:
+                                h.dependency.dependents.append(i.index)
+                                h.dependency.dependents.append(j.index)
+                                i.dependency.dependents.append(j.index)
+                                j.dependency.dependents.append(i.index)
+                                i.dependency.lefthead = h.index
+                                j.dependency.lefthead = h.index
+                                # TODO: I don't think i.index has in all cases
+                                #   been added to openTransitions.
+                                if i.index in openTransitions:
+                                    openTransitions.remove(i.index)
+                                openTransitions.append(j.index)
+                                break
                 elif (i.csd.value % 7 == 5 and
                       j.csd.value % 7 == 6 and
                       i.csd.direction == 'descending'):
@@ -1310,6 +1382,15 @@ class Parser:
                                 openTransitions.remove(t)
                                 openHeads.append(j.index)
                                 arcGenerateTransition(t, part, arcs)
+                # TODO trying to allow sd3 at start of dominant span in upper line
+                #   check only if this is the first note in the span??
+                #   and in the upper part
+                if self.context.harmonicSpecies and len(stack) == 1:
+                    if i.index not in openTransitions:
+                        # openTransitions.append(i.index)
+                        # openHeads.append(j.index)
+                        # print(len(stack))
+                        pass
             else:
                 openHeads.append(j.index)
 
@@ -1801,21 +1882,26 @@ class Parser:
                 logger.debug(f'List of bass S3 candidates: '
                              f'{[s.index for s in s3cands]}')
                 # create list of S4 candidates
+                s4cands = []
                 if (self.context.harmonicSpanDict['offsetPredominant']
                         is not None):
                     s4cands = [self.notes[head] for head in self.P_openHeads
                                if (self.notes[head].csd.value % 7 in {1, 3, 5}
                                and self.notes[head].offset
-                               < self.context.harmonicSpanDict['offsetDominant'])]
+                               < self.context.harmonicSpanDict['offsetDominant'])
+                               and not isEmbeddedInArcs(head, self.arcs)]
 
                 s3s4Pairs = []
                 S1 = self.notes[-1]
                 for S3 in s3cands:
-                    for S4 in s4cands:
-                        rules = [
-                            isDiatonicStep(S4, S1) or isDiatonicStep(S4, S3)]
-                        if all(rules):
-                            s3s4Pairs.append((S3, S4))
+                    if s4cands:
+                        for S4 in s4cands:
+                            rules = [
+                                isDiatonicStep(S4, S1) or isDiatonicStep(S4, S3)]
+                            if all(rules):
+                                s3s4Pairs.append((S3, S4))
+                    else:
+                        s3s4Pairs.append((S3, None))
 
                 if buildErrors == []:
                     for candPair in s3s4Pairs:
@@ -3146,6 +3232,7 @@ class Parser:
             """Find any note that does not yet have a rule assigned and
             determine the appropriate rule based on its dependency.
             """
+            # TODO rewrite for harmonic species
             for i in self.notes:
                 idl = i.dependency.lefthead
                 idr = i.dependency.righthead
@@ -3256,8 +3343,8 @@ class Parser:
                                 break
                     if not resolved:
                         error = ('The local insertion ' + i.nameWithOctave +
-                                 'in measure ' + str(i.measureNumber) +
-                                 'is not resolved.')
+                                 ' in measure ' + str(i.measureNumber) +
+                                 ' is not resolved.')
                         self.errors.append(error)
 
         def pruneArcs(self):
@@ -4081,6 +4168,15 @@ def isDirectedStep(n1, n2):
         return True
     else:
         return False
+
+
+def getStepDirection(n1, n2):
+    if isStepDown(n1, n2):
+        return 'descending'
+    if isStepUp(n1, n2):
+        return 'ascending'
+    else:
+        return None
 
 
 def isNeighboringArc(arc, notes):
