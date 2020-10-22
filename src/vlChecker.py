@@ -1387,7 +1387,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                     vSpeciesNote2 = vlq.v1n2
                     vCantusNote1 = vlq.v2n1
                     vSpeciesPartNum = vlq.v1n1.getContextByClass('Part').partNum
-                elif vlq.v1n1.getContextByClass('Part').species == 'third':
+                elif vlq.v2n1.getContextByClass('Part').species == 'third':
                     vSpeciesNote1 = vlq.v2n1
                     vSpeciesNote2 = vlq.v2n2
                     vCantusNote1 = vlq.v1n1

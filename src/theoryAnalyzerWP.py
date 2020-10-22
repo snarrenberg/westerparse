@@ -548,7 +548,7 @@ class Analyzer:
                 part1_notesAndRests.getElementAtOrBefore(os2).isNote and
                 part2_notesAndRests.getElementAtOrBefore(os1).isNote and
                 part2_notesAndRests.getElementAtOrBefore(os2).isNote):
-                continue
+                pass
                 if (upper_voice_notes.getElementAtOrBefore(os1).beat > 1.0 or
                     lower_voice_notes.getElementAtOrBefore(os1).beat > 1.0):
                     if not (upper_voice_notes.getElementAtOrBefore(os2).beat == 1.0 and
@@ -564,7 +564,7 @@ class Analyzer:
                             else:
                                 n =+1
             else:
-                continue
+                pass
 
             def makeVLQ(os1, os2):
                 v1n1=upper_voice_notes.getElementAtOrBefore(os1)
