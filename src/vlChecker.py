@@ -1709,7 +1709,8 @@ def checkFourthLeapsInBass(score, analyzer):
 
                     # rules for fourth species
                     elif len(barseg1) == 2 and barseg1[0].tie:
-                        rules4 = [n.tie.type == 'start']
+                        # TODO verify that no additional rule is needed
+                        rules4 = [] # [n.tie.type == 'start']
                         if all(rules1) and all(rules4):
                             impliedSixFour = False
                             break
