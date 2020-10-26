@@ -748,7 +748,7 @@ def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
                             finalStepConnection = True
             shiftBuffer(stack, buffer)
             blen = len(buffer)
-        if not finalStepConnection:
+        if not finalStepConnection: # ultimaNote.csd.value % 7 == 0
             error = ('No final step connection in the primary upper line.')
             vlErrors.append(error)
     else:
@@ -1505,8 +1505,8 @@ def checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
                 if vlq2 is not None:
                     if isDisplaced(vlq2):
                         pass
-                    elif (vlq1.v1n2.csd.value == vpt[2][0].csd.value
-                          or vlq1.v1n2.csd.value == vpt[2][1].csd.value):
+                    elif (vlq1.v1n2.csd.value % 7 == vpt[2][0].csd.value % 7
+                          or vlq1.v1n2.csd.value % 7 == vpt[2][1].csd.value % 7):
                         pass
                     else:
                         bar1 = vpt[0][0].measureNumber
