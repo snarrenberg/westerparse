@@ -389,9 +389,6 @@ class Parser:
                                 openHeads = h_openHeads
 
             # TODO select S2cand and S3cands from the relevant harmonic spans
-            # TODO create entirely new methods for preparing parses
-            # prepareMonotriadicParses
-            # prepareHarmonicParses
 
         # Method for parsing monotriadic third species (fifth is aspirational)
         elif self.part.species in ['third', 'fifth']:
@@ -934,15 +931,24 @@ class Parser:
                                  + f'{h.measureNumber}.')
                         self.errors.append(error)
                         return
+            # see whether j is a local suspension
+            if not openTransitions and openHeads:
+                for t in reversed(openHeads):
+                    h = self.notes[t]
+                    if h.csd.value == j.csd.value:
+                        j.dependency.lefthead = h.index
+                        h.dependency.dependents.append(j.index)
+                        arcGenerateRepetition(j.index, part, arcs)
+                        return
             if not isHarmonic(j, harmonyEnd):
                 openTransitions.append(j.index)
-                # if j.dependency.lefthead is None:
-                #     error = ('This note does not belong to the '
-                #              + 'harmony of the span: '
-                #              + f'{j.nameWithOctave} in bar '
-                #              + f'{j.measureNumber}.')
-                #     self.errors.append(error)
-                #     return
+                if j.dependency.lefthead is None:
+                    error = ('This note does not belong to the '
+                             + 'harmony of the span: '
+                             + f'{j.nameWithOctave} in bar '
+                             + f'{j.measureNumber}.')
+                    self.errors.append(error)
+                    return
 
 # CASE THREE: Step from harmonic to nonharmonic pitch.
         elif all(case3):
