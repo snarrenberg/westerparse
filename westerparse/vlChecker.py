@@ -1227,7 +1227,7 @@ def secondSpeciesForbiddenMotions(score, analyzer,
     in second species.
     Use :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`
     to check motion across the
-    barline and then checks motion from beat to beat.
+    barline and then check motion from beat to beat.
     """
     # TODO Check oblique motion within the bar for voice crossing?
 
@@ -1505,6 +1505,9 @@ def checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
                 if vlq2 is not None:
                     if isDisplaced(vlq2):
                         pass
+                    elif (vlq1.v1n2.csd.value == vpt[2][0].csd.value
+                          or vlq1.v1n2.csd.value == vpt[2][1].csd.value):
+                        pass
                     else:
                         bar1 = vpt[0][0].measureNumber
                         bar2 = vpt[2][0].measureNumber
@@ -1711,7 +1714,8 @@ def checkFourthLeapsInBass(score, analyzer):
 
                     # rules for fourth species
                     elif len(barseg1) == 2 and barseg1[1].tie:
-                        rules4 = [n.tie.type == 'start']
+                        # TODO verify that no additional rule is needed
+                        rules4 = [] # [n.tie.type == 'start']
                         if all(rules1) and all(rules4):
                             impliedSixFour = False
                             break
@@ -1752,7 +1756,7 @@ def checkFourthLeapsInBass(score, analyzer):
                     # rules for fourth species
                     elif len(barseg2) == 2 and barseg2[1].tie:
                         # TODO verify that no additional rule is needed
-                        rules4 = [n.tie.type == 'start']
+                        rules4 = [] # [n.tie.type == 'start']
                         if all(rules1) and all(rules4):
                             impliedSixFour = False
                             break
@@ -1962,6 +1966,9 @@ class Test(unittest.TestCase):
 
         a = voiceLeading.VoiceLeadingQuartet(B3, C4, G4, Bb4)
         self.assertTrue(isCrossRelation(a))
+
+        a = voiceLeading.VoiceLeadingQuartet(C4, G3, C5, B4)
+        self.assertTrue(isDisplaced(a))
 
     def test_isOnbeat(self):
         pass
