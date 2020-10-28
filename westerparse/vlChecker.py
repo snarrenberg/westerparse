@@ -1482,7 +1482,7 @@ def fourthSpeciesForbiddenMotions(score, analyzer,
         if speciesNote.tie is None and speciesNote.beat > 1.0:
             forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                                                    partNum1, partNum2)
-    # TODO check second-species motion across final barline
+    # check second-species motion across final barline
     for vlq in vlqsOnbeat:
         if (isParallelOctave(vlq)
                 and vlq.v1n2.tie is None
