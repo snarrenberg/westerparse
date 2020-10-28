@@ -220,13 +220,15 @@ def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
     in an enclosing Context.
     [Not functional.]
     """
-    locCxt = cxt.getElementsByOffset(cxtOn,
+    locSource = cxt.getElementsByOffset(cxtOn,
                                      cxtOff,
                                      includeEndBoundary=True,
                                      mustFinishInSpan=False,
                                      mustBeginInSpan=True,
                                      includeElementsThatEndAtStart=False,
                                      classList=None)
+    locCxt = context.LocalContext(locSource)
+    locCxt.source = locSource
     locCxt.harmony = cxtHarmony
     return locCxt
 

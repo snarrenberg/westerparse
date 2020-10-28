@@ -96,9 +96,9 @@ class Context:
         self.harmonyEnd = None
         self.offset = None
         # dictionaries, by part, of parse-related data
-        self.openHeads = {}
-        self.openTransitions = {}
-        self.arcs = {}
+        self.openHeads = []
+        self.openTransitions = []
+        self.arcs = []
 
 
 class LocalContext(Context):
@@ -109,9 +109,9 @@ class LocalContext(Context):
         self.harmonyEnd = None
         self.offset = None
         # dictionaries, by part, of parse-related data
-        self.openHeads = {}
-        self.openTransitions = {}
-        self.arcs = {}
+        self.openHeads = []
+        self.openTransitions = []
+        self.arcs = []
         pass
 
     def __repr__(self):
@@ -189,6 +189,21 @@ class GlobalContext(Context):
         # (5) Prepare local contexts for harmonic analysis.
         self.localContexts = {}
 
+        def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
+            """
+            Create a local context given a start and stop offset
+            in an enclosing Context.
+            """
+            locCxt = cxt.flat.getElementsByOffset(cxtOn,
+                                             cxtOff,
+                                             includeEndBoundary=True,
+                                             mustFinishInSpan=False,
+                                             mustBeginInSpan=True,
+                                             includeElementsThatEndAtStart=False,
+                                             classList=None).stream()
+            locCxt.harmony = cxtHarmony
+            return locCxt
+
         # TODO Move harmonic species span stuff to a different place.
         if self.harmonicSpecies:
             if kwargs.get('startPredominant'):
@@ -214,6 +229,46 @@ class GlobalContext(Context):
                     'offsetDominant': offDom,
                     'offsetClosingTonic': offClosTon,
                 }
+            if self.harmonicSpanDict:
+                if self.harmonicSpanDict['offsetPredominant'] is not None:
+                    Ti_context = makeLocalContext(self.score,
+                                                  self.harmonicSpanDict[
+                                                      'offsetInitialTonic'],
+                                                  self.harmonicSpanDict[
+                                                      'offsetPredominant'],
+                                                  0)
+                    self.localContexts['Ti_context'] = Ti_context
+                    P_context = makeLocalContext(self.score,
+                                                  self.harmonicSpanDict[
+                                                      'offsetPredominant'],
+                                                  self.harmonicSpanDict[
+                                                     'offsetDominant'],
+                                                  1)
+                    self.localContexts['P_context'] = P_context
+                elif self.harmonicSpanDict['offsetPredominant'] is None:
+                    Ti_context = makeLocalContext(self.score,
+                                                  self.harmonicSpanDict['offsetInitialTonic'],
+                                                  self.harmonicSpanDict['offsetDominant'],
+                                                  0)
+                    self.localContexts['Ti_context'] = Ti_context
+                D_context = makeLocalContext(self.score,
+                                             self.harmonicSpanDict[
+                                                 'offsetDominant'],
+                                             self.harmonicSpanDict[
+                                                 'offsetClosingTonic'],
+                                             4)
+                self.localContexts['D_context'] = D_context
+                Tc_context = makeLocalContext(self.score,
+                                              self.harmonicSpanDict[
+                                                  'offsetClosingTonic'],
+                                              self.harmonicSpanDict[
+                                                  'offsetClosingTonic']
+                                              + self.barDuration,
+                                              0)
+                self.localContexts['Tc_context'] = Tc_context
+                self.localContexts['D_context'].show()
+                pass
+
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.

@@ -126,7 +126,8 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_10_14T19_23_30_946Z.musicxml'
 #    source = 'TestScoresXML/2020_10_21T16_30_34_038Z.musicxml'
 #    source = 'TestScoresXML/2020_10_24T14_46_50_334Z.musicxml'
-    source = 'TestScoresXML/2020_10_26T20_52_55_920Z.musicxml'
+#    source = 'TestScoresXML/2020_10_26T20_52_55_920Z.musicxml'
+    source = 'TestScoresXML/2020_10_24T04_03_18_019Z.musicxml'
 
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
