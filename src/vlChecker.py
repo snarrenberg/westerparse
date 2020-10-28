@@ -1480,6 +1480,14 @@ def fourthSpeciesForbiddenMotions(score, analyzer,
         if speciesNote.tie is None and speciesNote.beat > 1.0:
             forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                                                    partNum1, partNum2)
+    # Check second-species motion across final barline
+    for vlq in vlqsOnbeat:
+        if (isParallelOctave(vlq)
+                and vlq.v1n2.tie is None
+                and vlq.v2n2.tie is None):
+            error = ('Forbidden parallel motion to octave going into bar '
+                     + str(vlq.v2n2.measureNumber))
+            vlErrors.append(error)
 
 
 def checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
