@@ -1482,6 +1482,14 @@ def fourthSpeciesForbiddenMotions(score, analyzer,
         if speciesNote.tie is None and speciesNote.beat > 1.0:
             forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                                                    partNum1, partNum2)
+    # TODO check second-species motion across final barline
+    for vlq in vlqsOnbeat:
+        if (isParallelOctave(vlq)
+                and vlq.v1n2.tie is None
+                and vlq.v2n2.tie is None):
+            error = ('Forbidden parallel motion to octave going into bar '
+                     + str(vlq.v2n2.measureNumber))
+            vlErrors.append(error)
 
 
 def checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
@@ -1717,6 +1725,17 @@ def checkFourthLeapsInBass(score, analyzer):
                         # TODO verify that no additional rule is needed
                         rules4 = [] # [n.tie.type == 'start']
                         if all(rules1) and all(rules4):
+                            impliedSixFour = False
+                            break
+                    # if fourth species is broken
+                    elif len(barseg1) == 2 and not barseg1[1].tie:
+                        # first in bar, leapt to, or last in bar
+                        # (hence contiguous with bn2)
+                        rules2 = [n.offset == 0.0,
+                                  n.consecutions.leftType == 'skip',
+                                  n.offset+n.quarterLength
+                                  == score.measure(bn1Meas).quarterLength]
+                        if all(rules1) and any(rules2):
                             impliedSixFour = False
                             break
 
