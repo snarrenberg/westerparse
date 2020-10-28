@@ -1717,6 +1717,17 @@ def checkFourthLeapsInBass(score, analyzer):
                         if all(rules1) and all(rules4):
                             impliedSixFour = False
                             break
+                    # if fourth species is broken
+                    elif len(barseg1) == 2 and not barseg1[1].tie:
+                        # first in bar, leapt to, or last in bar
+                        # (hence contiguous with bn2)
+                        rules2 = [n.offset == 0.0,
+                                  n.consecutions.leftType == 'skip',
+                                  n.offset+n.quarterLength
+                                  == score.measure(bn1Meas).quarterLength]
+                        if all(rules1) and any(rules2):
+                            impliedSixFour = False
+                            break
 
                 for n in barseg2:
                     # locally consonant, step-class contiguity
