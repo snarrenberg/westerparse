@@ -782,8 +782,8 @@ def checkControlOfDissonance(score, analyzer):
 
             # Do not evaluate a vertical pair if one note is a rest.
             # TODO This is okay for now, but need to check
-            # the rules for all gambits.
-            # And what if there's a rest during a line?
+            #   the rules for all gambits.
+            #   And what if there's a rest during a line?
             if upperNote.isRest or lowerNote.isRest:
                 continue
 
@@ -808,7 +808,8 @@ def checkControlOfDissonance(score, analyzer):
 
             # Test co-initiated simultaneities.
             if (all(rules1) and not (all(rules2a)
-               or all(rules2b) or all(rules2c))):
+                                     or all(rules2b)
+                                     or all(rules2c))):
                 error = ('Dissonance between co-initiated notes in bar '
                          + str(upperNote.measureNumber) + ': '
                          + str(interval.Interval(lowerNote, upperNote).name)

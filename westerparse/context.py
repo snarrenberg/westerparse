@@ -77,7 +77,7 @@ class EvaluationException(Exception):
         printLogfile(self.logfile)
 
 # TODO: Figure out how to accommodate tonal ambiguity:
-# Make a global context for each option?
+#   Make a global context for each option?
 
 # -----------------------------------------------------------------------------
 # MAIN CLASSES
@@ -229,46 +229,6 @@ class GlobalContext(Context):
                     'offsetDominant': offDom,
                     'offsetClosingTonic': offClosTon,
                 }
-            if self.harmonicSpanDict:
-                if self.harmonicSpanDict['offsetPredominant'] is not None:
-                    Ti_context = makeLocalContext(self.score,
-                                                  self.harmonicSpanDict[
-                                                      'offsetInitialTonic'],
-                                                  self.harmonicSpanDict[
-                                                      'offsetPredominant'],
-                                                  0)
-                    self.localContexts['Ti_context'] = Ti_context
-                    P_context = makeLocalContext(self.score,
-                                                  self.harmonicSpanDict[
-                                                      'offsetPredominant'],
-                                                  self.harmonicSpanDict[
-                                                     'offsetDominant'],
-                                                  1)
-                    self.localContexts['P_context'] = P_context
-                elif self.harmonicSpanDict['offsetPredominant'] is None:
-                    Ti_context = makeLocalContext(self.score,
-                                                  self.harmonicSpanDict['offsetInitialTonic'],
-                                                  self.harmonicSpanDict['offsetDominant'],
-                                                  0)
-                    self.localContexts['Ti_context'] = Ti_context
-                D_context = makeLocalContext(self.score,
-                                             self.harmonicSpanDict[
-                                                 'offsetDominant'],
-                                             self.harmonicSpanDict[
-                                                 'offsetClosingTonic'],
-                                             4)
-                self.localContexts['D_context'] = D_context
-                Tc_context = makeLocalContext(self.score,
-                                              self.harmonicSpanDict[
-                                                  'offsetClosingTonic'],
-                                              self.harmonicSpanDict[
-                                                  'offsetClosingTonic']
-                                              + self.barDuration,
-                                              0)
-                self.localContexts['Tc_context'] = Tc_context
-                self.localContexts['D_context'].show()
-                pass
-
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
@@ -472,7 +432,7 @@ class GlobalContext(Context):
     def setupLocalContexts(self):
         # TODO This currently sets up measure-length contexts,
         # but would also like to set up harmonic spans for harmonic species.
-        # TODO Create a custom offset map for harmonic species
+        # TODO Perhaps create a custom offset map for harmonic species
         #        and use the measure map for third species
         #        offsetspans = []
         #        if harmonicSpecies == True:

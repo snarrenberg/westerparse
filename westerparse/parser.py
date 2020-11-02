@@ -1979,7 +1979,8 @@ class Parser:
         """
         # create the Parse object
         newParse = Parser.Parse()
-        # copy information
+        # copy information, deepcopy objects that may undergo alteration
+        # during the parse
         newParse.S1Index = self.notes[-1].index
         newParse.arcs = copy.deepcopy(self.arcs)
         newParse.lineType = lineType
@@ -1987,6 +1988,7 @@ class Parser:
         newParse.tonic = self.part.tonic
         newParse.mode = self.part.mode
         newParse.partNum = self.part.partNum
+        # newParse.notes = self.notes
         newParse.notes = copy.deepcopy(self.notes.stream())
         newParse.errors = buildErrors
         newParse.notes[newParse.S1Index].rule.name = 'S1'
