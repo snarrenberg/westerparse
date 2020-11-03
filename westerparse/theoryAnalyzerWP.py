@@ -484,10 +484,10 @@ class Analyzer:
                 part1_notesAndRests.getElementAtOrBefore(os2).isNote and
                 part2_notesAndRests.getElementAtOrBefore(os1).isNote and
                 part2_notesAndRests.getElementAtOrBefore(os2).isNote):
-                v1n1=upper_voice_notes.getElementAtOrBefore(os1)
-                v2n1=lower_voice_notes.getElementAtOrBefore(os1)
-                v1n2=upper_voice_notes.getElementAtOrBefore(os2)
-                v2n2=lower_voice_notes.getElementAtOrBefore(os2)
+                v1n1 = upper_voice_notes.getElementAtOrBefore(os1)
+                v2n1 = lower_voice_notes.getElementAtOrBefore(os1)
+                v1n2 = upper_voice_notes.getElementAtOrBefore(os2)
+                v2n2 = lower_voice_notes.getElementAtOrBefore(os2)
                 a = voiceLeading.VoiceLeadingQuartet(v1n1,v1n2,v2n1,v2n2)
                 allVLQs.append(a)
         return allVLQs
@@ -513,12 +513,12 @@ class Analyzer:
                                         classList=(note.Note, chord.Chord))
         allVLQs = []
         ##        defaultKey = None
-        vlist=[]#list of verticalities
+        vlist = []  # list of verticalities
         # get all verticalities
         for v in tsCol.iterateVerticalities():
             vlist.append(v)
 
-        #find average pitch level of each part and determine which part is higher
+        # find average pitch level of each part and determine which part is higher
         part1_mean_pitch=0
         part2_mean_pitch=0
         for i in part1_notes:
@@ -528,10 +528,10 @@ class Analyzer:
             part2_mean_pitch += i.pitch.ps
         part2_mean_pitch /= len(part2_notes)
         if part1_mean_pitch > part2_mean_pitch:
-            upper_voice_notes = part1_notes#part1 is the upper voice
+            upper_voice_notes = part1_notes  # part1 is the upper voice
             lower_voice_notes = part2_notes
         else:
-            upper_voice_notes = part2_notes#part2 is the upper voice
+            upper_voice_notes = part2_notes  # part2 is the upper voice
             lower_voice_notes = part1_notes
 
         # make VLQs
@@ -543,33 +543,33 @@ class Analyzer:
             os1 = vlist[i].offset
             os2 = vlist[i+1].offset
             # check that there are no rests before proceeding
-            if (part1_notesAndRests.getElementAtOrBefore(os1).isNote and
-                part1_notesAndRests.getElementAtOrBefore(os2).isNote and
-                part2_notesAndRests.getElementAtOrBefore(os1).isNote and
-                part2_notesAndRests.getElementAtOrBefore(os2).isNote):
+            if (part1_notesAndRests.getElementAtOrBefore(os1).isNote
+                    and part1_notesAndRests.getElementAtOrBefore(os2).isNote
+                    and part2_notesAndRests.getElementAtOrBefore(os1).isNote
+                    and part2_notesAndRests.getElementAtOrBefore(os2).isNote):
                 pass
                 if (upper_voice_notes.getElementAtOrBefore(os1).beat > 1.0 or
                     lower_voice_notes.getElementAtOrBefore(os1).beat > 1.0):
-                    if not (upper_voice_notes.getElementAtOrBefore(os2).beat == 1.0 and
-                            lower_voice_notes.getElementAtOrBefore(os2).beat == 1.0):
+                    if not (upper_voice_notes.getElementAtOrBefore(os2).beat == 1.0
+                            and lower_voice_notes.getElementAtOrBefore(os2).beat == 1.0):
                         nextOnbeat = False
+                        n = 2
                         while nextOnbeat == False:
-                            n = 2
                             os2 = vlist[i+n].offset
-                            if (upper_voice_notes.getElementAtOrBefore(os2).beat == 1.0 and
-                                lower_voice_notes.getElementAtOrBefore(os2).beat == 1.0):
+                            if (upper_voice_notes.getElementAtOrBefore(os2).beat == 1.0
+                                    and lower_voice_notes.getElementAtOrBefore(os2).beat == 1.0):
                                 nextOnbeat = True
                                 makeVLQ(os1, os2)
                             else:
-                                n =+1
+                                n += 1
             else:
                 pass
 
             def makeVLQ(os1, os2):
-                v1n1=upper_voice_notes.getElementAtOrBefore(os1)
-                v2n1=lower_voice_notes.getElementAtOrBefore(os1)
-                v1n2=upper_voice_notes.getElementAtOrBefore(os2)
-                v2n2=lower_voice_notes.getElementAtOrBefore(os2)
+                v1n1 = upper_voice_notes.getElementAtOrBefore(os1)
+                v2n1 = lower_voice_notes.getElementAtOrBefore(os1)
+                v1n2 = upper_voice_notes.getElementAtOrBefore(os2)
+                v2n2 = lower_voice_notes.getElementAtOrBefore(os2)
                 a = voiceLeading.VoiceLeadingQuartet(v1n1,v1n2,v2n1,v2n2)
                 allVLQs.append(a)
         return allVLQs

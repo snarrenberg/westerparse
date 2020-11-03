@@ -1296,7 +1296,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                                  partNum1=None, partNum2=None):
     """Check the forbidden forms of motion for a pair of lines in
     third species.  Use :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`
-    to check motion across the barline and then checks motion from beat
+    to check motion across the barline and then check motion from beat
     to beat, from off the beat to next but not immediately following
     on the beat.
     """
@@ -1375,7 +1375,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                     vlErrors.append(error)
 
     def checkMotionsOffToOnBeat():
-        # Check motions from off to nonconsecutive onbeat.
+        # Check motions from off to next but not consecutive on beat.
         vlqNonconsecutivesList = analyzer.getNonconsecutiveOffbeatToOnbeatVLQs(score, partNum1, partNum2)
         for vlq in vlqNonconsecutivesList:
             if isParallelUnison(vlq):
