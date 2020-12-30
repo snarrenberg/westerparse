@@ -1330,7 +1330,6 @@ class Parser:
                 if i.csd.value % 7 == 6 and j.csd.value % 7 == 5:
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
-                    openTransitions.remove(i.index)
                     openTransitions.append(j.index)
                 else:
                     j.dependency.lefthead = i.dependency.lefthead
@@ -1533,7 +1532,7 @@ class Parser:
                                              + ' cannot be generated.')
                                     self.errors.append(error)
                                 else:
-                                    break
+                                    return
                         # (Search 2) Look for possible step-related transition
                         # that was previously integrated into a neighbor arc;
                         # look for sd7 as lower neighbor or sd6 as upper

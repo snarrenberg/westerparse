@@ -189,20 +189,20 @@ class GlobalContext(Context):
         # (5) Prepare local contexts for harmonic analysis.
         self.localContexts = {}
 
-        def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
-            """
-            Create a local context given a start and stop offset
-            in an enclosing Context.
-            """
-            locCxt = cxt.flat.getElementsByOffset(cxtOn,
-                                             cxtOff,
-                                             includeEndBoundary=True,
-                                             mustFinishInSpan=False,
-                                             mustBeginInSpan=True,
-                                             includeElementsThatEndAtStart=False,
-                                             classList=None).stream()
-            locCxt.harmony = cxtHarmony
-            return locCxt
+        # def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
+        #     """
+        #     Create a local context given a start and stop offset
+        #     in an enclosing Context.
+        #     """
+        #     locCxt = cxt.flat.getElementsByOffset(cxtOn,
+        #                                      cxtOff,
+        #                                      includeEndBoundary=True,
+        #                                      mustFinishInSpan=False,
+        #                                      mustBeginInSpan=True,
+        #                                      includeElementsThatEndAtStart=False,
+        #                                      classList=None).stream()
+        #     locCxt.harmony = cxtHarmony
+        #     return locCxt
 
         # TODO Move harmonic species span stuff to a different place.
         if self.harmonicSpecies:
@@ -229,6 +229,9 @@ class GlobalContext(Context):
                     'offsetDominant': offDom,
                     'offsetClosingTonic': offClosTon,
                 }
+           # TODO Local harmonies and timespans aren't yet
+            #   used by the parser for all species.
+            self.setupHarmonicTimespans()
 
         # Collect dictionary of local harmonies for use
         # in parsing third species.
@@ -244,9 +247,6 @@ class GlobalContext(Context):
                 ce.logerror()
                 raise EvaluationException()
                 return
-
-        # TODO Local contexts aren't yet used by the parser.
-#        self.setupLocalContexts()
 
     def __repr__(self):
         return('Global context')
@@ -429,7 +429,7 @@ class GlobalContext(Context):
         else:
             pass
 
-    def setupLocalContexts(self):
+    def setupHarmonicTimespans(self):
         # TODO This currently sets up measure-length contexts,
         # but would also like to set up harmonic spans for harmonic species.
         # TODO Perhaps create a custom offset map for harmonic species
@@ -440,46 +440,64 @@ class GlobalContext(Context):
         #        else:
 
         # Get the offset for each downbeat.
-        measureOffsets = self.score.measureOffsetMap()
-        # Get the start/stop offsets for each measure.
-        offsetSpans = pairwise(measureOffsets)
-        # Include the span of the final bar.
-        # measureSpan = offsetSpans[0][1] - offsetSpans[0][0]
-        measureSpan = self.parts[0].getElementsByClass('Measure')[-1].barDuration.quarterLength
-        finalSpanOnset = offsetSpans[-1][1]
-        finalSpan = (finalSpanOnset, finalSpanOnset+measureSpan)
-        offsetSpans.append(finalSpan)
+        offsetSpans = []
+        if self.harmonicSpanDict['offsetPredominant'] is not None:
+            offsetSpans.append((self.harmonicSpanDict['offsetInitialTonic'],
+                                self.harmonicSpanDict['offsetPredominant']))
+            offsetSpans.append((self.harmonicSpanDict['offsetPredominant'],
+                                self.harmonicSpanDict['offsetDominant']))
+        else:
+            offsetSpans.append((self.harmonicSpanDict['offsetInitialTonic'],
+                                self.harmonicSpanDict['offsetDominant']))
+        offsetSpans.append((self.harmonicSpanDict['offsetDominant'],
+                            self.harmonicSpanDict['offsetClosingTonic']))
+        offsetSpans.append((self.harmonicSpanDict['offsetClosingTonic'],
+                            self.score.duration.quarterLength))
 
-        for span in offsetSpans[:-1]:
-            offsetStart = span[0]
-            offsetEnd = span[1]
-            cxt = LocalContext()
-            cxt.offset = offsetStart
-            cxt.harmonyStart = self.localHarmonyDict[offsetStart]
-            cxt.harmonyEnd = self.localHarmonyDict[offsetEnd]
-            # Create a new stream for each context.
-            cxt.score = stream.Score()
-            # Go through the parts of the global context
-            # and add notes to corresponding local parts.
-            for num, part in enumerate(self.score.parts):
-                newpart = stream.Part()
-                newpart.species = part.species
-                cxt.score.append(newpart)
-                for note in part.flat.notes:
-                    if offsetStart <= note.offset <= offsetEnd:
-                        newpart.append(note)
-                # Part-related parsing initialization:
-                # newpart.buffer = [n for n in part.flat.notes
-                #                   if not n.tie or n.tie.type == 'start']
-                #                   # and n.tie.type != 'stop'
-                # newpart.stack = []
-                # newpart.arcs = []
-                # newpart.openHeads = []
-                # newpart.openTransitions = []
-            self.localContexts[cxt.offset] = cxt
+        # create list in the Context for the timespans
+        self.timespans = []
+        for span in offsetSpans:
+            ts = TimeSpan(self.score)
+            ts.start = span[0]
+            ts.end = span[1]
+            # ts.harmonyStart = self.localHarmonyDict[ts.start]
+            # ts.harmonyEnd = self.localHarmonyDict[ts.end]
+            self.timespans.append(ts)
 
-    def makeLocalContext(self, score, start, stop, name):
-        pass
+        for ts in self.timespans:
+            tsNotes = []
+            for n in ts.score.parts[0].flat.notes:
+                if ts.start <= n.offset <= ts.end:
+                    tsNotes.append(n.index)
+            pass # print(tsNotes)
+
+class TimeSpan():
+
+    def __init__(self, score):
+        self.harmonyStart = None
+        self.harmonyEnd = None
+        self.start = None
+        self.end = None
+        self.score = score
+        # dictionaries, by part, of parse-related data
+        self.parts = {} # references to context parts
+        for num, part in enumerate(score.parts):
+            partId = f'Part {num}'
+            self.parts[partId] = TsPart()
+        # list, if TimeSpan has subordinate timespans
+        self.timespans = []
+
+    def __repr__(self):
+        return str('Timespan starting at ' + str(self.start))
+
+
+class TsPart():
+
+        def __init__(self):
+            self.openHeads = []
+            self.openTransitions = []
+            self.arcs = [['X'], ['Y']]
+
 # -----------------------------------------------------------------------------
 # HELPER SCRIPTS
 # -----------------------------------------------------------------------------

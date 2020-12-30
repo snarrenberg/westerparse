@@ -593,7 +593,6 @@ def checkFirstSpecies(score, analyzer, numPair):
     """
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     firstSpeciesForbiddenMotions(score, analytics,
                                  partNum1=numPair[0], partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer)
@@ -612,7 +611,6 @@ def checkSecondSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     secondSpeciesForbiddenMotions(score, analytics,
                                   partNum1=numPair[0], partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer)
@@ -636,7 +634,6 @@ def checkThirdSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     partNumPairs = getAllPartNumPairs(score)
     thirdSpeciesForbiddenMotions(score, analytics,
                                  partNum1=numPair[0], partNum2=numPair[1])
@@ -655,7 +652,6 @@ def checkFourthSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     partNumPairs = getAllPartNumPairs(score)
     fourthSpeciesForbiddenMotions(score, analytics,
                                   partNum1=numPair[0], partNum2=numPair[1])
@@ -696,63 +692,6 @@ def checkConsecutions(score):
                         error = ('Direct repetition around bar '
                                  + str(n.measureNumber) + '.')
                         vlErrors.append(error)
-
-
-def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
-    """Check the final step of a primary line for conformity with
-    the global rule that requires at least one note in the
-    penultimate measure to connect by step to the final
-    tonic. [Not yet functional.
-    The counterpoint evaluation does not yet have access
-    to the results of the line parser, and thus
-    cannot know whether a part is a primary line.]
-    """
-    # TODO Rewrite based on parser's lineType value. Part ID is no longer valid.
-    # Determine whether the the upper part is a primary upper line.
-    #     if score.parts[partNum1].isPrimary == True:
-    if score.parts[partNum1]:
-        # Assume there is no acceptable final step connection until proven true.
-        finalStepConnection = False
-        # Get the last note of the primary upper line.
-        ultimaNote = score.parts[partNum1].recurse().notes[-1]
-        # Get the penultimate note of the bass.
-        penultBass = score.parts[partNum2].recurse().notes[-2]
-        # Collect the notes in the penultimate bar of the upper line.
-        penultBar = score.parts[partNum1].getElementsByClass(stream.Measure)[-2].notes
-        buffer = []
-        stack = []
-
-        def shiftBuffer(stack, buffer):
-            nextnote = buffer[0]
-            buffer.pop(0)
-            stack.append(nextnote)
-        # Fill buffer with notes of penultimate bar in reverse.
-        for n in reversed(penultBar):
-            buffer.append(n)
-        blen = len(buffer)
-        # Start looking for a viable step connection.
-        while blen > 0:
-            if (isDiatonicStep(ultimaNote, buffer[0]) and
-               isConsonanceAboveBass(penultBass, buffer[0])):
-                # Check penultimate note.
-                if len(stack) == 0:
-                    finalStepConnection = True
-                    break
-                # Check other notes, if needed.
-                elif len(stack) > 0:
-                    for s in stack:
-                        if isDiatonicStep(s, buffer[0]):
-                            finalStepConnection = False
-                            break
-                        else:
-                            finalStepConnection = True
-            shiftBuffer(stack, buffer)
-            blen = len(buffer)
-        if not finalStepConnection: # ultimaNote.csd.value % 7 == 0
-            error = ('No final step connection in the primary upper line.')
-            vlErrors.append(error)
-    else:
-        pass
 
 
 def checkControlOfDissonance(score, analyzer):
@@ -2012,9 +1951,6 @@ class Test(unittest.TestCase):
         pass
 
     def test_checkConsecutions(self):
-        pass
-
-    def test_checkFinalStep(self):
         pass
 
     def test_checkControlOfDissonance(self):
