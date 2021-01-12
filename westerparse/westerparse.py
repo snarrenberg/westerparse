@@ -617,6 +617,7 @@ def parsePart(part, cxt):
     part.errors = partParser.errors
     part.typeErrorsDict = partParser.typeErrorsDict
 
+
 def checkFinalStep(cxt):
     # TODO this works when a line is otherwise parsable as a primary line,
     #   but perhaps it should also be called when a line is being evaluated
