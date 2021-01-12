@@ -235,10 +235,12 @@ def findScoreKeys(score):
     # Exempt third-species lines from the hanging notes test.
     partKeyListsFromHanging = [part.keyCandidatesFromHanging
                                for part in score.parts]
+
     # Get only those keys that are shared among all parts.
     scoreKeyCandidatesFromScale = set(
         partKeyListsFromScale[0]
         ).intersection(*partKeyListsFromScale)
+
     # Get those keys shared among all parts not in third species.
     if partKeyListsFromHanging:
         scoreKeyCandidatesFromHanging = set(
@@ -486,7 +488,7 @@ def getPartKeyUsingHangingNotes(part):
     elif hnchord.commonName in ['Perfect Fifth', 'Perfect Fourth']:
         keyCandidates.append((hnchord.root().name, 'minor'))
         keyCandidates.append((hnchord.root().name, 'major'))
-    elif hnchord.commonName in ['unison']:
+    elif hnchord.commonName in ['unison', 'note']:
         keyCandidates.append((hnchord.root().name, 'minor'))
         keyCandidates.append((hnchord.root().name, 'major'))
         keyCandidates.append((hnchord.root().transpose('M6').name, 'minor'))
