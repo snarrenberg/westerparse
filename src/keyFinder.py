@@ -484,7 +484,7 @@ def getPartKeyUsingHangingNotes(part):
     elif hnchord.commonName in ['Perfect Fifth', 'Perfect Fourth']:
         keyCandidates.append((hnchord.root().name, 'minor'))
         keyCandidates.append((hnchord.root().name, 'major'))
-    elif hnchord.commonName in ['unison', 'note']:
+    elif hnchord.commonName in ['unison', 'note', 'Perfect Octave']:
         keyCandidates.append((hnchord.root().name, 'minor'))
         keyCandidates.append((hnchord.root().name, 'major'))
         keyCandidates.append((hnchord.root().transpose('M6').name, 'minor'))
