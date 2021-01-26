@@ -1,1 +1,5 @@
 -e .
+music21~=6.6.0
+westerparse~=1.1.0a0
+pillow~=7.2.0
+setuptools~=49.6.0
