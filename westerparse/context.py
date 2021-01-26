@@ -89,7 +89,7 @@ class Context:
     and for storing objects that represent smaller spans.
     """
 
-    def __init__(self, music21Stream):
+    def __init__(self):
         self.scale = None
         self.triad = None
         self.harmonyStart = None
@@ -104,6 +104,7 @@ class Context:
 class LocalContext(Context):
 
     def __init__(self):
+        super().__init__()
         self.score = None
         self.harmonyStart = None
         self.harmonyEnd = None
@@ -112,7 +113,6 @@ class LocalContext(Context):
         self.openHeads = []
         self.openTransitions = []
         self.arcs = []
-        pass
 
     def __repr__(self):
         return str('Local context starting at ' + str(self.offset))
@@ -152,6 +152,7 @@ class GlobalContext(Context):
        for use in parsing events in third species.
     """
     def __init__(self, score, **kwargs):
+        super().__init__()
         self.score = score
         self.parts = self.score.parts
         self.score.measures = len(self.parts[0].getElementsByClass('Measure'))
@@ -207,12 +208,12 @@ class GlobalContext(Context):
         # TODO Move harmonic species span stuff to a different place.
         if self.harmonicSpecies:
             if kwargs.get('startPredominant'):
-                offPre = (kwargs['startPredominant'] -1) * self.barDuration
+                offPre = (kwargs['startPredominant'] - 1) * self.barDuration
             else:
                 offPre = None
             if kwargs.get('startDominant'):
-                offDom = (kwargs['startDominant'] -1) * self.barDuration
-            offClosTon = (self.score.measures -1) * self.barDuration
+                offDom = (kwargs['startDominant'] - 1) * self.barDuration
+            offClosTon = (self.score.measures - 1) * self.barDuration
             try:
                 validateHarmonicSegmentation(offPre,
                                              offDom,
@@ -229,7 +230,7 @@ class GlobalContext(Context):
                     'offsetDominant': offDom,
                     'offsetClosingTonic': offClosTon,
                 }
-           # TODO Local harmonies and timespans aren't yet
+            # TODO Local harmonies and timespans aren't yet
             #   used by the parser for all species.
             self.setupHarmonicTimespans()
 
@@ -249,7 +250,7 @@ class GlobalContext(Context):
                 return
 
     def __repr__(self):
-        return('Global context')
+        return 'Global context'
 
     def setupPartsGeneral(self):
         # Set part properties: part number, rhythmic species.
@@ -336,15 +337,18 @@ class GlobalContext(Context):
                 part.scale = scale.MelodicMinorScale(part.tonic)
 
             # Infer principal harmonic triads.
-            part.tonicTriad = chord.Chord([part.scale.pitchFromDegree(1),
-                                           part.scale.pitchFromDegree(3),
-                                           part.scale.pitchFromDegree(5)])
-            part.dominantTriad = chord.Chord([part.scale.pitchFromDegree(5),
-                                              part.scale.pitchFromDegree(7, direction='ascending'),
-                                              part.scale.pitchFromDegree(2)])
-            part.predominantTriad = chord.Chord([part.scale.pitchFromDegree(2),
-                                                 part.scale.pitchFromDegree(4),
-                                                 part.scale.pitchFromDegree(6, direction='descending')])
+            part.tonicTriad = chord.Chord(
+                [part.scale.pitchFromDegree(1),
+                 part.scale.pitchFromDegree(3),
+                 part.scale.pitchFromDegree(5)])
+            part.dominantTriad = chord.Chord(
+                [part.scale.pitchFromDegree(5),
+                 part.scale.pitchFromDegree(7, direction='ascending'),
+                 part.scale.pitchFromDegree(2)])
+            part.predominantTriad = chord.Chord(
+                [part.scale.pitchFromDegree(2),
+                 part.scale.pitchFromDegree(4),
+                 part.scale.pitchFromDegree(6, direction='descending')])
 
             # Assign scale degrees to notes.
             for indx, note in enumerate(part.recurse().notes):
@@ -379,14 +383,17 @@ class GlobalContext(Context):
             harmonicEssentials = []
             for part in self.score.parts:
                 # Get all the notes in the local span.
-                localPartElements = part.flat.recurse().getElementsByOffset(offsetStart,
-                                                                            offsetEnd,
-                                                                            includeEndBoundary=False,
-                                                                            mustFinishInSpan=False,
-                                                                            mustBeginInSpan=True,
-                                                                            includeElementsThatEndAtStart=False).notesAndRests
-                localPartNotes = [elem for elem in localPartElements if elem.isNote]
-                # Get onbeat consonances or resolutions of tied-over dissonances.
+                localPartElements = part.flat.recurse().getElementsByOffset(
+                    offsetStart,
+                    offsetEnd,
+                    includeEndBoundary=False,
+                    mustFinishInSpan=False,
+                    mustBeginInSpan=True,
+                    includeElementsThatEndAtStart=False).notesAndRests
+                localPartNotes = [elem for elem in localPartElements
+                                  if elem.isNote]
+                # Get onbeat consonances or resolutions
+                # of tied-over dissonances.
                 for elem in localPartElements:
                     if elem.isNote and elem.offset == offsetStart:
                         if elem.tie is None:
@@ -395,7 +402,8 @@ class GlobalContext(Context):
                     isHarmonic = True
                     if elem.isNote and elem.offset == offsetStart and elem.tie:
                         for n in harmonicEssentials:
-                            if not vlChecker.isTriadicConsonance(elem, note.Note(n)):
+                            if not vlChecker.isTriadicConsonance(elem,
+                                                                 note.Note(n)):
                                 isHarmonic = False
                                 break
                         if elem.isNote and isHarmonic:
@@ -409,7 +417,6 @@ class GlobalContext(Context):
                                 if (resolution.isNote and
                                    resolution.offset > offsetStart and
                                    parser.isStepDown(elem, resolution)):
-                                    # resolution = part.scale.next(elem, 'descending')
                                     harmonicEssentials.append(resolution.pitch)
                 self.localHarmonyDict[offsetStart] = harmonicEssentials
 
@@ -469,9 +476,10 @@ class GlobalContext(Context):
             for n in ts.score.parts[0].flat.notes:
                 if ts.start <= n.offset <= ts.end:
                     tsNotes.append(n.index)
-            pass # print(tsNotes)
+            pass  # print(tsNotes)
 
-class TimeSpan():
+
+class TimeSpan:
 
     def __init__(self, score):
         self.harmonyStart = None
@@ -480,7 +488,7 @@ class TimeSpan():
         self.end = None
         self.score = score
         # dictionaries, by part, of parse-related data
-        self.parts = {} # references to context parts
+        self.parts = {}  # references to context parts
         for num, part in enumerate(score.parts):
             partId = f'Part {num}'
             self.parts[partId] = TsPart()
@@ -491,12 +499,12 @@ class TimeSpan():
         return str('Timespan starting at ' + str(self.start))
 
 
-class TsPart():
+class TsPart:
 
-        def __init__(self):
-            self.openHeads = []
-            self.openTransitions = []
-            self.arcs = [['X'], ['Y']]
+    def __init__(self):
+        self.openHeads = []
+        self.openTransitions = []
+        self.arcs = [['X'], ['Y']]
 
 # -----------------------------------------------------------------------------
 # HELPER SCRIPTS
@@ -505,7 +513,7 @@ class TsPart():
 
 def validateParts(score):
     if len(score.parts) < 1:
-        error = ('The source does not contain any parts.')
+        error = 'The source does not contain any parts.'
         raise ContextError(error)
     else:
         for num, part in enumerate(score.parts):
@@ -556,13 +564,11 @@ def validateHarmonicSegmentation(offPre, offDom, offClosTon, barDuration):
         spanA = offDom
         spanB = totalLength - offDom
     if spanA < spanB:
-        error = ('The initial tonic span is too short.')
+        error = 'The initial tonic span is too short.'
         raise ContextError(error)
 
 
-
 # -----------------------------------------------------------------------------
-
 
 if __name__ == "__main__":
     pass
