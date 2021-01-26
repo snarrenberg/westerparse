@@ -31,6 +31,18 @@ def pairwiseFromLists(list1, list2):
             result.append((c[1], c[0]))
     return result
 
+
+def shiftBuffer(stack, buffer):
+    nextnote = buffer[0]
+    buffer.pop(0)
+    stack.append(nextnote)
+
+
+def shiftStack(stack, buffer):
+    lastnote = stack[-1]
+    stack.pop(-1)
+    buffer.insert(0, lastnote)
+
 # -----------------------------------------------------------------------------
 
 

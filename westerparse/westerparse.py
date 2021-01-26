@@ -40,6 +40,7 @@ from westerparse import context
 from westerparse import parser
 from westerparse import vlChecker
 from westerparse import theoryAnalyzerWP
+from westerparse import utilities
 
 # -----------------------------------------------------------------------------
 # LOGGER
@@ -634,11 +635,6 @@ def checkFinalStep(part, cxt):
     buffer = []
     stack = []
 
-    # TODO move buffer function to utilities.py ?
-    def shiftBuffer(stack, buffer):
-        nextnote = buffer[0]
-        buffer.pop(0)
-        stack.append(nextnote)
     # Fill buffer with notes of penultimate bar in reverse.
     for n in reversed(penultBar):
         buffer.append(n)
@@ -658,7 +654,7 @@ def checkFinalStep(part, cxt):
                         break
                     else:
                         finalStepConnection = True
-        shiftBuffer(stack, buffer)
+        utilities.shiftBuffer(stack, buffer)
         blen = len(buffer)
     # Write an error in the context error dictionary for this part
     # and set isPrimary to False

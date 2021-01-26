@@ -49,7 +49,7 @@ import unittest
 
 from music21 import *
 
-from westerparse.utilities import pairwise
+from westerparse.utilities import pairwise, shiftBuffer, shiftStack
 from westerparse import dependency
 from westerparse import westerparse
 
@@ -4054,16 +4054,8 @@ class Parser:
 # -----------------------------------------------------------------------------
 
 
-def shiftBuffer(stack, buffer):
-    nextnote = buffer[0]
-    buffer.pop(0)
-    stack.append(nextnote)
-
-
-def shiftStack(stack, buffer):
-    lastnote = stack[-1]
-    stack.pop(-1)
-    buffer.insert(0, lastnote)
+# from utilities.py
+#   shiftBuffer, shiftStack
 
 
 def isTriadMember(note, stufe, context=None):
