@@ -13,7 +13,7 @@ import itertools
 
 
 def pairwise(span):
-    "s -> (s0, s1), (s1, s2), (s2, s3), ..."
+    """s -> (s0, s1), (s1, s2), (s2, s3), ..."""
     a, b = itertools.tee(span)
     next(b, None)
     zipped = zip(a, b)
@@ -21,7 +21,7 @@ def pairwise(span):
 
 
 def pairwiseFromLists(list1, list2):
-    'return permutations from two lists'
+    """return permutations from two lists"""
     comb = [(i, j) for i in list1 for j in list2]
     result = []
     for c in comb:
