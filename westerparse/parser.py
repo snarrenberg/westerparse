@@ -2118,6 +2118,7 @@ class Parser:
             self.arcbasic = None
             self.species = None
             self.harmonicSpecies = False
+            self.harmonicSpanDict = {}
 
         def __repr__(self):
             return self.label
