@@ -112,7 +112,7 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Bass02.musicxml'
 #    source = 'TestScoresXML/Westergaard057c.musicxml'
  #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
-    source = 'TestScoresXML/Westergaard100k.musicxml'
+#    source = 'TestScoresXML/Westergaard100k.musicxml'
 #    source = 'TestScoresXML/WestergaardP111c.musicxml'
 #    source = 'TestScoresXML/WestergaardP111d.musicxml'
 #    source = 'TestScoresXML/Westergaard105.musicxml'
@@ -132,7 +132,8 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_10_26T20_52_55_920Z.musicxml'
 #    source = 'TestScoresXML/2020_10_24T04_03_18_019Z.musicxml'
 #    source = 'TestScoresXML/2020_10_29T17_51_23_268Z.musicxml'
-
+#    source = 'TestScoresXML/2021_01_19T17_58_09_439Z.musicxml'
+    source = 'TestScoresXML/2021_01_25T22_53_12_206Z.musicxml'
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
 #    source = 'TestScoresXML/chorale066.6.musicxml'
@@ -210,6 +211,11 @@ if __name__ == "__main__":
             westerparse.evaluateLines(source, show='show',
                                       partSelection=0,
                                       partLineType='primary')
+        elif verify == 61:
+            westerparse.evaluateLines(source, show='showWestergaardParse',
+                                  partSelection=0,
+                                  partLineType='primary')
+
         elif verify == 7:
             westerparse.evaluateLines(source, show=None,
                                       partSelection=-1,

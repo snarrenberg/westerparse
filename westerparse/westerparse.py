@@ -296,10 +296,9 @@ def parseContext(cxt,
         if part.typeErrorsDict:
             for key, value in part.typeErrorsDict.items():
                 cxt.errorsDict[part.name][key] = value
-
-    # Check the final step in any primary lines and weed out ones that do
-    # not pass the test
-    checkFinalStep(cxt)
+        # Check the final step in potential primary lines
+        if part.isPrimary:
+            checkFinalStep(part, cxt)
 
     # Determine whether all parts are generable.
     generableParts = 0
@@ -618,116 +617,61 @@ def parsePart(part, cxt):
     part.typeErrorsDict = partParser.typeErrorsDict
 
 
-def checkFinalStep(cxt):
+def checkFinalStep(part, cxt):
     # TODO this works when a line is otherwise parsable as a primary line,
     #   but perhaps it should also be called when a line is being evaluated
     #   as a primary line, regardless of whether it is otherwise generable
 
-    for part in cxt.parts:
-        # TODO rewrite to eliminate redundancy in if and elif statements
-        #   relocate the difference inside the while loop, with two sets of conditions
-        #   counterpointTest = True, False
-        # TODO rethink how the rule works in third species:
-        #   e.g., 7-6-5 | 8, the local passing does not interfere with the
-        #   7-8 connection
-        if part.isPrimary and len(cxt.parts) == 1:
-            # Assume there is no acceptable final step connection until proven true.
-            finalStepConnection = False
-            # Get the last note of the primary upper line.
-            ultimaNote = part.recurse().notes[-1]
-            # Collect the notes in the penultimate bar of the upper line.
-            penultBar = part.getElementsByClass(stream.Measure)[-2].notes
-            buffer = []
-            stack = []
+    # TODO rethink how the rule works in third species:
+    #   e.g., 7-6-5 | 8, the local passing does not interfere with the
+    #   7-8 connection
+    # Assume there is no acceptable final step connection until proven true.
+    finalStepConnection = False
+    # Get the last note of the primary upper line.
+    ultimaNote = part.recurse().notes[-1]
+    # Collect the notes in the penultimate bar of the upper line.
+    penultBar = part.getElementsByClass(stream.Measure)[-2].notes
+    buffer = []
+    stack = []
 
-            # TODO move buffer function to utilities.py ?
-            def shiftBuffer(stack, buffer):
-                nextnote = buffer[0]
-                buffer.pop(0)
-                stack.append(nextnote)
-            # Fill buffer with notes of penultimate bar in reverse.
-            for n in reversed(penultBar):
-                buffer.append(n)
-            blen = len(buffer)
-            # Start looking for a viable step connection.
-            while blen > 0:
-                if vlChecker.isDiatonicStep(ultimaNote, buffer[0]):
-                    # Check penultimate note.
-                    if len(stack) == 0:
-                        finalStepConnection = True
+    # TODO move buffer function to utilities.py ?
+    def shiftBuffer(stack, buffer):
+        nextnote = buffer[0]
+        buffer.pop(0)
+        stack.append(nextnote)
+    # Fill buffer with notes of penultimate bar in reverse.
+    for n in reversed(penultBar):
+        buffer.append(n)
+    blen = len(buffer)
+    # Start looking for a viable step connection.
+    while blen > 0:
+        if vlChecker.isDiatonicStep(ultimaNote, buffer[0]):
+            # Check penultimate note.
+            if len(stack) == 0:
+                finalStepConnection = True
+                break
+            # Check other notes, if needed.
+            elif len(stack) > 0:
+                for s in stack:
+                    if vlChecker.isDiatonicStep(s, buffer[0]):
+                        finalStepConnection = False
                         break
-                    # Check other notes, if needed.
-                    elif len(stack) > 0:
-                        for s in stack:
-                            if vlChecker.isDiatonicStep(s, buffer[0]):
-                                finalStepConnection = False
-                                break
-                            else:
-                                finalStepConnection = True
-                shiftBuffer(stack, buffer)
-                blen = len(buffer)
-            if not finalStepConnection:  # ultimaNote.csd.value % 7 == 0
-                error = (
-                    'No final step connection in the primary upper line.')
-                parserErrors = cxt.errorsDict[part.name]['parser errors']
-                parserErrors.append(error)
-                cxt.errorsDict[part.name]['parser errors'] = parserErrors
-                part.isPrimary = False
-            else:
-                pass
-
-        elif (part.isPrimary and len(cxt.parts) > 1
-              and part.partNum != cxt.parts[-1].partNum):
-            # Assume there is no acceptable final step connection until proven true.
-            finalStepConnection = False
-            # Get the last note of the primary upper line.
-            ultimaNote = part.recurse().notes[-1]
-            # Get the penultimate note of the bass.
-            penultBass = cxt.parts[-1].recurse().notes[-2]
-            # Collect the notes in the penultimate bar of the upper line.
-            penultBar = part.getElementsByClass(stream.Measure)[-2].notes
-            buffer = []
-            stack = []
-
-            def shiftBuffer(stack, buffer):
-                nextnote = buffer[0]
-                buffer.pop(0)
-                stack.append(nextnote)
-            # Fill buffer with notes of penultimate bar in reverse.
-            for n in reversed(penultBar):
-                buffer.append(n)
-            blen = len(buffer)
-            # Start looking for a viable step connection.
-            while blen > 0:
-                if (vlChecker.isDiatonicStep(ultimaNote, buffer[0]) and
-                   vlChecker.isConsonanceAboveBass(penultBass, buffer[0])):
-                    # Check penultimate note.
-                    if len(stack) == 0:
+                    else:
                         finalStepConnection = True
-                        break
-                    # Check other notes, if needed.
-                    elif len(stack) > 0:
-                        for s in stack:
-                            if vlChecker.isDiatonicStep(s, buffer[0]):
-                                finalStepConnection = False
-                                break
-                            else:
-                                finalStepConnection = True
-                shiftBuffer(stack, buffer)
-                blen = len(buffer)
-            if not finalStepConnection: # ultimaNote.csd.value % 7 == 0
-                error = (
-                    'No final step connection in the primary upper line.')
-                parserErrors = cxt.errorsDict[part.name]['parser errors']
-                parserErrors.append(error)
-                cxt.errorsDict[part.name]['parser errors'] = parserErrors
-                part.isPrimary = False
-            else:
-                # print('final step connection found')
-                pass
-        else:
-            pass
-
+        shiftBuffer(stack, buffer)
+        blen = len(buffer)
+    # Write an error in the context error dictionary for this part
+    # and set isPrimary to False
+    if not finalStepConnection:  # ultimaNote.csd.value % 7 == 0
+        error = (
+            'No final step connection in the primary upper line.')
+        cxt.errorsDict[part.name]['parser errors'].append(error)
+#        part.errors.append(error)
+#        parserErrors = cxt.errorsDict[part.name]['parser errors']
+#        parserErrors.append(error)
+#        cxt.errorsDict[part.name]['parser errors'] = parserErrors
+        part.isPrimary = False
+    else:
         pass
 
 
