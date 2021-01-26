@@ -222,12 +222,12 @@ def makeLocalContext(cxt, cxtOn, cxtOff, cxtHarmony):
     [Not functional.]
     """
     locSource = cxt.getElementsByOffset(cxtOn,
-                                     cxtOff,
-                                     includeEndBoundary=True,
-                                     mustFinishInSpan=False,
-                                     mustBeginInSpan=True,
-                                     includeElementsThatEndAtStart=False,
-                                     classList=None)
+                                        cxtOff,
+                                        includeEndBoundary=True,
+                                        mustFinishInSpan=False,
+                                        mustBeginInSpan=True,
+                                        includeElementsThatEndAtStart=False,
+                                        classList=None)
     locCxt = context.LocalContext(locSource)
     locCxt.source = locSource
     locCxt.harmony = cxtHarmony
@@ -353,11 +353,11 @@ def parseContext(cxt,
                                   'as a generic line.')
                 elif partLineType is not None:
                     if partLineType == 'primary' and part.isPrimary:
-                        result = ('The line is generable as a primary line.')
+                        result = 'The line is generable as a primary line.'
                     elif partLineType == 'bass' and part.isBass:
-                        result = ('The line is generable as a bass line.')
+                        result = 'The line is generable as a bass line.'
                     elif partLineType == 'generic' and part.isGeneric:
-                        result = ('The line is generable as a generic line.')
+                        result = 'The line is generable as a generic line.'
                     # ERRORS
                     else:
                         error = ('The line is not generable as the '
@@ -485,7 +485,7 @@ def parseContext(cxt,
                     if part.isPrimary:
                         error = (error + '\n\t' + part.name +
                                  ' is generable as a primary line.')
-                    elif (not part.isPrimary and part.isGeneric):
+                    elif not part.isPrimary and part.isGeneric:
                         error = (error + '\n\t' + part.name +
                                  ' is generable as a generic line.')
                     else:
@@ -587,7 +587,8 @@ def validateLineTypeSelection(cxt, partSelection, partLineType):
             pass
         raise context.ContextError(
             'Context Error: You have selected the following line type: '
-            + f'{partLineType}. \nHowever, line type selection is only permitted '
+            + f'{partLineType}. '
+            + '\nHowever, line type selection is only permitted '
             + 'when the source is a single line \nor there is a valid '
             + 'part selection.'
             )
@@ -705,8 +706,8 @@ def selectedPreferredParseSets(cxt, show):
                 domOffsetDiff = (a - b)
                 if abs(domOffsetDiff) < lowestDifference:
                     lowestDifference = abs(domOffsetDiff)
-                domOffsetDiffList.append((abs(domOffsetDiff), (interpPrimary,
-                                                          interpBass)))
+                domOffsetDiffList.append((abs(domOffsetDiff),
+                                          (interpPrimary, interpBass)))
 #                    if interpBass.S3Index == interpPrimary.S3Final:
 #                        preferredGlobals.append((interpPrimary, interpBass))
         for pair in domOffsetDiffList:
@@ -728,8 +729,10 @@ def selectedPreferredParseSets(cxt, show):
                 offDom = cxt.harmonicSpanDict['offsetDominant']
                 offClosTon = cxt.harmonicSpanDict['offsetClosingTonic']
 
-                # implement preference rules for global coordination of linear structures
-                # Check for span placement and consonance of primary upper line notes
+                # implement preference rules for global coordination of
+                # linear structures
+                # Check for span placement and consonance of
+                # primary upper line notes
                 # bass line pitches have already been checked
 
                 def getBassNote(upperNote, context):
@@ -813,7 +816,7 @@ def selectedPreferredParseSets(cxt, show):
 
         if cxt.harmonicSpecies:
             preferredGlobals = [prse for prse in allGlobals
-                            if prse not in nonharmonicParses]
+                                if prse not in nonharmonicParses]
 
 
         for pair in preferredGlobals:
@@ -1089,6 +1092,7 @@ class Test(unittest.TestCase):
         self.assertTrue(evaluateLines(source))
 
 # -----------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     unittest.main()
