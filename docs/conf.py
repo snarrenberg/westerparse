@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 # -- Project information -----------------------------------------------------
 
 project = 'WesterParse'
-copyright = u'2020, Robert Snarrenberg'
+copyright = u'2021, Robert Snarrenberg'
 author = u'Robert Snarrenberg'
 version = release =  '1.1.0a'
 
