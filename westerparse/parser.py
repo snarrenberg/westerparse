@@ -61,6 +61,7 @@ from westerparse import westerparse
 selectPreferredParses = True
 getStructuralLevels = True
 showWestergaardInterpretations = False
+gatherParseMeasurementData = True
 
 # for third species
 localNeighborsOnly = False
@@ -2120,6 +2121,12 @@ class Parser:
             self.harmonicSpecies = False
             self.harmonicSpanDict = {}
 
+            # attributes for comparing parses
+            self.arcCount = 0
+            self.levelCount = 0
+            self.dependencyMeasure = 0
+            self.integrationMeasure = 0
+
         def __repr__(self):
             return self.label
 
@@ -2136,8 +2143,7 @@ class Parser:
             * Consolidate arcs into longer passing motions, if possible
             * Assemble lists for rule labels and parentheses, to be used
               when generating representations of the interpretation.
-            * Set the dependency level of each note. [This function is
-              currently disabled.]
+            * Set the dependency level of each note [if function enabled].
             """
             # log message
             logger.debug('Beginning parse: ' + str(self.label))
@@ -2189,6 +2195,8 @@ class Parser:
                                         for lbl in self.ruleLabels])
                              )
             logger.debug(parseData)
+            if gatherParseMeasurementData:
+                self.quantifyParse()
             if showWestergaardInterpretations:
                 self.displayWestergaardParse()
 
@@ -3850,6 +3858,66 @@ class Parser:
                               for n in self.notes
                               if n.rule.level is not None]
             generationTable = [n.rule.level for n in self.notes]
+
+        def quantifyParse(self):
+            """
+            Examine the parse of a line and measure its complexity
+            and coherence.
+            Complexity involves two measures:
+            (1) Count the number of secondary arcs (prefer fewer).
+            (2) Count the number of secondary structural levels (prefer fewer).
+            Coherence involves two additional measures:
+            (3) Count the number of notes that are neither dependent nor
+            depended upon (prefer fewer).
+            (4) Count the number of secondary arcs that are not connected to
+            the basic arc (prefer fewer).
+            [Consider assigning different weights to these four factors.]
+            """
+
+            # Count non-basic arcs
+            self.arcCount = len(self.arcs) - 1
+
+            # Set counters for levels and independent notes
+            deepestLevel = 0
+            independentCount = 0
+            for n in self.notes:
+                if n.rule.level > deepestLevel:
+                    deepestLevel = n.rule.level
+                if (n.dependency.lefthead is None
+                        and n.dependency.righthead is None
+                        and not n.dependency.dependents):
+                    independentCount += 1
+            # Basic arc has at 2 or 3 levels, so subtract the corresponding
+            # Pythonic value (1 or 2) from
+            # the total number of levels to find number of secondary levels.
+            if len(self.arcBasic) > 2:
+                self.levelCount = deepestLevel - 2
+            elif len(self.arcBasic) == 2:
+                self.levelCount = deepestLevel - 1
+            # Get the count of independent notes.
+            self.dependencyMeasure = independentCount
+
+            independentArcs = []
+            independentArcCount = 0
+            # Find all of the nonintegrated secondary arcs.
+            for arc in self.arcs:
+                if arc[0] in self.arcBasic:
+                    pass
+                elif arc[-1] in self.arcBasic:
+                        pass
+                else:
+                    independentArcs.append(arc)
+            # Of the nonintegrated arcs, count those that aren't embedded.
+            self.integrationMeasure = len(independentArcs)
+
+            # Calculate the span of the basic arc relative to the length
+            # of the line: = index of arcBasic[0]
+#            print('basic arc length factor:', self.arcBasic[0])
+
+            # Quantify the interpretation features.
+            interpValue = (self.arcCount + self.levelCount + self.dependencyMeasure + self.integrationMeasure)
+#            print(self.lineType, interpValue)
+#            print(self.lineType, self.arcCount, self.levelCount, self.dependencyMeasure, self.integrationMeasure)
 
         def displayWestergaardParse(self):
             """Create a multileveled illustration of a parse of the sort
