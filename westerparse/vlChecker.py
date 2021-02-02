@@ -101,17 +101,17 @@ or :py:func:'fourthSpeciesControlOfDissonance'.
 # NB: vlq parts and score Parts are numbered top to bottom.
 # NB: vPair parts are numbered bottom to top.
 
-import itertools
+# import itertools
 import unittest
 import logging
 
 from music21 import *
 
-import csd
-import context
-import theoryAnalyzerWP
-import theoryResultWP
-from utilities import *
+# from westerparse import csd
+# from westerparse import context
+from westerparse import theoryAnalyzerWP
+# from westerparse import theoryResultWP
+from westerparse.utilities import pairwise
 
 # -----------------------------------------------------------------------------
 # LOGGER
@@ -466,7 +466,7 @@ def isVoiceOverlap(vlq):
 
 def isVoiceCrossing(vlq):
     """Input a VLQ and determine whether
-    the voices cross: v1n1 < v2n1 and v1n2 < v2n2.
+    the voices cross: v1n1 < v2n1 or v1n2 < v2n2.
     """
     rules = [vlq.v1n1.pitch < vlq.v2n1.pitch,
              vlq.v1n2.pitch < vlq.v2n2.pitch]
@@ -506,6 +506,7 @@ def isDisplaced(vlq):
         return False
     else:
         return True
+
 
 # Methods for notes
 
@@ -592,7 +593,6 @@ def checkFirstSpecies(score, analyzer, numPair):
     """
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     firstSpeciesForbiddenMotions(score, analytics,
                                  partNum1=numPair[0], partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer)
@@ -611,7 +611,6 @@ def checkSecondSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     secondSpeciesForbiddenMotions(score, analytics,
                                   partNum1=numPair[0], partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer)
@@ -635,7 +634,6 @@ def checkThirdSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     partNumPairs = getAllPartNumPairs(score)
     thirdSpeciesForbiddenMotions(score, analytics,
                                  partNum1=numPair[0], partNum2=numPair[1])
@@ -654,7 +652,6 @@ def checkFourthSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
-    checkFinalStep(score, analytics, partNum1=numPair[0], partNum2=numPair[1])
     partNumPairs = getAllPartNumPairs(score)
     fourthSpeciesForbiddenMotions(score, analytics,
                                   partNum1=numPair[0], partNum2=numPair[1])
@@ -697,63 +694,6 @@ def checkConsecutions(score):
                         vlErrors.append(error)
 
 
-def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
-    """Check the final step of a primary line for conformity with
-    the global rule that requires at least one note in the
-    penultimate measure to connect by step to the final
-    tonic. [Not yet functional.
-    The counterpoint evaluation does not yet have access
-    to the results of the line parser, and thus
-    cannot know whether a part is a primary line.]
-    """
-    # TODO Rewrite based on parser's lineType value. Part ID is no longer valid.
-    # Determine whether the the upper part is a primary upper line.
-    #     if score.parts[partNum1].isPrimary == True:
-    if score.parts[partNum1].id == 'Primary Upper Line':
-        # Assume there is no acceptable final step connection until proven true.
-        finalStepConnection = False
-        # Get the last note of the primary upper line.
-        ultimaNote = score.parts[partNum1].recurse().notes[-1]
-        # Get the penultimate note of the bass.
-        penultBass = score.parts[partNum2].recurse().notes[-2]
-        # Collect the notes in the penultimate bar of the upper line.
-        penultBar = score.parts[partNum1].getElementsByClass(stream.Measure)[-2].notes
-        buffer = []
-        stack = []
-
-        def shiftBuffer(stack, buffer):
-            nextnote = buffer[0]
-            buffer.pop(0)
-            stack.append(nextnote)
-        # Fill buffer with notes of penultimate bar in reverse.
-        for n in reversed(penultBar):
-            buffer.append(n)
-        blen = len(buffer)
-        # Start looking for a viable step connection.
-        while blen > 0:
-            if (isDiatonicStep(ultimaNote, buffer[0]) and
-               isConsonanceAboveBass(penultBass, buffer[0])):
-                # Check penultimate note.
-                if len(stack) == 0:
-                    finalStepConnection = True
-                    break
-                # Check other notes, if needed.
-                elif len(stack) > 0:
-                    for s in stack:
-                        if isDiatonicStep(s, buffer[0]):
-                            finalStepConnection = False
-                            break
-                        else:
-                            finalStepConnection = True
-            shiftBuffer(stack, buffer)
-            blen = len(buffer)
-        if not finalStepConnection:
-            error = ('No final step connection in the primary upper line.')
-            vlErrors.append(error)
-    else:
-        pass
-
-
 def checkControlOfDissonance(score, analyzer):
     """Check the score for conformity with the rules that control
     dissonance in first, second, or third species.
@@ -781,8 +721,8 @@ def checkControlOfDissonance(score, analyzer):
 
             # Do not evaluate a vertical pair if one note is a rest.
             # TODO This is okay for now, but need to check
-            # the rules for all gambits.
-            # And what if there's a rest during a line?
+            #   the rules for all gambits.
+            #   And what if there's a rest during a line?
             if upperNote.isRest or lowerNote.isRest:
                 continue
 
@@ -807,7 +747,8 @@ def checkControlOfDissonance(score, analyzer):
 
             # Test co-initiated simultaneities.
             if (all(rules1) and not (all(rules2a)
-               or all(rules2b) or all(rules2c))):
+                                     or all(rules2b)
+                                     or all(rules2c))):
                 error = ('Dissonance between co-initiated notes in bar '
                          + str(upperNote.measureNumber) + ': '
                          + str(interval.Interval(lowerNote, upperNote).name)
@@ -1219,13 +1160,14 @@ def firstSpeciesForbiddenMotions(score, analyzer,
                                                    partNum2)
 
 
+
 def secondSpeciesForbiddenMotions(score, analyzer,
                                   partNum1=None, partNum2=None):
     """Check the forbidden forms of motion for a pair of lines
     in second species.
     Use :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`
     to check motion across the
-    barline and then checks motion from beat to beat.
+    barline and then check motion from beat to beat.
     """
     # TODO Check oblique motion within the bar for voice crossing?
 
@@ -1256,7 +1198,7 @@ def secondSpeciesForbiddenMotions(score, analyzer,
                 vSpeciesNote2 = vlq.v1n2
                 vCantusNote1 = vlq.v2n1
                 vSpeciesPartNum = vlq.v1n1.getContextByClass('Part').partNum
-            elif vlq.v2n1.getContextByClass('Part').species == 'second':
+            elif vlq.v1n1.getContextByClass('Part').species == 'second':
                 vSpeciesNote1 = vlq.v2n1
                 vSpeciesNote2 = vlq.v2n2
                 vCantusNote1 = vlq.v1n1
@@ -1293,7 +1235,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                                  partNum1=None, partNum2=None):
     """Check the forbidden forms of motion for a pair of lines in
     third species.  Use :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`
-    to check motion across the barline and then checks motion from beat
+    to check motion across the barline and then check motion from beat
     to beat, from off the beat to next but not immediately following
     on the beat.
     """
@@ -1372,7 +1314,7 @@ def thirdSpeciesForbiddenMotions(score, analyzer,
                     vlErrors.append(error)
 
     def checkMotionsOffToOnBeat():
-        # Check motions from off to nonconsecutive onbeat.
+        # Check motions from off to next but not consecutive on beat.
         vlqNonconsecutivesList = analyzer.getNonconsecutiveOffbeatToOnbeatVLQs(score, partNum1, partNum2)
         for vlq in vlqNonconsecutivesList:
             if isParallelUnison(vlq):
@@ -1480,7 +1422,7 @@ def fourthSpeciesForbiddenMotions(score, analyzer,
         if speciesNote.tie is None and speciesNote.beat > 1.0:
             forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                                                    partNum1, partNum2)
-    # Check second-species motion across final barline
+    # check second-species motion across final barline
     for vlq in vlqsOnbeat:
         if (isParallelOctave(vlq)
                 and vlq.v1n2.tie is None
@@ -1511,15 +1453,15 @@ def checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
                 if vlq2 is not None:
                     if isDisplaced(vlq2):
                         pass
-                elif (vlq1.v1n2.csd.value % 7 == vpt[2][0].csd.value % 7
-                      or vlq1.v1n2.csd.value % 7 == vpt[2][1].csd.value % 7):
-                    pass
-                else:
-                    bar1 = vpt[0][0].measureNumber
-                    bar2 = vpt[2][0].measureNumber
-                    error = (f'Non-consecutive parallel {p_int} in bars {bar1}'
+                    elif (vlq1.v1n2.csd.value % 7 == vpt[2][0].csd.value % 7
+                          or vlq1.v1n2.csd.value % 7 == vpt[2][1].csd.value % 7):
+                        pass
+                    else:
+                        bar1 = vpt[0][0].measureNumber
+                        bar2 = vpt[2][0].measureNumber
+                        error = (f'Non-consecutive parallel {p_int} in bars {bar1}'
                              f' and {bar2}.')
-                    vlErrors.append(error)
+                        vlErrors.append(error)
 
 
 def checkSecondSpeciesNonconsecutiveUnisons(score, analyzer,
@@ -1719,7 +1661,7 @@ def checkFourthLeapsInBass(score, analyzer):
                             break
 
                     # rules for fourth species
-                    elif len(barseg1) == 2 and barseg1[0].tie:
+                    elif len(barseg1) == 2 and barseg1[1].tie:
                         # TODO verify that no additional rule is needed
                         rules4 = [] # [n.tie.type == 'start']
                         if all(rules1) and all(rules4):
@@ -1771,9 +1713,9 @@ def checkFourthLeapsInBass(score, analyzer):
                             break
 
                     # rules for fourth species
-                    elif len(barseg2) == 2 and barseg2[0].tie:
+                    elif len(barseg2) == 2 and barseg2[1].tie:
                         # TODO verify that no additional rule is needed
-                        rules4 = []  # [n.tie.type == 'start']
+                        rules4 = [] # [n.tie.type == 'start']
                         if all(rules1) and all(rules4):
                             impliedSixFour = False
                             break
@@ -1875,6 +1817,7 @@ def makeVLQfromVertPairs(vpair1, vpair2):
         vlq = voiceLeading.VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2)
 
     return vlq
+
 
 # -----------------------------------------------------------------------------
 # TESTS
@@ -1983,6 +1926,9 @@ class Test(unittest.TestCase):
         a = voiceLeading.VoiceLeadingQuartet(B3, C4, G4, Bb4)
         self.assertTrue(isCrossRelation(a))
 
+        a = voiceLeading.VoiceLeadingQuartet(C4, G3, C5, B4)
+        self.assertTrue(isDisplaced(a))
+
     def test_isOnbeat(self):
         pass
 
@@ -2005,9 +1951,6 @@ class Test(unittest.TestCase):
         pass
 
     def test_checkConsecutions(self):
-        pass
-
-    def test_checkFinalStep(self):
         pass
 
     def test_checkControlOfDissonance(self):

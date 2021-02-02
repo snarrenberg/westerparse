@@ -1,9 +1,9 @@
-#!/Users/snarrenberg/opt/anaconda3/envs/westerparse/bin/python
-import os
-import sys
-sys.path.insert(0, os.path.abspath('../src'))
+ #!/Users/snarrenberg/opt/anaconda3/envs/westerparse/bin/python
+#import os
+#import sys
+#sys.path.insert(0, os.path.abspath('../westerparse'))
 
-import westerparse
+from westerparse import westerparse
 
 if __name__ == "__main__":
     # self_test code
@@ -60,8 +60,9 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/ThirdSpecies08.musicxml'    # not currently generable
 #    source = 'TestScoresXML/ThirdSpecies09.musicxml'
 #    source = 'TestScoresXML/ThirdSpecies040.musicxml'
+#    source = 'TestScoresXML/ThirdSpecies101.musicxml'
 
-#    source = 'TestScoresXML/FourthSpecies01.musicxml'
+    #    source = 'TestScoresXML/FourthSpecies01.musicxml'
 #    source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
 #    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
@@ -69,7 +70,14 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/FourthSpecies21.musicxml'
 #    source = 'TestScoresXML/FourthSpecies22.musicxml'
 
-#    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
+#    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml' # 10, 12
+#    source = 'TestScoresXML/HarmonicSecondSpecies02.musicxml' # 8, 10
+#   source = 'TestScoresXML/HarmonicSecondSpecies03.musicxml'  # 8, 14 initial tonic too short
+#    source = 'TestScoresXML/harmonic_species1.musicxml' # 8, 10
+#    source = 'TestScoresXML/harmonic_species2.musicxml'  # 11, 13
+#    source = 'TestScoresXML/harmonic_species2_mistakes.musicxml'
+#    source = 'TestScoresXML/harmonic_species3.musicxml'  #  7, 9
+#    source = 'TestScoresXML/harmonic_species3_mistakes.musicxml'
 
 #    source = 'TestScoresXML/CombinedSpecies1234.musicxml'
 
@@ -98,10 +106,12 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
 #    source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
 #    source = 'TestScoresXML/2020_08_24T20_39_55_774Z.musicxml'
-#    source = 'TestScoresXML/2020_10_14T16_31_54_122Z.musicxml'
-    source = 'TestScoresXML/2020_10_24T04_03_18_019Z.musicxml'
+#    source = 'TestScoresXML/2020_09_11T14_43_44_987Z.musicxml'
 
-#    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
+
+#    source = 'TestScoresXML/Bass02.musicxml'
+#    source = 'TestScoresXML/Westergaard057c.musicxml'
+ #    source = 'WesterParseCorpora/WesterParseLineCorpus/Westergaard070c.musicxml'
 #    source = 'TestScoresXML/Westergaard100k.musicxml'
 #    source = 'TestScoresXML/WestergaardP111c.musicxml'
 #    source = 'TestScoresXML/WestergaardP111d.musicxml'
@@ -113,7 +123,17 @@ if __name__ == "__main__":
 #    source = 'TestScoresXML/Westergaard107a.musicxml'
 #    source = 'TestScoresXML/Westergaard121a.musicxml'
 #    source = 'TestScoresXML/2020_08_26T17_50_33_151Z.musicxml'
-
+#    source = 'TestScoresXML/2020_10_11T20_10_52_188Z.musicxml'
+#    source = 'TestScoresXML/2020_10_14T00_42_54_913Z.musicxml'
+#    source = 'TestScoresXML/2020_10_14T16_31_54_122Z.musicxml'
+#    source = 'TestScoresXML/2020_10_14T19_23_30_946Z.musicxml'
+#    source = 'TestScoresXML/2020_10_21T16_30_34_038Z.musicxml'
+#    source = 'TestScoresXML/2020_10_24T14_46_50_334Z.musicxml'
+#    source = 'TestScoresXML/2020_10_26T20_52_55_920Z.musicxml'
+#    source = 'TestScoresXML/2020_10_24T04_03_18_019Z.musicxml'
+#    source = 'TestScoresXML/2020_10_29T17_51_23_268Z.musicxml'
+#    source = 'TestScoresXML/2021_01_19T17_58_09_439Z.musicxml'
+    source = 'TestScoresXML/2021_01_25T22_53_12_206Z.musicxml'
 #    source = 'TestScoresXML/ChromaTest.musicxml'
 
 #    source = 'TestScoresXML/chorale066.6.musicxml'
@@ -128,6 +148,7 @@ if __name__ == "__main__":
     #    source = '../examples/corpus/Westergaard057b.musicxml'
 #    source = '../examples/corpus/WP304.musicxml'
 #    source = 'TestScoresXML/SecondSpecies33.musicxml'
+#    source = '../examples/corpus/WP141.musicxml'
 #    source = '../examples/corpus/WP022.musicxml'
 #    source = '../examples/corpus/WP024.musicxml'
 #    source = '../examples/corpus/WP309.musicxml'
@@ -154,10 +175,16 @@ if __name__ == "__main__":
         elif verify == 10: # tests for generability as harmonic counterpoint
             westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
-                                      offsetPredominant=36.0,
-                                      offsetDominant=44.0,
-                                      offsetClosingTonic=48.0,
-                                      keynote='E', mode='major')
+                                      startPredominant=6,
+                                      startDominant=8)
+
+        elif verify == 11:
+            westerparse.evaluateLines(source, show='show',
+                                      partSelection=0,
+                                      partLineType='primary',
+                                      harmonicSpecies=True,
+                                      startPredominant=7,
+                                      startDominant=9)
 
         elif verify == 3:
             westerparse.evaluateLines(source, show=None)
@@ -184,6 +211,11 @@ if __name__ == "__main__":
             westerparse.evaluateLines(source, show='show',
                                       partSelection=0,
                                       partLineType='primary')
+        elif verify == 61:
+            westerparse.evaluateLines(source, show='showWestergaardParse',
+                                  partSelection=0,
+                                  partLineType='primary')
+
         elif verify == 7:
             westerparse.evaluateLines(source, show=None,
                                       partSelection=-1,
@@ -215,6 +247,10 @@ if __name__ == "__main__":
         elif verify == 30:
             westerparse.evaluateLines(source, show=None,
                                       partSelection=0, partLineType='generic')
+        elif verify == 31:
+            westerparse.evaluateLines(source, show=None,
+                                      partSelection=1, partLineType=None)
+
         elif verify == 101:
             westerparse.evaluateLines(source, show=None,
                                       harmonicSpecies=True,
@@ -239,7 +275,7 @@ if __name__ == "__main__":
 
 
 #    vltester(source, keynote='C', mode='major')
-    tester(source, 2)
+    tester(source, 6)
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)

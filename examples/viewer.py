@@ -13,7 +13,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 
 from music21 import *
-import westerparse
+from westerparse import westerparse
 # import strip_xml_metadata
 
 

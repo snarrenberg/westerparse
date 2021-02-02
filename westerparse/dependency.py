@@ -21,7 +21,7 @@ dependent (the passing tone) but no left- or righthead.
 An anticipation stores a reference to a righthead, but has no
 lefthead and no dependents."""
 
-from music21 import *
+from music21 import note
 
 
 class DependencyException(Exception):

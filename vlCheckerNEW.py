@@ -3,7 +3,7 @@
 # Purpose:      Framework for analyzing voice leading in species counterpoint
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2020 by Robert Snarrenberg
+# Copyright:    (c) 2021 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """Take a score (source) with two or more parts (lines)
@@ -20,10 +20,10 @@ import logging
 
 from music21 import *
 
-import csd
-import context
-import theoryAnalyzerWP
-import theoryResultWP
+# from westerparse import csd
+from westerparse import context
+from westerparse import theoryAnalyzerWP
+# from westerparse import theoryResultWP
 
 # -----------------------------------------------------------------------------
 # LOGGER
@@ -52,8 +52,9 @@ vlErrors = []
 
 # settings for testing
 # paceUnit = 4.0 # pace unit for first-species notes, in quarter-note lengths
-# TODO may be able to infer pace unit from meter for species counterpoint
-#    paceUnit = xxxxx.getContextByClass('Measure').barDuration.quarterLength
+# TODO infer pace unit from meter for species counterpoint
+#   paceUnit = xxxxx.getContextByClass('Measure').barDuration.quarterLength
+#   find the slowest moving line and take it as the Cf?
 
 # -----------------------------------------------------------------------------
 # MAIN FUNCTIONS
@@ -66,7 +67,6 @@ def voiceLeadingAnalyzer(context):
     in two to four parts."""
 
     # list of errors for reporting
-    voiceLeadingErrors = []
     sonorityErrors = []
     
     if len(context.parts) == 1:
@@ -168,7 +168,7 @@ def checkConsecutions(score):
                         vlErrors.append(error)
 
 
-def checkFinalStep(score, analyzer, partNum1=None, partNum2=None):
+def checkFinalStep(score, analyzer, partNum1=0, partNum2=None):
     # TODO rewrite based on parser's lineType value
     # determine whether the the upper part is a primary upper line
     # if score.parts[partNum1].isPrimary == True:

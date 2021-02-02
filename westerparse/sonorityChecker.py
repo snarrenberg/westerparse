@@ -20,11 +20,11 @@ counterpoint.
 
 from music21 import *
 
-from vlChecker import *
-import context
-import consecutions
-import theoryAnalyzerWP
-import theoryResultWP
+from westerparse.vlChecker import *
+from westerparse import context
+from westerparse import consecutions
+from westerparse import theoryAnalyzerWP
+from westerparse import theoryResultWP
 
 # -----------------------------------------------------------------------------
 # MODULE VARIABLES
@@ -405,7 +405,7 @@ def isOnbeatVerticality(verticality):
 def assignSpeciesToParts(score):
     for part in score.parts:
         if not part.species:
-            assignSpecies(part)
+            context.assignSpecies(part)
 
 
 def getSonorityRating(score, beatPosition=None, sonorityType=None,

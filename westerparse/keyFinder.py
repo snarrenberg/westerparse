@@ -85,7 +85,7 @@ class KeyFinderError(Exception):
 # -----------------------------------------------------------------------------
 
 
-def testKey(score, knote=None, kmode=None):
+def testKey(score, knote=None, kmode=None, kharm=False):
     """Validate and test a key provided by the user."""
     # (1) Validate the user selected key.
     try:
@@ -95,7 +95,7 @@ def testKey(score, knote=None, kmode=None):
         return False
     # (2) Test each part for generic errors.
     try:
-        testValidatedKey(score, knote, kmode)
+        testValidatedKey(score, knote, kmode, kharm)
     except KeyFinderError as kfe:
         kfe.logerror()
         return False
@@ -159,7 +159,7 @@ def validateKeySelection(knote, kmode):
         return userKey
 
 
-def testValidatedKey(score, keynote, mode):
+def testValidatedKey(score, keynote, mode, kharm):
     # Test whether the user-selected key is fits the context.
     userKeyErrors = ''
     partErrorStr = ''
@@ -178,14 +178,14 @@ def testValidatedKey(score, keynote, mode):
         thisTriad = [thisScale.pitchFromDegree(1).name,
                      thisScale.pitchFromDegree(3).name,
                      thisScale.pitchFromDegree(5).name]
-        # Test first and last notes.
+        # (1) Test first and last notes.
         if part.flat.notes[0].pitch.name not in thisTriad:
             error = ('The first note is not a triad pitch.')
             partErrors = partErrors + error + '\n\t'
         if part.flat.notes[-1].pitch.name not in thisTriad:
             error = ('The last note is not a triad pitch.')
             partErrors = partErrors + error + '\n\t'
-        # Test for scale pitches.
+        # (2) Test for scale pitches.
         nonscalars = 0
         for n in part.flat.notes:
             if n.pitch.name not in thisCollection:
@@ -197,12 +197,13 @@ def testValidatedKey(score, keynote, mode):
             error = (str(nonscalars)
                      + ' notes in the line do not belong to the scale.')
             partErrors = partErrors + error + '\n\t'
-        # Test leaps.
+        # (3) Test leaps in monotriadic first, second and fourth species.
         leapPairs = {(note.pitch.name, note.next().pitch.name)
                      for note in part.flat.notes
                      if note.consecutions.rightType == 'skip'}
-        if (part.species in ['first', 'second', 'fourth'] and
-           leapTestWeak(leapPairs, thisTriad) is False):
+        if (not kharm
+                and part.species in ['first', 'second', 'fourth'] and
+                leapTestWeak(leapPairs, thisTriad) is False):
             error = ('At least one leap fails to include a triad pitch.')
             partErrors = partErrors + error + '\n\t'
         if partErrors:
@@ -234,10 +235,12 @@ def findScoreKeys(score):
     # Exempt third-species lines from the hanging notes test.
     partKeyListsFromHanging = [part.keyCandidatesFromHanging
                                for part in score.parts]
+
     # Get only those keys that are shared among all parts.
     scoreKeyCandidatesFromScale = set(
         partKeyListsFromScale[0]
         ).intersection(*partKeyListsFromScale)
+
     # Get those keys shared among all parts not in third species.
     if partKeyListsFromHanging:
         scoreKeyCandidatesFromHanging = set(
@@ -381,7 +384,8 @@ def getPartKeysUsingScale(part):
         terminals = terminalsTest(residueInit, residueFin, thisMinorTriad)
         scalars = scaleTest(chromaResidues, thisMinorScale)
         # EXEMPT THIRD SPECIES LINES FROM LEAPS TEST.
-        if part.species not in ['first', 'second', 'fourth']:
+        if (part.harmonicSpecies
+                or part.species not in ['first', 'second', 'fourth']):
             leaps = True
         else:
             leaps = leapTestWeak(leapPairResidues, thisMinorTriad)
@@ -390,7 +394,7 @@ def getPartKeysUsingScale(part):
 
         terminals = terminalsTest(residueInit, residueFin, thisMajorTriad)
         scalars = scaleTest(chromaResidues, thisMajorScale)
-        if part.species not in ['first', 'second', 'fourth']:
+        if (part.harmonicSpecies or part.species not in ['first', 'second', 'fourth']):
             leaps = True
         else:
             leaps = leapTestWeak(leapPairResidues, thisMajorTriad)
