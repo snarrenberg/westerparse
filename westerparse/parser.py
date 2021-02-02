@@ -4,7 +4,7 @@
 #               of simple tonal lines
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2020 by Robert Snarrenberg
+# Copyright:    (c) 2021 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """
