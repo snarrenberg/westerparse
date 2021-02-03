@@ -129,11 +129,13 @@ Download the latest WesterParse release from
 `GitHub <https://github.com/snarrenberg/westerparse/releases>`_,
 place it in a directory of your choice, and unzip it.  For example:
 
+To install directly from GitHub:
+
 .. code-block:: shell
 
-   $  tar -xvf westerparse-1.1.0alpha.tar.gz
+   $ git+git://github.com/snarrenberg/westerparse.git
 
-Navigate to the :literal:`src` directory inside :literal:`westerparse`
+Navigate to the main :literal:`westerparse` package directory
 and start :literal:`python`.
 
 .. code-block:: shell
@@ -142,8 +144,8 @@ and start :literal:`python`.
    
 Then begin using :literal:`westerparse`:
 
->>> import westerparse
->>> source = '../docs/samplefiles/FuxDorian.musicxml'
+>>> from westerparse import westerparse
+>>> source = 'docs/samplefiles/FuxDorian.musicxml'
 >>> westerparse.evaluateLines(source, 
 ...                           show='show',
 ...                           partLineType='primary',
