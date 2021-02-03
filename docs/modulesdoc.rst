@@ -1,10 +1,10 @@
 Module Documentation
 ====================
 
-.. automodule:: westerparse
+.. automodule:: westerparse.westerparse
    :members:
 
-.. automodule:: context
+.. automodule:: westerparse.context
    :members:
 
 .. automodule:: keyFinder
