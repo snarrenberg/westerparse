@@ -131,7 +131,7 @@ place it in a directory of your choice, and unzip it.  For example:
 
 .. code-block:: shell
 
-   $  tar -xvf westerparse-1.0.4alpha.tar.gz
+   $  tar -xvf westerparse-1.1.0alpha.tar.gz
 
 Navigate to the :literal:`src` directory inside :literal:`westerparse`
 and start :literal:`python`.
