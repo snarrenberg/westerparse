@@ -125,15 +125,15 @@ And then configure ``music21`` to use a musicxml viewer like MuseScore.
 See the instructions on the
 `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
-Download the latest WesterParse release from
-`GitHub <https://github.com/snarrenberg/westerparse/releases>`_,
-place it in a directory of your choice, and unzip it.  For example:
-
-To install directly from GitHub:
+Install the WesterParse code from GitHub:
 
 .. code-block:: shell
 
    $ git+git://github.com/snarrenberg/westerparse.git
+
+(You can also get the latest WesterParse release from
+`GitHub <https://github.com/snarrenberg/westerparse/releases>`_.
+as a .zip or .tar.gz archive.)
 
 Navigate to the main :literal:`westerparse` package directory
 and start :literal:`python`.
