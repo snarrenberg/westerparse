@@ -7,26 +7,26 @@ Module Documentation
 .. automodule:: westerparse.context
    :members:
 
-.. automodule:: keyFinder
+.. automodule:: westerparse.keyFinder
    :members:
 
-.. automodule:: parser
+.. automodule:: westerparse.parser
    :members:
 
-.. automodule:: vlChecker
+.. automodule:: westerparse.vlChecker
    :members:
 
-.. automodule:: dependency
+.. automodule:: westerparse.dependency
    :members:
 
-.. automodule:: rule
+.. automodule:: westerparse.rule
    :members:
 
-.. automodule:: csd
+.. automodule:: westerparse.csd
    :members:
 
-.. automodule:: consecutions
+.. automodule:: westerparse.consecutions
    :members:
 
-.. automodule:: utilities
+.. automodule:: westerparse.utilities
    :members:
