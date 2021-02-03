@@ -1,9 +1,6 @@
 Module Documentation
 ====================
 
-.. automodule:: westerparse
-   :members:
-
 .. automodule:: context
    :members:
 
