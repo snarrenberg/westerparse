@@ -3880,7 +3880,8 @@ class Parser:
             # Set counters for levels and independent notes
             deepestLevel = 0
             independentCount = 0
-            for n in self.notes:
+            interpNotes = [n for n in self.notes if not n.tie or n.tie.type == 'start']
+            for n in interpNotes:
                 if n.rule.level > deepestLevel:
                     deepestLevel = n.rule.level
                 if (n.dependency.lefthead is None
