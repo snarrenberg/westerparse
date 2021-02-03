@@ -72,17 +72,17 @@ addLocalRepetitions = True
 # LOGGER
 # -----------------------------------------------------------------------------
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.propagate = False
-# logging handlers
-f_handler = logging.FileHandler('parser.txt', mode='w')
-f_handler.setLevel(logging.DEBUG)
-# logging formatters
-f_formatter = logging.Formatter('%(message)s')
-f_handler.setFormatter(f_formatter)
-# add handlers to logger
-logger.addHandler(f_handler)
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.DEBUG)
+# logger.propagate = False
+# # logging handlers
+# f_handler = logging.FileHandler('parser.txt', mode='w')
+# f_handler.setLevel(logging.DEBUG)
+# # logging formatters
+# f_formatter = logging.Formatter('%(message)s')
+# f_handler.setFormatter(f_formatter)
+# # add handlers to logger
+# logger.addHandler(f_handler)
 
 
 # -----------------------------------------------------------------------------
