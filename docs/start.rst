@@ -113,9 +113,10 @@ of the line.
 Installation Instructions
 -------------------------
 
-Python 3 can be obtained from: http://www.python.org.
+(1) Python 3 can be obtained from: http://www.python.org. You will need Python
+v3.6 or later.
 
-Install ``music21``.
+(2) Install ``music21``.
 
 .. code-block:: shell
 
@@ -125,7 +126,7 @@ And then configure ``music21`` to use a musicxml viewer like MuseScore.
 See the instructions on the
 `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
-Install the WesterParse code from GitHub:
+(3) Install the WesterParse code from GitHub:
 
 .. code-block:: shell
 
@@ -135,14 +136,14 @@ Install the WesterParse code from GitHub:
 `GitHub <https://github.com/snarrenberg/westerparse/releases>`_.
 as a .zip or .tar.gz archive.)
 
-Navigate to the main :literal:`westerparse` package directory
-and start :literal:`python`.
+(4) To test your installation, navigate to the main :literal:`westerparse`
+package directory and start :literal:`python`.
 
 .. code-block:: shell
 
    $ python
    
-Then begin using :literal:`westerparse`:
+Then import :literal:`westerparse` and evaluate one of the sample files:
 
 >>> from westerparse import westerparse
 >>> source = 'docs/samplefiles/FuxDorian.musicxml'
