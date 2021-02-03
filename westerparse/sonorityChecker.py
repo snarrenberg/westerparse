@@ -4,7 +4,7 @@
 # Purpose:      Checks sonority for compliance with preference rules
 #
 # Authors:      Robert Snarrenberg, Tony Li
-# Copyright:    (c) 2020 by Robert Snarrenberg
+# Copyright:    (c) 2021 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """

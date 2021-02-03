@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # Name:         parser.py
-# Purpose:      Framework for analyzing the Westergaardian structure
+# Purpose:      Framework for analyzing the syntactic structure
 #               of simple tonal lines
 #
 # Author:       Robert Snarrenberg
