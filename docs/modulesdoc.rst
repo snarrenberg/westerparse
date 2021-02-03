@@ -1,7 +1,7 @@
 Module Documentation
 ====================
 
-.. automodule:: westerparse.westerparse
+.. automodule:: westerparse
    :members:
 
 .. automodule:: context
@@ -11,7 +11,7 @@ Module Documentation
    :members:
 
 .. automodule:: parser
-   :members:
+   :members: Parser
 
 .. automodule:: vlChecker
    :members:
