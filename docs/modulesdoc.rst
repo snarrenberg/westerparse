@@ -27,3 +27,6 @@ Module Documentation
 
 .. automodule:: consecutions
    :members:
+
+.. automodule:: utilities
+   :members:
