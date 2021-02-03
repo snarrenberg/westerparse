@@ -113,10 +113,10 @@ of the line.
 Installation Instructions
 -------------------------
 
-(1) Python 3 can be obtained from: http://www.python.org. You will need Python
+Python 3 can be obtained from: http://www.python.org. You will need Python
 v3.6 or later.
 
-(2) Install ``music21``.
+Install ``music21``.
 
 .. code-block:: shell
 
@@ -126,7 +126,7 @@ And then configure ``music21`` to use a musicxml viewer like MuseScore.
 See the instructions on the
 `music21 website <http://web.mit.edu/music21/doc/installing/index.html>`_.
 
-(3) Install the WesterParse code from GitHub:
+Install the WesterParse code from GitHub:
 
 .. code-block:: shell
 
@@ -136,7 +136,7 @@ See the instructions on the
 `GitHub <https://github.com/snarrenberg/westerparse/releases>`_.
 as a .zip or .tar.gz archive.)
 
-(4) To test your installation, navigate to the main :literal:`westerparse`
+To test your installation, navigate to the main :literal:`westerparse`
 package directory and start :literal:`python`.
 
 .. code-block:: shell
