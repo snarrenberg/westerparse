@@ -114,7 +114,7 @@ Installation Instructions
 -------------------------
 
 Python 3 can be obtained from: http://www.python.org. You will need Python
-v3.6 or later.
+v3.7 or later.
 
 Install ``music21``.
 
