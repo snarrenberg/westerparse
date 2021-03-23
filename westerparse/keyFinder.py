@@ -163,8 +163,8 @@ def validateKeySelection(knote, kmode):
 def testValidatedKey(score, keynote, mode, kharm):
     # Test whether the user-selected key is fits the context.
     userKeyErrors = ''
-    partErrorStr = ''
     for part in score.parts:
+        partErrorStr = ''
         partErrors = ''
         thisKey = key.Key(tonic=keynote, mode=mode)
         if mode == 'minor':
