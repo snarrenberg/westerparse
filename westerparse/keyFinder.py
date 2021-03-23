@@ -1,11 +1,11 @@
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Name:         keyFinder.py
 # Purpose:      Framework for determining the key of simple tonal lines
 #
 # Author:       Robert Snarrenberg
 # Copyright:    (c) 2021 by Robert Snarrenberg
 # License:      BSD, see license.txt
-# ------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 """
 Key Finder
 ==========
@@ -98,9 +98,10 @@ def testKey(score, knote=None, kmode=None, kharm=False):
         testValidatedKey(score, knote, kmode, kharm)
     except KeyFinderError as kfe:
         kfe.logerror()
-        return False
-    else:
         return userKey
+        # return False
+    else:
+        userKey
 
 
 def inferKey(score):
