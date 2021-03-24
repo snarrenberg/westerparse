@@ -1651,7 +1651,7 @@ class Parser:
                         if demotedHeads:
                             for dh in reversed(demotedHeads):
                                 if isDiatonicStep(self.notes[dh], j):
-                                    # Look for arcs that cross over h.
+                                    # Look for arcs that cross over dh.
                                     for arc in arcs:
                                         if arc[-2] < dh < arc[-1]:
                                             # Restore arc[-2] to open
@@ -1678,6 +1678,13 @@ class Parser:
                                                 if h < oh < j.index:
                                                     openHeads.remove(oh)
                                             return
+                                        else:
+                                            error = ('The non-tonic-triad pitch '
+                                                     + j.nameWithOctave + ' in measure '
+                                                     + str(j.measureNumber)
+                                                    + ' cannot be generated.')
+                                            self.errors.append(error)
+
                         else:
                             error = ('The non-tonic-triad pitch '
                                      + j.nameWithOctave + ' in measure '
