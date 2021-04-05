@@ -2,7 +2,7 @@ The Westergaard Rules
 =====================
 
 This document contains only the rules for simple counterpoint in first,
-second, third, and fourth.
+second, third, and fourth species.
 
 Monotriadic Lines
 -----------------
