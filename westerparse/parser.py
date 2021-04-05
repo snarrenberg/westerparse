@@ -2434,7 +2434,7 @@ class Parser:
                                  > self.notes[arc2[-1]].csd.value),
                                 # arc1 is higher than arc2
                                 (self.notes[arc1[-1]].csd.value
-                                 > self.notes[arc2[0]].csd.value),
+                                 >= self.notes[arc2[0]].csd.value),
                                 # arc2 is non final
                                 (self.notes[arc2[-1]].csd.value
                                  > self.notes[-1].csd.value),
