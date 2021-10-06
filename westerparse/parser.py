@@ -1146,6 +1146,8 @@ class Parser:
                             j.dependency.dependents.append(i.index)
                             openTransitions.remove(i.index)
                             arcGenerateTransition(i.index, part, arcs)
+                            # ?? also add j.index to open heads?
+                            openHeads.append(j.index)
                         else:
                             openHeads.append(j.index)
                     elif isDiatonicStep(h, j) and t != i.index:
@@ -1182,8 +1184,8 @@ class Parser:
                             # add the new arc only if it doesn't contradict
                             # an existing arc
                             testArc = [h.dependency.lefthead, h.index, j.index]
-                            logger.debug(f'Test arc: {testArc}')
                             if conflictsWithOtherArc(testArc, arcs):
+                                print('test arc failed', testArc)
                                 return
                             else:
                                 pass
@@ -4563,29 +4565,47 @@ def isEmbeddedInOtherArc(arc, arcs, startIndex=0, stopIndex=-1):
 def conflictsWithOtherArc(arc, arcs):
     """
     Check whether an arc is in conflict with any existing arc.
+    Five types of relationship:
+        1. overlap, always illegal
+        2. congruence, always illegal
+        3. containment, requires nesting test
+        4. co-iniation, requires nesting test
+        5. co-termination, requires nesting test
     """
     conflict = False
     for extArc in arcs:
-        # overlaps later arc
-        cond1 = (arc[0] < extArc[0] < arc[-1] < extArc[-1])
-        # overlaps earlier arc
-        cond2 = (extArc[0] < arc[0] < extArc[-1] < arc[-1])
-        # contains an existing arc ...
-        cond3 = (arc[0] <= extArc[0]
-                 and arc[-1] >= extArc[-1])
-        # or is contained by an existing arc ...
-        cond4 = (extArc[0] <= arc[0]
-                 and extArc[-1] >= arc[-1])
-        if cond1 or cond2:
+        # new arc overlaps later arc
+        cond1a = (arc[0] < extArc[0] < arc[-1] < extArc[-1])
+        # new arc overlaps earlier arc
+        cond1b = (extArc[0] < arc[0] < extArc[-1] < arc[-1])
+        # new arc is congruent with existing arc
+        cond2 = (extArc[0] == arc[0] and extArc[-1] == arc[-1])
+        # new arc contains an existing arc
+        cond3a = (arc[0] < extArc[0]
+                 and arc[-1] > extArc[-1])
+        # new arc is contained by an existing arc
+        cond3b = (extArc[0] < arc[0]
+                 and extArc[-1] > arc[-1])
+        # new arc is co-initiated with an existing arc and ends earlier
+        cond4a  = (extArc[0] == arc[0] and extArc[-1] > arc[-1])
+        # new arc is co-initiated with an existing arc and ends later
+        cond4b  = (extArc[0] == arc[0] and extArc[-1] < arc[-1])
+        # new arc is co-terminated with an existing arc and starts earlier
+        cond5a  = (extArc[0] > arc[0] and extArc[-1] == arc[-1])
+        # new arc is co-terminated with an existing arc and starts later
+        cond5b = (extArc[0] < arc[0] and extArc[-1] == arc[-1])
+
+        if cond1a or cond1b or cond2:
             conflict = True
-        # but has internal elements enclosed in the extant arc
-        elif cond3:
+        # conflicts if internal elements of containing arc
+        # found in contained arc
+        elif cond3a or cond4a or cond5a:
             if len(arc) > 2:
                 for d in arc[1:-1]:
                     if extArc[0] < d < extArc[-1]:
                         conflict = True
                         break
-        elif cond4:
+        elif cond3b or cond4b or cond5b:
             if len(extArc) > 2:
                 for d in extArc[1:-1]:
                     if arc[0] < d < arc[-1]:
