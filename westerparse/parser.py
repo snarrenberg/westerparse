@@ -3202,74 +3202,76 @@ class Parser:
                 basicArcDirection = 'descending'
             elif self.notes[0].csd.value < self.notes[-1].csd.value:
                 basicArcDirection = 'ascending'
-            # If so, find a basic step motion, and if not there,
+            # If they are different, search for a basic step motion,
+            # and if not there,
             # reinterpret the arcs between start and end of tune.
-            for counter, arc1 in enumerate(self.arcs):
-                a = self.notes[arc1[0]]
-                b = self.notes[arc1[-1]]
-                # Look for one existing basic step motion arc
-                # that starts from S2
-                if (arc1[0] == self.S2Index
-                        and arc1[-1] == self.S1Index
-                        and isPassingArc(arc1, self.notes)):
-                    for elem in arc1[1:-1]:
-                        self.notes[elem].rule.name = 'S3'
-                    self.arcBasic = arc1
-                    break
-                # Look for an existing basic step motion arc
-                # that can be attached to S2.
-                elif (a.csd.value == self.S2Value
-                      and b.index == self.S1Index
-                      and isPassingArc(arc1, self.notes)):
-                    arc1[0] = self.S2Index
-                    a.dependency.lefthead = self.S2Index
-                    arcGenerateRepetition(a.index, self.notes,
-                                          self.arcs)
-                    a.rule.name = 'E1'
-                    for n in arc1[1:-1]:
-                        self.notes[n].dependency.lefthead = self.S2Index
-                        self.notes[self.S2Index].dependency.dependents.append(
-                            n)
-                        self.notes[n].rule.name = 'S3'
+            if not self.arcBasic:
+                for counter, arc1 in enumerate(self.arcs):
+                    a = self.notes[arc1[0]]
+                    b = self.notes[arc1[-1]]
+                    # Look for one existing basic step motion arc
+                    # that starts from S2
+                    if (arc1[0] == self.S2Index
+                            and arc1[-1] == self.S1Index
+                            and isPassingArc(arc1, self.notes)):
+                        for elem in arc1[1:-1]:
+                            self.notes[elem].rule.name = 'S3'
                         self.arcBasic = arc1
                         break
-                    break
-                # Look for two arcs that can be embedded or merged
-                # into a basic step motion.
-                elif arc1[0] == self.S2Index and not arc1[-1] == self.S1Index:
-                    # First look rightward for another arc from same degree.
-                    for arc2 in self.arcs[counter + 1:]:
-                        rules1 = [arc1[-1] == arc2[0],
-                                  arc2[-1] == self.S1Index]
-                        rules2 = [self.notes[arc1[0]].csd.value
-                                  > self.notes[arc1[-1]].csd.value,
-                                  self.notes[arc2[0]].csd.value
-                                  > self.notes[arc2[-1]].csd.value]
-                        rules3 = [self.notes[arc1[0]].csd.value
-                                  < self.notes[arc1[-1]].csd.value,
-                                  self.notes[arc2[0]].csd.value
-                                  < self.notes[arc2[-1]].csd.value]
-                        if all(rules1) and (all(rules2) or all(rules3)):
-                            self.arcMerge(arc1, arc2)
-                            for elem in arc1[1:-1]:
-                                self.notes[elem].rule.name = 'S3'
+                    # Look for an existing basic step motion arc
+                    # that can be attached to S2.
+                    elif (a.csd.value == self.S2Value
+                          and b.index == self.S1Index
+                          and isPassingArc(arc1, self.notes)):
+                        arc1[0] = self.S2Index
+                        a.dependency.lefthead = self.S2Index
+                        arcGenerateRepetition(a.index, self.notes,
+                                              self.arcs)
+                        a.rule.name = 'E1'
+                        for n in arc1[1:-1]:
+                            self.notes[n].dependency.lefthead = self.S2Index
+                            self.notes[self.S2Index].dependency.dependents.append(
+                                n)
+                            self.notes[n].rule.name = 'S3'
                             self.arcBasic = arc1
                             break
-                        # Merge.
-                        elif (self.arcBasic and
-                              (self.notes[arc2[0]
-                                          == self.notes[
-                                              self.S1Index].csd.value])):
-                            self.arcBasic.pop()
-                            self.arcBasic.append(arc2[-1])
-                        rules4 = [self.notes[arc1[-1]].csd.value
-                                  == self.notes[arc2[0]].csd.value]
-                        if all(rules4) and (all(rules2) or all(rules3)):
-                            # TODO: Finish this.
-                            pass
-                            # Attach arc2 to arc1 and then merge.
-                            # This may not be needed if earlier
-                            # parsing picks up the repetition.
+                        break
+                    # Look for two arcs that can be embedded or merged
+                    # into a basic step motion.
+                    elif arc1[0] == self.S2Index and not arc1[-1] == self.S1Index:
+                        # First look rightward for another arc from same degree.
+                        for arc2 in self.arcs[counter + 1:]:
+                            rules1 = [arc1[-1] == arc2[0],
+                                      arc2[-1] == self.S1Index]
+                            rules2 = [self.notes[arc1[0]].csd.value
+                                      > self.notes[arc1[-1]].csd.value,
+                                      self.notes[arc2[0]].csd.value
+                                      > self.notes[arc2[-1]].csd.value]
+                            rules3 = [self.notes[arc1[0]].csd.value
+                                      < self.notes[arc1[-1]].csd.value,
+                                      self.notes[arc2[0]].csd.value
+                                      < self.notes[arc2[-1]].csd.value]
+                            if all(rules1) and (all(rules2) or all(rules3)):
+                                self.arcMerge(arc1, arc2)
+                                for elem in arc1[1:-1]:
+                                    self.notes[elem].rule.name = 'S3'
+                                self.arcBasic = arc1
+                                break
+                            # Merge.
+                            elif (self.arcBasic and
+                                  (self.notes[arc2[0]
+                                              == self.notes[
+                                                  self.S1Index].csd.value])):
+                                self.arcBasic.pop()
+                                self.arcBasic.append(arc2[-1])
+                            rules4 = [self.notes[arc1[-1]].csd.value
+                                      == self.notes[arc2[0]].csd.value]
+                            if all(rules4) and (all(rules2) or all(rules3)):
+                                # TODO: Finish this.
+                                pass
+                                # Attach arc2 to arc1 and then merge.
+                                # This may not be needed if earlier
+                                # parsing picks up the repetition.
             # Attach repetitions of S2 before onset of S1.
             # TODO Refine generic basic arc and coherence.
             self.attachOpenheadsToStructuralLefthead(self.S2Index,
@@ -3683,7 +3685,6 @@ class Parser:
                                 and interBranch
                                 and arcLength(arc) > arcLength(interBranch)):
                             interBranch = arc
-
                 # (2) Process any branches that have been found in the span:
                 #     (a) Remove the branch from the list of dependent arcs.
                 #     (b) Calculate rule levels for members of the branch.
