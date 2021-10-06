@@ -1182,6 +1182,7 @@ class Parser:
                             # add the new arc only if it doesn't contradict
                             # an existing arc
                             testArc = [h.dependency.lefthead, h.index, j.index]
+                            logger.debug(f'Test arc: {testArc}')
                             if conflictsWithOtherArc(testArc, arcs):
                                 return
                             else:
@@ -1678,12 +1679,6 @@ class Parser:
                                                 if h < oh < j.index:
                                                     openHeads.remove(oh)
                                             return
-                                        else:
-                                            error = ('The non-tonic-triad pitch '
-                                                     + j.nameWithOctave + ' in measure '
-                                                     + str(j.measureNumber)
-                                                    + ' cannot be generated.')
-                                            self.errors.append(error)
 
                         else:
                             error = ('The non-tonic-triad pitch '
