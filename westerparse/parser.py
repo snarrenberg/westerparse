@@ -1697,6 +1697,15 @@ class Parser:
                                  + ' cannot be generated.')
                         self.errors.append(error)
 
+                # If no lefthead is found, return an error.
+                if (self.part.species not in ['third', 'fifth']
+                        and not j.dependency.lefthead):
+                    error = ('The non-tonic-triad pitch '
+                             + j.nameWithOctave + ' in measure '
+                             + str(j.measureNumber)
+                             + ' cannot be generated.')
+                    self.errors.append(error)
+
         # CASE EIGHT: Skip from nonharmonic to nonharmonic.
         elif all(case8):
             logger.debug(f'Parse transition {i.index}-{j.index}: case 8')
