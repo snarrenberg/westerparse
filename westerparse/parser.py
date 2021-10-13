@@ -1185,7 +1185,6 @@ class Parser:
                             # an existing arc
                             testArc = [h.dependency.lefthead, h.index, j.index]
                             if conflictsWithOtherArc(testArc, arcs):
-                                print('test arc failed', testArc)
                                 return
                             else:
                                 pass
@@ -1698,6 +1697,7 @@ class Parser:
                         self.errors.append(error)
 
                 # If no lefthead is found, return an error.
+                # added on 2021-10-08
                 if (self.part.species not in ['third', 'fifth']
                         and not j.dependency.lefthead):
                     error = ('The non-tonic-triad pitch '
@@ -4609,16 +4609,41 @@ def conflictsWithOtherArc(arc, arcs):
             conflict = True
         # conflicts if internal elements of containing arc
         # found in contained arc
-        elif cond3a or cond4a or cond5a:
+        elif cond3a:
             if len(arc) > 2:
                 for d in arc[1:-1]:
                     if extArc[0] < d < extArc[-1]:
                         conflict = True
                         break
-        elif cond3b or cond4b or cond5b:
+        elif cond4a:
+            if len(extArc) > 2:
+                for d in extArc[1:-1]:
+                    if d < arc[-1]:
+                        conflict = True
+                        break
+        elif cond5a:
+             if len(arc) > 2:
+                for d in arc[1:-1]:
+                    if d > extArc[0]:
+                        conflict = True
+                        break
+        elif cond3b:
             if len(extArc) > 2:
                 for d in extArc[1:-1]:
                     if arc[0] < d < arc[-1]:
+                        conflict = True
+                        break
+        elif cond4b:
+            if len(arc) > 2:
+                for d in arc[1:-1]:
+                   if d < extArc[-1]:
+                        conflict = True
+                        break
+
+        elif cond5a:
+            if len(extArc) > 2:
+                for d in extArc[1:-1]:
+                    if d > arc[0]:
                         conflict = True
                         break
     return conflict
