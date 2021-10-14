@@ -1699,7 +1699,8 @@ class Parser:
                 # If no lefthead is found, return an error.
                 # added on 2021-10-08
                 if (self.part.species not in ['third', 'fifth']
-                        and not j.dependency.lefthead):
+                        and j.dependency.lefthead is None): # is None, in case
+                            # lefthead is 0
                     error = ('The non-tonic-triad pitch '
                              + j.nameWithOctave + ' in measure '
                              + str(j.measureNumber)
