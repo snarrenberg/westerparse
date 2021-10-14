@@ -1713,7 +1713,7 @@ def checkFourthLeapsInBass(score, analyzer):
                             break
 
                     # rules for fourth species
-                    elif len(barseg2) == 2 and barseg2[1].tie:
+                    elif len(barseg2) == 2 and barseg2[0].tie:
                         # TODO verify that no additional rule is needed
                         rules4 = [] # [n.tie.type == 'start']
                         if all(rules1) and all(rules4):
