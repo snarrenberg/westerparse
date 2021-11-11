@@ -1,5 +1,5 @@
 -e .
 music21~=6.7.0
-westerparse~=1.1.0a
+westerparse~=1.2.0
 pillow~=7.2.0
 setuptools~=49.6.0
