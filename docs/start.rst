@@ -120,7 +120,7 @@ Install ``music21``.
 
 .. code-block:: shell
 
-   $ pip install music21
+   $ pip3 install music21
    
 And then configure ``music21`` to use a musicxml viewer like MuseScore. 
 See the instructions on the
