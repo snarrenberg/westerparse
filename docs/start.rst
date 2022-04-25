@@ -28,7 +28,7 @@ Yes:
 
 * Westegaardian Species Counterpoint Online: 
       
-  * https://ada.artsci.wustl.edu/westerparse/
+  * https://talus.artsci.wustl.edu/westerparse/
       
 If you want to know how the program interprets Westergaard's own examples of
 counterpoint, you can use the WesterParse Corpus Viewer, which includes over
