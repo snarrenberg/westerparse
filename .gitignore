@@ -6,6 +6,7 @@ vl.txt
 westerparse.txt
 interface_to_westerparse
 __pycache__/
+.readthedocs.yml
 
 # Packages
 *.egg
