@@ -5,12 +5,17 @@ To test for compliance with Westergaard's rules, I have assembled a small
 corpus of examples, including many from Westergaard's book (these are
 identified by page number in the filename).  There are over 70 single lines
 and over 50 examples of two-part counterpoint, some with errors and
-most without. 
+most without.
+
+Using the Web-Based Corpus Viewer
+---------------------------------
+
+Visit https://ada.artsci.wustl.edu/wp_web_project/corpus/
+
+Using the Stand-Alone Corpus Viewer
+-----------------------------------
 
 Requires Tkinter, PIL (pillow), and MuseScore.
-
-Using the Corpus Viewer
------------------------
 
 Navigate to the examples folder and then run the corpus viewer
 from the terminal.
