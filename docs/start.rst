@@ -130,7 +130,7 @@ Install the WesterParse code from GitHub:
 
 .. code-block:: shell
 
-   $ git+git://github.com/snarrenberg/westerparse.git
+   $ pip3 install git+https://github.com/snarrenberg/westerparse.git
 
 (You can also get the latest WesterParse release from
 `GitHub <https://github.com/snarrenberg/westerparse/releases>`_.
