@@ -3113,6 +3113,17 @@ class Parser:
             self.attachOpenheadsToStructuralLefthead(self.S2Index,
                                                      self.S3Initial)
 
+            # If there are open heads after the onset of a tonic-triad S3
+            # that have the
+            # same pitch as that S3, attach them as repetitions of that S3
+            if len(self.arcBasic) == 5:
+                self.attachOpenheadsToStructuralLefthead(self.arcBasic[2],
+                                                         self.arcBasic[3])
+            if len(self.arcBasic) == 8:
+                self.attachOpenheadsToStructuralLefthead(self.arcBasic[3],
+                                                         self.arcBasic[4])
+                self.attachOpenheadsToStructuralLefthead(self.arcBasic[5],
+                                                         self.arcBasic[6])
             # Because this method of inferring basic arc can contradict
             # arcs in the preliminary arc list, look for crossed arcs.
             if self.arcBasic is None:
@@ -4367,6 +4378,14 @@ def isNeighboringArc(arc, notes):
     else:
         return False
 
+def getNeighborType(arc, notes):
+    i = notes[arc[0]]
+    j = notes[arc[1]]
+    if isNeighboringArc(arc, notes):
+        if isStepUp(i, j):
+            return 'upper'
+        else:
+            return 'lower'
 
 def isPassingArc(arc, notes):
     # Accept an arcList of line indices and determine whether
@@ -4397,6 +4416,14 @@ def isPassingArc(arc, notes):
             return False
     return True
 
+def getPassingType(arc, notes):
+    i = notes[arc[0]]
+    j = notes[arc[1]]
+    if isPassingArc(arc, notes):
+        if isStepUp(i, j):
+            return 'rising'
+        else:
+            return 'falling'
 
 def isRepetitionArc(arc, notes):
     # Accept an arcList of line indices and determine
