@@ -608,7 +608,7 @@ def parseContext(cxt,
                 arc_array['arc_category'] = arc_category
                 arc_array['arc_type'] = arc_type
                 # determine the subtype, if any
-                arc_subtype = ''a
+                arc_subtype = ''
                 if arc_type == 'neighbor':
                     arc_subtype = parser.getNeighborType(arc, part.flat.notes)
                 if arc_type == 'passing':
