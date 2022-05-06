@@ -33,6 +33,8 @@ For more information on how to use these scripts, see
 import logging
 import time
 import unittest
+import os
+import json
 
 from music21 import *
 
@@ -99,7 +101,7 @@ def evaluateLines(source,
        the browser window.
 
        `writeToLocal` -- Can be used to write parses in musicxml to a
-       user's local directory. [Eventually the user will be able select
+       user's local directory. [Eventually the user will be able to select
        a directory by editing a configuration.py file.]  By default, the
        files are written to 'parses_from_context/'.  The name for each
        file consists of the prefix 'parser_output\_', a timestamp,
@@ -211,7 +213,7 @@ def makeGlobalContext(source, **kwargs):
     s = converter.parse(source)
     # create a global context object and prep for evaluation
     # if errors encountered, script will exit and report
-    gxt = context.GlobalContext(s, **kwargs)
+    gxt = context.GlobalContext(s, filename=source, **kwargs)
     return gxt
 
 
@@ -531,15 +533,146 @@ def parseContext(cxt,
 
             raise context.ContextError(error)
 
+    def createParseDataFiles():
+        file_name = os.path.splitext(os.path.basename(cxt.filename))[0]
+
+        def extractParseData(part, parse):
+            # create a name for the parsed data file
+            fn = 'parse_data/' + file_name + '_' + str(part.partNum) + '_' + parse.label + '_data.json'
+            # assemble metadata
+            parse_data = {}
+            parse_data['file_name'] = file_name
+            parse_data['part_number'] = part.partNum
+            parse_data['line_type'] = parse.lineType
+            parse_data['species'] = parse.species
+            parse_data['parse_label'] = parse.label
+            # assemble notes_array dictionary
+            notes_array = []
+            # start with the note labels in each part, consisting of a
+            # tuple: (index, rule, level)
+            # TODO address problem with indexing notes in fourth species
+            for lab in parse.ruleLabels:
+                note_array = {}
+                note_array['index'] = lab[0]
+                # offset property is causing problems, perhaps because of json
+                # data restrictions (no fractions allowed),
+                # so I've converted the fractions to approx floats
+                if not isinstance(part.flatten().notes[lab[0]].offset, float):
+                    num = part.flatten().notes[lab[0]].offset.numerator
+                    den = part.flatten().notes[lab[0]].offset.denominator
+                    val = round(num / den, 2)
+                    note_array['offset'] = val
+                else:
+                    note_array['offset'] = part.flatten().notes[lab[0]].offset
+                note_array['csd_value'] = part.flatten().notes[lab[0]].csd.value
+                note_array['rule_label'] = lab[1]
+                note_array['gen_level'] = lab[2]
+                # detemine parentheses for each note
+                left_paren = False
+                right_paren = False
+                if lab[1] == 'E3':
+                    left_paren = True
+                    right_paren = True
+                    for arc in parse.arcs:
+                        if arc[-1] == lab[0]:
+                            left_paren = False
+                        if arc[0] == lab[0]:
+                            right_paren = False
+                note_array['left_paren'] = left_paren
+                note_array['right_paren'] = right_paren
+                # add note array to list
+                notes_array.append(note_array)
+            # add notes list to data
+            parse_data['notes_array'] = notes_array
+            # assemble arcs_array dictionary
+            arcs_array = []
+            for arc in parse.arcs:
+                arc_array = {}
+                arc_array['arc'] = arc
+                # determine the type of arc
+                arc_category = None
+                arc_type = None
+                if arc == parse.arcBasic:
+                    arc_category = 'basic'
+                else:
+                    arc_category = 'secondary'
+                if not arc_type:
+                    if parser.isRepetitionArc(arc, part.flat.notes):
+                        arc_type = 'repetition'
+                    elif parser.isNeighboringArc(arc, part.flat.notes):
+                        arc_type = 'neighbor'
+                    elif parser.isPassingArc(arc, part.flat.notes):
+                        arc_type = 'passing'
+                    elif parse.lineType == 'bass' and arc_category == 'basic':
+                        arc_type = 'arpeggiation'
+                arc_array['arc_category'] = arc_category
+                arc_array['arc_type'] = arc_type
+                # determine the subtype, if any
+                arc_subtype = ''a
+                if arc_type == 'neighbor':
+                    arc_subtype = parser.getNeighborType(arc, part.flat.notes)
+                if arc_type == 'passing':
+                    arc_subtype = parser.getPassingType(arc,
+                                                    part.flat.notes)
+                arc_array['arc_subtype'] = arc_subtype
+                # find csd content of arc
+                arc_content = []
+                for ind in arc:
+                    arc_content.append(part.flat.notes[ind].csd.value)
+                arc_array['arc_content'] = arc_content
+                # calculate raw hierarchical level of arc
+                arc_level_raw = 0
+                for na in notes_array:
+                    if na['index'] == arc[0]:
+                        arc_level_raw += na['gen_level']
+                    if na['index'] == arc[-1]:
+                        arc_level_raw += na['gen_level']
+                arc_array['arc_level'] = arc_level_raw
+                # add arc array to list
+                arcs_array.append(arc_array)
+            # re-calculate hierarichical levels of arcs
+            arc_levels_raw = []
+            for arc in arcs_array:
+                raw_lev = arc['arc_level']
+                if raw_lev not in arc_levels_raw:
+                    arc_levels_raw.append(raw_lev)
+            arc_levels_raw_sorted = sorted(arc_levels_raw)
+            for arc in arcs_array:
+                raw_lev = arc['arc_level']
+                arc_level = arc_levels_raw_sorted.index(raw_lev)
+                arc['arc_level'] = arc_level
+            # add arcs list to data
+            parse_data['arcs_array'] = sorted(arcs_array, key=lambda d: d['arc_level'])
+            # write data to json text file
+            with open(fn, 'w') as json_file:
+                json.dump(parse_data, json_file, indent=4)
+
+        for part in cxt.parts:
+            Pinterps = part.interpretations.get('primary', None)
+            Ginterps = part.interpretations.get('generic', None)
+            Binterps = part.interpretations.get('bass', None)
+            if Pinterps:
+                for parse in Pinterps:
+                    extractParseData(part, parse)
+            # if Ginterps:
+            #     for parse in Ginterps:
+            #         extractParseData(part, parse)
+            if Binterps:
+                for parse in Binterps:
+                    extractParseData(part, parse)
+
+    if show == 'parsedata':
+        createParseDataFiles()
     try:
         createParseReport()
     except context.ContextError as ce:
         ce.logerror()
         raise context.EvaluationException
-    else:
-        pass
 
-        if show is not None:
+    else:
+        # if show == 'parsedata':
+        #     createParseDataFiles()
+        if show !='parsedata' and show is not None:
             # Preferences currently only work for two-part counterpoint.
             # Preference can be turned off by setting
             # selectPreferredParseSets to False
