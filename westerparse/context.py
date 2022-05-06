@@ -164,7 +164,8 @@ class GlobalContext(Context):
             self.harmonicSpecies = kwargs['harmonicSpecies']
         else:
             self.harmonicSpecies = False
-
+        if kwargs.get('filename'):
+            self.filename = kwargs['filename']
         # (1) Verify that there are parts populated with notes.
         # TODO: only check selected parts
         try:
