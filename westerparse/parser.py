@@ -4,7 +4,7 @@
 #               of simple tonal lines
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2021 by Robert Snarrenberg
+# Copyright:    (c) 2022 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """
@@ -39,7 +39,7 @@ backtrack and reinterpret segments of a line.
 The first stage of parsing ends when the buffer is exhausted.
 Interpretation then continues by line type.
 
-The parser gathers all of the valid interpretations into lists.
+The parser gathers all the valid interpretations into lists.
 The parser also records errors that arise.
 """
 import itertools
@@ -534,7 +534,7 @@ class Parser:
                                                                  startIndex=0,
                                                                  stopIndex=99)):
                                 lh = self.notes[arc[0]].dependency.lefthead
-                                # Get all of the global notes connected to
+                                # Get all the global notes connected to
                                 # the open transition.
                                 globalElems = [
                                     idx for idx in
@@ -629,7 +629,7 @@ class Parser:
                 while g_buffer[0].index < localEnd:
                     shiftBuffer(g_stack, g_buffer)
                     if g_stack[-1].index not in l_openHeads and g_stack[
-                        -1].index not in l_openTransitions:
+                            -1].index not in l_openTransitions:
                         g_stack.pop(-1)
 
                 # Restore the open locals to the buffer.
@@ -1126,8 +1126,8 @@ class Parser:
                             i.dependency.righthead = j.index
                             j.dependency.dependents.append(i.index)
                             # Add dependents that aren't repetitions.
-                            # TODO limit to dependents that should belong to the
-                            #   new arc.
+                            # TODO limit to dependents that should belong to
+                            #   the new arc.
                             for d in i.dependency.dependents:
                                 if self.notes[d].csd.value != i.csd.value:
                                     self.notes[
@@ -1699,7 +1699,7 @@ class Parser:
                 # If no lefthead is found, return an error.
                 # added on 2021-10-08
                 if (self.part.species not in ['third', 'fifth']
-                        and j.dependency.lefthead is None): # is None, in case
+                        and j.dependency.lefthead is None):  # is None, in case
                             # lefthead is 0
                     error = ('The non-tonic-triad pitch '
                              + j.nameWithOctave + ' in measure '
@@ -2582,6 +2582,7 @@ class Parser:
             # and shouldn't really ignore all the preparse work.
             # Test cases: 2020_05_19T16_58_53_914Z.musicxml;
             #             Westergaard070g.musicxml
+            #             WP000
             # TODO Prefer S2 on beat in third species,
             # if there are two candidates in the same bar.
             # TODO currently turned off for harmonic species
@@ -2606,13 +2607,9 @@ class Parser:
                     h = self.notes[basicArcCand[-1]]
                     # Look for descending steps to S1.
                     if isStepDown(j, h) and j.csd.value < self.S2Value:
-                        # Skip the pitch if it is a local repetition
-                        # (prefer the lefthead).
-                        if not isLocalRepetition(j.index, self.notes,
-                                                 self.arcs):
-                            basicArcCand.append(j.index)
+                        basicArcCand.append(j.index)
                     elif isStepDown(j, h) and j.csd.value == self.S2Value:
-                        # Skip the pitch if it is a repetition
+                        # Skip the pitch if it is a repetition of S2
                         # (prefer the lefthead).
                         if not isRepetition(j.index, self.notes, self.arcs):
                             basicArcCand.append(self.S2Index)
@@ -3926,7 +3923,7 @@ class Parser:
 
             independentArcs = []
             independentArcCount = 0
-            # Find all of the nonintegrated secondary arcs.
+            # Find all the nonintegrated secondary arcs.
             for arc in self.arcs:
                 if arc[0] in self.arcBasic:
                     pass
@@ -4378,6 +4375,7 @@ def isNeighboringArc(arc, notes):
     else:
         return False
 
+
 def getNeighborType(arc, notes):
     i = notes[arc[0]]
     j = notes[arc[1]]
@@ -4386,6 +4384,7 @@ def getNeighborType(arc, notes):
             return 'upper'
         else:
             return 'lower'
+
 
 def isPassingArc(arc, notes):
     # Accept an arcList of line indices and determine whether
@@ -4416,6 +4415,7 @@ def isPassingArc(arc, notes):
             return False
     return True
 
+
 def getPassingType(arc, notes):
     i = notes[arc[0]]
     j = notes[arc[1]]
@@ -4424,6 +4424,7 @@ def getPassingType(arc, notes):
             return 'rising'
         else:
             return 'falling'
+
 
 def isRepetitionArc(arc, notes):
     # Accept an arcList of line indices and determine
