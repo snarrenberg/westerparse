@@ -3,7 +3,7 @@
 # Purpose:      Framework for analyzing species counterpoint.
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2021 by Robert Snarrenberg
+# Copyright:    (c) 2022 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """
@@ -160,6 +160,7 @@ class GlobalContext(Context):
         self.score.errors = []
         self.errors = []
         self.errorsDict = {}
+        self.parseReport = ''
         if kwargs.get('harmonicSpecies'):
             self.harmonicSpecies = kwargs['harmonicSpecies']
         else:
