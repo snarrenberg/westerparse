@@ -1,0 +1,1264 @@
+# -----------------------------------------------------------------------------
+# Name:        westerparse.py
+# Purpose:     Evaluating Westergaardian species counterpoint
+#
+# Author:      Robert Snarrenberg
+# Copyright:   (c) 2022 by Robert Snarrenberg
+# License:     BSD, see license.txt
+# -----------------------------------------------------------------------------
+"""
+WesterParse
+===========
+
+This is the main program module.
+
+WesterParse allows a user to test a species counterpoint exercise
+for conformity with the rules of line construction and voice leading
+laid out in Peter Westergaard's book, *An Introduction to Tonal Theory*
+(New York, 1975).
+
+WesterParse imports a musicxml file, converts it to a music21 stream,
+determines a key (unless specified by the user), and then evaluates
+the linear syntax or the counterpoint.
+
+The main scripts are:
+
+>>> evaluateLines(source)
+>>> evaluateCounterpoint(source)
+
+For more information on how to use these scripts, see
+:doc:`User's Guide to WesterParse <userguide>`.
+"""
+
+import logging
+import time
+import unittest
+import os
+import json
+
+from music21 import *
+
+from westerparse import context
+from westerparse import parser
+from westerparse import vlChecker
+from westerparse import theoryAnalyzerWP
+from westerparse import utilities
+
+# -----------------------------------------------------------------------------
+# LOGGER
+# -----------------------------------------------------------------------------
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+logger.propagate = False
+# logging handlers
+f_handler = logging.FileHandler('westerparse.txt', mode='w')
+f_handler.setLevel(logging.DEBUG)
+# logging formatters
+f_formatter = logging.Formatter('%(message)s')
+f_handler.setFormatter(f_formatter)
+# add handlers to logger
+logger.addHandler(f_handler)
+
+# -----------------------------------------------------------------------------
+# OPERATIONAL VARIABLES
+# -----------------------------------------------------------------------------
+
+usePreferredParseSets = True
+
+# -----------------------------------------------------------------------------
+# EXCEPTION HANDLERS
+# -----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
+# MAIN SCRIPTS
+# -----------------------------------------------------------------------------
+
+def evaluateLines(source,
+                  show=None,
+                  partSelection=None,
+                  partLineType=None,
+                  report=False,
+                  **kwargs):
+    """
+    Determine whether lines are generable using Westergaard's rules.
+
+    Keyword arguments:
+
+    `show` -- Determines how the output is handled.
+
+       *Options*
+
+       None -- Default option. A text report is generated in lieu of a
+       display in musical notation.
+
+       `show` -- Parses will be displayed using the music notation application
+       that the user has configured for music21.
+
+       `writeToServer` -- Reserved for use by the WesterParse website
+       to write parses to musicxml files, which are then displayed in
+       the browser window.
+
+       `writeToLocal` -- Can be used to write parses in musicxml to a
+       user's local directory. [Eventually the user will be able to select
+       a directory by editing a configuration.py file.]  By default, the
+       files are written to 'parses_from_context/'.  The name for each
+       file consists of the prefix 'parser_output\_', a timestamp,
+       and the suffix '.musicxml'.
+
+       `writeToPng` -- Use the application MuseScore to produce png files.
+       MuseScore first generates an xml file and then derives the png
+       file.  These are named with the prefix 'parser_output\_',
+       a timestamp, and the appropriate suffix.  Note that Musescore
+       inserts '-1' before adding the '.png' suffix. The default
+       directory for these files is 'tempimages/'.  [This, too, can be
+       changed by editing the configuration.py file.]
+
+       `showWestergaardParse` -- Not yet functional.  Can be used if
+       the source consists of only one line. It will display the parse(s)
+       of a line using Westergaard's layered form of representation.
+
+       'parsedata' -- Can be used to create a json data file for each viable
+       parse of the selected parts. The data file consists of several lines of
+       metadata, a data table for notes, and a data table for the arcs.
+
+    `partSelection` -- Designates a line of the composition to parse.
+
+       *Options*
+
+       `None` -- The default option. Selects all the lines for parsing.
+
+       0, 1, 2, ..., -1 -- Following the conventions of music21, lines are
+       numbered from top to bottom, starting with 0.
+
+    `partLineType` -- Only for use in evaluating a single line.  None is
+    the default. User may select among 'primary', 'bass', or 'generic'.
+
+    `report` -- True or False. Use True to see a text report.  Note: If
+    one or more lines in the source cannot be parsed (i.e., if there are
+    syntax errors) or the `show` option is set to None, the program will
+    automatically generate a text report.
+
+    Other keywords: `keynote` and `mode` -- The user can use these to
+    force the parser to interpret the input in a particular key.
+
+    For harmonically progressive species, the user can specify when
+    the predominant and dominant spans begin, using the keywords
+    `startDominant` and, if needed, `startPredominant`, with values
+     given as measure numbers.
+    """
+    context.clearLogfile('logfile.txt')
+    # Make the global context.
+    if partLineType == 'any' or '':
+        partLineType = None
+    try:
+        cxt = makeGlobalContext(source, **kwargs)
+    except context.EvaluationException as fce:
+        fce.show()
+        return
+    # Parse the global context.
+    try:
+        parseContext(cxt, show, partSelection, partLineType)
+        logger.debug(f'\n{cxt.parseReport}')
+        if show is None or report is True:
+            print(cxt.parseReport)
+        return True
+    except context.EvaluationException as fce:
+        fce.show()
+
+
+def evaluateCounterpoint(source,
+                         report=True,
+                         sonorityCheck=False,
+                         **kwargs):
+    """
+    Determine whether voice leading conforms to Westergaard's rules.
+    """
+    context.clearLogfile('logfile.txt')
+    # Make the global context.
+    try:
+        cxt = makeGlobalContext(source, **kwargs)
+    except context.EvaluationException as fce:
+        fce.show()
+        return
+    # Validate the context as contrapuntal.
+    try:
+        if len(cxt.parts) == 1:
+            raise context.ContextError(
+                  'Context Error: The composition is only a single line. '
+                  'There is no voice-leading to check.')
+    except context.ContextError as ce:
+        ce.logerror()
+    # If context is contrapuntal, evaluate the voice leading.
+    try:
+        if len(cxt.parts) == 1:
+            raise context.EvaluationException
+    except context.EvaluationException as ee:
+        ee.show()
+    else:
+        vlChecker.vlErrors = []
+        vlChecker.checkCounterpoint(cxt, report=True)
+
+# -----------------------------------------------------------------------------
+# MAIN AUXILIARY SCRIPT
+# -----------------------------------------------------------------------------
+
+
+def makeGlobalContext(source, **kwargs):
+    """
+    Import a musicxml file and convert to music21 Stream.
+    Then create a :py:class:`~context.GlobalContext`.
+    """
+    s = converter.parse(source)
+    # create a global context object and prep for evaluation
+    # if errors encountered, script will exit and report
+    gxt = context.GlobalContext(s, filename=source, **kwargs)
+    return gxt
+
+# -----------------------------------------------------------------------------
+# PARSING SCRIPTS
+# -----------------------------------------------------------------------------
+
+
+def parseContext(cxt,
+                 show=None,
+                 partSelection=None,
+                 partLineType=None,
+                 report=False):
+    """
+    Parse the lines in a score.
+
+    Run the parser for each line of a context using :py:func:`parsePart`.
+    Collect error reports from the parser and
+    to produce an error report.
+    Create a separate report for successful parses.
+    If the user has elected to display the results, select
+    the preferred interpretations and display them.
+
+    (1) Create a dictionary of error reports for each part that is parsed.
+    (2) If the user has selected a part for evaluation, determine
+    whether the selection is valid.
+    (3) If the user has selected a type of line, determine whether
+    the selection is valid.
+    (4) Run the parser for the selected parts and collect errors, if any.
+    For primary lines, check for compliance with rule G2.
+    (5) Determine the generability of the selected parts.
+    (6) If show is 'parsedata' and the parts are all generable, export the
+    data for each parse as a json file.
+    (7) Create a parse report (text) to display to the user.
+    (8) Gather the sets of parses for the selected part(s).
+    If the module variable 'usePreferredParseSets' is set to True,
+    use Westergaard's counterpoint preferences for 2- and 3-part counterpoint.
+    (9) [If show is 'parsedata' and the parts are all generable,
+    export counterpoint data as a json file. (Not yet implemented.)]
+    (10) Based on the value of the 'show' variable, output
+    the interpreted part(s).
+    """
+
+    # (1) Create a dictionary of dictionaries for collecting error reports.
+    #   primary keys: part names
+    #   secondary keys: 'parser errors', 'primary', 'bass'
+    cxt.errorsDict = {}
+    for part in cxt.parts:
+        cxt.errorsDict[part.name] = {}
+
+    # (2) Validate part selection.
+    try:
+        partsForParsing = validatePartSelection(cxt, partSelection)
+    except context.ContextError as ce:
+        ce.logerror()
+        raise context.EvaluationException
+
+    # (3) Validate line type selection.
+    try:
+        validateLineTypeSelection(cxt, partSelection, partLineType)
+    except context.ContextError as ce:
+        ce.logerror()
+        raise context.EvaluationException
+
+    # (4) Run the parser, collect errors, and log parses.
+    for part in partsForParsing:
+        # Set the part's lineType if given by the user.
+        if partLineType:
+            part.lineType = partLineType
+        else:
+            part.lineType = None
+        # Parse the selected part.
+        parsePart(part, cxt)
+        # Collect errors.
+        if part.errors:
+            cxt.errorsDict[part.name]['parser errors'] = part.errors
+        else:
+            cxt.errorsDict[part.name]['parser errors'] = []
+        if part.typeErrorsDict:
+            for key, value in part.typeErrorsDict.items():
+                cxt.errorsDict[part.name][key] = value
+        # Check the final step in potential primary lines
+        if part.isPrimary:
+            checkFinalStep(part, cxt)
+        # Log the parse.
+        parseLog = writeParseDataLog(part)
+        logger.debug(f'{parseLog}')
+
+    # (5) Determine the generability of the selected parts.
+    generability = getGenerability(cxt, partSelection)
+    logger.debug(f'\nGenerabilty: {generability}')
+
+    # (6) Create parse data files, if called.
+    if show == 'parsedata' and generability:
+        writeteParseDataFiles(cxt)
+
+    # (7) Create parse report.
+    try:
+        createParseReport(cxt, generability, partsForParsing, partSelection,
+                          partLineType)
+    except context.ContextError as ce:
+        ce.logerror()
+        raise context.EvaluationException
+
+    # (8) Gather the interpretations of the selected part(s)
+    #       in the specified manner.
+    # If usePreferredParseSets is True, use Westergaard's counterpoint
+    #       preferences for 2- and 3-part counterpoint
+    parseSets = gatherParseSets(cxt, partSelection, partLineType)
+
+    # TODO (9) add export of counterpoint data file
+    # (9) Create counterpoint data files, if called.
+    if show == 'parsedata' and generability:
+        createCounterpointDataFiles(cxt, parseSets)
+
+    # (10) Output the parses in the desired manner.
+    showParses(cxt, show, parseSets)
+
+
+def validatePartSelection(cxt, partSelection):
+    partsSelected = None
+    if partSelection is not None:
+        try:
+            cxt.parts[partSelection]
+        except IndexError:
+            if len(cxt.parts) == 1:
+                pts = ' part'
+            else:
+                pts = ' parts'
+            raise context.ContextError(
+                'Context Error: The composition has only '
+                + str(len(cxt.parts)) + pts
+                + ', so the part selection must fall in the range of 0-'
+                + str(len(cxt.parts)-1)
+                + '. Hence the selection of part '
+                + str(partSelection) + ' is invalid.')
+        else:
+            if partSelection >= 0:
+                partsSelected = cxt.parts[partSelection:partSelection+1]
+            else:
+                partsSelected = cxt.parts[partSelection::partSelection-1]
+    elif len(cxt.parts) == 1:
+        partsSelected = cxt.parts[0:1]
+    elif partSelection is None:
+        partsSelected = cxt.parts
+    return partsSelected
+
+
+def validateLineTypeSelection(cxt, partSelection, partLineType):
+    if partLineType is not None:
+        if len(cxt.parts) == 1 or partSelection is not None:
+            return True
+        else:
+            pass
+        raise context.ContextError(
+            'Context Error: You have selected the following line type: '
+            + f'{partLineType}. '
+            + '\nHowever, line type selection is only permitted '
+            + 'when the source is a single line \nor there is a valid '
+            + 'part selection.'
+            )
+
+
+def parsePart(part, cxt):
+    """
+    Parse a given part.
+
+    Create a (:py:class:`~parser.Parser`) for the part and
+    collect the results.  Determine whether the line is generable as a primary,
+    bass, or generic line.  Compile a list of ways the line can be generated
+    for each line type, if at all. Collect a list of parsing errors.
+    """
+    # Run the parser.
+    partParser = parser.Parser(part, cxt)
+    # Sort out the interpretations of the part.
+    part.parses = partParser.parses
+    part.isPrimary = partParser.isPrimary
+    part.isGeneric = partParser.isGeneric
+    part.isBass = partParser.isBass
+    part.Pinterps = partParser.Pinterps
+    part.Ginterps = partParser.Ginterps
+    part.Binterps = partParser.Binterps
+    part.interpretations = partParser.interpretations
+    # Gather errors, if any.
+    part.errors = partParser.errors
+    part.typeErrorsDict = partParser.typeErrorsDict
+    logger.debug(f'\nValid parses of part {part.partNum}: {part.interpretations}')
+
+
+
+def checkFinalStep(part, cxt):
+    # TODO this works when a line is otherwise parsable as a primary line,
+    #   but perhaps it should also be called when a line is being evaluated
+    #   as a primary line, regardless of whether it is otherwise generable
+
+    # TODO rethink how the rule works in third species:
+    #   e.g., 7-6-5 | 8, the local passing does not interfere with the
+    #   7-8 connection
+    # Assume there is no acceptable final step connection until proven true.
+    finalStepConnection = False
+    # Get the last note of the primary upper line.
+    ultimaNote = part.recurse().notes[-1]
+    # Collect the notes in the penultimate bar of the upper line.
+    penultBar = part.getElementsByClass(stream.Measure)[-2].notes
+    buffer = []
+    stack = []
+
+    # Fill buffer with notes of penultimate bar in reverse.
+    for n in reversed(penultBar):
+        buffer.append(n)
+    blen = len(buffer)
+    # Start looking for a viable step connection.
+    while blen > 0:
+        if vlChecker.isDiatonicStep(ultimaNote, buffer[0]):
+            # Check penultimate note.
+            if len(stack) == 0:
+                finalStepConnection = True
+                break
+            # Check other notes, if needed.
+            elif len(stack) > 0:
+                for s in stack:
+                    if vlChecker.isDiatonicStep(s, buffer[0]):
+                        finalStepConnection = False
+                        break
+                    else:
+                        finalStepConnection = True
+        utilities.shiftBuffer(stack, buffer)
+        blen = len(buffer)
+    # Write an error in the context error dictionary for this part
+    # and set isPrimary to False
+    if not finalStepConnection:  # ultimaNote.csd.value % 7 == 0
+        error = (
+            'No final step connection in the primary upper line.')
+        cxt.errorsDict[part.name]['parser errors'].append(error)
+#        part.errors.append(error)
+#        parserErrors = cxt.errorsDict[part.name]['parser errors']
+#        parserErrors.append(error)
+#        cxt.errorsDict[part.name]['parser errors'] = parserErrors
+        part.isPrimary = False
+    else:
+        pass
+
+
+def writeParseDataLog(part):
+    """
+    Write line parse to log file.
+    """
+    pass
+    logInfo = []
+    parseHeader = ('Parse of part ' + str(part.partNum) + ':')
+    logInfo.append(parseHeader)
+    if part.parses:
+        for prse in part.parses:
+            parseData = ('Label: ' + prse.label
+                         + '\n\tArcs:  ' + str(prse.arcs)
+                         + '\n\tRules:\t'
+                         + ''.join(['{:4d}'.format(lbl[0])
+                                    for lbl in prse.ruleLabels])
+                         + '\n\t      \t'
+                         + ''.join(['{:>4}'.format(lbl[1])
+                                    for lbl in prse.ruleLabels])
+                         + '\n\t      \t'
+                         + ''.join(['{:4d}'.format(lbl[2])
+                                    for lbl in prse.ruleLabels])
+                         )
+            logInfo.append(parseData)
+    logData = '\n'.join(logInfo)
+    return logData
+
+
+def getGenerability(cxt, partSelection):
+    # Determine whether all parts are generable.
+    generableParts = 0
+    generability = False
+    if partSelection is None:
+        for part in cxt.parts:
+            if part.isPrimary or part.isBass or part.isGeneric:
+                generableParts += 1
+        if generableParts == len(cxt.parts):
+            generability = True
+    elif partSelection is not None:
+        rules = [cxt.parts[partSelection].isPrimary,
+                 cxt.parts[partSelection].isBass,
+                 cxt.parts[partSelection].isGeneric]
+        if any(rules):
+            generability = True
+    return generability
+
+
+def writeParseDataFiles(cxt):
+    # TODO limit to selected part
+    for part in cxt.parts:
+        Pinterps = part.interpretations.get('primary', None)
+        Ginterps = part.interpretations.get('generic', None)
+        Binterps = part.interpretations.get('bass', None)
+        if Pinterps:
+            for parse in Pinterps:
+                extractParseDataFromPart(cxt, part, parse)
+        # if Ginterps:
+        #     for parse in Ginterps:
+        #         extractParseData(part, parse)
+        if Binterps:
+            for parse in Binterps:
+                extractParseDataFromPart(cxt, part, parse)
+
+
+def extractParseDataFromPart(cxt, part, parse):
+    file_name = os.path.splitext(os.path.basename(cxt.filename))[0]
+    # create a name for the parsed data file
+    fn = 'parse_data/' + file_name + '_' + str(
+        part.partNum) + '_' + parse.label + '_data.json'
+    # assemble metadata
+    parse_data = {}
+    parse_data['file_name'] = file_name
+    parse_data['part_number'] = part.partNum
+    parse_data['line_type'] = parse.lineType
+    parse_data['species'] = parse.species
+    parse_data['parse_label'] = parse.label
+    # assemble notes_array dictionary
+    notes_array = []
+    # start with the note labels in each part, consisting of a
+    # tuple: (index, rule, level)
+    # TODO address problem with indexing notes in fourth species
+    for lab in parse.ruleLabels:
+        note_array = {}
+        note_array['index'] = lab[0]
+        # offset property is causing problems, perhaps because of json
+        # data restrictions (no fractions allowed),
+        # so I've converted the fractions to approx floats
+        if not isinstance(part.flatten().notes[lab[0]].offset, float):
+            num = part.flatten().notes[lab[0]].offset.numerator
+            den = part.flatten().notes[lab[0]].offset.denominator
+            val = round(num / den, 2)
+            note_array['offset'] = val
+        else:
+            note_array['offset'] = part.flatten().notes[lab[0]].offset
+        note_array['csd_value'] = part.flatten().notes[lab[0]].csd.value
+        note_array['rule_label'] = lab[1]
+        note_array['gen_level'] = lab[2]
+        # detemine parentheses for each note
+        left_paren = False
+        right_paren = False
+        if lab[1] == 'E3':
+            left_paren = True
+            right_paren = True
+            for arc in parse.arcs:
+                if arc[-1] == lab[0]:
+                    left_paren = False
+                if arc[0] == lab[0]:
+                    right_paren = False
+        note_array['left_paren'] = left_paren
+        note_array['right_paren'] = right_paren
+        # add note array to list
+        notes_array.append(note_array)
+    # add notes list to data
+    parse_data['notes_array'] = notes_array
+    # assemble arcs_array dictionary
+    arcs_array = []
+    for arc in parse.arcs:
+        arc_array = {}
+        arc_array['arc'] = arc
+        # determine the category of arc
+        if arc == parse.arcBasic:
+            arc_category = 'basic'
+        else:
+            arc_category = 'secondary'
+        # determine the type of arc
+        arc_type = None
+        if not arc_type:
+            if parser.isRepetitionArc(arc, part.flat.notes):
+                arc_type = 'repetition'
+            elif parser.isNeighboringArc(arc, part.flat.notes):
+                arc_type = 'neighbor'
+            elif parser.isPassingArc(arc, part.flat.notes):
+                arc_type = 'passing'
+            elif parse.lineType == 'bass' and arc_category == 'basic':
+                arc_type = 'arpeggiation'
+        arc_array['arc_category'] = arc_category
+        arc_array['arc_type'] = arc_type
+        # determine the subtype, if any
+        arc_subtype = ''
+        if arc_type == 'neighbor':
+            arc_subtype = parser.getNeighborType(arc, part.flat.notes)
+        if arc_type == 'passing':
+            arc_subtype = parser.getPassingType(arc,
+                                                part.flat.notes)
+        arc_array['arc_subtype'] = arc_subtype
+        # find csd content of arc
+        arc_content = []
+        for ind in arc:
+            arc_content.append(part.flat.notes[ind].csd.value)
+        arc_array['arc_content'] = arc_content
+        # calculate raw hierarchical level of arc
+        arc_level_raw = 0
+        for na in notes_array:
+            if na['index'] == arc[0]:
+                arc_level_raw += na['gen_level']
+            if na['index'] == arc[-1]:
+                arc_level_raw += na['gen_level']
+        arc_array['arc_level'] = arc_level_raw
+        # add arc array to list
+        arcs_array.append(arc_array)
+    # re-calculate hierarichical levels of arcs
+    arc_levels_raw = []
+    for arc in arcs_array:
+        raw_lev = arc['arc_level']
+        if raw_lev not in arc_levels_raw:
+            arc_levels_raw.append(raw_lev)
+    arc_levels_raw_sorted = sorted(arc_levels_raw)
+    for arc in arcs_array:
+        raw_lev = arc['arc_level']
+        arc_level = arc_levels_raw_sorted.index(raw_lev)
+        arc['arc_level'] = arc_level
+    # add arcs list to data
+    parse_data['arcs_array'] = sorted(arcs_array, key=lambda d: d['arc_level'])
+    # write data to json text file
+    with open(fn, 'w') as json_file:
+        json.dump(parse_data, json_file, indent=4)
+
+
+def createParseReport(cxt, generability, partsForParsing, partSelection,
+                      partLineType):
+    # Create the optional parse report for user
+    # and a required error report if errors arise.
+
+    # Base string for reporting parse results.
+    cxt.parseReport = 'PARSE REPORT'
+
+    # Gather information on the key to report to the user.
+    if cxt.keyFromUser:
+        result = ('Key supplied by user: ' + cxt.key.nameString)
+        cxt.parseReport = cxt.parseReport + '\n' + result
+    else:
+        result = ('Key inferred by program: ' + cxt.key.nameString)
+        cxt.parseReport = cxt.parseReport + '\n' + result
+
+    if generability:
+        if partSelection is not None or len(cxt.parts) == 1:
+            if partSelection is not None:
+                part = cxt.parts[partSelection]
+            else:
+                part = cxt.parts[0]
+            if partLineType is None:
+                if part.isPrimary and part.isBass:
+                    result = ('The line is generable as both '
+                              'a primary line and a bass line.')
+                elif not part.isPrimary and part.isBass:
+                    result = ('The line is generable as a bass '
+                              'line but not as a primary line.')
+                elif part.isPrimary and not part.isBass:
+                    result = ('The line is generable as a primary '
+                              'line but not as a bass line.')
+                if (not part.isPrimary and not part.isBass
+                        and part.isGeneric):
+                    result = ('The line is generable only '
+                              'as a generic line.')
+            elif partLineType is not None:
+                if partLineType == 'primary' and part.isPrimary:
+                    result = 'The line is generable as a primary line.'
+                elif partLineType == 'bass' and part.isBass:
+                    result = 'The line is generable as a bass line.'
+                elif partLineType == 'generic' and part.isGeneric:
+                    result = 'The line is generable as a generic line.'
+                # ERRORS
+                else:
+                    error = ('The line is not generable as the '
+                             'selected type: ' + partLineType)
+                    error = (error + '\nThe following linear '
+                             'errors were found:')
+                    if cxt.errorsDict[part.name][partLineType]:
+                        for err in cxt.errorsDict[part.name][partLineType]:
+                            error = error + '\n\t\t' + str(err)
+                    raise context.ContextError(error)
+            # Update parse report if no errors found.
+            cxt.parseReport = cxt.parseReport + '\n' + result
+
+        elif partSelection is None and len(cxt.parts) > 1:
+            upperPrimary = False
+            genericUpperLines = []
+            lowerBass = False
+            for part in cxt.parts[0:-1]:
+                if part.isPrimary:
+                    upperPrimary = True
+                else:
+                    genericUpperLines.append(part.name)
+            if cxt.parts[-1].isBass:
+                lowerBass = True
+            if upperPrimary and lowerBass:
+                if len(cxt.parts) == 2:
+                    result = ('The upper line is generable as a '
+                              'primary line. \nThe lower line '
+                              'is generable as a bass line.')
+                else:
+                    result = ('At least one upper line is generable '
+                              'as a primary line. \nThe lower line '
+                              'is generable as a bass line.')
+            # ERRORS
+            elif not upperPrimary and lowerBass:
+                if len(cxt.parts) == 2:
+                    error = ('The upper line is not generable '
+                             'as a primary line. \nBut the lower '
+                             'line is generable as a bass line.')
+                else:
+                    error = ('No upper line is generable as a '
+                             'primary line. \nBut the lower line '
+                             'is generable as a bass line.')
+                for gul in genericUpperLines:
+                    if cxt.errorsDict[gul]:
+                        error = (error + '\n\tThe following linear '
+                                 'errors were found in ' + gul + ':')
+                        for err in cxt.errorsDict[gul]['parser errors']:
+                            error = error + '\n\t\t\t' + str(err)
+                raise context.ContextError(error)
+            elif upperPrimary and not lowerBass:
+                if len(cxt.parts) == 2:
+                    error = ('The upper line is generable as a '
+                             'primary line. \nBut the lower line '
+                             'is not generable as a bass line.')
+                else:
+                    error = ('At least one upper line is generable '
+                             'as a primary line. \nBut the lower line '
+                             'is not generable as a bass line.')
+                bln = cxt.parts[-1].name
+                if cxt.errorsDict[bln]:
+                    error = (error + '\n\tThe following linear '
+                             'errors were found in the bass line:')
+                    for err in cxt.errorsDict[bln]['bass']:
+                        error = error + '\n\t\t\t' + str(err)
+                raise context.ContextError(error)
+            elif not upperPrimary and not lowerBass:
+                if len(cxt.parts) == 2:
+                    error = ('The upper line is not generable as a '
+                             'primary line. \nNor is the lower line '
+                             'generable as a bass line.')
+                else:
+                    error = ('No upper line is generable as '
+                             'a primary line. \nNor is the lower '
+                             'line generable as a bass line.')
+                for part in cxt.parts[:-1]:
+                    if cxt.errorsDict[part.name]:
+                        error = (error + '\n\tThe following linear '
+                                 'errors were found in ' + part.name + ':')
+                        for err in cxt.errorsDict[part.name]['primary']:
+                            error = error + '\n\t\t\t' + str(err)
+                bln = cxt.parts[-1].name
+                if cxt.errorsDict[bln]:
+                    error = (error + '\n\tThe following linear errors '
+                             'were found in the bass line:')
+                    for err in cxt.errorsDict[bln]['bass']:
+                        error = error + '\n\t\t\t' + str(err)
+                raise context.ContextError(error)
+            # Update parse report if no errors found.
+            cxt.parseReport = cxt.parseReport + '\n' + result
+
+    elif not generability:
+        # Get header and key information from parse report.
+        error = cxt.parseReport + '\n' + 'Line Parsing Errors'
+        if len(partsForParsing) == 1:
+            part = partsForParsing[0]
+            error = (error + '\n\tThe following linear errors were '
+                     'found when attempting to interpret the line:')
+            try:
+                cxt.errorsDict[part.name]['parser errors']
+            except KeyError:
+                pass
+            else:
+                for err in cxt.errorsDict[part.name]['parser errors']:
+                    error = error + '\n\t\t\t' + str(err)
+                if not cxt.errorsDict[part.name]['parser errors']:
+                    error = error + '\n\t\t\tUnspecified error.'
+            try:
+                cxt.errorsDict[part.name]['primary']
+            except KeyError:
+                pass
+            else:
+                for err in cxt.errorsDict[part.name]['primary']:
+                    error = error + '\n\t\t\t' + str(err)
+            try:
+                cxt.errorsDict[part.name]['bass']
+            except KeyError:
+                pass
+            else:
+                for err in cxt.errorsDict[part.name]['bass']:
+                    error = error + '\n\t\t\t' + str(err)
+            raise context.ContextError(error)
+        else:
+            for part in cxt.parts[:-1]:
+                if part.isPrimary:
+                    error = (error + '\n\t' + part.name +
+                             ' is generable as a primary line.')
+                elif not part.isPrimary and part.isGeneric:
+                    error = (error + '\n\t' + part.name +
+                             ' is generable as a generic line.')
+                else:
+                    error = (error + '\n\t' + part.name +
+                             ' is not generable. '
+                             'The following errors were found:')
+                try:
+                    cxt.errorsDict[part.name]['parser errors']
+                except KeyError:
+                    pass
+                else:
+                    for err in cxt.errorsDict[part.name]['parser errors']:
+                        error = error + '\n\t\t\t' + str(err)
+                try:
+                    cxt.errorsDict[part.name]['primary']
+                except KeyError:
+                    pass
+                else:
+                    for err in cxt.errorsDict[part.name]['primary']:
+                        error = error + '\n\t\t\t' + str(err)
+            for part in cxt.parts[-1:]:
+                if part.isBass:
+                    error = (error + '\n\t' + part.name +
+                             ' is generable as a bass line.')
+                else:
+                    error = (error + '\n\t' + part.name +
+                             ' is not generable. '
+                             'The following errors were found:')
+                try:
+                    cxt.errorsDict[part.name]['parser errors']
+                except KeyError:
+                    pass
+                else:
+                    for err in cxt.errorsDict[part.name]['parser errors']:
+                        error = error + '\n\t\t\t' + str(err)
+                try:
+                    cxt.errorsDict[part.name]['bass']
+                except KeyError:
+                    pass
+                else:
+                    for err in cxt.errorsDict[part.name]['bass']:
+                        error = error + '\n\t\t\t' + str(err)
+
+        raise context.ContextError(error)
+
+
+def gatherParseSets(cxt, partSelection=None, partLineType=None):
+    parseSets = []
+    # (1a) If one part is selected.
+    if partSelection is not None:
+        part = cxt.parts[partSelection]
+        if partLineType == 'primary' and part.isPrimary:
+            for parse in part.Pinterps:
+                parseSets.append((parse,))
+        elif partLineType == 'bass' and part.isBass:
+            for parse in part.Binterps:
+                parseSets.append((parse,))
+        elif partLineType == 'generic' and part.isGeneric:
+            for parse in part.Ginterps:
+                parseSets.append((parse,))
+    # (1b) if there is only 1 part and no type is specified.
+    elif len(cxt.parts) == 1 and partLineType is None:
+        part = cxt.parts[0]
+        if part.Pinterps:
+            for parse in part.Pinterps:
+                parseSets.append((parse,))
+        if part.Binterps:
+            for parse in part.Binterps:
+                parseSets.append((parse,))
+        if part.Ginterps:
+            for parse in part.Ginterps:
+                parseSets.append((parse,))
+    # (2a) If there are 2 parts and no preferences are specified, show
+    # all combinations of primary and bass parses. Ignore generic parses.
+    elif len(cxt.parts) == 2 and partSelection is None:
+        upperPart = cxt.parts[0]
+        lowerPart = cxt.parts[1]
+        for PI in upperPart.Pinterps:
+            for BI in lowerPart.Binterps:
+                parseSets.append((PI, BI))
+    # (2b) If there are 3 parts and no preferences are specified, show
+    # all combinations of primary and bass parses. Ignore generic parses if
+    # primary parses are available for an upper or inner line.
+    elif len(cxt.parts) == 3 and partSelection is None:
+        upperPart = cxt.parts[0]
+        innerPart = cxt.parts[1]
+        lowerPart = cxt.parts[2]
+        if upperPart.isPrimary:
+            upperPartPreferredInterps = upperPart.Pinterps
+        else:
+            upperPartPreferredInterps = upperPart.Ginterps
+        if innerPart.isPrimary:
+            innerPartPreferredInterps = innerPart.Pinterps
+        else:
+            innerPartPreferredInterps = innerPart.Ginterps
+        for UI in upperPartPreferredInterps:
+            for II in innerPartPreferredInterps:
+                for BI in lowerPart.Binterps:
+                    parseSets.append((UI, II, BI))
+    parsesString = ("\n".join([f"\t{x}" for x in parseSets]) )
+    logger.debug(f'\nAll parse sets:\n {parsesString}')
+    # (3) select only preferred parses in 2- or 3-part counterpoint
+    if len(cxt.parts) == 2 and partSelection is None and usePreferredParseSets:
+        preferredParseSets = selectPreferredParseSets(cxt, 0)
+        parseSets = preferredParseSets
+    elif len(cxt.parts) == 3 and partSelection is None and usePreferredParseSets:
+        upperPart = cxt.parts[0]
+        innerPart = cxt.parts[1]
+        preferredParseSets = []
+        if upperPart.isPrimary:
+            upperPrefs = selectPreferredParseSets(cxt, 0)
+            # collect all of the possible P and G parses for the inner part
+            innerPrefs = []
+            if innerPart.isPrimary:
+                innerPrefs += [p for p in innerPart.Pinterps]
+            innerPrefs += [p for p in innerPart.Ginterps]
+            # now make all the combinations
+            for prefPair in upperPrefs:
+                for II in innerPrefs:
+                    preferredParseSets.append((prefPair[0], II, prefPair[1]))
+        if innerPart.isPrimary:
+            innerPrefs = selectPreferredParseSets(cxt, 0)
+            # collect all of the possible P and G parses for the upper part
+            upperPrefs = []
+            if upperPart.isPrimary:
+                upperPrefs += [p for p in upperPart.Pinterps]
+            upperPrefs += [p for p in upperPart.Ginterps]
+            # now make all the combinations
+            for prefPair in innerPrefs:
+                for PI in upperPrefs:
+                    preferredParseSets.append((PI, prefPair[0], prefPair[1]))
+            parseSets = preferredParseSets
+    parsesString = ("\n".join([f"\t{x}" for x in parseSets]) )
+    logger.debug(f'\nPreferred sets:\n {parsesString}')
+    # (4) show 4-part counterpoint???
+    if len(cxt.parts) > 3:
+        error = 'Not yet able to display counterpoint in four or more parts.'
+        raise context.ContextError(error)
+    else:
+        return parseSets
+
+
+def selectPreferredParseSets(cxt, primaryPartNum):
+    """
+    Select sets of parses based on Westergaard preference rules,
+    trying to negotiate the best match
+    between the global structures of a given upper line and the bass line.
+    [This currently works
+    only for two- and three-part counterpoint.]
+    """
+    # TODO need to refine the preferences substantially
+
+    primPart = cxt.parts[primaryPartNum]
+    bassPart = cxt.parts[-1]
+    preferredGlobals = []
+
+    # Look for coordination of penultimate structural components.
+    domOffsetDiffList = []  # structural Dominant Offset Differences List
+    lowestDifference = 1000
+    for interpPrimary in primPart.interpretations['primary']:
+        for interpBass in bassPart.interpretations['bass']:
+            a = primPart.recurse().flat.notes[interpPrimary.S3Final].offset
+            b = bassPart.recurse().flat.notes[interpBass.S3Index].offset
+            domOffsetDiff = (a - b)
+            if abs(domOffsetDiff) < lowestDifference:
+                lowestDifference = abs(domOffsetDiff)
+            domOffsetDiffList.append((abs(domOffsetDiff),
+                                      (interpPrimary, interpBass)))
+    for pair in domOffsetDiffList:
+        if abs(pair[0]) == abs(lowestDifference):
+            preferredGlobals.append(pair[1])
+
+    nonharmonicParses = []
+    # TODO evaluate all pairings, not just the preferred ones
+    #   create a list of all pairings???
+    allGlobals = []
+    for interpPrimary in primPart.interpretations['primary']:
+        for interpBass in bassPart.interpretations['bass']:
+            allGlobals.append((interpPrimary, interpBass))
+
+    if allGlobals and cxt.harmonicSpecies:
+        for prse in allGlobals:
+            offInitTon = cxt.harmonicSpanDict['offsetInitialTonic']
+            offPredom = cxt.harmonicSpanDict['offsetPredominant']
+            offDom = cxt.harmonicSpanDict['offsetDominant']
+            offClosTon = cxt.harmonicSpanDict['offsetClosingTonic']
+
+            # implement preference rules for global coordination of
+            #   linear structures
+            # Check for span placement and consonance of
+            #   primary upper line notes
+            #   bass line pitches have already been checked
+
+            def getBassNote(upperNote, context):
+                # TODO rewrite without calling theoryAnalyzerWP
+                # TODO create the vert list just once, outside the function
+                #  and use as needed
+                analyzer = theoryAnalyzerWP.Analyzer()
+                analyzer.addAnalysisData(context.score)
+                verts = analyzer.getVerticalities(context.score)
+                bassNote = None
+                for vert in verts:
+                    if upperNote in vert.objects:
+                        bassNote = vert.objects[-1]
+                return bassNote
+
+            SList = prse[0].arcBasic
+            # Set primary line type: 3line, 5line, 8line.
+            SLine = str(len(SList)) + 'line'
+            # Set number of required structural consonances.
+            if len(SList) == 3:
+                structConsReq = 3
+            else:
+                structConsReq = 4
+            # Count the structural consonances.
+            structuralConsonances = 0
+            for s in SList:
+                u = primPart.recurse().notes[s]
+                b = getBassNote(u, cxt)
+                if vlChecker.isConsonanceAboveBass(b, u):
+                    structuralConsonances += 1
+            # Check harmonic coordination of structural pitches.
+            # Assume it true until proven otherwise.
+            harmonicCoordination = True
+            # Check placement of S1.
+            if offPredom is not None:
+                if not (offInitTon
+                        <= primPart.recurse().notes[SList[0]].offset
+                        < offPredom):
+                    harmonicCoordination = False
+                    break
+            else:
+                if not (offInitTon
+                        <= primPart.recurse().notes[
+                            SList[0]].offset
+                        < offDom):
+                    harmonicCoordination = False
+                    break
+            # Check placement of predominant.
+            predomSIndexList = []
+            structuralPredominant = False
+            if SLine == '3line':
+                predomSIndexList = [SList[-2]]
+            elif SLine == '5line':
+                predomSIndexList = [SList[-4], SList[-2]]
+            elif SLine == '8line':
+                predomSIndexList = [SList[-6], SList[-4], SList[-2]]
+            if offPredom is not None:
+                for psi in predomSIndexList:
+                    u = primPart.recurse().notes[psi]
+                    b = getBassNote(u, cxt)
+                    if ((offPredom
+                         <= primPart.recurse().notes[psi].offset
+                         < offDom)
+                            and vlChecker.isConsonanceAboveBass(b, u)):
+                        structuralPredominant = True
+                        break
+            if not structuralPredominant:
+                harmonicCoordination = False
+                break
+            # Check placement of dominant.
+            if offPredom is None:
+                u = primPart.recurse().notes[SList[-1]]
+                b = getBassNote(u, cxt)
+                if ((offDom
+                     <= primPart.recurse().notes[SList[-1]].offset
+                     < offClosTon)
+                        and vlChecker.isConsonanceAboveBass(b, u)):
+                    harmonicCoordination = False
+                    break
+
+            # Add pair to removal list if coordination tests not passed.
+            if not (structuralConsonances >= structConsReq
+                    and harmonicCoordination):
+                nonharmonicParses.append(prse)
+
+    if cxt.harmonicSpecies:
+        preferredGlobals = [prse for prse in allGlobals
+                            if prse not in nonharmonicParses]
+
+    return preferredGlobals
+
+
+def createCounterpointDataFiles(cxt, parseSets):
+    pass
+
+
+def extractCounterpointDataFromParseSets(cxt, parseSets):
+    pass
+
+
+def showParses(cxt, show, parseSets):
+    """Show the interpretations. For each set of line parses,
+    build the representation of each component line
+    and then select the appropriate mode of representation (show)."""
+    def buildInterpretation(parse):
+        # Clean out slurs that might have been left behind by a previous parse.
+        slurs = cxt.parts[parse.partNum].recurse().getElementsByClass(
+            spanner.Slur)
+        for slur in slurs:
+            cxt.parts[parse.partNum].remove(slur)
+        # TODO Remove not only slurs but also parentheses and colors.
+
+        # BUILD the interpretation
+        # Arcs, rules, and parens are tied to note indexes in the line,
+        # and these are then attached to notes in the source part.
+        gatherArcs(cxt.parts[parse.partNum], parse.arcs, parse.arcBasic)
+        assignRules(cxt.parts[parse.partNum], parse.ruleLabels)
+        assignParentheses(cxt.parts[parse.partNum], parse.parentheses)
+
+    def selectOutput(content, show):
+        # content is a stream (part or score)
+        if show == 'show':
+            content.show()
+        elif show == 'writeToServer':
+            timestamp = str(time.time())
+            filename = ('/home/spenteco/1/snarrenberg/parses_from_context/'
+                        + 'parser_output_' + timestamp + '.musicxml')
+            content.write('musicxml', filename)
+            print(filename)
+        elif show == 'writeToCorpusServer':
+            timestamp = str(time.time())
+            filename = ('./media/tmp/'
+                        + 'parser_output_' + timestamp + '.musicxml')
+            content.write('musicxml', filename)
+        elif show == 'writeToLocal':
+            timestamp = str(time.time())
+            filename = ('parses_from_context/'
+                        + 'parser_output_' + timestamp + '.musicxml')
+            content.write('musicxml', filename)
+        elif show == 'writeToPng':
+            timestamp = str(time.time())
+            filename = ('tempimages/'
+                        + 'parser_output_' + timestamp + '.xml')
+            content.write('musicxml.png', fp=filename)
+        elif show == 'showWestergaardParse':
+            pass
+            # TODO Activate function for displaying layered representations of
+            # a parsed line, perhaps for one line only.
+            # use parser.displayWestergaardParse
+
+    for parseTuple in parseSets:
+        # (1) Build the interpretation of each part.
+        for parseLabel in parseTuple:
+            buildInterpretation(parseLabel)
+        # (2) Show the interpreted content.
+        # if just one part present or selected, show just that part
+        if len(parseTuple) == 1:
+            selectedPart = parseTuple[0].partNum
+            content = cxt.parts[selectedPart]
+        # else show all parts:
+        elif len(parseTuple) in [2, 3]:
+            content = cxt.score
+
+        selectOutput(content, show)
+
+# -----------------------------------------------------------------------------
+# OPERATIONAL SCRIPTS FOR PARSING DISPLAY
+# -----------------------------------------------------------------------------
+
+
+def gatherArcs(source, arcs, arcBasic=None):
+    """
+    Given a fully parsed line (an interpretation), sort through the arcs and
+    create a music21 spanner (tie/slur) to represent each arc.
+    """
+    # Source is a Part in the input Score.
+    # Sort through the arcs and create a spanner(tie/slur) for each.
+    tempArcs = []
+    # Skip duplicate arcs and the basic arc, if given.
+    for elem in arcs:
+        if elem not in tempArcs and elem != arcBasic:
+            tempArcs.append(elem)
+    arcs = tempArcs
+    # Build arcs.
+    for arc in arcs:
+        arcBuild(source, arc)
+    # TODO Set up separate function for the basic arc.
+    # Currently using color to indicate notes in the basic arc.
+
+
+def arcBuild(source, arc):
+    """
+    Translate an arc into a notated slur.
+    """
+    # Source is a Part in the input Score.
+    if len(arc) == 2:
+        slurStyle = 'dashed'
+    else:
+        slurStyle = 'solid'
+    thisSlur = spanner.Slur()
+    thisSlur.lineType = slurStyle
+    thisSlur.placement = 'above'
+    source.insert(0, thisSlur)
+    for ind in arc:
+        obj = source.recurse().notes[ind]
+        thisSlur.addSpannedElements(obj)
+
+
+def assignRules(source, rules):
+    """
+    Given a fully parsed line (an interpretation), add a lyric to each
+    note to show the syntactic rule that generates the note.
+    Also assigns a color to notes generated by a rule of basic structure.
+    """
+    # Source is a Part in the input Score.
+    ruleLabels = rules
+    for index, elem in enumerate(source.recurse().notes):
+        for rule in ruleLabels:
+            if index == rule[0]:
+                elem.lyric = rule[1]
+                if elem.lyric is not None and elem.lyric[0] == 'S':
+                    elem.style.color = 'red'
+                else:
+                    elem.style.color = 'black'
+            else:
+                pass
+
+
+def assignParentheses(source, parentheses):
+    """
+    Add parentheses around notes generated as insertions. [This aspect
+    of syntax representation cannot be fully implemented at this time,
+    because musicxml only allows parentheses to be assigned in pairs,
+    whereas syntax coding requires
+    the ability to assign left and right parentheses separately.]
+    """
+    # Source is a Part in the input Score.
+    parentheses = parentheses
+    for index, elem in enumerate(source.recurse().notes):
+        for parens in parentheses:
+            if index == parens[0]:
+                elem.noteheadParenthesis = parens[1]
+            else:
+                pass
+
+# -----------------------------------------------------------------------------
+# TESTS
+# -----------------------------------------------------------------------------
+
+
+class Test(unittest.TestCase):
+
+    def runTest(self):
+        pass
+
+    def test_evaluateLines(self):
+        source = '../examples/corpus/WP100.musicxml'
+        self.assertTrue(evaluateLines(source))
+
+# -----------------------------------------------------------------------------
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+# -----------------------------------------------------------------------------
+# eof
