@@ -341,6 +341,12 @@ def parseContext(cxt,
 
 
 def validatePartSelection(cxt, partSelection):
+    """
+    Determine whether the selected part number is actually present in
+    the score, and if so, select that part; if not, report the selection
+    error to the user. If no part is selected by the user, all parts
+    of the score will be parsed.
+    """
     partsSelected = None
     if partSelection is not None:
         try:
@@ -370,6 +376,11 @@ def validatePartSelection(cxt, partSelection):
 
 
 def validateLineTypeSelection(cxt, partSelection, partLineType):
+    """
+    If the user has selected a line type, they must also have selected a
+    single part for evaluation. If both selections were not made,
+    report the error to the user.
+    """
     if partLineType is not None:
         if len(cxt.parts) == 1 or partSelection is not None:
             return True
@@ -387,7 +398,6 @@ def validateLineTypeSelection(cxt, partSelection, partLineType):
 def parsePart(part, cxt):
     """
     Parse a given part.
-
     Create a (:py:class:`~parser.Parser`) for the part and
     collect the results.  Determine whether the line is generable as a primary,
     bass, or generic line.  Compile a list of ways the line can be generated
@@ -412,6 +422,12 @@ def parsePart(part, cxt):
 
 
 def checkFinalStep(part, cxt):
+    """
+    Check primary lines for compliance with rule G2, which requires that at
+    least one note in the penultimate measure has a clear step connection
+    to the final note in the line. If no such connection is found, record
+    the error.
+    """
     # TODO this works when a line is otherwise parsable as a primary line,
     #   but perhaps it should also be called when a line is being evaluated
     #   as a primary line, regardless of whether it is otherwise generable
@@ -466,7 +482,7 @@ def checkFinalStep(part, cxt):
 
 def writeParseDataLog(part):
     """
-    Write line parse to log file.
+    Write line parse to a log file.  Used for debugging.
     """
     pass
     logInfo = []
@@ -492,7 +508,9 @@ def writeParseDataLog(part):
 
 
 def getGenerability(cxt, partSelection):
-    # Determine whether all parts are generable.
+    """
+    Determine whether all parts are generable.
+    """
     generableParts = 0
     generability = False
     if partSelection is None:
@@ -511,6 +529,9 @@ def getGenerability(cxt, partSelection):
 
 
 def writeParseDataFiles(cxt):
+    """Using the output of :py:func:`extractParseDataFromPart`,
+    write json data files for each successfully parsed line, ignoring
+    generic parses."""
     # TODO limit to selected part
     for part in cxt.parts:
         Pinterps = part.interpretations.get('primary', None)
@@ -528,6 +549,19 @@ def writeParseDataFiles(cxt):
 
 
 def extractParseDataFromPart(cxt, part, parse):
+    """Prepare a json data file for a particular parse.
+    Each file contains three sets of data:
+
+    #. Metadata: file name, part number, line type, parse label, species
+
+    #. A data table for notes: index, rule, generative level, offset,
+       scale degree, left paren, right paren.
+
+    #. A data table for arcs: list of note indexes,
+       category (basic, secondary), type (passing, neighboring, repetition,
+       arpeggiation), direction, position in hierarchy, list of scale degrees.
+
+     """
     file_name = os.path.splitext(os.path.basename(cxt.filename))[0]
     # create a name for the parsed data file
     fn = 'parse_data/' + file_name + '_' + str(
@@ -643,9 +677,10 @@ def extractParseDataFromPart(cxt, part, parse):
 
 def createParseReport(cxt, generability, partsForParsing, partSelection,
                       partLineType):
-    # Create the optional parse report for user
-    # and a required error report if errors arise.
-
+    """
+    Create an optional parse report to be diplayed to the user
+    and a required error report if errors arise.
+    """
     # Base string for reporting parse results.
     cxt.parseReport = 'PARSE REPORT'
 
@@ -859,6 +894,12 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
 
 
 def gatherParseSets(cxt, partSelection=None, partLineType=None):
+    """
+    After parsing the individual lines, collect all the possible combinations
+    of parses. If the module variable `usePreferredParseSets`
+    is set to True, use Westergaard’s counterpoint preferences
+    for 2- and 3-part counterpoint.
+    """
     parseSets = []
     # (1a) If one part is selected.
     if partSelection is not None:
@@ -956,11 +997,9 @@ def gatherParseSets(cxt, partSelection=None, partLineType=None):
 
 def selectPreferredParseSets(cxt, primaryPartNum):
     """
-    Select sets of parses based on Westergaard preference rules,
-    trying to negotiate the best match
-    between the global structures of a given upper line and the bass line.
-    [This currently works
-    only for two- and three-part counterpoint.]
+    Negotiate the best match between the global structure of a given
+    upper line and the global structure of the bass line.
+    [This currently works only for two- and three-part counterpoint.]
     """
     # TODO need to refine the preferences substantially
 
