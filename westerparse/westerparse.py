@@ -227,8 +227,6 @@ def parseContext(cxt,
                  partLineType=None,
                  report=False):
     """
-    Parse the lines in a score.
-
     Run the parser for each line of a context using :py:func:`parsePart`.
     Collect error reports from the parser and
     to produce an error report.
