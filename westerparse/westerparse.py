@@ -237,23 +237,33 @@ def parseContext(cxt,
     the preferred interpretations and display them.
 
     (1) Create a dictionary of error reports for each part that is parsed.
+
     (2) If the user has selected a part for evaluation, determine
     whether the selection is valid.
+
     (3) If the user has selected a type of line, determine whether
     the selection is valid.
+
     (4) Run the parser for the selected parts and collect errors, if any.
     For primary lines, check for compliance with rule G2.
+
     (5) Determine the generability of the selected parts.
+
     (6) If show is 'parsedata' and the parts are all generable, export the
     data for each parse as a json file.
+
     (7) Create a parse report (text) to display to the user.
+
     (8) Gather the sets of parses for the selected part(s).
     If the module variable 'usePreferredParseSets' is set to True,
     use Westergaard's counterpoint preferences for 2- and 3-part counterpoint.
+
     (9) [If show is 'parsedata' and the parts are all generable,
     export counterpoint data as a json file. (Not yet implemented.)]
+
     (10) Based on the value of the 'show' variable, output
     the interpreted part(s).
+
     """
 
     # (1) Create a dictionary of dictionaries for collecting error reports.
