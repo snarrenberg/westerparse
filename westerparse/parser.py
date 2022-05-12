@@ -2289,7 +2289,8 @@ class Parser:
 
         def parsePrimary(self):
             """
-            Use one of eight methods to find a basic step motion
+            For monotriadic lines, use one of eight methods to
+            find a basic step motion
             from a potential S2 (Kopfton):
 
             #. Look for one existing basic step motion arc that starts
@@ -2311,8 +2312,10 @@ class Parser:
             #. Reinterpret the line, looking for a descending step motion
                from S2 and then parsing the remaining notes.
                The least reliable method.
-            #. If the line is harmonic species, look for series of arcs that
-               can be merged into a basic step motion.
+
+            For harmonic lines, use one of a dozen methods to merge a
+            series of arcs into a basic step motion.
+
             """
             # Once all preliminary parsing is done,
             # prepare for assigning basic structure
