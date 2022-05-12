@@ -4111,7 +4111,7 @@ class Parser:
 
         # TODO Westergaard p. 112: prefer S notes onbeat (esp S2).
         # TODO Implement Westergaard cognitive preferences,
-        # sections 4.2, 4.4, and 5.3.
+        #   sections 4.2, 4.4, and 5.3.
         # Get local offset of each S pitch:
         # Prefer as many offset==0.0 as possible.
 
