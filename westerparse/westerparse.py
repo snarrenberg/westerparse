@@ -119,7 +119,7 @@ def evaluateLines(source,
        the source consists of only one line. It will display the parse(s)
        of a line using Westergaard's layered form of representation.
 
-       'parsedata' -- Can be used to create a json data file for each viable
+       `parsedata` -- Can be used to create a json data file for each viable
        parse of the selected parts. The data file consists of several lines of
        metadata, a data table for notes, and a data table for the arcs.
 
