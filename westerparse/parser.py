@@ -173,6 +173,7 @@ class Parser:
         self.preParseLine()
         # log result
         logger.debug(f'\nPreliminary Arcs: {self.arcs}\n')
+        logger.debug(f'\nPreliminary Heads: {self.openHeads}\n')
         # TODO show preliminary parse during testing phase
         # self.showPartialParse(self.notes[0],
         #           self.notes[-1], self.arcs, [], [])
@@ -981,13 +982,15 @@ class Parser:
                               in ['ascending', 'bidirectional'],
                               j.csd.direction
                               in ['ascending', 'bidirectional'],
-                              h.dependency.dependents == []]
+                              h.dependency.dependents == []
+                              ]
                     rules2 = [isStepDown(h, j),
                               h.csd.direction
                               in ['descending', 'bidirectional'],
                               j.csd.direction
                               in ['descending', 'bidirectional'],
-                              h.dependency.dependents == []]
+                              h.dependency.dependents == []
+                              ]
                     # TODO The rules need to take into account where h is
                     # coming from ... WP021 ... and in whether it must continue
                     # in a particular direction or can be diverted back
@@ -1050,8 +1053,9 @@ class Parser:
                             break
                         elif h != i:
                             # TODO rethink why we remove t from open heads
-                            # during local parse
-                            openHeads.remove(t)
+                            #   during local parse
+                            # openHeads.remove(t)
+                            pass
                         elif h == i:
                             j.dependency.lefthead = h.index
                             h.dependency.dependents.append(j.index)
@@ -2314,7 +2318,8 @@ class Parser:
                The least reliable method.
 
             For harmonic lines, use one of a dozen methods to merge a
-            series of arcs into a basic step motion.
+            series of arcs into a basic step motion that connects with
+            the final tonic.
 
             """
             # Once all preliminary parsing is done,
@@ -2586,6 +2591,7 @@ class Parser:
             # Test cases: 2020_05_19T16_58_53_914Z.musicxml;
             #             Westergaard070g.musicxml
             #             WP000
+            #             WP311
             # TODO Prefer S2 on beat in third species,
             # if there are two candidates in the same bar.
             # TODO currently turned off for harmonic species
@@ -3535,6 +3541,27 @@ class Parser:
         def setDependencyLevels(self):
             """Review a completed parse and determine the
             structural level of each note.
+
+            #. Assign levels to notes in the basic arc.
+
+            #. Set the level of the first note if not in the basic arc.
+
+            #. Collect all the secondary arcs.  Examine each arc and make a
+               list of all the spans that filled with notes that are not
+               components of the arc.
+
+            #. Look at every span in the list, and see whether a dependent
+               arc fits into it. This is the core of the function. Give
+               priority to an arc that connects both edges of the span,
+               then one that is tethered to the left edge, then the
+               right edge, and then any that lie independently within
+               the span. Give preference to the longer arcs. Once a choice is
+               made, assign generative levels to the dependent arc components,
+               revise the span list, and continue.
+
+            #. Process any spans that contains only inserted pitches and
+               no arcs, testing to ensure compliance with
+               the restrictions of rule E3.
             """
             # Assign levels to notes in the basic arc.
             for n in self.notes:
