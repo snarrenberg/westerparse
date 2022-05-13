@@ -1046,7 +1046,7 @@ def fourthSpeciesControlOfDissonance(score, analyzer,
 def forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                                            partNum1, partNum2):
     """Check a pair of parts for conformity with the rules that
-    prohibit certain kinds of motion onto the beat:
+    prohibit or restrict certain kinds of motion onto the beat:
 
        * similar motion to or from a unison
        * similar motion to an octave
