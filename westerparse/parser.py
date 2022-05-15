@@ -26,7 +26,10 @@ The machinery consists of a buffer, a stack, and a scanner.
 At initialization, the notes of the line are read into the buffer.
 The scanner then shifts notes onto the stack one by one. With each
 shift, the transition is evaluated in light of the previously analyzed
-line.  As the scanning proceeds, the parser maintains lists of
+line.  The new note may be evaluated as (a) dependent upon an earlier note,
+(b) extending a dependency from an earlier note, (c) resolving
+an earlier note, or (d) independent.
+As the scanning proceeds, the parser maintains lists of
 open heads, open transitions, and syntactic units (arcs). These lists
 shrink and grow as the interpretive process unfolds. When an arc is
 formed (e.g., a passing or neighboring motion), a tuple of note positions
@@ -39,7 +42,7 @@ backtrack and reinterpret segments of a line.
 The first stage of parsing ends when the buffer is exhausted.
 Interpretation then continues by line type.
 
-The parser gathers all the valid interpretations into lists.
+The parser compiles lists of all the valid interpretations.
 The parser also records errors that arise.
 """
 import itertools
