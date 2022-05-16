@@ -61,7 +61,7 @@ from westerparse import westerparse
 # -----------------------------------------------------------------------------
 
 # variables set by user
-selectPreferredParses = True
+selectPreferredParses = False
 getStructuralLevels = True
 showWestergaardInterpretations = False
 gatherParseMeasurementData = True
@@ -198,7 +198,8 @@ class Parser:
         self.collectParses()
 
         # STEP FOUR: Reduce the set of interpretations using preference rules.
-        self.selectPreferredParses()
+        if selectPreferredParses:
+            self.selectPreferredParses()
 
     def inferLineTypes(self):
         """If the line type is not specified, infer a set of possibilities."""
@@ -4170,7 +4171,7 @@ class Parser:
                          if interp.label not in labelsToPurge]
 
         # TODO Are there options for the placement of S3?
-        # If so, coordinate with a bass line.
+        #   If so, coordinate with a bass line.
         # Redefine Pinterps after purging.
         # TODO Find the positions of the end of S3 (sd2) in upper lines.
         S3PenultCands = [interp.arcBasic[-2] for interp in self.Pinterps]
