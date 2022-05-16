@@ -315,7 +315,7 @@ def parseContext(cxt,
 
     # (6) Create parse data files, if called.
     if show == 'parsedata' and generability:
-        writeteParseDataFiles(cxt)
+        writeParseDataFiles(cxt)
 
     # (7) Create parse report.
     try:
