@@ -2073,8 +2073,12 @@ class Parser:
         if self.context.harmonicSpecies:
             newParse.harmonicSpanDict = self.context.harmonicSpanDict
         # Prepare the basic structure information.
+        if parsecounter < 10:
+            parsenumber = '0' + str(parsecounter)
+        else:
+            parsenumber = str(parsecounter)
         if lineType == 'bass':
-            newParse.label = 'parse' + str(parsecounter) + '_BL'
+            newParse.label = 'parse' + parsenumber + '_BL'
             newParse.S2Index = 0
             newParse.S3Index = cand.index
             newParse.S3Degree = cand.csd.degree
@@ -2087,13 +2091,13 @@ class Parser:
                 newParse.S4Value = s4cand.csd.value
                 newParse.notes[newParse.S4Index].rule.name = 'S4'
         elif lineType == 'primary':
-            newParse.label = 'parse' + str(parsecounter) + '_PL'
+            newParse.label = 'parse' + parsenumber + '_PL'
             newParse.S2Index = cand.index
             newParse.S2Degree = cand.csd.degree
             newParse.S2Value = cand.csd.value
             newParse.notes[newParse.S2Index].rule.name = 'S2'
         elif lineType == 'generic':
-            newParse.label = 'parse' + str(parsecounter) + '_GL'
+            newParse.label = 'parse' + parsenumber + '_GL'
             newParse.S2Index = cand.index  # always 0
             newParse.S2Degree = cand.csd.degree
             newParse.S2Value = cand.csd.value
@@ -4060,6 +4064,23 @@ class Parser:
         # Remove parses that have errors.
         self.parses = [parse for parse in self.parses
                        if self.parseErrorsDict[parse.label] == []]
+
+        # remove duplicate parses
+        unique_parses = [self.parses[0]]
+        for parse in self.parses:
+            for up in unique_parses:
+                if (parse.ruleLabels != up.ruleLabels):
+                    unique = True
+
+                else:
+                    unique = False
+            if unique == True:
+                unique_parses.append(parse)
+                # rules = [sorted(parse.arcs) != sorted(up.arcs),
+                #          parse.ruleLabels != up.ruleLabels]
+                # if all(rules):
+                #     unique_parses.append(parse)
+        self.parses = unique_parses
 
         for parse in self.parses:
             if parse.lineType == 'primary':
