@@ -65,6 +65,7 @@ selectPreferredParses = False
 getStructuralLevels = True
 showWestergaardInterpretations = False
 gatherParseMeasurementData = True
+showPreParse = False
 
 # for third species
 localNeighborsOnly = False
@@ -178,8 +179,9 @@ class Parser:
         logger.debug(f'\nPreliminary Arcs: {self.arcs}\n')
         logger.debug(f'\nPreliminary Heads: {self.openHeads}\n')
         # TODO show preliminary parse during testing phase
-        # self.showPartialParse(self.notes[0],
-        #           self.notes[-1], self.arcs, [], [])
+        if showPreParse:
+            self.showPartialParse(self.notes[0],
+                                  self.notes[-1], self.arcs, [], [])
 
         # Interrupt parser if preliminary parsing is unsuccessful.
         # and report errors
