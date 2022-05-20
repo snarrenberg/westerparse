@@ -66,6 +66,7 @@ getStructuralLevels = True
 showWestergaardInterpretations = False
 gatherParseMeasurementData = True
 showPreParse = False
+integrateFinalNeighbor = True
 
 # for third species
 localNeighborsOnly = False
@@ -2336,6 +2337,31 @@ class Parser:
             # prepare for assigning basic structure
             self.arcs.sort()  # = sorted(self.arcList)
             self.arcBasic = None
+
+            # If present, merge a final neighbor with a descending passing
+            # motion if they share an internal node.
+            # TODO probably doesnt work for third species
+            if self.species not in ['third', 'fifth'] and integrateFinalNeighbor:
+                if isNeighboringArc(self.arcs[-1], self.notes):
+                    n_arc = self.arcs[-1]
+                    p_arc = None
+                    n_arc_dir = getNeighborType(n_arc, self.notes)
+                    for arc in self.arcs:
+                        if (arc[-1] == n_arc[0] and
+                                getPassingType(arc,
+                                               self.notes) == 'falling'):
+                            p_arc = arc
+                            break
+                    # print(p_arc, n_arc)
+                    if p_arc and n_arc_dir == 'lower':
+                        self.arcEmbed(p_arc, n_arc)
+                    elif p_arc and n_arc_dir == 'upper':
+                        removeDependenciesFromArc(self.notes, n_arc)
+                        self.arcs.remove(n_arc)
+                        new_arc = [p_arc[0], n_arc[1], n_arc[2]]
+                        self.arcs.append(new_arc)
+                        addDependenciesFromArc(self.notes, new_arc)
+                    # print(self.arcs)
 
             # METHOD 0
             # From any S2 candidate, look for one existing basic step motion
