@@ -714,7 +714,7 @@ class Parser:
         if openHeads:
             for h in openHeads:
                 self.notes[h].style.color = 'purple'
-        westerparse.gatherArcs(self.part, arcs)
+        westerparse.assignSlurs(self.part, arcs)
         self.part.show()
         for n in self.notes:
             n.style.color = 'black'

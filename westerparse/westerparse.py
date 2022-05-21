@@ -1157,7 +1157,7 @@ def showParses(cxt, show, parseSets):
         # BUILD the interpretation
         # Arcs, rules, and parens are tied to note indexes in the line,
         # and these are then attached to notes in the source part.
-        gatherArcs(cxt.parts[parse.partNum], parse.arcs, parse.arcBasic)
+        assignSlurs(cxt.parts[parse.partNum], parse.arcs, parse.arcBasic)
         assignRules(cxt.parts[parse.partNum], parse.ruleLabels)
         assignParentheses(cxt.parts[parse.partNum], parse.parentheses)
 
@@ -1212,7 +1212,7 @@ def showParses(cxt, show, parseSets):
 # -----------------------------------------------------------------------------
 
 
-def gatherArcs(source, arcs, arcBasic=None):
+def assignSlurs(source, arcs, arcBasic=None):
     """
     Given a fully parsed line (an interpretation), sort through the arcs and
     create a music21 spanner (tie/slur) to represent each arc.
