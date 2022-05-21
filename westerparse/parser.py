@@ -55,6 +55,7 @@ from music21 import *
 from westerparse.utilities import pairwise, shiftBuffer, shiftStack
 from westerparse import dependency
 from westerparse import westerparse
+from westerparse import arc
 
 # -----------------------------------------------------------------------------
 # MODULE VARIABLES
@@ -2134,6 +2135,7 @@ class Parser:
             self.notes = None
             self.lineType = None
             self.arcs = []
+            self.arcDict = {}
             self.method = None
             self.S1Index = None
             self.S2Index = None
@@ -2200,6 +2202,10 @@ class Parser:
             if getStructuralLevels:
                 self.setDependencyLevels()
 
+            # Now that all arcs for the parse have been settled,
+            # create an Arc object for each and populate the
+            # parse's arc dictionary.
+            self.gatherArcs()
             # Make lists for rule labels and parentheses.
             # Make tuples of note indices and labels/parentheses,
             # for running with musicxml input/output.
@@ -3555,6 +3561,49 @@ class Parser:
                             # Should it also be set to 'E4'?
                             for elem in mergePairOption[0][1:-1]:
                                 self.notes[elem].rule.name = 'E4'
+
+        def gatherArcs(self):
+            arc_label_counter = 0
+            for elem in sorted(self.arcs):
+                dict_entry = arc.Arc(elem)
+                # set category
+                arc_category = None
+                if elem == self.arcBasic:
+                    arc_category = 'basic'
+                else:
+                    arc_category = 'secondary'
+                dict_entry.category = arc_category
+                # set type
+                arc_type = None
+                if not arc_type:
+                    if isRepetitionArc(elem, self.notes):
+                        arc_type = 'repetition'
+                    elif isNeighboringArc(elem, self.notes):
+                        arc_type = 'neighbor'
+                    elif isPassingArc(elem, self.notes):
+                        arc_type = 'passing'
+                    elif self.lineType == 'bass' and arc_category == 'basic':
+                        arc_type = 'arpeggiation'
+                dict_entry.type = arc_type
+                # determine the subtype, if any
+                arc_subtype = ''
+                if arc_type == 'neighbor':
+                    arc_subtype = getNeighborType(elem, self.notes)
+                if arc_type == 'passing':
+                    arc_subtype = getPassingType(elem, self.notes)
+                dict_entry.subtype = arc_subtype
+                # find csd content of arc
+                arc_content = []
+                for idx in elem:
+                    arc_content.append(self.notes[idx].csd.value)
+                dict_entry.content = arc_content
+
+                # print(dict_entry.arc, dict_entry.category, dict_entry.type, dict_entry.subtype)
+
+                self.arcDict[arc_label_counter] = dict_entry
+                arc_label_counter += 1
+                pass
+            # print(self.arcDict)
 
         def gatherRuleLabels(self):
             for elem in self.notes:
