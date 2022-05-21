@@ -974,7 +974,7 @@ def gatherParseSets(cxt, partSelection=None, partLineType=None):
                 for II in innerPrefs:
                     preferredParseSets.append((prefPair[0], II, prefPair[1]))
         if innerPart.isPrimary:
-            innerPrefs = selectPreferredParseSets(cxt, 0)
+            innerPrefs = selectPreferredParseSets(cxt, 1)
             # collect all of the possible P and G parses for the upper part
             upperPrefs = []
             if upperPart.isPrimary:
