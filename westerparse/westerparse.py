@@ -155,7 +155,9 @@ def evaluateLines(source,
     try:
         cxt = makeGlobalContext(source, **kwargs)
     except context.EvaluationException as fce:
-        fce.show()
+        # suppress error reporting when generating parse data files
+        if show != 'parsedata':
+            fce.show()
         return
     # Parse the global context.
     try:
@@ -165,7 +167,9 @@ def evaluateLines(source,
             print(cxt.parseReport)
         return True
     except context.EvaluationException as fce:
-        fce.show()
+        # suppress error reporting when generating parse data files
+        if show != 'parsedata':
+            fce.show()
 
 
 def evaluateCounterpoint(source,
@@ -613,63 +617,17 @@ def extractParseDataFromPart(cxt, part, parse):
     parse_data['notes_array'] = notes_array
     # assemble arcs_array dictionary
     arcs_array = []
-    for arc in parse.arcs:
+    for key, arc in parse.arcDict.items():
         arc_array = {}
-        arc_array['arc'] = arc
-        # determine the category of arc
-        if arc == parse.arcBasic:
-            arc_category = 'basic'
-        else:
-            arc_category = 'secondary'
-        # determine the type of arc
-        arc_type = None
-        if not arc_type:
-            if parser.isRepetitionArc(arc, part.flat.notes):
-                arc_type = 'repetition'
-            elif parser.isNeighboringArc(arc, part.flat.notes):
-                arc_type = 'neighbor'
-            elif parser.isPassingArc(arc, part.flat.notes):
-                arc_type = 'passing'
-            elif parse.lineType == 'bass' and arc_category == 'basic':
-                arc_type = 'arpeggiation'
-        arc_array['arc_category'] = arc_category
-        arc_array['arc_type'] = arc_type
-        # determine the subtype, if any
-        arc_subtype = ''
-        if arc_type == 'neighbor':
-            arc_subtype = parser.getNeighborType(arc, part.flat.notes)
-        if arc_type == 'passing':
-            arc_subtype = parser.getPassingType(arc,
-                                                part.flat.notes)
-        arc_array['arc_subtype'] = arc_subtype
-        # find csd content of arc
-        arc_content = []
-        for ind in arc:
-            arc_content.append(part.flat.notes[ind].csd.value)
-        arc_array['arc_content'] = arc_content
-        # calculate raw hierarchical level of arc
-        arc_level_raw = 0
-        for na in notes_array:
-            if na['index'] == arc[0]:
-                arc_level_raw += na['gen_level']
-            if na['index'] == arc[-1]:
-                arc_level_raw += na['gen_level']
-        arc_array['arc_level'] = arc_level_raw
-        # add arc array to list
+        arc_array['arc'] = arc.arc
+        arc_array['arc_category'] = arc.category
+        arc_array['arc_type'] = arc.type
+        arc_array['arc_subtype'] = arc.subtype
+        arc_array['arc_content'] = arc.content
+        arc_array['arc_level'] = arc.level
         arcs_array.append(arc_array)
-    # re-calculate hierarichical levels of arcs
-    arc_levels_raw = []
-    for arc in arcs_array:
-        raw_lev = arc['arc_level']
-        if raw_lev not in arc_levels_raw:
-            arc_levels_raw.append(raw_lev)
-    arc_levels_raw_sorted = sorted(arc_levels_raw)
-    for arc in arcs_array:
-        raw_lev = arc['arc_level']
-        arc_level = arc_levels_raw_sorted.index(raw_lev)
-        arc['arc_level'] = arc_level
     # add arcs list to data
-    parse_data['arcs_array'] = sorted(arcs_array, key=lambda d: d['arc_level'])
+    parse_data['arcs_array'] = arcs_array
     # write data to json text file
     with open(fn, 'w') as json_file:
         json.dump(parse_data, json_file, indent=4)
