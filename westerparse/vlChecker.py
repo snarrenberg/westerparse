@@ -595,7 +595,7 @@ def checkFirstSpecies(score, analyzer, numPair):
     analytics.addAnalysisData(score)
     firstSpeciesForbiddenMotions(score, analytics,
                                  partNum1=numPair[0], partNum2=numPair[1])
-    checkControlOfDissonance(score, analyzer)
+    checkControlOfDissonance(score, analyzer, numPair)
 
 
 def checkSecondSpecies(score, analyzer, numPair):
@@ -613,7 +613,7 @@ def checkSecondSpecies(score, analyzer, numPair):
     checkConsecutions(score)
     secondSpeciesForbiddenMotions(score, analytics,
                                   partNum1=numPair[0], partNum2=numPair[1])
-    checkControlOfDissonance(score, analyzer)
+    checkControlOfDissonance(score, analyzer, numPair)
     checkSecondSpeciesNonconsecutiveUnisons(score, analytics,
                                             partNum1=numPair[0],
                                             partNum2=numPair[1])
@@ -637,7 +637,7 @@ def checkThirdSpecies(score, analyzer, numPair):
     partNumPairs = getAllPartNumPairs(score)
     thirdSpeciesForbiddenMotions(score, analytics,
                                  partNum1=numPair[0], partNum2=numPair[1])
-    checkControlOfDissonance(score, analyzer)
+    checkControlOfDissonance(score, analyzer, numPair)
 
 
 def checkFourthSpecies(score, analyzer, numPair):
@@ -652,7 +652,6 @@ def checkFourthSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     checkConsecutions(score)
-    partNumPairs = getAllPartNumPairs(score)
     fourthSpeciesForbiddenMotions(score, analytics,
                                   partNum1=numPair[0], partNum2=numPair[1])
     fourthSpeciesControlOfDissonance(score, analytics,
@@ -694,7 +693,7 @@ def checkConsecutions(score):
                         vlErrors.append(error)
 
 
-def checkControlOfDissonance(score, analyzer):
+def checkControlOfDissonance(score, analyzer, numPair):
     """Check the score for conformity with the rules that control
     dissonance in first, second, or third species.
 
@@ -706,65 +705,68 @@ def checkControlOfDissonance(score, analyzer):
     Off the beat: consecutive dissonances must be approached
     and left by step in the same direction.
     """
-    partNumPairs = getAllPartNumPairs(score)
+    # collect sequence of intervals for logging and data analysis
     verts = analyzer.getVerticalities(score)
     bassPartNum = len(score.parts)-1
-    for numPair in partNumPairs:
-        for vert in verts:
-            upperNote = vert.objects[numPair[0]]
-            lowerNote = vert.objects[numPair[1]]
-            laterNote = None
-            if upperNote.beat > lowerNote.beat:
-                laterNote = upperNote
-            elif upperNote.beat < lowerNote.beat:
-                laterNote = lowerNote
+    part_pair_ivls = []  # for logging and analysis
+    for vert in verts:
+        upperNote = vert.objects[numPair[0]]
+        lowerNote = vert.objects[numPair[1]]
+        laterNote = None
+        if upperNote.beat > lowerNote.beat:
+            laterNote = upperNote
+        elif upperNote.beat < lowerNote.beat:
+            laterNote = lowerNote
 
-            # Do not evaluate a vertical pair if one note is a rest.
-            # TODO This is okay for now, but need to check
-            #   the rules for all gambits.
-            #   And what if there's a rest during a line?
-            if upperNote.isRest or lowerNote.isRest:
-                continue
+        # Do not evaluate a vertical pair if one note is a rest.
+        # TODO This is okay for now, but need to check
+        #   the rules for all gambits.
+        #   And what if there's a rest during a line?
+        if upperNote.isRest or lowerNote.isRest:
+            continue
 
-            # Both notes start at the same time, neither is tied over:
-            rules1 = [upperNote.beat == lowerNote.beat,
-                      (upperNote.tie is None or upperNote.tie.type == 'start'),
-                      (lowerNote.tie is None or lowerNote.tie.type == 'start')]
-            # The pair constitutes a permissible consonance above the bass:
-            rules2a = [bassPartNum in numPair,
-                       isConsonanceAboveBass(lowerNote, upperNote)]
-            # The pair constitutes a permissible consonance between upper parts:
-            rules2b = [bassPartNum not in numPair,
-                       isConsonanceBetweenUpper(lowerNote, upperNote)]
-            # The pair is a permissible dissonance between upper parts:
-            # TODO This won't work if the bass is a rest and not a note.
-            rules2c = [bassPartNum not in numPair,
-                       isPermittedDissonanceBetweenUpper(lowerNote, upperNote),
-                       isThirdOrSixthAboveBass(vert.objects[bassPartNum],
-                                               upperNote),
-                       isThirdOrSixthAboveBass(vert.objects[bassPartNum],
-                                               lowerNote)]
+        # get interval for logging and data analysis
+        part_pair_ivls.append(interval.Interval(lowerNote, upperNote).name)
 
-            # Test co-initiated simultaneities.
-            if (all(rules1) and not (all(rules2a)
-                                     or all(rules2b)
-                                     or all(rules2c))):
-                error = ('Dissonance between co-initiated notes in bar '
-                         + str(upperNote.measureNumber) + ': '
-                         + str(interval.Interval(lowerNote, upperNote).name)
-                         + '.')
-                vlErrors.append(error)
+        # Both notes start at the same time, neither is tied over:
+        rules1 = [upperNote.beat == lowerNote.beat,
+                  (upperNote.tie is None or upperNote.tie.type == 'start'),
+                  (lowerNote.tie is None or lowerNote.tie.type == 'start')]
+        # The pair constitutes a permissible consonance above the bass:
+        rules2a = [bassPartNum in numPair,
+                   isConsonanceAboveBass(lowerNote, upperNote)]
+        # The pair constitutes a permissible consonance between upper parts:
+        rules2b = [bassPartNum not in numPair,
+                   isConsonanceBetweenUpper(lowerNote, upperNote)]
+        # The pair is a permissible dissonance between upper parts:
+        # TODO This won't work if the bass is a rest and not a note.
+        rules2c = [bassPartNum not in numPair,
+                   isPermittedDissonanceBetweenUpper(lowerNote, upperNote),
+                   isThirdOrSixthAboveBass(vert.objects[bassPartNum],
+                                           upperNote),
+                   isThirdOrSixthAboveBass(vert.objects[bassPartNum],
+                                           lowerNote)]
 
-            # One note starts after the other:
-            rules3 = [upperNote.beat != lowerNote.beat,
-                      not (all(rules2a) or all(rules2b) or all(rules2c))]
-            rules4 = [upperNote.beat > lowerNote.beat]
-            rules5a = [upperNote.consecutions.leftType == 'step',
-                       upperNote.consecutions.rightType == 'step']
-            rules5b = [lowerNote.consecutions.leftType == 'step',
-                       lowerNote.consecutions.rightType == 'step']
+        # Test co-initiated simultaneities.
+        if (all(rules1) and not (all(rules2a)
+                                 or all(rules2b)
+                                 or all(rules2c))):
+            error = ('Dissonance between co-initiated notes in bar '
+                     + str(upperNote.measureNumber) + ': '
+                     + str(interval.Interval(lowerNote, upperNote).name)
+                     + '.')
+            vlErrors.append(error)
 
-            # Both notes start at the same time, one of them is tied over:
+        # One note starts after the other:
+        rules3 = [upperNote.beat != lowerNote.beat,
+                  not (all(rules2a) or all(rules2b) or all(rules2c))]
+        rules4 = [upperNote.beat > lowerNote.beat]
+        rules5a = [upperNote.consecutions.leftType == 'step',
+                   upperNote.consecutions.rightType == 'step']
+        rules5b = [lowerNote.consecutions.leftType == 'step',
+                   lowerNote.consecutions.rightType == 'step']
+
+        # Both notes start at the same time, one of them is tied over:
 
 #             rules1 = [upperNote.beat == lowerNote.beat,
 #                 (upperNote.tie == None or upperNote.tie.type == 'start'),
@@ -800,57 +802,65 @@ def checkControlOfDissonance(score, analyzer):
 #                             str(interval.Interval(vPair[1], vPair[0]).name)
 #                     vlErrors.append(error)
 
-            # Both notes start at the same time, both of them are tied over:
-            if (all(rules3) and ((all(rules4) and not all(rules5a))
-               or (not all(rules4) and not all(rules5b)))):
-                error = ('Dissonant interval off the beat that is not '
-                         'approached and left by step in bar '
-                         + str(lowerNote.measureNumber) + ': '
-                         + str(interval.Interval(lowerNote, upperNote).name)
-                         + '.')
-                vlErrors.append(error)
+        # Both notes start at the same time, both of them are tied over:
+        if (all(rules3) and ((all(rules4) and not all(rules5a))
+           or (not all(rules4) and not all(rules5b)))):
+            error = ('Dissonant interval off the beat that is not '
+                     'approached and left by step in bar '
+                     + str(lowerNote.measureNumber) + ': '
+                     + str(interval.Interval(lowerNote, upperNote).name)
+                     + '.')
+            vlErrors.append(error)
 
-        # Check whether consecutive dissonances move in one directions.
-        vlqList = analyzer.getVLQs(score, numPair[0], numPair[1])
-        for vlq in vlqList:
-            # if vlq.v1n1 == vlq.v1n2 or vlq.v2n1 == vlq.v2n2:
-            #     print('motion is oblique against sustained tone')
-            # Either both of the intervals are dissonant above the bass:
-            rules1a = [bassPartNum in numPair,
-                       isVerticalDissonance(vlq.v1n1, vlq.v2n1),
-                       isVerticalDissonance(vlq.v1n2, vlq.v2n2)]
-            # Or both of the intervals are prohibited dissonances
-            # between upper parts:
-            rules1b = [bassPartNum not in numPair,
-                       isVerticalDissonance(vlq.v1n1, vlq.v2n1),
-                       not isPermittedDissonanceBetweenUpper(vlq.v1n1,
-                                                             vlq.v2n1),
-                       isVerticalDissonance(vlq.v1n2, vlq.v2n2),
-                       not isPermittedDissonanceBetweenUpper(vlq.v1n2,
-                                                             vlq.v2n2)]
-            # Either the first voice is stationary and
-            # the second voice moves in one direction:
-            rules2a = [vlq.v1n1 == vlq.v1n2,
-                       (vlq.v2n1.consecutions.leftDirection
-                        == vlq.v2n2.consecutions.leftDirection),
-                       (vlq.v2n1.consecutions.rightDirection
-                        == vlq.v2n2.consecutions.rightDirection)]
-            # Or the second voice is stationary and
-            # the first voice moves in one direction:
-            rules2b = [vlq.v2n1 == vlq.v2n2,
-                       (vlq.v1n1.consecutions.leftDirection
-                        == vlq.v1n2.consecutions.leftDirection),
-                       (vlq.v1n1.consecutions.rightDirection
-                        == vlq.v1n2.consecutions.rightDirection)]
-            # Must be in the same measure:
-            rules3 = [vlq.v1n1.measureNumber != vlq.v1n2.measureNumber]
-            if ((all(rules1a) or all(rules1b))
-               and not (all(rules2a) or all(rules2b)) and not(all(rules3))):
-                error = ('Consecutive dissonant intervals in bar '
-                         + str(vlq.v1n1.measureNumber)
-                         + ' are not approached and left '
-                         'in the same direction.')
-                vlErrors.append(error)
+    # Check whether consecutive dissonances move in one directions.
+    vlqList = analyzer.getVLQs(score, numPair[0], numPair[1])
+    for vlq in vlqList:
+        # if vlq.v1n1 == vlq.v1n2 or vlq.v2n1 == vlq.v2n2:
+        #     print('motion is oblique against sustained tone')
+        # Either both of the intervals are dissonant above the bass:
+        rules1a = [bassPartNum in numPair,
+                   isVerticalDissonance(vlq.v1n1, vlq.v2n1),
+                   isVerticalDissonance(vlq.v1n2, vlq.v2n2)]
+        # Or both of the intervals are prohibited dissonances
+        # between upper parts:
+        rules1b = [bassPartNum not in numPair,
+                   isVerticalDissonance(vlq.v1n1, vlq.v2n1),
+                   not isPermittedDissonanceBetweenUpper(vlq.v1n1,
+                                                         vlq.v2n1),
+                   isVerticalDissonance(vlq.v1n2, vlq.v2n2),
+                   not isPermittedDissonanceBetweenUpper(vlq.v1n2,
+                                                         vlq.v2n2)]
+        # Either the first voice is stationary and
+        # the second voice moves in one direction:
+        rules2a = [vlq.v1n1 == vlq.v1n2,
+                   (vlq.v2n1.consecutions.leftDirection
+                    == vlq.v2n2.consecutions.leftDirection),
+                   (vlq.v2n1.consecutions.rightDirection
+                    == vlq.v2n2.consecutions.rightDirection)]
+        # Or the second voice is stationary and
+        # the first voice moves in one direction:
+        rules2b = [vlq.v2n1 == vlq.v2n2,
+                   (vlq.v1n1.consecutions.leftDirection
+                    == vlq.v1n2.consecutions.leftDirection),
+                   (vlq.v1n1.consecutions.rightDirection
+                    == vlq.v1n2.consecutions.rightDirection)]
+        # Must be in the same measure:
+        rules3 = [vlq.v1n1.measureNumber != vlq.v1n2.measureNumber]
+        if ((all(rules1a) or all(rules1b))
+           and not (all(rules2a) or all(rules2b)) and not(all(rules3))):
+            error = ('Consecutive dissonant intervals in bar '
+                     + str(vlq.v1n1.measureNumber)
+                     + ' are not approached and left '
+                     'in the same direction.')
+            vlErrors.append(error)
+
+    # get the interval sequence for logging and data analysis
+    part_pair_ivlData = ('Intervals for ' + str(numPair) + ': ' + ''.join(['{:>5}'.format(ivl)
+                        for ivl in part_pair_ivls])
+             )
+
+    # log the intervals
+    logger.debug(part_pair_ivlData)
 
     # TODO Check third species consecutive dissonances rules (above).
 
