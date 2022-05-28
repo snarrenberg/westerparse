@@ -1377,6 +1377,7 @@ class Parser:
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
                     openTransitions.append(j.index)
+                # 2022-05-28, the following is probably never the case
                 else:
                     j.dependency.lefthead = i.dependency.lefthead
                     i.dependency.dependents.append(j.index)
@@ -1490,8 +1491,8 @@ class Parser:
                             openTransitions.append(j.index)
                             connectsToHead = True
                             break
-                    # C. If neither of these works, return an error.
                     if not connectsToHead:
+                        # C. If neither of these works, return an error.
                         if self.part.species in ['third', 'fifth']:
                             # can't just add j to open transitions without knowing its lefthead
                             pass
@@ -1791,7 +1792,7 @@ class Parser:
 
     def prepareMonotriadicParses(self):
         """
-        After preliminary parsing is completed, determines possibiities
+        After preliminary parsing is completed, determines possibilities
         for basic structures in a monotriadic line based on available
         line types and parses the
         line using each candidate for basic structure. The results are
@@ -2046,8 +2047,8 @@ class Parser:
                 else:
                     self.typeErrorsDict[lineType] = buildErrors
                 # TODO test for compliance with rules after generating a
-                # a complete parse, since the rules involve interaction
-                # with the global structure of the bass line
+                #   a complete parse, since the rules involve interaction
+                #   with the global structure of the bass line
 
     def buildParse(self, cand, lineType, parsecounter,
                    buildErrors, method=None, s4cand=None):
@@ -2151,12 +2152,6 @@ class Parser:
             self.harmonicSpecies = False
             self.harmonicSpanDict = {}
 
-            # attributes for comparing parses
-            self.arcCount = 0
-            self.levelCount = 0
-            self.dependencyMeasure = 0
-            self.integrationMeasure = 0
-
         def __repr__(self):
             return self.label
 
@@ -2198,7 +2193,7 @@ class Parser:
             self.testLocalResolutions()
             # Consolidate arcs into longer passing motions if possible.
             self.pruneArcs()
-            # Calculate the structural level of each note.
+            # Calculate the structural level of each note and arc.
             if getStructuralLevels:
                 self.setDependencyLevels()
 
@@ -2211,6 +2206,8 @@ class Parser:
             # for running with musicxml input/output.
             self.gatherRuleLabels()
             self.gatherParentheses()
+            # Calculate the hierarchical levels of the arcs
+            self.setArcLevels()
             # log result
             parseData = ('Label: ' + self.label
                          + '\n\tBasic: ' + str(self.arcBasic)
@@ -3597,13 +3594,9 @@ class Parser:
                 for idx in elem:
                     arc_content.append(self.notes[idx].csd.value)
                 dict_entry.content = arc_content
-
-                # print(dict_entry.arc, dict_entry.category, dict_entry.type, dict_entry.subtype)
-
+                # add arc to parse's arc dictionary
                 self.arcDict[arc_label_counter] = dict_entry
                 arc_label_counter += 1
-                pass
-            # print(self.arcDict)
 
         def gatherRuleLabels(self):
             for elem in self.notes:
@@ -3629,7 +3622,7 @@ class Parser:
             #. Set the level of the first note if not in the basic arc.
 
             #. Collect all the secondary arcs.  Examine each arc and make a
-               list of all the spans that filled with notes that are not
+               list of all the spans filled with notes that are not
                components of the arc.
 
             #. Look at every span in the list, and see whether a dependent
@@ -3994,6 +3987,25 @@ class Parser:
                               if n.rule.level is not None]
             generationTable = [n.rule.level for n in self.notes]
 
+        def setArcLevels(self):
+            # calculate raw hierarchical level of arc based on generation
+            # level of the most deeply embeded component
+            # TODO refine how levels are defined
+            for key, arc in self.arcDict.items():
+                arc_level_raw = 0
+                for n in self.notes:
+                    if n.index in arc.arc and n.rule.level > arc_level_raw:
+                        arc_level_raw = n.rule.level
+                arc.level = arc_level_raw
+            # re-calculate hierarichical levels of arcs
+            arc_levels_raw = []
+            for key, arc in self.arcDict.items():
+                if arc.level not in arc_levels_raw:
+                    arc_levels_raw.append(arc.level)
+            arc_levels_raw_sorted = sorted(arc_levels_raw)
+            for key, arc in self.arcDict.items():
+                arc_level = arc_levels_raw_sorted.index(arc.level)
+                arc.level = arc_level
 
         def displayWestergaardParse(self):
             """Create a multileveled illustration of a parse of the sort
@@ -4048,8 +4060,7 @@ class Parser:
 
             illustration.show()
             # Exit after showing the first parse, for testing.
-
-    #            exit()
+            # exit()
 
     def testGenerabilityFromLevels(self):
         """Given a parse in which rule levels have been assigned
