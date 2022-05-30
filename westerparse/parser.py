@@ -2304,7 +2304,7 @@ class Parser:
 
         def parsePrimary(self):
             """
-            For monotriadic lines, use one of eight methods to
+            For monotriadic lines, use one of nine methods to
             find a basic step motion
             from a potential S2 (Kopfton):
 
@@ -3232,6 +3232,9 @@ class Parser:
                         if (a <= arc[0] < b < arc[-1]
                                 and arc != self.arcBasic):
                             purgeList.append(arc)
+                if purgeList:
+                    print(f'Basic arc: {self.arcBasic}')
+                    print(f'Purging crossed arcs: {purgeList}')
                 for arc in purgeList:
                     removeDependenciesFromArc(self.notes, arc)
                     self.arcs.remove(arc)
@@ -3258,6 +3261,8 @@ class Parser:
             # ascending, or descending.
             self.arcs.sort()
             self.arcBasic = None
+            # TODO 2022-05-29 consider removing calculation of direction
+            #  since this variable is not used in this function
             basicArcDirection = None
             if self.notes[0].csd.value == self.notes[-1].csd.value:
                 self.arcBasic = [self.S2Index, self.S1Index]
@@ -4091,21 +4096,22 @@ class Parser:
                        if self.parseErrorsDict[parse.label] == []]
 
         # remove duplicate parses
-        unique_parses = [self.parses[0]]
-        for parse in self.parses:
-            for up in unique_parses:
-                if (parse.ruleLabels != up.ruleLabels):
-                    unique = True
+        if self.parses:
+            unique_parses = [self.parses[0]]
+            for parse in self.parses:
+                for up in unique_parses:
+                    if (parse.ruleLabels != up.ruleLabels):
+                        unique = True
 
-                else:
-                    unique = False
-            if unique == True:
-                unique_parses.append(parse)
-                # rules = [sorted(parse.arcs) != sorted(up.arcs),
-                #          parse.ruleLabels != up.ruleLabels]
-                # if all(rules):
-                #     unique_parses.append(parse)
-        self.parses = unique_parses
+                    else:
+                        unique = False
+                if unique == True:
+                    unique_parses.append(parse)
+                    # rules = [sorted(parse.arcs) != sorted(up.arcs),
+                    #          parse.ruleLabels != up.ruleLabels]
+                    # if all(rules):
+                    #     unique_parses.append(parse)
+            self.parses = unique_parses
 
         for parse in self.parses:
             if parse.lineType == 'primary':
