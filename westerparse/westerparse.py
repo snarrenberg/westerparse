@@ -268,10 +268,10 @@ def parseContext(cxt,
        the interpreted part(s).
     """
 
-    # (1) Create a dictionary of dictionaries for collecting error reports.
+    # (1) Access the context's dictionary of dictionaries for collecting error reports.
     #   primary keys: part names
     #   secondary keys: 'parser errors', 'primary', 'bass'
-    cxt.errorsDict = {}
+    # cxt.errorsDict = {}
     for part in cxt.parts:
         cxt.errorsDict[part.name] = {}
 
@@ -338,7 +338,7 @@ def parseContext(cxt,
     # TODO (9) add export of counterpoint data file
     # (9) Create counterpoint data files, if called.
     if show == 'parsedata' and generability:
-        createCounterpointDataFiles(cxt, parseSets)
+        writeCounterpointDataFiles(cxt, parseSets)
 
     # (10) Output the parses in the desired manner.
     showParses(cxt, show, parseSets)
@@ -1092,11 +1092,32 @@ def selectPreferredParseSets(cxt, primaryPartNum):
     return preferredGlobals
 
 
-def createCounterpointDataFiles(cxt, parseSets):
-    pass
+def writeCounterpointDataFiles(cxt, parseSets):
+    label_count = 0
+    for parseSet in parseSets:
+        if label_count < 10:
+            label = '0' + str(label_count)
+        else:
+            label = str(label_count)
+        # extractCounterpointDataFromParseSets(cxt, parseSet, label)
+        pass
 
+def extractCounterpointDataFromParseSets(cxt, parseSet, label):
+    """Prepare a json data file for a particular set of parses.
+    Each file contains n sets of data:
 
-def extractCounterpointDataFromParseSets(cxt, parseSets):
+    #. Metadata: file name, species
+
+    #. A data table for intervals.
+
+    #. n data tables for arcs: list of note indexes,
+       category (basic, secondary), type (passing, neighboring, repetition,
+       arpeggiation), direction, position in hierarchy, list of scale degrees.
+
+     """
+    file_name = os.path.splitext(os.path.basename(cxt.filename))[0]
+    # create a name for the parsed data file
+    fn = 'counterpoint_data/' + file_name + '_' + label + '_data.json'
     pass
 
 
