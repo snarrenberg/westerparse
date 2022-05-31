@@ -3092,18 +3092,11 @@ class Parser:
                     return
 
             # METHOD 18: 3, 2, 1
-            # 2 occurs in the predominant
+            # 2 occurs in the dominant
             elif self.method == 18 and self.S2Value % 7 == 2:
-                offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
-                if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
-                    self.errors.append(error)
-                    return
                 s3cands = [n.index for n in self.notes
-                           if (offPre <= n.offset < offDom
+                           if (offDom <= n.offset
                                and n.csd.value == self.S2Value - 1)]
                 if s3cands:
                     for idx in s3cands:
@@ -3119,11 +3112,18 @@ class Parser:
                     return
 
             # METHOD 19: 3, 2, 1
-            # 2 occurs in the dominant
+            # 2 occurs in the predominant
             elif self.method == 19 and self.S2Value % 7 == 2:
+                offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = ('No composite step motion found from '
+                             'this S2 candidate: '
+                             + str(self.S2Value + 1) + '.')
+                    self.errors.append(error)
+                    return
                 s3cands = [n.index for n in self.notes
-                           if (offDom <= n.offset
+                           if (offPre <= n.offset < offDom
                                and n.csd.value == self.S2Value - 1)]
                 if s3cands:
                     for idx in s3cands:
