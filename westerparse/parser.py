@@ -1912,7 +1912,7 @@ class Parser:
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
                 # using a series of methods to infer a basic step motion.
-                methods = 9
+                methods = 8
                 if not buildErrors:
                     for cand in s2cands:
                         logger.debug(f'Building parses for S2 candidate: '
