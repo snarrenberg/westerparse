@@ -2018,6 +2018,7 @@ class Parser:
                              f'{[s.index for s in s2cands]}')
 
                 # create list of S3 candidates in the predominant span
+                # TODO Remove this since not used in building the parse ??
                 if (self.context.harmonicSpanDict['offsetPredominant']
                         is not None):
                     s3Pcands = [self.notes[head] for head in self.P_openHeads
@@ -2027,7 +2028,6 @@ class Parser:
                                     and self.notes[head].offset
                                     < self.context.harmonicSpanDict[
                                         'offsetDominant'])]
-                    # print('S3 P cands', s3Pcands)
                     # TODO continue with method
 
                 # Create a Parse object for each S2cand
