@@ -25,6 +25,9 @@ Module Documentation
 .. automodule:: westerparse.csd
    :members:
 
+.. automodule:: westerparse.arc
+   :members:
+
 .. automodule:: westerparse.consecutions
    :members:
 
