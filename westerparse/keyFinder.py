@@ -98,10 +98,10 @@ def testKey(score, knote=None, kmode=None, kharm=False):
         testValidatedKey(score, knote, kmode, kharm)
     except KeyFinderError as kfe:
         kfe.logerror()
-        return userKey
-        # return False
+        # return userKey
+        return False
     else:
-        userKey
+        return userKey
 
 
 def inferKey(score):
