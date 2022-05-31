@@ -17,6 +17,7 @@ in a line is approached and left.
 This should be converted to a method."""
 
 # TODO add categories for chromatic semitones and other
+#   such as enharmonic equivalents
 # nondiatonic steps, currently set to None
 # perhaps add modifier to step: diatonic (m2, M2),
 # chromatic (A1, d1), nondiatonic (A2)
