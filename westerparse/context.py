@@ -139,13 +139,13 @@ class GlobalContext(Context):
 
     #. For each note in the part:
 
-       * A position index is assigned. The is the primary note
+       * A position index is assigned. This is the primary note
          reference used during parsing.
        * A concrete scale degree (:py:class:`~csd.ConcreteScaleDegree`)
          is determined.
        * A :py:class:`~rule.Rule` object is attached.
        * A :py:class:`~dependency.Dependency` object is attached.
-       * The manner or approach and departure
+       * The manner of approach and departure
          (:py:class:`~consecutions.Consecutions`) for the note are determined.
 
     #. Measure-long local harmonic contexts are created,

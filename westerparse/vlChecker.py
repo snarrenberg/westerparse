@@ -3,7 +3,7 @@
 # Purpose:      Framework for analyzing voice leading in species counterpoint
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2021 by Robert Snarrenberg
+# Copyright:    (c) 2022 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """
@@ -166,6 +166,8 @@ def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
     # Works best for two-part simple species.
     # Each pairing has its own subroutines:
     #     1:1; 1:2; 1:3 and 1:4; and syncopated
+
+    logger.debug(f'Checking voice leading in {context.filename}.')
 
     checkPartPairs(context.score, analytics)
     checkFourthLeapsInBass(context.score, analytics)
@@ -566,14 +568,14 @@ def checkPartPairs(score, analyzer):
         cond2 = score.parts[numPair[1]].species == 'first'
         if cond1 and cond2:
             checkFirstSpecies(score, analyzer, numPair)
-        if (cond1 and score.parts[numPair[1]].species == 'second'
-                or score.parts[0].species == 'second' and cond2):
+        if ((cond1 and score.parts[numPair[1]].species == 'second')
+                or (score.parts[numPair[0]].species == 'second' and cond2)):
             checkSecondSpecies(score, analyzer, numPair)
-        if (cond1 and score.parts[numPair[1]].species == 'third'
-                or score.parts[0].species == 'third' and cond2):
+        if ((cond1 and score.parts[numPair[1]].species == 'third')
+                or (score.parts[numPair[0]].species == 'third' and cond2)):
             checkThirdSpecies(score, analyzer, numPair)
-        if (cond1 and score.parts[numPair[1]].species == 'fourth'
-                or score.parts[0].species == 'fourth' and cond2):
+        if ((cond1 and score.parts[numPair[1]].species == 'fourth')
+                or (score.parts[numPair[0]].species == 'fourth' and cond2)):
             checkFourthSpecies(score, analyzer, numPair)
     # TODO Add pairs for combined species: Westergaard chapter 6:
     # second and second
@@ -594,7 +596,8 @@ def checkFirstSpecies(score, analyzer, numPair):
     analytics = theoryAnalyzerWP.Analyzer()
     analytics.addAnalysisData(score)
     firstSpeciesForbiddenMotions(score, analytics,
-                                 partNum1=numPair[0], partNum2=numPair[1])
+                                 partNum1=numPair[0],
+                                 partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer, numPair)
 
 
@@ -636,7 +639,8 @@ def checkThirdSpecies(score, analyzer, numPair):
     checkConsecutions(score)
     partNumPairs = getAllPartNumPairs(score)
     thirdSpeciesForbiddenMotions(score, analytics,
-                                 partNum1=numPair[0], partNum2=numPair[1])
+                                 partNum1=numPair[0],
+                                 partNum2=numPair[1])
     checkControlOfDissonance(score, analyzer, numPair)
 
 
@@ -653,9 +657,11 @@ def checkFourthSpecies(score, analyzer, numPair):
     analytics.addAnalysisData(score)
     checkConsecutions(score)
     fourthSpeciesForbiddenMotions(score, analytics,
-                                  partNum1=numPair[0], partNum2=numPair[1])
+                                  partNum1=numPair[0],
+                                  partNum2=numPair[1])
     fourthSpeciesControlOfDissonance(score, analytics,
-                                     partNum1=numPair[0], partNum2=numPair[1])
+                                     partNum1=numPair[0],
+                                     partNum2=numPair[1])
 
 
 def checkConsecutions(score):
@@ -695,7 +701,8 @@ def checkConsecutions(score):
 
 def checkControlOfDissonance(score, analyzer, numPair):
     """Check the score for conformity with the rules that control
-    dissonance in first, second, or third species.
+    dissonance in first, second, or third species. Requires access not only
+    to notes in a given pair of lines but also the bass line, if different.
 
     On the beat: notes must be consonant.
 
@@ -708,7 +715,10 @@ def checkControlOfDissonance(score, analyzer, numPair):
     # collect sequence of intervals for logging and data analysis
     verts = analyzer.getVerticalities(score)
     bassPartNum = len(score.parts)-1
-    part_pair_ivls = []  # for logging and analysis
+
+    # for logging and analysis
+    part_pair_ivls = []
+
     for vert in verts:
         upperNote = vert.objects[numPair[0]]
         lowerNote = vert.objects[numPair[1]]
@@ -855,7 +865,7 @@ def checkControlOfDissonance(score, analyzer, numPair):
             vlErrors.append(error)
 
     # get the interval sequence for logging and data analysis
-    part_pair_ivlData = ('Intervals for ' + str(numPair) + ': ' + ''.join(['{:>5}'.format(ivl)
+    part_pair_ivlData = (''.join(['{:>5}'.format(ivl)
                         for ivl in part_pair_ivls])
              )
 
