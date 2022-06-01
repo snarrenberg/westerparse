@@ -598,7 +598,7 @@ def extractParseDataFromPart(cxt, part, parse):
         note_array['csd_value'] = part.flatten().notes[lab[0]].csd.value
         note_array['rule_label'] = lab[1]
         note_array['gen_level'] = lab[2]
-        # detemine parentheses for each note
+        # detemine parentheses for each inserted note
         left_paren = False
         right_paren = False
         if lab[1] == 'E3':
@@ -608,6 +608,20 @@ def extractParseDataFromPart(cxt, part, parse):
                 if arc[-1] == lab[0]:
                     left_paren = False
                 if arc[0] == lab[0]:
+                    right_paren = False
+        # detemine parentheses for each repetition, based on lefthead
+        elif lab[1] == 'E1':
+            left_paren = False
+            right_paren = False
+            for arc in parse.arcs:
+                # lookup start of arc to see if it has a left paren
+                if arc[-1] == lab[0]:
+                    lefthead = arc[0]
+                    lefttuplelist = [lb for lb in parse.ruleLabels if lb[0] == lefthead]
+                    if lefttuplelist[0][1] == 'E3':
+                        right_paren = True
+                # set to false if there's an arc that starts from the rep
+                elif arc[0] == lab[0]:
                     right_paren = False
         note_array['left_paren'] = left_paren
         note_array['right_paren'] = right_paren
