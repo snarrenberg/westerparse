@@ -601,7 +601,7 @@ def extractParseDataFromPart(cxt, part, parse):
         # detemine parentheses for each inserted note
         left_paren = False
         right_paren = False
-        if lab[1] == 'E3':
+        if lab[1] in ['E3', 'L3']:
             left_paren = True
             right_paren = True
             for arc in parse.arcs:
@@ -609,17 +609,24 @@ def extractParseDataFromPart(cxt, part, parse):
                     left_paren = False
                 if arc[0] == lab[0]:
                     right_paren = False
-        # detemine parentheses for each repetition, based on lefthead
-        elif lab[1] == 'E1':
+        # detemine parentheses for each repetition, based on its lefthead
+        elif lab[1] in ['E1', 'L1']:
             left_paren = False
             right_paren = False
             for arc in parse.arcs:
                 # lookup start of arc to see if it has a left paren
-                if arc[-1] == lab[0]:
+                if (arc[-1] == lab[0] and part.flatten().notes[
+                        arc[0]].csd.value == part.flatten().notes[
+                        lab[0]].csd.value):
                     lefthead = arc[0]
                     lefttuplelist = [lb for lb in parse.ruleLabels if lb[0] == lefthead]
-                    if lefttuplelist[0][1] == 'E3':
+                    if lefttuplelist[0][1] in ['E3', 'L3']:
                         right_paren = True
+                    # now check to see if an arc from the lefthead extends
+                    # beyond the repetition
+                    for a in parse.arcs:
+                        if a[0] == lefthead and a[-1] > lab[0]:
+                            right_paren = False
                 # set to false if there's an arc that starts from the rep
                 elif arc[0] == lab[0]:
                     right_paren = False
