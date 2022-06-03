@@ -598,6 +598,10 @@ def extractParseDataFromPart(cxt, part, parse):
         note_array['csd_value'] = part.flatten().notes[lab[0]].csd.value
         note_array['rule_label'] = lab[1]
         note_array['gen_level'] = lab[2]
+        # add dependency data
+        # note_array['lefthead'] = part.flatten().notes[lab[0]].dependency.lefthead
+        # note_array['righthead'] = part.flatten().notes[lab[0]].dependency.righthead
+        # note_array['dependents'] = part.flatten().notes[lab[0]].dependency.dependents
         # detemine parentheses for each inserted note
         left_paren = False
         right_paren = False
