@@ -908,6 +908,18 @@ def gatherParseSets(cxt, partSelection=None, partLineType=None):
         if part.Ginterps:
             for parse in part.Ginterps:
                 parseSets.append((parse,))
+    # (1c) if there is only 1 part and type is specified.
+    elif len(cxt.parts) == 1 and partLineType:
+        part = cxt.parts[0]
+        if partLineType == 'primary' and part.Pinterps:
+            for parse in part.Pinterps:
+                parseSets.append((parse,))
+        if partLineType == 'bass' and part.Binterps:
+            for parse in part.Binterps:
+                parseSets.append((parse,))
+        if partLineType == 'generic' and part.Ginterps:
+            for parse in part.Ginterps:
+                parseSets.append((parse,))
     # (2a) If there are 2 parts and no preferences are specified, show
     # all combinations of primary and bass parses. Ignore generic parses.
     elif len(cxt.parts) == 2 and partSelection is None:
