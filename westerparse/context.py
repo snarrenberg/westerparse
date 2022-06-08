@@ -480,6 +480,21 @@ class GlobalContext(Context):
                     tsNotes.append(n.index)
             pass  # print(tsNotes)
 
+    def makeTwoPartContexts(self):
+        partNumPairs = vlChecker.getAllPartNumPairs(self.score)
+        twoPartContexts = []
+        if partNumPairs:
+            for pair in partNumPairs:
+                parts = [self.parts[pair[0]], self.parts[pair[1]]]
+                duetScore = stream.Score(givenElements=parts)
+                duetScore.key = self.key
+                # duetScore.score = duetScore
+                duetScore.filename = f'Parts {pair[0]} and {pair[1]}'
+                twoPartContexts.append(duetScore)
+        for duet in twoPartContexts:
+            duet.show()
+        return twoPartContexts
+
 
 class TimeSpan:
 
