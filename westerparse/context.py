@@ -482,6 +482,7 @@ class GlobalContext(Context):
 
     def makeTwoPartContexts(self):
         partNumPairs = vlChecker.getAllPartNumPairs(self.score)
+        bassPartNum = self.parts[-1].partNum
         twoPartContexts = []
         if partNumPairs:
             for pair in partNumPairs:
@@ -490,9 +491,12 @@ class GlobalContext(Context):
                 duetScore.key = self.key
                 # duetScore.score = duetScore
                 duetScore.filename = f'Parts {pair[0]} and {pair[1]}'
+                if bassPartNum in pair:
+                    duetScore.includesBass = True
+                else:
+                    duetScore.includesBass = False
                 twoPartContexts.append(duetScore)
-        for duet in twoPartContexts:
-            duet.show()
+                # duetScore.show()
         return twoPartContexts
 
 

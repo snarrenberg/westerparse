@@ -1760,7 +1760,7 @@ class Parser:
             else:
                 pass
 
-        # # CASE TEN: Dissonant skip between nonharmonic pitches.
+        # # OLD CASE TEN: Dissonant skip between nonharmonic pitches.
         # elif all(case10):
         #     logger.debug(f'Parse transition {i.index}-{j.index}: case 10')
         #     if i.index == j.index - 1:

@@ -156,11 +156,94 @@ def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
     forms of motion.  A separate function checks for the rules that
     control leaps of a fourth in the bass.
     """
-    # Extract relevant information from the score, if contrapuntal.
-    # Use revised versions of music21 theory analyzer module.
-    analytics = theoryAnalyzerWP.Analyzer()
-    analytics.addAnalysisData(context.score)
 
+    twoPartContexts = context.makeTwoPartContexts()
+    for duet in twoPartContexts:
+        checkDuet(context, duet)
+
+def checkDuet(context, duet):
+    """
+    """
+    cond1 = duet.parts[0].species == 'first'
+    cond2 = duet.parts[1].species == 'first'
+    if cond1 and cond2:
+        print('checking first species')
+        print(duet.includesBass)
+        checkFirstSpecies(context, duet)
+    if ((cond1 and duet.parts[1].species == 'second')
+            or (duet.parts[0].species == 'second' and cond2)):
+        print('checking second species')
+        print(duet.includesBass)
+        # checkSecondSpecies(score, analyzer, numPair)
+    if ((cond1 and duet.parts[1].species == 'third')
+            or (duet.parts[0].species == 'third' and cond2)):
+        print('checking third species')
+        # checkThirdSpecies(score, analyzer, numPair)
+    if ((cond1 and duet.parts[0].species == 'fourth')
+            or (duet.parts[0].species == 'fourth' and cond2)):
+        print('checking fourth species')
+        # checkFourthSpecies(score, analyzer, numPair)
+    # TODO Add pairs for combined species: Westergaard chapter 6:
+    # second and second
+    # third and third
+    # fourth and fourth
+    # second and third
+    # second and fourth
+    # third and fourth
+
+
+def getVerticalitiesFromDuet(duet):
+    tree = duet.asTimespans(classList=(note.Note,))
+    vertList = tree.iterateVerticalities(reverse=False)
+    return vertList
+
+def getVoiceLeadingQuartetsFromDuet(duet):
+    vlqs = []
+    for v in getVerticalitiesFromDuet(duet):
+        # use verticality method from music21
+        vlqList = v.getAllVoiceLeadingQuartets()
+        for vlq in vlqList:
+            vlqs.append(vlq)
+    return vlqs
+
+
+def checkFirstSpecies(context, duet):
+    """Check a pair of parts, where one line is in first species
+    and the other is also in first species.
+    Evaluate control of dissonance and forbidden forms of motion.
+    Also check the final step for conformity with the global
+    rule for upper lines.
+    """
+    VLQs = getVoiceLeadingQuartetsFromDuet(duet)
+    firstSpeciesForbiddenMotions(context, VLQs, includesBass=duet.includesBass)
+    #firstSpeciesForbiddenMotions(duet)
+    # checkControlOfDissonance(score, analyzer, numPair)
+
+def firstSpeciesForbiddenMotions(context, VLQs, includesBass=False):
+    """Check the forbidden forms of motion for a pair
+    of lines in first species.
+    Essentially: :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`.
+    """
+    for vlq in VLQs:
+        if not includesBass:
+            mn = vlq.v1n2.measureNumber
+            vlqBassNote = context.parts[-1].measure(mn).getElementsByClass('Note')[0]
+            print('bass', vlqBassNote)
+        if vlq.similarMotion:
+            print(f'similar motion going into {vlq.v2n2.measureNumber}')
+        if isSimilarFifth(vlq):
+            error = ('Forbidden similar motion to fifth going into bar '
+                     + str(vlq.v2n2.measureNumber) + '.')
+            print(error)
+            vlErrors.append(error)
+        pass
+        # forbiddenMotionsOntoBeatWithoutSyncope(score, vlq, partNum1, partNum2)
+    # checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
+    #                                                partNum1,
+    #                                                partNum2)
+
+
+def dummyFunction():
     # CURRENT VERSION: TEST EACH PAIR OF LINES
     # Information access to other activity in other lines is limited.
     # Works best for two-part simple species.
@@ -556,49 +639,50 @@ def isSyncopated(score, note):
 # -----------------------------------------------------------------------------
 
 
-def checkPartPairs(score, analyzer):
-    """Find all of the pairwise combinations of parts and check the
-    voice-leading of each pair, depending upon which simple species
-    the pair represents (e.g., first, second, third, fourth).
-    The function is currently not able to evaluate combined species.
-    """
-    partNumPairs = getAllPartNumPairs(score)
-    for numPair in partNumPairs:
-        cond1 = score.parts[numPair[0]].species == 'first'
-        cond2 = score.parts[numPair[1]].species == 'first'
-        if cond1 and cond2:
-            checkFirstSpecies(score, analyzer, numPair)
-        if ((cond1 and score.parts[numPair[1]].species == 'second')
-                or (score.parts[numPair[0]].species == 'second' and cond2)):
-            checkSecondSpecies(score, analyzer, numPair)
-        if ((cond1 and score.parts[numPair[1]].species == 'third')
-                or (score.parts[numPair[0]].species == 'third' and cond2)):
-            checkThirdSpecies(score, analyzer, numPair)
-        if ((cond1 and score.parts[numPair[1]].species == 'fourth')
-                or (score.parts[numPair[0]].species == 'fourth' and cond2)):
-            checkFourthSpecies(score, analyzer, numPair)
-    # TODO Add pairs for combined species: Westergaard chapter 6:
-    # second and second
-    # third and third
-    # fourth and fourth
-    # second and third
-    # second and fourth
-    # third and fourth
+# def checkPartPairs(score, analyzer):
+#     """Find all of the pairwise combinations of parts and check the
+#     voice-leading of each pair, depending upon which simple species
+#     the pair represents (e.g., first, second, third, fourth).
+#     The function is currently not able to evaluate combined species.
+#     """
+#     partNumPairs = getAllPartNumPairs(score)
+#     for numPair in partNumPairs:
+#         cond1 = score.parts[numPair[0]].species == 'first'
+#         cond2 = score.parts[numPair[1]].species == 'first'
+#         if cond1 and cond2:
+#             checkFirstSpecies(score, analyzer, numPair)
+#         if ((cond1 and score.parts[numPair[1]].species == 'second')
+#                 or (score.parts[numPair[0]].species == 'second' and cond2)):
+#             checkSecondSpecies(score, analyzer, numPair)
+#         if ((cond1 and score.parts[numPair[1]].species == 'third')
+#                 or (score.parts[numPair[0]].species == 'third' and cond2)):
+#             checkThirdSpecies(score, analyzer, numPair)
+#         if ((cond1 and score.parts[numPair[1]].species == 'fourth')
+#                 or (score.parts[numPair[0]].species == 'fourth' and cond2)):
+#             checkFourthSpecies(score, analyzer, numPair)
+#     # TODO Add pairs for combined species: Westergaard chapter 6:
+#     # second and second
+#     # third and third
+#     # fourth and fourth
+#     # second and third
+#     # second and fourth
+#     # third and fourth
 
 
-def checkFirstSpecies(score, analyzer, numPair):
-    """Check a pair of parts, where one line is in first species
-    and the other is also in first species.
-    Evaluate control of dissonance and forbidden forms of motion.
-    Also check the final step for conformity with the global
-    rule for upper lines.
-    """
-    analytics = theoryAnalyzerWP.Analyzer()
-    analytics.addAnalysisData(score)
-    firstSpeciesForbiddenMotions(score, analytics,
-                                 partNum1=numPair[0],
-                                 partNum2=numPair[1])
-    checkControlOfDissonance(score, analyzer, numPair)
+# def checkFirstSpecies(score, analyzer, numPair):
+#     """Check a pair of parts, where one line is in first species
+#     and the other is also in first species.
+#     Evaluate control of dissonance and forbidden forms of motion.
+#     Also check the final step for conformity with the global
+#     rule for upper lines.
+#     """
+#     analytics = theoryAnalyzerWP.Analyzer()
+#     analytics.addAnalysisData(score)
+#     firstSpeciesForbiddenMotions(score, analytics,
+#                                  partNum1=numPair[0],
+#                                  partNum2=numPair[1])
+#     checkControlOfDissonance(score, analyzer, numPair)
+
 
 
 def checkSecondSpecies(score, analyzer, numPair):
@@ -1166,18 +1250,18 @@ def forbiddenMotionsOntoBeatWithoutSyncope(score, vlq,
                 vlErrors.append(error)
 
 
-def firstSpeciesForbiddenMotions(score, analyzer,
-                                 partNum1=None, partNum2=None):
-    """Check the forbidden forms of motion for a pair
-    of lines in first species.
-    Essentially: :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`.
-    """
-    vlqList = analyzer.getVLQs(score, partNum1, partNum2)
-    for vlq in vlqList:
-        forbiddenMotionsOntoBeatWithoutSyncope(score, vlq, partNum1, partNum2)
-    checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
-                                                   partNum1,
-                                                   partNum2)
+# def firstSpeciesForbiddenMotions(score, analyzer,
+#                                  partNum1=None, partNum2=None):
+#     """Check the forbidden forms of motion for a pair
+#     of lines in first species.
+#     Essentially: :py:func:`forbiddenMotionsOntoBeatWithoutSyncope`.
+#     """
+#     vlqList = analyzer.getVLQs(score, partNum1, partNum2)
+#     for vlq in vlqList:
+#         forbiddenMotionsOntoBeatWithoutSyncope(score, vlq, partNum1, partNum2)
+#     checkFirstSpeciesNonconsecutiveParallels(score, analyzer,
+#                                                    partNum1,
+#                                                    partNum2)
 
 
 
