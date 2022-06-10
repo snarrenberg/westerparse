@@ -487,15 +487,18 @@ class GlobalContext(Context):
         if partNumPairs:
             for pair in partNumPairs:
                 parts = [self.parts[pair[0]], self.parts[pair[1]]]
-                duetScore = stream.Score(givenElements=parts)
-                duetScore.key = self.key
+                duet = stream.Score(givenElements=parts)
+                # copy part number in context to part in duet
+                duet.parts[0].parentID = pair[0]
+                duet.parts[1].parentID = pair[1]
+                duet.key = self.key
                 # duetScore.score = duetScore
-                duetScore.filename = f'Parts {pair[0]} and {pair[1]}'
+                duet.filename = f'Parts {pair[0]} and {pair[1]}'
                 if bassPartNum in pair:
-                    duetScore.includesBass = True
+                    duet.includesBass = True
                 else:
-                    duetScore.includesBass = False
-                twoPartContexts.append(duetScore)
+                    duet.includesBass = False
+                twoPartContexts.append(duet)
                 # duetScore.show()
         return twoPartContexts
 
