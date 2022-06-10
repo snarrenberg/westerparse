@@ -1344,14 +1344,6 @@ def getVerticalitiesFromDuet(duet):
     return vertsIter
 
 
-# def getVerticalitiesListFromDuet(duet):
-#     vertsIter = getVerticalitiesFromDuet(duet)
-#     vertList = []
-#     for vert in vertsIter:
-#         vertList.append(vert)
-#     return vertList
-
-
 def getVerticalityContentDictFromDuet(duet, verticality):
     """Assume that the verticality in a duet has pitched timespans that
     only contain a single note each. Then construct a content dictionary:
@@ -1372,7 +1364,7 @@ def getVerticalityContentDictFromDuet(duet, verticality):
     return contentDict
 
 
-# NOT CURRENTLY IN USE
+# NOT CURRENTLY IN USE, MAY COME IN HANDY
 def getAllVerticalitiesContentDictionary(context):
     tree = context.score.asTimespans(classList=(note.Note, note.Rest))
     vertsIter = tree.iterateVerticalities(reverse=False)
