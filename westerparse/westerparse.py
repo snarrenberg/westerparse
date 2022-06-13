@@ -41,7 +41,7 @@ from music21 import *
 from westerparse import context
 from westerparse import parser
 from westerparse import vlChecker
-from westerparse import theoryAnalyzerWP
+# from westerparse import theoryAnalyzerWP
 from westerparse import utilities
 
 # -----------------------------------------------------------------------------
