@@ -192,7 +192,8 @@ def checkCounterpoint(context, report=True):
 
 
 def checkDuet(context, duet):
-    """Check the voice-leading of each duet, depending upon which simple
+    """
+    Check the voice-leading of each duet, depending upon which simple
     species the pair represents (e.g., first, second, third, fourth).
     The function is not yet able to evaluate combined species.
     """
@@ -219,7 +220,8 @@ def checkDuet(context, duet):
 
 
 def checkFirstSpecies(context, duet):
-    """Check a duet, where both lines are in first species.
+    """
+    Check a duet, where both lines are in first species.
     Evaluate control of dissonance and forbidden forms of motion.
     """
     VLQs = getAllVLQsFromDuet(duet)
@@ -230,7 +232,8 @@ def checkFirstSpecies(context, duet):
 
 
 def checkSecondSpecies(context, duet):
-    """Check a duet, where one line is in first species
+    """
+    Check a duet, where one line is in first species
     and the other is in second species.
     Check the intervals between consecutive notes (no local
     repetitions in the second species line).
@@ -246,7 +249,8 @@ def checkSecondSpecies(context, duet):
 
 
 def checkThirdSpecies(context, duet):
-    """Check a duet, where one line is in first species
+    """
+    Check a duet, where one line is in first species
     and the other is in third species.
     Check the intervals between consecutive notes (no local repetitions
     in the third species line).
@@ -259,7 +263,8 @@ def checkThirdSpecies(context, duet):
 
 
 def checkFourthSpecies(context, duet):
-    """Check a duet, where one line is in first species
+    """
+    Check a duet, where one line is in first species
     and the other is in fourth species.
     Check the intervals between consecutive notes (no local repetitions
     in the fourth species line).
@@ -277,7 +282,8 @@ def checkFourthSpecies(context, duet):
 
 
 def checkControlOfDissonance(context, duet, VLQs):
-    """Check a duet for conformity with the rules that control
+    """
+    Check a duet for conformity with the rules that control
     dissonance in first, second, or third species. Requires access not only
     to notes in the duet but also the bass line, if not included in the duet.
 
@@ -426,7 +432,8 @@ def checkControlOfDissonance(context, duet, VLQs):
 
 
 def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
-    """Check the duet for conformity the rules that
+    """
+    Check the duet for conformity the rules that
     control dissonance in fourth species.
     """
     if duet.parts[0].species == 'fourth':
