@@ -1424,8 +1424,8 @@ def getOffsetList(score):
     Get a list of note/rest offsets for all event initiations in a score.
     Accepts a stream as input: duet, context.score
     Use as input to building the context dictionary of verticals
-    tsTree = score.asTimespans(classList=(note.Note,note.Rest))
     """
+    tsTree = score.asTimespans(classList=(note.Note,note.Rest))
     offsetList = [os for os in tsTree.allOffsets()]
     return offsetList
 
