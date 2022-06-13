@@ -26,13 +26,14 @@ The base functions consist of the following:
    extracted from a score or all of the score parts.
 
    :py:func:`getVerticalityContentDictFromDuet(duet, offset)` - Given a duet
-   and a particular offset, this function constructs a dictionary of all
+   and a particular offset, this function constructs a dictionary of
    the notes still sounding or starting to sound at that offset.
    The dictionary is arranged by part number.
 
    :py:func:`getVerticalPairs(duet)` - Uses :py:func:`getOffsetList(score)`
    to construct an ordered list of all the pairs of simultaneous notes
-   occurring between the parts of the duet.
+   occurring between the parts of the duet. Useful for checking the control
+   of dissonance.
 
    :py:func:`getAllVLQsFromDuet(duet)` - Uses :py:func:`getOffsetList(score)`
    to extract an ordered list of the
@@ -42,6 +43,8 @@ The base functions consist of the following:
 
       * v1: n1, n2
       * v2: n1, n2
+
+   VLQs are useful for checking forbidden forms of motion.
 
 Modified versions of these functions are used to extra vertical pairs and
 VLQs that involve nonconsecutive simulataneities (see below).
@@ -98,7 +101,6 @@ or :py:func:'fourthSpeciesControlOfDissonance'.
 [Etc.]
 """
 
-# import itertools
 import unittest
 import logging
 
@@ -128,7 +130,7 @@ logger.addHandler(f_handler)
 
 # Variables set by instructor.
 allowSecondSpeciesBreak = True
-allowThirdSpeciesInsertions = True
+allowThirdSpeciesInsertions = True  # currently not in use
 sonorityCheck = True
 
 # Create lists to collect errors and advice, for reporting to user.
@@ -884,13 +886,13 @@ def checkThirdSpeciesForbiddenMotions(context, duet, VLQs):
             if isParallelOctave(vlq):
                 parDirection = interval.Interval(vlq.v1n1, vlq.v1n2).direction
                 if vlq.v1n1.getContextByClass('Part').species == 'third':
-                    vSpeciesNote1 = vlq.v1n1
+                    # vSpeciesNote1 = vlq.v1n1
                     vSpeciesNote2 = vlq.v1n2
                     vCantusNote1 = vlq.v2n1
                     vSpeciesPartNum = vlq.v1n1.getContextByClass(
                         'Part').partNum
                 elif vlq.v2n1.getContextByClass('Part').species == 'third':
-                    vSpeciesNote1 = vlq.v2n1
+                    # vSpeciesNote1 = vlq.v2n1
                     vSpeciesNote2 = vlq.v2n2
                     vCantusNote1 = vlq.v1n1
                     vSpeciesPartNum = vlq.v2n1.getContextByClass(
@@ -941,10 +943,11 @@ def checkFourthSpeciesForbiddenMotions(context, duet, VLQs):
         speciesPart = 0
     elif duet.parts[1].species == 'fourth':
         speciesPart = 1
-
+    # gather the simultaneities by location
     vPairsOnbeat = []
     vPairsOnbeatDict = {}
     vPairsOffbeat = []
+    # get the lists of onbeat  and offbeat VPs
     for vPair in getVerticalPairs(duet):
         if vPair is not None:
             # Evaluate offbeat intervals when one of the parts is the bass.
@@ -953,8 +956,10 @@ def checkFourthSpeciesForbiddenMotions(context, duet, VLQs):
                 vPairsOnbeatDict[vPair[speciesPart].measureNumber] = vPair
             else:
                 vPairsOffbeat.append(vPair)
+    # make lists of VLQs for each
     vlqsOffbeat = makeVLQFromVPairList(vPairsOffbeat)
     vlqsOnbeat = makeVLQFromVPairList(vPairsOnbeat)
+    # evaluate the offbeat VLQs
     for vlq in vlqsOffbeat:
         if isParallelUnison(vlq):
             error = ('Forbidden parallel motion to unison going into bar '
@@ -967,6 +972,7 @@ def checkFourthSpeciesForbiddenMotions(context, duet, VLQs):
                 error = ('Forbidden parallel motion to octave going into bar '
                          + str(vlq.v2n2.measureNumber))
                 vlErrors.append(error)
+    # evaluate the onbeat VLQs
     for vlq in vlqsOnbeat:
         if isParallelUnison(vlq):
             error = ('Forbidden parallel motion to unison going into bar '
@@ -1340,7 +1346,7 @@ def checkFourthLeapsInBass(context):
             vlErrors.append(error)
         elif impliedSixFour and bn1Meas != bn2Meas:
             error = ('Prohibited leap of a fourth in bars '
-                     + str(bn1Meas) + ' to ' + str(bn2Meas) + '.')
+                     + str(bn1Meas) + '-' + str(bn2Meas) + '.')
             vlErrors.append(error)
 
 
@@ -1401,8 +1407,10 @@ def checkThreePartOnbeatSonority(context):
 
 # utility function for finding pairs of parts
 def getAllPartNumPairs(score):
-    """Assemble a list of the pairwise combinations of parts in a score."""
-    # Adapted from music21's theory analyzer
+    """
+    Assemble a list of the pairwise combinations of parts in a score.
+    Adopted from music21's theory analyzer
+    """
     partNumPairs = []
     numParts = len(score.parts)
     for partNum1 in range(numParts - 1):
@@ -1412,15 +1420,21 @@ def getAllPartNumPairs(score):
 
 
 def getOffsetList(score):
-    # get a list of note/rest offsets for all event initiations in a score
-    # accepts a stream as input: duet, context.score
-    # use as input to building the context dictionary of verticals
+    """
+    Get a list of note/rest offsets for all event initiations in a score.
+    Accepts a stream as input: duet, context.score
+    Use as input to building the context dictionary of verticals
     tsTree = score.asTimespans(classList=(note.Note,note.Rest))
+    """
     offsetList = [os for os in tsTree.allOffsets()]
     return offsetList
 
 
 def getOnbeatOffsetList(score):
+    """
+    Get a list of offsets for all downbeats in a score.
+    Accepts a stream as input: duet, context.score.
+    """
     measureOffsetsDict = score.measureOffsetMap()
     downbeatOffsetList = []
     for offset in measureOffsetsDict:
@@ -1430,17 +1444,14 @@ def getOnbeatOffsetList(score):
 
 
 def getOffbeatOffsetList(score):
+    """
+    Get a list of offsets for all offbeats in a score.
+    Accepts a stream as input: duet, context.score.
+    """
     offsetList = getOffsetList(score)
     downbeatOffsetList = getOnbeatOffsetList(score)
     offbeatOffsetList = [offset for offset in offsetList if offset not in downbeatOffsetList]
     return offbeatOffsetList
-
-
-# def getVerticalitiesFromDuet(duet):
-#     """Get the iterator for a duet's verticalities."""
-#     tree = duet.asTimespans(classList=(note.Note,))
-#     vertsIter = tree.iterateVerticalities(reverse=False)
-#     return vertsIter
 
 
 def getOnbeatIntervals(duet):
@@ -1458,11 +1469,11 @@ def getOnbeatIntervals(duet):
 
 def getOffbeatIntervals(duet):
     """
-    Extract an ordered list of onbeat intervals in the duet.
+    Extract an ordered list of offbeat intervals in the duet.
     """
     vertPairs = getVerticalPairs(duet)
     intervalList = []
-    # get interval of onbeat vertical pair
+    # get interval of offbeat vertical pair
     for vp in vertPairs:
         if vp[0].beatStrength > 1.0 or vp[1].beatStrength > 1.0:
             intervalList.append(interval.Interval(vp[1],vp[0]))
@@ -1489,9 +1500,11 @@ def getGenericKlangs(score):
 
 
 def getVerticalityContentDictFromDuet(duet, offset):
-    """Assume that the verticality in a duet has pitched timespans that
-    only contain a single note each. Then construct a content dictionary:
-    the keys are part numbers in the duet and the values are notes (rests).
+    """
+    Assume that the parts in a duet contain a single note or rest each
+    at any given offset. Get the content of each part at the offset and
+    construct a content dictionary: the keys are part numbers in the duet
+    and the values are notes (rests).
     """
     contentDict = {}
     partCount = 2
@@ -1509,7 +1522,11 @@ def getVerticalityContentDictFromDuet(duet, offset):
 
 # NOT CURRENTLY IN USE, MAY COME IN HANDY FOR SONORITY CHECKING
 def getAllVerticalContentDictionaries(score):
-    # accepts: duet, context.score
+    """
+    Generate an offset list for a score, then construct a content dictionary
+    for the parts at every offset: the keys are part numbers in the duet
+    and the values are notes (rests). Accepts as input: duet, context.score.
+    """
     contentDictList = {}
     offsetList = getOffsetList(score)
     for offset in offsetList:
@@ -1530,8 +1547,9 @@ def getAllVerticalContentDictionaries(score):
 
 def getVerticalPairs(duet):
     """
-    Returns a list of all the vertical pairs of notes occurring
-    between the parts of the duet, using the offset list.
+    Generate an offset list for the duet and then construct a list of all
+    the simultaneities (vertical pairs of notes) occurring
+    between the parts of the duet.
     """
     vPairList = []
     offsetList = getOffsetList(duet)
@@ -1551,7 +1569,8 @@ def getVerticalPairs(duet):
 
 def getAllVLQsFromDuet(duet):
     """
-    Extract an ordered list of the
+    Generate an offset list for the duet, make a pairwise list of offsets,
+    and then construct a list of all the
     :class:`~music21.voiceLeading.VoiceLeadingQuartet`
     objects in the duet.
     """
@@ -1586,9 +1605,9 @@ def getAllVLQsFromDuet(duet):
 
 def getOnbeatVLQs(duet):
     """
-    Extract an ordered list of the
-    :class:`~music21.voiceLeading.VoiceLeadingQuartet`
-    objects in the duet, restricted to notes that start on the beat
+    Generate an offset list of downbeats in the duet, make a pairwise list
+    from it, and then construct a list of
+    :class:`~music21.voiceLeading.VoiceLeadingQuartet` objects.
     """
     allVLQs = []
     # extract the relevant parts from the score
@@ -1620,10 +1639,10 @@ def getOnbeatVLQs(duet):
 
 def getNonconsecutiveOffbeatToOnbeatVLQs(duet):
     """
-    Extract an ordered list of the
-    :class:`~music21.voiceLeading.VoiceLeadingQuartet`
-    objects in the duet, restricted to nonconsecutive notes,
-    offbeat to onbeat.
+    Generate an offset list for the duet in which the first offset
+    is off the beat and the second is on the next downbeat,
+    and then construct a list of
+    :class:`~music21.voiceLeading.VoiceLeadingQuartet` objects.
     """
     allVLQs = []
     # extract the relevant parts from the score
@@ -1683,8 +1702,9 @@ def getNonconsecutiveOffbeatToOnbeatVLQs(duet):
 
 
 def makeVLQFromVPairList(vPairList):
-    """Given a list of simultaneous note pairs, create a voice-leading
-    quartet for each consecutive pair of pairs.
+    """
+    Given a list of simultaneous note pairs, create a voice-leading
+    quartet for each consecutive pair of pairs and return the list of VLQs.
     """
     quartetList = []
     for quartet in pairwise(vPairList):
@@ -1700,7 +1720,8 @@ def makeVLQFromVPairList(vPairList):
 
 
 def makeVLQfromVertPairs(vpair1, vpair2):
-    """Given a pair of simultaneous note pairs, create a voice-leading
+    """
+    Given a pair of simultaneous note pairs, create a voice-leading
     quartet.
     """
     v1n1 = vpair1[0]
@@ -1718,7 +1739,7 @@ def makeVLQfromVertPairs(vpair1, vpair2):
 
 def getFourthLeapsInBassDict(context):
     """
-    Identify P4 intervals in the bass part and make a list.
+    Identify P4 intervals in the bass part and make a list of the note pairs.
     """
     bassNotes = [note for note in context.parts[-1].flatten().notes]
     bassPairs = pairwise(bassNotes)
@@ -1738,7 +1759,8 @@ def getFourthLeapsInBassDict(context):
 
 
 def isConsonanceAboveBass(b, u):
-    """Input two notes with pitch, a bass note and an upper note, and
+    """
+    Input two notes with pitch, a bass note and an upper note, and
     determine whether the pair forms a vertical consonance.
     The test determines whether the simple interval
     equivalent of the actual interval is in the list:
@@ -1754,7 +1776,8 @@ def isConsonanceAboveBass(b, u):
 
 
 def isThirdOrSixthAboveBass(b, u):
-    """Input two notes with pitch, a bass note and an upper note,
+    """
+    Input two notes with pitch, a bass note and an upper note,
     and determine whether the pair forms a vertical third or sixth.
     The test determines whether the simple interval
     equivalent of the actual interval is in the list:
@@ -1769,7 +1792,8 @@ def isThirdOrSixthAboveBass(b, u):
 
 
 def isConsonanceBetweenUpper(u1, u2):
-    """Input two notes with pitch, two upper-line notes, and determine
+    """
+    Input two notes with pitch, two upper-line notes, and determine
     whether the pair forms a vertical consonance.  The test determines
     whether the simple interval equivalent of the actual interval is
     in the list: 'P1', 'm3', 'M3', 'P4', 'P5', 'm6', 'M6'.
@@ -1782,7 +1806,8 @@ def isConsonanceBetweenUpper(u1, u2):
 
 
 def isPermittedDissonanceBetweenUpper(u1, u2):
-    """Input two notes with pitch, two upper-line notes, and determine
+    """
+    Input two notes with pitch, two upper-line notes, and determine
     whether the pair forms a permitted vertical dissonance.  The test
     determines whether the simple interval
     equivalent of the actual interval is in the list: 'P4', 'A4', 'd5'.
@@ -1797,7 +1822,8 @@ def isPermittedDissonanceBetweenUpper(u1, u2):
 
 
 def isTriadicConsonance(n1, n2):
-    """Input two notes, from any context, and determine whether
+    """
+    Input two notes, from any context, and determine whether
     the pair forms a triadic interval in a consonant triad (major or minor).
     The test determines whether the simple interval
     equivalent of the actual interval is in the list:
@@ -1811,7 +1837,8 @@ def isTriadicConsonance(n1, n2):
 
 
 def isTriadicInterval(n1, n2):
-    """Input two notes, from any context, and determine whether
+    """
+    Input two notes, from any context, and determine whether
     the pair forms a triadic interval in any type of triad
     (major, minor, diminished, augmented).
     The test determines whether the simple interval
@@ -1827,7 +1854,8 @@ def isTriadicInterval(n1, n2):
 
 
 def isPerfectVerticalConsonance(n1, n2):
-    """Input two simultaneous notes with pitch and determine whether
+    """
+    Input two simultaneous notes with pitch and determine whether
     the pair forms a perfect vertical consonance.  The test determines
     whether the simple interval equivalent of the actual interval
     is in the list: 'P1', 'P5', 'P8'.
@@ -1840,7 +1868,8 @@ def isPerfectVerticalConsonance(n1, n2):
 
 
 def isImperfectVerticalConsonance(n1, n2):
-    """Input two simultaneous notes with pitch and determine whether
+    """
+    Input two simultaneous notes with pitch and determine whether
     the pair forms an imperfect vertical consonance.
     The test determines whether
     the simple interval equivalent of the actual
@@ -1855,7 +1884,8 @@ def isImperfectVerticalConsonance(n1, n2):
 
 
 def isVerticalDissonance(n1, n2):
-    """Input two simultaneous notes with pitch and determine whether
+    """
+    Input two simultaneous notes with pitch and determine whether
     the pair forms a vertical dissonance.  The test determines whether
     the simple interval equivalent of the actual interval
     is not in the list:
@@ -1870,7 +1900,8 @@ def isVerticalDissonance(n1, n2):
 
 
 def isDiatonicStep(n1, n2):
-    """Input two notes with pitch and determine whether
+    """
+    Input two notes with pitch and determine whether
     the pair forms a diatonic step.  The test determines whether
     the actual interval is in the list:
     'm2', 'M2'.
@@ -1883,7 +1914,8 @@ def isDiatonicStep(n1, n2):
 
 
 def isUnison(n1, n2):
-    """Input two notes with pitch and determine whether
+    """
+    Input two notes with pitch and determine whether
     the pair forms a unison.  The test determines whether
     the actual interval is in the list:
     'P1'.
@@ -1896,7 +1928,8 @@ def isUnison(n1, n2):
 
 
 def isOctave(n1, n2):
-    """Input two notes with pitch and determine whether
+    """
+    Input two notes with pitch and determine whether
     the pair forms an octave.  The test determines whether
     the actual interval is in the list:
     'P8', 'P15', 'P22'.
@@ -1913,8 +1946,8 @@ def isOctave(n1, n2):
 
 
 def isSimilarUnison(vlq):
-    """Input a VLQ and determine whether
-    there is similar motion to a unison.
+    """
+    Input a VLQ and determine whether there is similar motion to a unison.
     """
     rules = [vlq.similarMotion(),
              vlq.vIntervals[1] != vlq.vIntervals[0],
@@ -1926,8 +1959,8 @@ def isSimilarUnison(vlq):
 
 
 def isSimilarFromUnison(vlq):
-    """Input a VLQ and determine whether
-    there is similar motion from a unison.
+    """
+    Input a VLQ and determine whether there is similar motion from a unison.
     """
     rules = [vlq.similarMotion(),
              vlq.vIntervals[1] != vlq.vIntervals[0],
@@ -1939,7 +1972,8 @@ def isSimilarFromUnison(vlq):
 
 
 def isSimilarFifth(vlq):
-    """Input a VLQ and determine whether there is similar motion to
+    """
+    Input a VLQ and determine whether there is similar motion to
     a perfect fifth (simple or compound).
     """
     rules = [vlq.similarMotion(),
@@ -1952,7 +1986,8 @@ def isSimilarFifth(vlq):
 
 
 def isSimilarOctave(vlq):
-    """Input a VLQ and determine whether there is similar motion to
+    """
+    Input a VLQ and determine whether there is similar motion to
     an octave (simple or compound).
     """
     rules = [vlq.similarMotion(),
@@ -1965,7 +2000,8 @@ def isSimilarOctave(vlq):
 
 
 def isParallelUnison(vlq):
-    """Input a VLQ and determine whether there is parallel motion
+    """
+    Input a VLQ and determine whether there is parallel motion
     from one unison to another.
     """
     rules = [vlq.parallelMotion(),
@@ -1977,7 +2013,8 @@ def isParallelUnison(vlq):
 
 
 def isParallelFifth(vlq):
-    """Input a VLQ and determine whether there is parallel motion
+    """
+    Input a VLQ and determine whether there is parallel motion
     to a perfect fifth (the first fifth need not be perfect).
     """
     rules = [vlq.parallelMotion(),
@@ -1989,7 +2026,8 @@ def isParallelFifth(vlq):
 
 
 def isParallelOctave(vlq):
-    """Input a VLQ and determine whether there is parallel motion
+    """
+    Input a VLQ and determine whether there is parallel motion
     from one octave (simple or compound) to another.
     """
     rules = [vlq.parallelMotion(),
@@ -2001,7 +2039,8 @@ def isParallelOctave(vlq):
 
 
 def isVoiceOverlap(vlq):
-    """Input a VLQ and determine whether the voices overlap:
+    """
+    Input a VLQ and determine whether the voices overlap:
      v1n1 >= v2n1 and v1n2 >= v2n2, and either v1n2 < v2n1 or v2n2 > v1n1.
     """
     # parts stay in the proper registral position
@@ -2017,7 +2056,8 @@ def isVoiceOverlap(vlq):
 
 
 def isVoiceCrossing(vlq):
-    """Input a VLQ and determine whether
+    """
+    Input a VLQ and determine whether
     the voices cross: v1n1 >= v2n1, and v1n2 < v2n2.
     """
     # parts start out in the proper registral position
@@ -2031,7 +2071,8 @@ def isVoiceCrossing(vlq):
 
 
 def isCrossRelation(vlq):
-    """Input a VLQ and determine whether the there is a cross relation.
+    """
+    Input a VLQ and determine whether the there is a cross relation.
     The test determines whether the simple interval of either contiguous
     interval is in the list: 'd1', 'A1'.
     """
@@ -2044,7 +2085,8 @@ def isCrossRelation(vlq):
 
 
 def isDisplaced(vlq):
-    """Input a VLQ and determine whether either of the pitches in the first
+    """
+    Input a VLQ and determine whether either of the pitches in the first
      verticality is displaced by a pitch in the second verticality.
      The test determines whether the simple interval of any contiguous
      or consecutive
