@@ -19,18 +19,32 @@ bits such as pairs of simultaneous notes,
 complete verticalities, and voice-leading quartets.
 The voice-leading checker then analyzes these bits of data.
 
-[Division of the score into duets]
+The base functions consist of the following:
 
-A voice pair (vPair) is a pair of simultaneous notes in two parts:
+   :py:func:`getOffsetList(score)` - Compiles a list of timepoints when events
+   are initiated in a score. Accepts as input either a duet of parts
+   extracted from a score or all of the score parts.
 
-   * v1: n
-   * v0: n
+   :py:func:`getVerticalityContentDictFromDuet(duet, offset)` - Given a duet
+   and a particular offset, this function constructs a dictionary of all
+   the notes still sounding or starting to sound at that offset.
+   The dictionary is arranged by part number.
 
-A voice-leading quartet (VLQ) consists of pairs of simultaneous
-notes in two parts:
+   :py:func:`getVerticalPairs(duet)` - Uses :py:func:`getOffsetList(score)`
+   to construct an ordered list of all the pairs of simultaneous notes
+   occurring between the parts of the duet.
 
-   * v1: n1, n2
-   * v2: n1, n2
+   :py:func:`getAllVLQsFromDuet(duet)` - Uses :py:func:`getOffsetList(score)`
+   to extract an ordered list of the
+   :class:`~music21.voiceLeading.VoiceLeadingQuartet` objects in the duet.
+   A voice-leading quartet (VLQ) consists of pairs of simultaneous
+   notes in two parts:
+
+      * v1: n1, n2
+      * v2: n1, n2
+
+Modified versions of these functions are used to extra vertical pairs and
+VLQs that involve nonconsecutive simulataneities (see below).
 
 Westergaard's rules for combining lines cover four areas:
 
@@ -53,7 +67,7 @@ and motion are absolutes, hence any infractions automatically
 yield an error report. The rules for controlling
 sonority, on the other hand, are rules of advice.
 Nonconformity with the sonority rules
-is only reported on demand. [This option is not yet available.]
+is only reported on demand [this option is not yet available].
 
 The rules for forbidden forms of motion vary with the rhythmic situation:
 
@@ -82,11 +96,7 @@ Control of dissonance is checked by one of two functions:
 or :py:func:'fourthSpeciesControlOfDissonance'.
 
 [Etc.]
-
 """
-
-# NB: vlq parts and score Parts are numbered top to bottom.
-# NB: vPair parts are numbered bottom to top.
 
 # import itertools
 import unittest
@@ -94,8 +104,6 @@ import logging
 
 from music21 import *
 
-# from westerparse import csd
-# from westerparse import context
 from westerparse.utilities import pairwise
 
 # -----------------------------------------------------------------------------
@@ -121,10 +129,11 @@ logger.addHandler(f_handler)
 # Variables set by instructor.
 allowSecondSpeciesBreak = True
 allowThirdSpeciesInsertions = True
-sonorityCheck = False
+sonorityCheck = True
 
-# Create list to collect errors, for reporting to user.
+# Create lists to collect errors and advice, for reporting to user.
 vlErrors = []
+vlAdvice = []
 
 
 # -----------------------------------------------------------------------------
@@ -132,7 +141,7 @@ vlErrors = []
 # -----------------------------------------------------------------------------
 
 
-def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
+def checkCounterpoint(context, report=True):
     """
     This is the main script.
 
@@ -165,6 +174,17 @@ def checkCounterpoint(context, report=True, sonorityCheck=False, **kwargs):
             for error in vlErrors:
                 result = result + '\n\t\t' + error
         print(result)
+        # Report sonority advice, if enabled.
+        if sonorityCheck:
+            if not vlAdvice:
+                advice = None
+            elif vlAdvice:
+                advice = ('SONORITY ADVICE \nThe following '
+                          'situations may need attention:')
+                for item in vlAdvice:
+                    advice = advice + '\n\t' + item
+            if advice:
+                print(advice)
     else:
         pass
 
@@ -184,7 +204,7 @@ def checkDuet(context, duet):
     if ((cond1 and duet.parts[1].species == 'third')
             or (duet.parts[0].species == 'third' and cond2)):
         checkThirdSpecies(context, duet)
-    if ((cond1 and duet.parts[0].species == 'fourth')
+    if ((cond1 and duet.parts[1].species == 'fourth')
             or (duet.parts[0].species == 'fourth' and cond2)):
         checkFourthSpecies(context, duet)
     # TODO Add pairs for combined species: Westergaard chapter 6:
@@ -203,6 +223,8 @@ def checkFirstSpecies(context, duet):
     VLQs = getAllVLQsFromDuet(duet)
     checkFirstSpeciesForbiddenMotions(context, duet, VLQs)
     checkControlOfDissonance(context, duet, VLQs)
+    if sonorityCheck and len(context.parts) == 2:
+        checkFirstSpeciesSonority(context, duet)
 
 
 def checkSecondSpecies(context, duet):
@@ -253,7 +275,7 @@ def checkFourthSpecies(context, duet):
 
 
 def checkControlOfDissonance(context, duet, VLQs):
-    """Check the duet for conformity with the rules that control
+    """Check a duet for conformity with the rules that control
     dissonance in first, second, or third species. Requires access not only
     to notes in the duet but also the bass line, if not included in the duet.
 
@@ -265,51 +287,44 @@ def checkControlOfDissonance(context, duet, VLQs):
     Off the beat: consecutive dissonances must be approached
     and left by step in the same direction.
     """
-    # collect sequence of intervals for logging and data analysis
-    verts = getVerticalitiesFromDuet(duet)
-    bassPartNum = len(context.parts) - 1
-
-    # for logging and analysis
-    part_pair_ivls = []
-
-    for vert in verts:
-        contentDict = getVerticalityContentDictFromDuet(duet, vert)
+    # Get the list of event offsets.
+    eventOffsets = getOffsetList(duet)
+    # Construct vertical dictionaries for every offset and evaluate for
+    # control of dissonance. Get bass note, if not included in duet.
+    for offset in eventOffsets:
+        contentDict = getVerticalityContentDictFromDuet(duet, offset)
         upperNote = contentDict[0]
         lowerNote = contentDict[1]
-        laterNote = None
-        if upperNote.beat > lowerNote.beat:
-            laterNote = upperNote
-        elif upperNote.beat < lowerNote.beat:
-            laterNote = lowerNote
         if not duet.includesBass:
             bassNotes = [el for el in
                          context.parts[-1].flatten().notes.getElementsByOffset(
-                             vert.offset, mustBeginInSpan=False)]
+                             offset, mustBeginInSpan=False)]
             bassNote = bassNotes[0]
         else:
             bassNote = lowerNote
 
-        # Do not evaluate a vertical pair if one note is a rest.
+        # Do not evaluate a simultaneity if one note is a rest.
         # TODO This is okay for now, but need to check
         #   the rules for all gambits.
         #   And what if there's a rest during a line?
+        #   Consider using getVerticalPairs(duet)...
+        #   Parts in the ContentDict may contain rests; parts in
+        #       VewrticalPairs contain only notes (already filtered)
         if upperNote.isRest or lowerNote.isRest:
             continue
 
-        # get interval for logging and data analysis
-        part_pair_ivls.append(interval.Interval(lowerNote, upperNote).name)
-
-        # Both notes start at the same time, neither is tied over:
+        # Rules for co-initiated simultaneities.
+        # (1) Both notes start at the same time, neither is tied over:
         rules1 = [upperNote.beat == lowerNote.beat,
                   (upperNote.tie is None or upperNote.tie.type == 'start'),
                   (lowerNote.tie is None or lowerNote.tie.type == 'start')]
-        # The pair constitutes a permissible consonance above the bass:
+        # (2a) The pair constitutes a permissible consonance above the bass:
         rules2a = [duet.includesBass,
                    isConsonanceAboveBass(lowerNote, upperNote)]
-        # The pair constitutes a permissible consonance between upper parts:
+        # (2b) The pair constitutes a permissible consonance between upper parts:
         rules2b = [not duet.includesBass,
                    isConsonanceBetweenUpper(lowerNote, upperNote)]
-        # The pair is a permissible dissonance between upper parts:
+        # (2c) The pair is a permissible dissonance between upper parts:
         # TODO This won't work if the bass is a rest and not a note.
         rules2c = [not duet.includesBass,
                    isPermittedDissonanceBetweenUpper(lowerNote, upperNote),
@@ -326,16 +341,21 @@ def checkControlOfDissonance(context, duet, VLQs):
                      + '.')
             vlErrors.append(error)
 
-        # One note starts after the other:
+        # Rules for non-co-initiated simultaneities.
+        # (3) One note starts after the other and is neither consonant
+        # nor included among the permissible dissonances:
         rules3 = [upperNote.beat != lowerNote.beat,
                   not (all(rules2a) or all(rules2b) or all(rules2c))]
+        # (4) Upper note is later.
         rules4 = [upperNote.beat > lowerNote.beat]
+        # (5a) The upper note is approached and left by step.
         rules5a = [upperNote.consecutions.leftType == 'step',
                    upperNote.consecutions.rightType == 'step']
+        # (5b) The lower note is approached and left by step.
         rules5b = [lowerNote.consecutions.leftType == 'step',
                    lowerNote.consecutions.rightType == 'step']
 
-        # Both notes start at the same time, both of them are tied over:
+        # Test non-co-initiated sumultaneities.
         if (all(rules3) and ((all(rules4) and not all(rules5a))
                              or (not all(rules4) and not all(rules5b)))):
             error = ('Dissonant interval off the beat that is not '
@@ -345,13 +365,17 @@ def checkControlOfDissonance(context, duet, VLQs):
                      + '.')
             vlErrors.append(error)
 
-    # Check whether consecutive dissonances move in one directions.
+        # Both notes start at the same time, both of them are tied over:
+        # TODO ???
+
+    # Check whether consecutive dissonances move in one direction.
     for vlq in VLQs:
-        # Either both of the intervals are dissonant above the bass:
+        # Rules for finding consecutive dissonances:
+        # (1a) Either both of the intervals are dissonant above the bass:
         rules1a = [duet.includesBass,
                    isVerticalDissonance(vlq.v1n1, vlq.v2n1),
                    isVerticalDissonance(vlq.v1n2, vlq.v2n2)]
-        # Or both of the intervals are prohibited dissonances
+        # (1b) Or both of the intervals are prohibited dissonances
         # between upper parts:
         rules1b = [not duet.includesBass,
                    isVerticalDissonance(vlq.v1n1, vlq.v2n1),
@@ -360,49 +384,42 @@ def checkControlOfDissonance(context, duet, VLQs):
                    isVerticalDissonance(vlq.v1n2, vlq.v2n2),
                    not isPermittedDissonanceBetweenUpper(vlq.v1n2,
                                                          vlq.v2n2)]
-        # Either the first voice is stationary and
+        # (2a) Either the first voice is stationary and
         # the second voice moves in one direction:
         rules2a = [vlq.v1n1 == vlq.v1n2,
                    (vlq.v2n1.consecutions.leftDirection
                     == vlq.v2n2.consecutions.leftDirection),
                    (vlq.v2n1.consecutions.rightDirection
                     == vlq.v2n2.consecutions.rightDirection)]
-        # Or the second voice is stationary and
+        # (2b) Or the second voice is stationary and
         # the first voice moves in one direction:
         rules2b = [vlq.v2n1 == vlq.v2n2,
                    (vlq.v1n1.consecutions.leftDirection
                     == vlq.v1n2.consecutions.leftDirection),
                    (vlq.v1n1.consecutions.rightDirection
                     == vlq.v1n2.consecutions.rightDirection)]
-        # Must be in the same measure:
-        rules3 = [vlq.v1n1.measureNumber != vlq.v1n2.measureNumber]
+        # (3) Must be in the same measure:
+        rules3 = [vlq.v1n1.measureNumber == vlq.v1n2.measureNumber]
+        # Evaluate the VLQ.
         if ((all(rules1a) or all(rules1b))
-                and not (all(rules2a) or all(rules2b)) and not (all(rules3))):
+                and not (all(rules2a) or all(rules2b))
+                and (all(rules3))):
             error = ('Consecutive dissonant intervals in bar '
                      + str(vlq.v1n1.measureNumber)
                      + ' are not approached and left '
                        'in the same direction.')
             vlErrors.append(error)
 
-    # Get the interval sequence for logging and data analysis
-    part_pair_ivlData = (''.join(['{:>5}'.format(ivl)
-                                  for ivl in part_pair_ivls])
-                         )
-    # log the intervals
-    logger.debug(part_pair_ivlData)
-
-    # TODO Check third species consecutive dissonances rules (above).
-
     # TODO Fix so that it works with higher species
-    # line that start with rests in the bass.
+    #   line that start with rests in the bass. ????
 
     # TODO Check fourth species control of dissonance.
-    # Check resolution of diss relative to onbeat note
-    # (which may move if not whole notes) to determine category of susp;
-    # this can be extracted from the vlq: e.g., v1n1,v2n1 and v1n2,v2n1.
-    # Separately check the consonance of the resolution in the
-    # vlq (v1n2, v2n2).
-    # Add rules for multiple parts.
+    #  Check resolution of diss relative to onbeat note
+    #  (which may move if not whole notes) to determine category of susp;
+    #  this can be extracted from the vlq: e.g., v1n1,v2n1 and v1n2,v2n1.
+    #  Separately check the consonance of the resolution in the
+    #  vlq (v1n2, v2n2).
+    #  Add rules for multiple parts.
     # TODO Add contiguous intervals to vlqs ?? xint1, xint2.
 
 
@@ -414,48 +431,51 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
         speciesPart = 0
     elif duet.parts[1].species == 'fourth':
         speciesPart = 1
+
     for vPair in getVerticalPairs(duet):
-        if vPair is not None:
-            # Evaluate on- and offbeat intervals when one of the parts
-            # is the bass.
-            # TODO Need to figure out rules for 3 or more parts.
-            if duet.includesBass:
-                # Look for onbeat note that is dissonant
-                # and improperly treated.
-                rules = [
-                    vPair[speciesPart].beat == 1.0,
-                    not isConsonanceAboveBass(vPair[1], vPair[0]),
-                    not vPair[speciesPart].consecutions.leftType == 'same',
-                    not vPair[speciesPart].consecutions.rightType == 'step'
-                ]
-                if all(rules):
-                    error = ('Dissonant interval on the beat that is '
-                             'either not prepared or not resolved in bar '
-                             + str(vPair[0].measureNumber) + ': '
-                             + str(interval.Interval(vPair[0], vPair[1]).name)
-                             + '.')
-                    vlErrors.append(error)
-                # Look for second-species onbeat dissonance.
-                rules = [vPair[speciesPart].beat == 1.0,
-                         vPair[speciesPart].tie is None,
-                         not isConsonanceAboveBass(vPair[1], vPair[0])]
-                if all(rules):
-                    error = ('Dissonant interval on the beat that is not '
-                             'permitted when fourth species is broken in '
-                             + str(vPair[0].measureNumber) + ': '
-                             + str(interval.Interval(vPair[1], vPair[0]).name)
-                             + '.')
-                    vlErrors.append(error)
-                # Look for offbeat note that is dissonant and tied over.
-                rules = [vPair[speciesPart].beat > 1.0,
-                         not isConsonanceAboveBass(vPair[1], vPair[0]),
-                         vPair[0].tie is not None or vPair[1].tie is not None]
-                if all(rules):
-                    error = ('Dissonant interval off the beat in bar '
-                             + str(vPair[0].measureNumber) + ': '
-                             + str(interval.Interval(vPair[1], vPair[0]).name)
-                             + '.')
-                    vlErrors.append(error)
+        # Evaluate on- and offbeat intervals when one of the parts
+        # is the bass.
+        if duet.includesBass:
+            # Look for onbeat note that is dissonant
+            # and improperly treated.
+            rules = [
+                vPair[speciesPart].beat == 1.0,
+                not isConsonanceAboveBass(vPair[1], vPair[0]),
+                not vPair[speciesPart].consecutions.leftType == 'same',
+                not vPair[speciesPart].consecutions.rightType == 'step'
+            ]
+            if all(rules):
+                error = ('Dissonant interval on the beat that is '
+                         'either not prepared or not resolved in bar '
+                         + str(vPair[0].measureNumber) + ': '
+                         + str(interval.Interval(vPair[0], vPair[1]).name)
+                         + '.')
+                vlErrors.append(error)
+            # Look for second-species onbeat dissonance.
+            rules = [vPair[speciesPart].beat == 1.0,
+                     vPair[speciesPart].tie is None,
+                     not isConsonanceAboveBass(vPair[1], vPair[0])]
+            if all(rules):
+                error = ('Dissonant interval on the beat that is not '
+                         'permitted when fourth species is broken in bar '
+                         + str(vPair[0].measureNumber) + ': '
+                         + str(interval.Interval(vPair[1], vPair[0]).name)
+                         + '.')
+                vlErrors.append(error)
+            # Look for offbeat note that is dissonant and tied over.
+            rules = [vPair[speciesPart].beat > 1.0,
+                     not isConsonanceAboveBass(vPair[1], vPair[0]),
+                     vPair[0].tie is not None or vPair[1].tie is not None]
+            if all(rules):
+                error = ('Dissonant interval off the beat in bar '
+                         + str(vPair[0].measureNumber) + ': '
+                         + str(interval.Interval(vPair[1], vPair[0]).name)
+                         + '.')
+                vlErrors.append(error)
+
+        # TODO Need to figure out rules for 3 or more parts.
+        elif not duet.includesBass:
+            pass
 
     # Determine whether breaking of species is permitted,
     # and, if so, whether proper.
@@ -537,10 +557,10 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
             intervalName = ivl.simpleName
         return intervalName
 
-    # Make list of dissonant syncopes.
+    # Make list of dissonant syncopes and verify that each is permitted.
     syncopeList = {}
     for vlq in VLQs:
-        if speciesPart == 1:
+        if speciesPart == 0:
             if vlq.v1n1.tie:
                 if vlq.v1n1.tie.type == 'stop':
                     if vlq.vIntervals[0].simpleName in validDissonances:
@@ -548,7 +568,7 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                                 dissName(vlq.vIntervals[0])
                                 + '-' + vlq.vIntervals[1].semiSimpleName[-1]
                         )
-        elif speciesPart == 0:
+        elif speciesPart == 1:
             if vlq.v2n1.tie:
                 if vlq.v2n1.tie.type == 'stop':
                     if vlq.vIntervals[0].simpleName in validDissonances:
@@ -556,7 +576,7 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                                 vlq.vIntervals[0].simpleName
                                 + '-' + vlq.vIntervals[1].semiSimpleName[-1]
                         )
-    if speciesPart == 1:
+    if speciesPart == 0:
         for bar in syncopeList:
             if (syncopeList[bar] not in strongSuspensions['upper']
                     and syncopeList[bar] not in intermediateSuspensions[
@@ -565,7 +585,7 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                          + str(bar) + ' is not permitted: '
                          + str(syncopeList[bar]) + '.')
                 vlErrors.append(error)
-    elif speciesPart == 0:
+    elif speciesPart == 1:
         for bar in syncopeList:
             if (syncopeList[bar] not in strongSuspensions['lower']
                     and syncopeList[bar] not in intermediateSuspensions[
@@ -574,6 +594,7 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                          + str(bar) + ' is not permitted: '
                          + str(syncopeList[bar]) + '.')
                 vlErrors.append(error)
+    # logger.debug(f'Syncopes list: {syncopeList}.')
 
 
 def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
@@ -641,13 +662,16 @@ def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
             if vlq.v1n1.beatStrength > vlq.v1n2.beatStrength:
                 error = f'Voice crossing in bar {vlq.v2n2.measureNumber}.'
             else:
-                error = f'Voice crossing going into bar {vlq.v2n2.measureNumber}.'
+                error = (f'Voice crossing going into bar '
+                         f'{vlq.v2n2.measureNumber}.')
             vlErrors.append(error)
         else:
             if vlq.v1n1.beatStrength > vlq.v1n2.beatStrength:
-                alert = f'ALERT: Upper voices cross in bar {vlq.v2n2.measureNumber}.'
+                alert = (f'ALERT: Upper voices cross in bar '
+                         f'{vlq.v2n2.measureNumber}.')
             else:
-                alert = f'ALERT: Upper voices cross going into bar {vlq.v2n2.measureNumber}.'
+                alert = (f'ALERT: Upper voices cross going into bar '
+                         f'{vlq.v2n2.measureNumber}.')
             vlErrors.append(alert)
     if isVoiceOverlap(vlq):
         # Voice overlap can only happen with both parts move
@@ -1320,6 +1344,56 @@ def checkFourthLeapsInBass(context):
             vlErrors.append(error)
 
 
+def checkFirstSpeciesSonority(context, duet):
+    onBeatIvls = getOnbeatIntervals(duet)
+    imperfectIvls = []
+    fifthsAndOctaves = []
+    unisons = []
+    compounds = []
+    for ivl in onBeatIvls:
+        if ivl.simpleName in ['m3', 'M3', 'm6', 'M6']:
+            imperfectIvls.append(ivl)
+        if ivl.semiSimpleName != ivl.name:
+            compounds.append(ivl)
+    for ivl in onBeatIvls[1:-1]:
+        if ivl.semiSimpleName in ['P5', 'P8']:
+            fifthsAndOctaves.append(ivl)
+        if ivl.name in ['P1']:
+            unisons.append(ivl)
+    imperfectScore = len(imperfectIvls) / len(onBeatIvls)
+    # count the number of imperfect intervals simpleName in [m3, M3, m6, M6]
+    if imperfectScore < 0.6:
+        advice = (f'* Use more imperfect intervals.' )
+        vlAdvice.append(advice)
+    # count the number of nonterminal fifths and octaves and
+    if fifthsAndOctaves:
+        advice = (f'* There is a least one perfect fifth or octave in the '
+                  f'\n\tmiddle of the composition. Ensure that the emphasis '
+                  f'\n\tprovided by this interval helps to stress a '
+                  f'\n\tpitch that belongs to the background structure.')
+        vlAdvice.append(advice)
+    # identify the location of any nonfinal unisons and advise to reconsider
+    if unisons:
+        advice = (f'* There is at least one unison in the middle of the '
+                  f'\n\tcomposition. Consider finding a solution that avoids '
+                  f'\n\tunisons except in the first and last measures.')
+        vlAdvice.append(advice)
+    # count the number of nonsimple intervals and give advice
+    compoundScore = len(compounds) / len(onBeatIvls)
+    if 0.9 >= compoundScore > 0.5:
+        advice = (f'* There are many compound intervals. Avoid intervals '
+                  f'\n\tlarger than a tenth.')
+        vlAdvice.append(advice)
+    elif compoundScore > 0.9:
+        advice = (f'* Almost all sonorities are compound intervals. Rewrite'
+                  f'\n\tso that most intervals are not larger than a tenth.')
+        vlAdvice.append(advice)
+
+
+def checkThreePartOnbeatSonority(context):
+    pass
+
+
 # -----------------------------------------------------------------------------
 # UTILITY SCRIPTS
 # -----------------------------------------------------------------------------
@@ -1337,19 +1411,88 @@ def getAllPartNumPairs(score):
     return partNumPairs
 
 
-def getVerticalitiesFromDuet(duet):
-    """Get the iterator for a duet's verticalities."""
-    tree = duet.asTimespans(classList=(note.Note,))
-    vertsIter = tree.iterateVerticalities(reverse=False)
-    return vertsIter
+def getOffsetList(score):
+    # get a list of note/rest offsets for all event initiations in a score
+    # accepts a stream as input: duet, context.score
+    # use as input to building the context dictionary of verticals
+    tsTree = score.asTimespans(classList=(note.Note,note.Rest))
+    offsetList = [os for os in tsTree.allOffsets()]
+    return offsetList
 
 
-def getVerticalityContentDictFromDuet(duet, verticality):
+def getOnbeatOffsetList(score):
+    measureOffsetsDict = score.measureOffsetMap()
+    downbeatOffsetList = []
+    for offset in measureOffsetsDict:
+        downbeatOffsetList.append(offset)
+    # Get the start/stop offsets for each measure.
+    return downbeatOffsetList
+
+
+def getOffbeatOffsetList(score):
+    offsetList = getOffsetList(score)
+    downbeatOffsetList = getOnbeatOffsetList(score)
+    offbeatOffsetList = [offset for offset in offsetList if offset not in downbeatOffsetList]
+    return offbeatOffsetList
+
+
+# def getVerticalitiesFromDuet(duet):
+#     """Get the iterator for a duet's verticalities."""
+#     tree = duet.asTimespans(classList=(note.Note,))
+#     vertsIter = tree.iterateVerticalities(reverse=False)
+#     return vertsIter
+
+
+def getOnbeatIntervals(duet):
+    """
+    Extract an ordered list of onbeat intervals in the duet.
+    """
+    vertPairs = getVerticalPairs(duet)
+    intervalList = []
+    # get interval of onbeat vertical pair
+    for vp in vertPairs:
+        if vp[0].beatStrength == 1.0 and vp[1].beatStrength == 1.0:
+            intervalList.append(interval.Interval(vp[1],vp[0]))
+    return intervalList
+
+
+def getOffbeatIntervals(duet):
+    """
+    Extract an ordered list of onbeat intervals in the duet.
+    """
+    vertPairs = getVerticalPairs(duet)
+    intervalList = []
+    # get interval of onbeat vertical pair
+    for vp in vertPairs:
+        if vp[0].beatStrength > 1.0 or vp[1].beatStrength > 1.0:
+            intervalList.append(interval.Interval(vp[1],vp[0]))
+    return intervalList
+
+
+# TODO needs a lot of work
+def getGenericKlangs(score):
+    """Extract a list of generic intervals above the bass for a score with
+    any number of parts"""
+    contentDicts = getAllVerticalContentDictionaries(score)
+    upperParts = range(0, (len(score.parts)-1))
+    bassPartNum = score.parts[-1].partNum
+    klangList = []
+    for offset in contentDicts:
+        contentDict = contentDicts[offset]
+        intervals = []
+        for partNum in upperParts:
+            nUpper = contentDict[partNum]
+            nBass = contentDict[bassPartNum]
+            intervals.append(interval.Interval(nBass, nUpper).generic.semiSimpleUndirected)
+        klangList.append(intervals)
+    return klangList
+
+
+def getVerticalityContentDictFromDuet(duet, offset):
     """Assume that the verticality in a duet has pitched timespans that
     only contain a single note each. Then construct a content dictionary:
     the keys are part numbers in the duet and the values are notes (rests).
     """
-    v = verticality
     contentDict = {}
     partCount = 2
     partNum = 0
@@ -1357,47 +1500,47 @@ def getVerticalityContentDictFromDuet(duet, verticality):
         partNotes = [el for el in
                      duet.parts[
                          partNum].flatten().notesAndRests.getElementsByOffset(
-                         v.offset, mustBeginInSpan=False)]
+                         offset, mustBeginInSpan=False)]
         # assume that there's just one note or rest to a part here
         contentDict[partNum] = partNotes[0]
         partNum += 1
     return contentDict
 
 
-# NOT CURRENTLY IN USE, MAY COME IN HANDY
-def getAllVerticalitiesContentDictionary(context):
-    tree = context.score.asTimespans(classList=(note.Note, note.Rest))
-    vertsIter = tree.iterateVerticalities(reverse=False)
-    vertContents = {}
-    for vert in vertsIter:
-        partCount = len(context.parts)
+# NOT CURRENTLY IN USE, MAY COME IN HANDY FOR SONORITY CHECKING
+def getAllVerticalContentDictionaries(score):
+    # accepts: duet, context.score
+    contentDictList = {}
+    offsetList = getOffsetList(score)
+    for offset in offsetList:
+        partCount = len(score.parts)
         partNum = 0
         contentDict = {}
         while partNum < partCount:
             partNotes = [el for el in
-                         context.parts[
+                         score.parts[
                              partNum].flatten().notesAndRests.getElementsByOffset(
-                             vert.offset, mustBeginInSpan=False)]
+                             offset, mustBeginInSpan=False)]
             # assume that there's just one note or rest to a part here
             contentDict[partNum] = partNotes[0]
             partNum += 1
-        vertContents[vert.offset] = contentDict
-    return vertContents
+        contentDictList[offset] = contentDict
+    return contentDictList
 
 
 def getVerticalPairs(duet):
     """
     Returns a list of all the vertical pairs of notes occurring
-    between the parts of the duet.
+    between the parts of the duet, using the offset list.
     """
     vPairList = []
-    verticalities = getVerticalitiesFromDuet(duet)
-    for verticality in verticalities:
-        nUpper = getVerticalityContentDictFromDuet(duet, verticality)[0]
-        nLower = getVerticalityContentDictFromDuet(duet, verticality)[1]
-        if nLower is None or nUpper is None:
+    offsetList = getOffsetList(duet)
+    for offset in offsetList:
+        nUpper = getVerticalityContentDictFromDuet(duet, offset)[0]
+        nLower = getVerticalityContentDictFromDuet(duet, offset)[1]
+        if nUpper is None or nLower is None:
             vPair = None
-        elif not nLower.isNote or not nUpper.isNote:
+        elif not nUpper.isNote or not nLower.isNote:
             vPair = None
         else:
             vPair = (nUpper, nLower)
@@ -1406,37 +1549,24 @@ def getVerticalPairs(duet):
     return vPairList
 
 
-# def getVoiceLeadingQuartetsFromDuet(duet):
-#     vlqs = []
-#     for v in getVerticalitiesFromDuet(duet):
-#         # use verticality method from music21: FAILS TO SORT PARTS BY REGISTER
-#         vlqList = v.getAllVoiceLeadingQuartets()
-#         for vlq in vlqList:
-#             vlqs.append(vlq)
-#     return vlqs
-
-
 def getAllVLQsFromDuet(duet):
     """
     Extract an ordered list of the
     :class:`~music21.voiceLeading.VoiceLeadingQuartet`
     objects in the duet.
     """
+    allVLQs = []
     # extract the relevant parts from the score
     part1 = duet.parts[0]
     part2 = duet.parts[1]
-
-    allVLQs = []
-    ##        defaultKey = None
-    vlist = []
-    # get onbeat verticalities
-    for v in getVerticalitiesFromDuet(duet):
-        vlist.append(v)
+    # get offsets of verticals
+    offsetList = getOffsetList(duet)
     # make VLQs
-    for i in range(len(vlist) - 1):
-        # get the pitches and offsets of the verticalities at index i and the following one
-        os1 = vlist[i].offset
-        os2 = vlist[i + 1].offset
+    for i in range(len(offsetList) - 1):
+        # get the pitches and offsets of the verticalities
+        # at index i and the following one
+        os1 = offsetList[i]
+        os2 = offsetList[i+1]
         # check that there are no rests before making the VLQ
         if (part1.flatten().notesAndRests.getElementAtOrBefore(os1).isNote and
                 part1.flatten().notesAndRests.getElementAtOrBefore(
@@ -1460,22 +1590,17 @@ def getOnbeatVLQs(duet):
     :class:`~music21.voiceLeading.VoiceLeadingQuartet`
     objects in the duet, restricted to notes that start on the beat
     """
+    allVLQs = []
     # extract the relevant parts from the score
     part1 = duet.parts[0]
     part2 = duet.parts[1]
-
-    allVLQs = []
-    ##        defaultKey = None
-    vlist = []
-    # get onbeat verticalities
-    for v in getVerticalitiesFromDuet(duet):
-        if v.beatStrength == 1.0:
-            vlist.append(v)
+    # get onbeat offsets of verticals
+    offsetList = getOnbeatOffsetList(duet)
     # make VLQs
-    for i in range(len(vlist) - 1):
+    for i in range(len(offsetList) - 1):
         # get the pitches and offsets of the verticalities at index i and the following one
-        os1 = vlist[i].offset
-        os2 = vlist[i + 1].offset
+        os1 = offsetList[i]
+        os2 = offsetList[i+1]
         # check that there are no rests before making the VLQ
         if (part1.flatten().notesAndRests.getElementAtOrBefore(os1).isNote and
                 part1.flatten().notesAndRests.getElementAtOrBefore(
@@ -1500,24 +1625,20 @@ def getNonconsecutiveOffbeatToOnbeatVLQs(duet):
     objects in the duet, restricted to nonconsecutive notes,
     offbeat to onbeat.
     """
+    allVLQs = []
     # extract the relevant parts from the score
     part1 = duet.parts[0]
     part2 = duet.parts[1]
-
-    allVLQs = []
-    ##        defaultKey = None
-    vlist = []  # list of verticalities
-    # get all verticalities
-    for v in getVerticalitiesFromDuet(duet):
-        vlist.append(v)
+    # get offsets of verticals
+    offsetList = getOffsetList(duet)
     # make VLQs
-    for i in range(len(vlist) - 1):
+    for i in range(len(offsetList) - 1):
         # get the pitches and offsets of the verticalities at index i
         # if i is offbeat, look at next vert j
         # if j is onbeat, pass
         # if j is offbeat, look ahead to find next onbeat vert and make vlq
-        os1 = vlist[i].offset
-        os2 = vlist[i + 1].offset
+        os1 = offsetList[i]
+        os2 = offsetList[i+1]
         # check that there are no rests before proceeding
         if (part1.flatten().notesAndRests.getElementAtOrBefore(os1).isNote and
                 part1.flatten().notesAndRests.getElementAtOrBefore(
@@ -1536,7 +1657,7 @@ def getNonconsecutiveOffbeatToOnbeatVLQs(duet):
                     nextOnbeat = False
                     n = 2
                     while nextOnbeat == False:
-                        os2 = vlist[i + n].offset
+                        os2 = offsetList[i+n]
                         if (part1.flatten().notes.getElementAtOrBefore(
                                 os2).beat == 1.0 and
                                 part2.flatten().notes.getElementAtOrBefore(
@@ -1599,7 +1720,6 @@ def getFourthLeapsInBassDict(context):
     """
     Identify P4 intervals in the bass part and make a list.
     """
-    partNum = len(context.parts) - 1
     bassNotes = [note for note in context.parts[-1].flatten().notes]
     bassPairs = pairwise(bassNotes)
     bassFourthsList = []
