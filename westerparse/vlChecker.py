@@ -131,7 +131,7 @@ logger.addHandler(f_handler)
 # Variables set by instructor.
 allowSecondSpeciesBreak = True
 allowThirdSpeciesInsertions = True  # currently not in use
-sonorityCheck = True
+sonorityCheck = False
 
 # Create lists to collect errors and advice, for reporting to user.
 vlErrors = []
