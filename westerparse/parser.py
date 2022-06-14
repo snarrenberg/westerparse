@@ -1086,6 +1086,9 @@ class Parser:
                     harmonyStart.append(j.pitch)
             # TODO 2020-07-08: Isn't i already on the list of open transitions?
             #   2020-10-14: not if there was no lefthead to be found?
+            #   2022-06-14: checked many lines in the corpus and did not find
+            #      any cases in which i was not already
+            #      on the list of open transitions or had no lefthead
             if not openTransitions:
                 # If step up or down, i.csd.direction must match
                 # direction of step in order to connect to j.
@@ -1231,6 +1234,10 @@ class Parser:
                             j.dependency.dependents.append(d)
                         arcGenerateTransition(i.index, part, arcs)
                         break
+            #   TODO 2022-06-14:
+            #      checked many lines in the corpus and did not find
+            #      any cases in which i was not already
+            #      on the list of open transitions or had no lefthead
             elif i.dependency.lefthead is None:
                 for t in reversed(openHeads):
                     h = self.notes[t]
