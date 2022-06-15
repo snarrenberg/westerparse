@@ -1058,24 +1058,27 @@ class Parser:
                             j.dependency.lefthead = i.index
                             i.dependency.dependents.append(j.index)
                             break
-                        elif h != i:
-                            # TODO rethink why we remove t from open heads
-                            #   during local parse
-                            # openHeads.remove(t)
-                            pass
+                        # elif h != i:
+                        #     # TODO rethink why we remove t from open heads
+                        #     #   during local parse
+                        #     # openHeads.remove(t)
+                        #     pass
                         elif h == i:
                             j.dependency.lefthead = h.index
                             h.dependency.dependents.append(j.index)
                             break
                     else:
+                        # TODO 2022-06-15 no examples of this found
                         j.dependency.lefthead = i.index
                         i.dependency.dependents.append(j.index)
                         openTransitions.append(j.index)
+                        print(
+                            f'Open transitions A {j.index}: {openTransitions}, case 3')
                 else:
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
-                # TODO 2020-06-09 should this be indented?
-                openTransitions.append(j.index)
+                if j not in openTransitions:
+                    openTransitions.append(j.index)
 
         # CASE FOUR: Step from nonharmonic to harmonic pitch.
         elif all(case4):
@@ -1089,25 +1092,25 @@ class Parser:
             #   2022-06-14: checked many lines in the corpus and did not find
             #      any cases in which i was not already
             #      on the list of open transitions or had no lefthead
-            if not openTransitions:
-                # If step up or down, i.csd.direction must match
-                # direction of step in order to connect to j.
-                # TODO just appending to open transitions wihout
-                #   finding a lefthead is dangerous, i.e., unresolved
-                #   leaving None as i.dependency.lefthead
-                if (isStepUp(i, j)
-                        and i.csd.direction
-                        not in ['ascending', 'bidirectional']):
-                    openTransitions.append(i.index)
-                elif (isStepDown(i, j)
-                      and i.csd.direction
-                      not in ['descending', 'bidirectional']):
-                    openTransitions.append(i.index)
-                else:
-                    i.dependency.righthead = j.index
-                    j.dependency.dependents.append(i.index)
-                    # TODO: When is the arc created for this??
-            elif openTransitions:
+            # if not openTransitions:
+            #     # If step up or down, i.csd.direction must match
+            #     # direction of step in order to connect to j.
+            #     # TODO just appending to open transitions wihout
+            #     #   finding a lefthead is dangerous, i.e., unresolved
+            #     #   leaving None as i.dependency.lefthead
+            #     if (isStepUp(i, j)
+            #             and i.csd.direction
+            #             not in ['ascending', 'bidirectional']):
+            #         openTransitions.append(i.index)
+            #     elif (isStepDown(i, j)
+            #           and i.csd.direction
+            #           not in ['descending', 'bidirectional']):
+            #         openTransitions.append(i.index)
+            #     else:
+            #         i.dependency.righthead = j.index
+            #         j.dependency.dependents.append(i.index)
+            #         # TODO: When is the arc created for this??
+            if openTransitions:
                 for t in reversed(openTransitions):
                     h = self.notes[t]
                     if t == i.index:
@@ -1150,7 +1153,8 @@ class Parser:
                             openTransitions.remove(i.index)
                             if (self.notes[i.dependency.lefthead]
                                     != self.notes[i.dependency.righthead]):
-                                openHeads.append(j.index)
+                                if j.index not in openHeads:
+                                    openHeads.append(j.index)
                             arcGenerateTransition(i.index, part, arcs)
                         elif (isStepUp(i, j)
                               and i.csd.direction == 'descending'
@@ -1161,7 +1165,8 @@ class Parser:
                             openTransitions.remove(i.index)
                             arcGenerateTransition(i.index, part, arcs)
                             # ?? also add j.index to open heads?
-                            openHeads.append(j.index)
+                            if j.index not in openHeads:
+                                openHeads.append(j.index)
                         else:
                             openHeads.append(j.index)
                     elif isDiatonicStep(h, j) and t != i.index:
@@ -1183,9 +1188,10 @@ class Parser:
                                         d].dependency.righthead = j.index
                                     # TODO Remove condition if there's no reason
                                     #   why d is not still in openTransitions
-                                    openTransitions[:] = [trans for trans
-                                                          in openTransitions
-                                                          if trans != d]
+                                    #   2022-06-15 no cases found
+                                    # openTransitions[:] = [trans for trans
+                                    #                       in openTransitions
+                                    #                       if trans != d]
                             openTransitions.remove(h.index)
                             arcGenerateTransition(h.index, part, arcs)
                             openHeads[:] = [head for head in openHeads
@@ -1210,11 +1216,12 @@ class Parser:
                                     self.notes[
                                         d].dependency.righthead = j.index
                                     # TODO: d was probably removed from open
-                                    #   transitions somewhere prior to this
-                                    #   so this may be entirely unnecessary.
-                                    openTransitions[:] = [trans for trans
-                                                          in openTransitions
-                                                          if trans != d]
+                                    #   transitions somewhere prior to this,
+                                    #   so the following may be entirely unnecessary.
+                                    #   2022-06-15 no cases found
+                                    # openTransitions[:] = [trans for trans
+                                    #                       in openTransitions
+                                    #                       if trans != d]
                             openTransitions.remove(h.index)
                             arcGenerateTransition(h.index, part, arcs)
                             openHeads[:] = [head for head in openHeads
@@ -1238,20 +1245,20 @@ class Parser:
             #      checked many lines in the corpus and did not find
             #      any cases in which i was not already
             #      on the list of open transitions or had no lefthead
-            elif i.dependency.lefthead is None:
-                for t in reversed(openHeads):
-                    h = self.notes[t]
-                    if not isDiatonicStep(h, i):
-                        openHeads.remove(t)
-                    elif isDiatonicStep(h, i):
-                        h.dependency.dependents.append(i.index)
-                        j.dependency.dependents.append(i.index)
-                        i.dependency.lefthead = h.index
-                        if i.index in openTransitions:
-                            openTransitions.remove(i.index)
-                        openHeads.append(j.index)
-                        arcGenerateTransition(i.index, part, arcs)
-                    break
+            # elif i.dependency.lefthead is None:
+            #     for t in reversed(openHeads):
+            #         h = self.notes[t]
+            #         if not isDiatonicStep(h, i):
+            #             openHeads.remove(t)
+            #         elif isDiatonicStep(h, i):
+            #             h.dependency.dependents.append(i.index)
+            #             j.dependency.dependents.append(i.index)
+            #             i.dependency.lefthead = h.index
+            #             if i.index in openTransitions:
+            #                 openTransitions.remove(i.index)
+            #             openHeads.append(j.index)
+            #             arcGenerateTransition(i.index, part, arcs)
+            #         break
 
         # CASE FIVE: Step from nonharmonic to nonharmonic.
         elif all(case5):
@@ -1259,45 +1266,13 @@ class Parser:
             if (i.csd.direction == j.csd.direction or
                     i.csd.direction == 'bidirectional' and
                     j.csd.direction == 'ascending'):
+                # TODO is it ever the case that a nonharmonic note has
+                #   no lefthead after being parsed?
+                #   2022-06-14 Testing corpus turned up only one case
+                #       WPH209: is it permissible to enter a new harmonic
+                #       span with two passing tones
                 if i.dependency.lefthead is None:
-                    for t in reversed(openHeads):
-                        h = self.notes[t]
-                        if not isDiatonicStep(h, i):
-                            openHeads.remove(t)
-                        elif isDiatonicStep(h, i):
-                            # in harmonic species, look for transitions from
-                            # head in prior harmonic span extending into this
-                            # span
-                            # if found, remove open heads from prior span
-                            if self.context.harmonicSpecies:
-                                if (getStepDirection(h, i)
-                                        == getStepDirection(i, j)):
-                                    h.dependency.dependents.append(i.index)
-                                    h.dependency.dependents.append(j.index)
-                                    i.dependency.dependents.append(j.index)
-                                    j.dependency.dependents.append(i.index)
-                                    i.dependency.lefthead = h.index
-                                    j.dependency.lefthead = h.index
-                                    if i.index in openTransitions:
-                                        openTransitions.remove(i.index)
-                                    openTransitions.append(j.index)
-                                    # TODO reconsider whether it's necessary
-                                    #   to empty the list of open heads
-                                    openHeads = []
-                                    break
-                            else:
-                                h.dependency.dependents.append(i.index)
-                                h.dependency.dependents.append(j.index)
-                                i.dependency.dependents.append(j.index)
-                                j.dependency.dependents.append(i.index)
-                                i.dependency.lefthead = h.index
-                                j.dependency.lefthead = h.index
-                                # TODO: I don't think i.index has in all cases
-                                #   been added to openTransitions.
-                                if i.index in openTransitions:
-                                    openTransitions.remove(i.index)
-                                openTransitions.append(j.index)
-                                break
+                    pass
                 elif (i.csd.value % 7 == 5 and
                       j.csd.value % 7 == 6 and
                       i.csd.direction == 'descending'):
