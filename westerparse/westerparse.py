@@ -1039,19 +1039,6 @@ def selectPreferredParseSets(cxt, primaryPartNum):
             #   primary upper line notes
             #   bass line pitches have already been checked
 
-            def getBassNote(upperNote, context):
-                # TODO rewrite without calling theoryAnalyzerWP
-                # TODO create the vert list just once, outside the function
-                #  and use as needed
-                analyzer = theoryAnalyzerWP.Analyzer()
-                analyzer.addAnalysisData(context.score)
-                verts = analyzer.getVerticalities(context.score)
-                bassNote = None
-                for vert in verts:
-                    if upperNote in vert.objects:
-                        bassNote = vert.objects[-1]
-                return bassNote
-
             SList = prse[0].arcBasic
             # Set primary line type: 3line, 5line, 8line.
             SLine = str(len(SList)) + 'line'
@@ -1063,27 +1050,28 @@ def selectPreferredParseSets(cxt, primaryPartNum):
             # Count the structural consonances.
             structuralConsonances = 0
             for s in SList:
-                u = primPart.recurse().notes[s]
-                b = getBassNote(u, cxt)
+                u = primPart.flatten().notes[s]
+                b = cxt.parts[
+                                 -1].flatten().notes.getElementsByOffset(
+                                 u.offset, mustBeginInSpan=False)[0]
                 if vlChecker.isConsonanceAboveBass(b, u):
                     structuralConsonances += 1
             # Check harmonic coordination of structural pitches.
             # Assume it true until proven otherwise.
+            # If false, add to list of nonharmonic parses
             harmonicCoordination = True
             # Check placement of S1.
             if offPredom is not None:
                 if not (offInitTon
-                        <= primPart.recurse().notes[SList[0]].offset
+                        <= primPart.flatten().notes[SList[0]].offset
                         < offPredom):
                     harmonicCoordination = False
-                    break
             else:
                 if not (offInitTon
-                        <= primPart.recurse().notes[
+                        <= primPart.flatten().notes[
                             SList[0]].offset
                         < offDom):
                     harmonicCoordination = False
-                    break
             # Check placement of predominant.
             predomSIndexList = []
             structuralPredominant = False
@@ -1095,27 +1083,28 @@ def selectPreferredParseSets(cxt, primaryPartNum):
                 predomSIndexList = [SList[-6], SList[-4], SList[-2]]
             if offPredom is not None:
                 for psi in predomSIndexList:
-                    u = primPart.recurse().notes[psi]
-                    b = getBassNote(u, cxt)
+                    u = primPart.flatten().notes[psi]
+                    b = cxt.parts[
+                        -1].flatten().notes.getElementsByOffset(
+                        u.offset, mustBeginInSpan=False)[0]
                     if ((offPredom
-                         <= primPart.recurse().notes[psi].offset
+                         <= primPart.flatten().notes[psi].offset
                          < offDom)
                             and vlChecker.isConsonanceAboveBass(b, u)):
                         structuralPredominant = True
-                        break
             if not structuralPredominant:
                 harmonicCoordination = False
-                break
             # Check placement of dominant.
             if offPredom is None:
-                u = primPart.recurse().notes[SList[-1]]
-                b = getBassNote(u, cxt)
+                u = primPart.flatten().notes[SList[-1]]
+                b = cxt.parts[
+                                 -1].flatten().notes.getElementsByOffset(
+                                 u.offset, mustBeginInSpan=False)[0]
                 if ((offDom
-                     <= primPart.recurse().notes[SList[-1]].offset
+                     <= primPart.flatten().notes[SList[-1]].offset
                      < offClosTon)
                         and vlChecker.isConsonanceAboveBass(b, u)):
                     harmonicCoordination = False
-                    break
 
             # Add pair to removal list if coordination tests not passed.
             if not (structuralConsonances >= structConsReq
