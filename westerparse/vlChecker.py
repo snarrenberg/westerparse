@@ -159,8 +159,6 @@ def checkCounterpoint(context, report=True):
     # Each pairing has its own subroutines:
     #     1:1; 1:2; 1:3 and 1:4; and syncopated
 
-    # logger.debug(f'Checking voice leading in {context.filename}.')
-
     twoPartContexts = context.makeTwoPartContexts()
     for duet in twoPartContexts:
         checkDuet(context, duet)

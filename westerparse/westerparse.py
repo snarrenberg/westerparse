@@ -148,6 +148,7 @@ def evaluateLines(source,
     `startDominant` and, if needed, `startPredominant`, with values
      given as measure numbers.
     """
+    logger.debug(f'Evaluating lines in {source}.')
     context.clearLogfile('logfile.txt')
     # Make the global context.
     if partLineType == 'any' or '':
@@ -179,6 +180,7 @@ def evaluateCounterpoint(source,
     """
     Determine whether voice leading conforms to Westergaard's rules.
     """
+    logger.debug(f'Evaluating voice leading in {source}.')
     context.clearLogfile('logfile.txt')
     # Make the global context.
     try:

@@ -861,10 +861,6 @@ class Parser:
         case9 = [not isHarmonic(i, harmonyStart),
                  not isHarmonic(j, harmonyStart),
                  isLinearUnison(i, j)]
-        # case10 = [not isHarmonic(i, harmonyStart),
-        #           not isHarmonic(j, harmonyStart),
-        #           not isLinearConsonance(i, j),
-        #           not isLinearUnison(i, j)]
         case10 = [not isLinearConsonance(i, j),
                   not isLinearUnison(i, j),
                   not isDiatonicStep(i, j)]
@@ -1741,21 +1737,6 @@ class Parser:
                 self.errors.append(error)
             else:
                 pass
-
-        # # OLD CASE TEN: Dissonant skip between nonharmonic pitches.
-        # elif all(case10):
-        #     logger.debug(f'Parse transition {i.index}-{j.index}: case 10')
-        #     if i.index == j.index - 1:
-        #         error = ('Nongenerable dissonant leap between '
-        #                  + i.nameWithOctave + ' and '
-        #                  + j.nameWithOctave + ' in the line.')
-        #         self.errors.append(error)
-        #     else:
-        #         error = ('The line contains an ungenerable intertwining of '
-        #                  'secondary structures involving '
-        #                  + j.nameWithOctave + ' in measure ' +
-        #                  str(j.measureNumber) + '.')
-        #         self.errors.append(error)
 
         # CASE TEN: Dissonant skip.
         elif all(case10):
