@@ -920,6 +920,7 @@ class Parser:
                 openTransitions.remove(i.index)
                 for d in i.dependency.dependents:
                     if i.dependency.lefthead is None:
+                        logger.debug(f'Case marker 018')
                         i.dependency.lefthead = self.notes[
                             d].dependency.lefthead
                     # Add righthead to codependents if they share lefthead.
@@ -943,7 +944,9 @@ class Parser:
                     if all(rules):
                         h.dependency.righthead = j.index
                         if h.dependency.dependents:
+                            logger.debug(f'Case marker 024')
                             for d in h.dependency.dependents:
+                                logger.debug(f'Case marker 025')
                                 self.notes[d].dependency.righthead = j.index
                         j.dependency.dependents.append(h.index)
                         openTransitions.remove(h.index)
@@ -960,6 +963,7 @@ class Parser:
                 for t in reversed(openHeads):
                     h = self.notes[t]
                     if h.csd.value == j.csd.value:
+                        logger.debug(f'Case marker 029')
                         j.dependency.lefthead = h.index
                         h.dependency.dependents.append(j.index)
                         arcGenerateRepetition(j.index, part, arcs)
@@ -1022,8 +1026,6 @@ class Parser:
                                 connected = True
                                 break
                             elif h != i:
-                                # TODO rethink why we remove oh from
-                                # open heads during local parse
                                 openHeads.remove(oh)
                             elif h == i:
                                 j.dependency.lefthead = h.index
@@ -1034,11 +1036,13 @@ class Parser:
                         if connected:
                             break
                         else:
+                            logger.debug(f'Case marker 043')
                             j.dependency.lefthead = i.index
                             i.dependency.dependents.append(j.index)
                             openTransitions.append(j.index)
                             break
                     else:
+                        logger.debug(f'Case marker 044')
                         j.dependency.lefthead = i.index
                         i.dependency.dependents.append(j.index)
                         openTransitions.append(j.index)
@@ -1054,23 +1058,16 @@ class Parser:
                             j.dependency.lefthead = i.index
                             i.dependency.dependents.append(j.index)
                             break
-                        # elif h != i:
-                        #     # TODO rethink why we remove t from open heads
-                        #     #   during local parse
-                        #     # openHeads.remove(t)
-                        #     pass
                         elif h == i:
                             j.dependency.lefthead = h.index
                             h.dependency.dependents.append(j.index)
                             break
                     else:
-                        # TODO 2022-06-15 no examples of this found
                         j.dependency.lefthead = i.index
                         i.dependency.dependents.append(j.index)
                         openTransitions.append(j.index)
-                        print(
-                            f'Open transitions A {j.index}: {openTransitions}, case 3')
                 else:
+                    logger.debug(f'Case marker 051')
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
                 if j not in openTransitions:
@@ -1083,29 +1080,6 @@ class Parser:
             if self.part.species in ['third', 'fifth']:
                 if j.pitch not in harmonyStart:
                     harmonyStart.append(j.pitch)
-            # TODO 2020-07-08: Isn't i already on the list of open transitions?
-            #   2020-10-14: not if there was no lefthead to be found?
-            #   2022-06-14: checked many lines in the corpus and did not find
-            #      any cases in which i was not already
-            #      on the list of open transitions or had no lefthead
-            # if not openTransitions:
-            #     # If step up or down, i.csd.direction must match
-            #     # direction of step in order to connect to j.
-            #     # TODO just appending to open transitions wihout
-            #     #   finding a lefthead is dangerous, i.e., unresolved
-            #     #   leaving None as i.dependency.lefthead
-            #     if (isStepUp(i, j)
-            #             and i.csd.direction
-            #             not in ['ascending', 'bidirectional']):
-            #         openTransitions.append(i.index)
-            #     elif (isStepDown(i, j)
-            #           and i.csd.direction
-            #           not in ['descending', 'bidirectional']):
-            #         openTransitions.append(i.index)
-            #     else:
-            #         i.dependency.righthead = j.index
-            #         j.dependency.dependents.append(i.index)
-            #         # TODO: When is the arc created for this??
             if openTransitions:
                 for t in reversed(openTransitions):
                     h = self.notes[t]
@@ -1180,6 +1154,7 @@ class Parser:
                             j.dependency.dependents.append(h.index)
                             for d in h.dependency.dependents:
                                 if d < h.index and isStepUp(self.notes[d], h):
+                                    logger.debug(f'Case marker 077')
                                     self.notes[
                                         d].dependency.righthead = j.index
                                     # TODO Remove condition if there's no reason
@@ -1201,6 +1176,7 @@ class Parser:
                             # an existing arc
                             testArc = [h.dependency.lefthead, h.index, j.index]
                             if conflictsWithOtherArc(testArc, arcs):
+                                logger.debug(f'Case marker 080')
                                 return
                             else:
                                 pass
@@ -1211,13 +1187,6 @@ class Parser:
                                         and isStepDown(self.notes[d], h)):
                                     self.notes[
                                         d].dependency.righthead = j.index
-                                    # TODO: d was probably removed from open
-                                    #   transitions somewhere prior to this,
-                                    #   so the following may be entirely unnecessary.
-                                    #   2022-06-15 no cases found
-                                    # openTransitions[:] = [trans for trans
-                                    #                       in openTransitions
-                                    #                       if trans != d]
                             openTransitions.remove(h.index)
                             arcGenerateTransition(h.index, part, arcs)
                             openHeads[:] = [head for head in openHeads
@@ -1231,30 +1200,13 @@ class Parser:
                         openHeads.append(j.index)
                         for d in i.dependency.dependents:
                             if i.dependency.lefthead is None:
+                                logger.debug(f'Case marker 087')
                                 i.dependency.lefthead = self.notes[
                                     d].dependency.lefthead
                             self.notes[d].dependency.righthead = j.index
                             j.dependency.dependents.append(d)
                         arcGenerateTransition(i.index, part, arcs)
                         break
-            #   TODO 2022-06-14:
-            #      checked many lines in the corpus and did not find
-            #      any cases in which i was not already
-            #      on the list of open transitions or had no lefthead
-            # elif i.dependency.lefthead is None:
-            #     for t in reversed(openHeads):
-            #         h = self.notes[t]
-            #         if not isDiatonicStep(h, i):
-            #             openHeads.remove(t)
-            #         elif isDiatonicStep(h, i):
-            #             h.dependency.dependents.append(i.index)
-            #             j.dependency.dependents.append(i.index)
-            #             i.dependency.lefthead = h.index
-            #             if i.index in openTransitions:
-            #                 openTransitions.remove(i.index)
-            #             openHeads.append(j.index)
-            #             arcGenerateTransition(i.index, part, arcs)
-            #         break
 
         # CASE FIVE: Step from nonharmonic to nonharmonic.
         elif all(case5):
@@ -1262,11 +1214,6 @@ class Parser:
             if (i.csd.direction == j.csd.direction or
                     i.csd.direction == 'bidirectional' and
                     j.csd.direction == 'ascending'):
-                # TODO is it ever the case that a nonharmonic note has
-                #   no lefthead after being parsed?
-                #   2022-06-14 Testing corpus turned up only one case
-                #       WPH209: is it permissible to enter a new harmonic
-                #       span with two passing tones
                 if i.dependency.lefthead is None:
                     pass
                 elif (i.csd.value % 7 == 5 and
@@ -1342,6 +1289,7 @@ class Parser:
                                 openTransitions.append(j.index)
             elif (i.csd.direction == 'ascending'
                   and j.csd.direction == 'descending'):
+                logger.debug(f'Case marker 102')
                 i.dependency.righthead = j.index
                 j.dependency.dependents.append(i.index)
                 openTransitions.remove(i.index)
@@ -1349,13 +1297,12 @@ class Parser:
                 arcGenerateTransition(i.index, part, arcs)
             elif (i.csd.direction == 'ascending'
                   and j.csd.direction == 'bidirectional'):
-                # Added this if trap on 2020-06-05
-                # to capture 8-#7-#6-5 in minor
+                # Added this if trap to capture 8-#7-#6-5 in minor
+                # Westergaard057c
                 if i.csd.value % 7 == 6 and j.csd.value % 7 == 5:
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
                     openTransitions.append(j.index)
-                # 2022-05-28, the following is probably never the case
                 else:
                     j.dependency.lefthead = i.dependency.lefthead
                     i.dependency.dependents.append(j.index)
@@ -1399,11 +1346,11 @@ class Parser:
                         break
                 # if third species and no lefthead was found,
                 # make it a local insertion and try to parse j
-                # ADDED: 2020-07-29 NEEDS TESTING
                 if (i.dependency.lefthead is None
                         and self.part.species in ['third', 'fifth']):
                     openLocals.append(i.index)
                     if i.index in openTransitions:
+                        logger.debug(f'Case marker 114')
                         openTransitions.remove(i.index)
                     if openTransitions:
                         for t in reversed(openTransitions):
@@ -1418,10 +1365,9 @@ class Parser:
                 #   check only if this is the first note in the span??
                 #   and in the upper part
                 if self.context.harmonicSpecies and len(stack) == 1:
+                    logger.debug(f'Case marker 118')
                     if i.index not in openTransitions:
-                        # openTransitions.append(i.index)
-                        # openHeads.append(j.index)
-                        # print(len(stack))
+                        logger.debug(f'Case marker 119')
                         pass
             else:
                 openHeads.append(j.index)
@@ -1486,7 +1432,7 @@ class Parser:
                     # A. Look for an open head to attach to.
                     if h != 0 and not isDiatonicStep(self.notes[h], j):
                         skippedHeads.append(h)
-                    elif isDiatonicStep(self.notes[h], j):
+                    elif isDiatonicStep(self.notes[h], j):                        # logger.debug(f'Case marker 139')
                         self.notes[h].dependency.dependents.append(j.index)
                         j.dependency.lefthead = h
                         openTransitions.append(j.index)
@@ -1637,6 +1583,7 @@ class Parser:
                         # pending search for a suitable righthead,
                         # so arc[-2] will have to be restored
                         # to the open transitions.
+                        # Case: WP013
                         demotedHeads = [note.index for note in self.notes
                                         if note.index < i.index
                                         and isIndependent(note)]
@@ -1680,6 +1627,7 @@ class Parser:
 
                     # C. If neither of these works, return an error.
                     elif self.part.species not in ['third', 'fifth']:
+                        logger.debug(f'Case marker 170')
                         error = ('The non-tonic-triad pitch '
                                  + j.nameWithOctave + ' in measure '
                                  + str(j.measureNumber)
@@ -1687,10 +1635,9 @@ class Parser:
                         self.errors.append(error)
 
                 # If no lefthead is found, return an error.
-                # added on 2021-10-08
                 if (self.part.species not in ['third', 'fifth']
                         and j.dependency.lefthead is None):  # is None, in case
-                            # lefthead is 0
+                    # lefthead is 0
                     error = ('The non-tonic-triad pitch '
                              + j.nameWithOctave + ' in measure '
                              + str(j.measureNumber)
@@ -1702,12 +1649,15 @@ class Parser:
             logger.debug(f'Parse transition {i.index}-{j.index}: case 8')
             openLocals = []
             if self.part.species not in ['third', 'fifth']:
+                logger.debug(f'Case marker 173')
                 if i.index == j.index - 1:
+                    logger.debug(f'Case marker 174')
                     error = ('Nongenerable succession between '
                              + i.nameWithOctave + ' and '
                              + j.nameWithOctave + ' in the line.')
                     self.errors.append(error)
                 else:
+                    logger.debug(f'Case marker 175')
                     error = ('The line contains an ungenerable intertwining '
                              'of secondary structures involving '
                              + j.nameWithOctave + ' in measure ' +
@@ -1736,6 +1686,7 @@ class Parser:
                          + i.nameWithOctave + '.')
                 self.errors.append(error)
             else:
+                logger.debug(f'Case marker 183')
                 pass
 
         # CASE TEN: Dissonant skip.
@@ -1748,6 +1699,7 @@ class Parser:
         # CASE ELEVEN: Leap larger than an octave.
         elif all(case11):
             logger.debug('Parse transition: case 12')
+            logger.debug(f'Case marker 185')
             error = ('Leap larger than an octave between '
                      + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
