@@ -23,8 +23,8 @@ from music21 import *
 from westerparse.vlChecker import *
 from westerparse import context
 from westerparse import consecutions
-from westerparse import theoryAnalyzerWP
-from westerparse import theoryResultWP
+# from westerparse import theoryAnalyzerWP
+# from westerparse import theoryResultWP
 
 # -----------------------------------------------------------------------------
 # MODULE VARIABLES
