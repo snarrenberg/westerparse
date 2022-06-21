@@ -696,7 +696,7 @@ class Parser:
             mns = ', '.join(mns)
             error = (f'There are unclosed transitions in '
                      'the following measures: '
-                     + f'{mns}')
+                     + f'{mns}.')
             self.errors.append(error)
             logger.debug(f'{error}')
         self.arcs = arcs
