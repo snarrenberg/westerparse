@@ -53,8 +53,6 @@ import unittest
 from music21 import *
 
 from westerparse.utilities import pairwise, shiftBuffer, shiftStack
-# from westerparse import dependency
-# from westerparse import westerparse
 from westerparse import arc
 
 # -----------------------------------------------------------------------------
