@@ -1332,7 +1332,7 @@ def checkFourthLeapsInBass(context):
             if context.parts[bnPartNum].species == 'third':
                 bn1Measure = bn1.measureNumber
                 # Get the notes in the bar of the first bass note.
-                bassnotes = context.parts[bnPartNum].flat.notes
+                bassnotes = context.parts[bnPartNum].flatten().notes
                 barns1 = [n for n in bassnotes
                           if n.measureNumber == bn1Measure]
 

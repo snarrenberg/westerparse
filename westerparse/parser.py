@@ -126,7 +126,7 @@ class Parser:
         # Set up base content.
         self.part = part
         self.context = context
-        self.notes = self.part.flat.notes
+        self.notes = self.part.flatten().notes
 
         # Collect errors by part, line type, and individual parse.
         # Raise exceptions in context.py: parseContext.
@@ -4481,18 +4481,18 @@ def arcGenerateTransition(i, part, arcs):
     # Also assigns a label.
     # After getting the elements, find the interval directions.
     elements = []
-    for elem in (part.flat.notes[i].dependency.lefthead,
-                 i, part.flat.notes[i].dependency.righthead):
+    for elem in (part.flatten().notes[i].dependency.lefthead,
+                 i, part.flatten().notes[i].dependency.righthead):
         elements.append(elem)
-    for d in part.flat.notes[i].dependency.dependents:
+    for d in part.flatten().notes[i].dependency.dependents:
         if (d < i and
-                part.flat.notes[d].dependency.lefthead ==
-                part.flat.notes[i].dependency.lefthead):
+                part.flatten().notes[d].dependency.lefthead ==
+                part.flatten().notes[i].dependency.lefthead):
             elements.append(d)
     thisArc = sorted(elements)
     arcs.append(thisArc)
     # See if it's a neighbor or passing.
-    if part.flat.notes[thisArc[-1]] == part.flat.notes[thisArc[0]]:
+    if part.flatten().notes[thisArc[-1]] == part.flatten().notes[thisArc[0]]:
         arcType = 'neighbor'
     else:
         arcType = 'passing'
@@ -4502,7 +4502,7 @@ def arcGenerateRepetition(j, part, arcs):
     # Assemble an arc after a repetition is detected.
     # Variable j is a note.index of the repetition.
     # Tests for arc type in self.line.notes.
-    elements = [elem for elem in (part.flat.notes[j].dependency.lefthead, j)]
+    elements = [elem for elem in (part.flatten().notes[j].dependency.lefthead, j)]
     thisArc = elements
     arcs.append(thisArc)
     arcType = 'repetition'

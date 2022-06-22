@@ -197,7 +197,7 @@ class GlobalContext(Context):
         #     Create a local context given a start and stop offset
         #     in an enclosing Context.
         #     """
-        #     locCxt = cxt.flat.getElementsByOffset(cxtOn,
+        #     locCxt = cxt.flatten().getElementsByOffset(cxtOn,
         #                                      cxtOff,
         #                                      includeEndBoundary=True,
         #                                      mustFinishInSpan=False,
@@ -385,7 +385,7 @@ class GlobalContext(Context):
             harmonicEssentials = []
             for part in self.score.parts:
                 # Get all the notes in the local span.
-                localPartElements = part.flat.recurse().getElementsByOffset(
+                localPartElements = part.flatten().recurse().getElementsByOffset(
                     offsetStart,
                     offsetEnd,
                     includeEndBoundary=False,
@@ -475,7 +475,7 @@ class GlobalContext(Context):
 
         for ts in self.timespans:
             tsNotes = []
-            for n in ts.score.parts[0].flat.notes:
+            for n in ts.score.parts[0].flatten().notes:
                 if ts.start <= n.offset <= ts.end:
                     tsNotes.append(n.index)
             pass  # print(tsNotes)
