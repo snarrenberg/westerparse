@@ -4019,11 +4019,12 @@ class Parser:
             unique_parses = [self.parses[0]]
             for parse in self.parses:
                 for up in unique_parses:
-                    if (parse.ruleLabels != up.ruleLabels):
-                        unique = True
-
-                    else:
+                    rules = [parse.ruleLabels == up.ruleLabels,
+                             parse.lineType == up.lineType]
+                    if all(rules):
                         unique = False
+                    else:
+                        unique = True
                 if unique == True:
                     unique_parses.append(parse)
                     # rules = [sorted(parse.arcs) != sorted(up.arcs),
