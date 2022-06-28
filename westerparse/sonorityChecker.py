@@ -64,8 +64,7 @@ imperfectSeriesLimit = 3
     # pitchDensity: number of distinct pitches divided by number of notes
 
 # implement preference rules for sonority
-    # run only if the voice-leading passes evaluation??
-    # no: run independently or in conjunction with voice-leading check
+    # run independently or in conjunction with voice-leading check
     # need to be able to access measure number for each sonority/interval
     # for reporting to user
     # perhaps modify theoryAnalyzer's getVerticalPairs

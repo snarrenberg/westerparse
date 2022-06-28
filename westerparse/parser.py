@@ -3715,6 +3715,8 @@ class Parser:
                                 and isPermissibleInsertion(leftEdge, arc[0],
                                                            rightEdge)):
                             leftBranch = arc
+                        # TODO if arc[0] is a repetition (E1),
+                        #  look for an interbranch that ends with arc[0]...
                 # Look for inter branch if no cross branches
                 # or left or right branches.
                 if (rightBranch is None and leftBranch is None

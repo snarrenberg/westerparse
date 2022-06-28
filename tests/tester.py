@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # source = 'TestScoresXML/FourthSpecies21.musicxml'
     # source = 'TestScoresXML/FourthSpecies22.musicxml'
 
-    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml' # 10, 12
+    # source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml' # 10, 12
     # source = 'TestScoresXML/HarmonicSecondSpecies02.musicxml' # 8, 10
     # source = 'TestScoresXML/HarmonicSecondSpecies03.musicxml'  # 8, 14 initial tonic too short
     # source = 'TestScoresXML/harmonic_species1.musicxml' # 8, 10
@@ -161,8 +161,8 @@ if __name__ == "__main__":
     # source = '../examples/corpus/Westergaard075a.musicxml'
     # source = '../examples/corpus/WP000.musicxml'
     # source = '../examples/corpus/WP022.musicxml'
-    # source = '../examples/corpus/WP309.musicxml'
-    source = '../examples/corpus/WP405.musicxml'
+    source = '../examples/corpus/WP309.musicxml'
+    # source = '../examples/corpus/WP405.musicxml'
     # source = '../examples/corpus/WP001.musicxml'
 
     # source = '../examples/corpus/WPH200.musicxml' # 10, 12
@@ -322,14 +322,18 @@ if __name__ == "__main__":
     def data_extractor(sources):
         for data_source in sources:
             # print('File:', data_source)
-            # westerparse.evaluateLines(data_source, show='parsedata')
+            westerparse.evaluateLines(data_source, show='parsedata')
             pass
+
+    sources = glob.glob('parse_corpus/*')
+    data_extractor(sources)
+
 #    vltester(source, keynote='C', mode='major')
 #    reporter(source, verify)
 
 
-    tester(source, 53)
-
+    # tester(source, 53)
+    #
     from westerparse import vlChecker
 
     # cxt = westerparse.makeGlobalContext(source)
@@ -352,5 +356,3 @@ if __name__ == "__main__":
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
 
 
-    # sources = glob.glob('../examples/corpus/WP*')
-    # data_extractor(sources)
