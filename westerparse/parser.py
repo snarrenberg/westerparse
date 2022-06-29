@@ -4019,6 +4019,7 @@ class Parser:
             unique_parses = [self.parses[0]]
             for parse in self.parses:
                 for up in unique_parses:
+                    # remove only if rules and linetype are identical
                     rules = [parse.ruleLabels == up.ruleLabels,
                              parse.lineType == up.lineType]
                     if all(rules):
@@ -4027,10 +4028,6 @@ class Parser:
                         unique = True
                 if unique == True:
                     unique_parses.append(parse)
-                    # rules = [sorted(parse.arcs) != sorted(up.arcs),
-                    #          parse.ruleLabels != up.ruleLabels]
-                    # if all(rules):
-                    #     unique_parses.append(parse)
             self.parses = unique_parses
 
         for parse in self.parses:
