@@ -1526,7 +1526,7 @@ def getVerticalityContentDictFromDuet(duet, offset):
 
 
 # NOT CURRENTLY IN USE, MAY COME IN HANDY FOR SONORITY CHECKING
-def getAllVerticalContentDictionaries(score):
+def getAllVerticalContentDictionariesList(score):
     """
     Generate an offset list for a score, then construct a content dictionary
     for the parts at every offset: the keys are part numbers in the duet
@@ -1546,6 +1546,7 @@ def getAllVerticalContentDictionaries(score):
             # assume that there's just one note or rest to a part here
             contentDict[partNum] = partNotes[0]
             partNum += 1
+            # key = common.opFrac(offset)
         contentDictList[offset] = contentDict
     return contentDictList
 
