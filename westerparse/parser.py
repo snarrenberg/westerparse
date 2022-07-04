@@ -1158,7 +1158,7 @@ class Parser:
                                     # TODO Remove condition if there's no reason
                                     #   why d is not still in openTransitions
                                     #   2022-06-15 no cases found
-                                    # openTransitions[:] = [trans for trans
+                                    # o penTransitions[:] = [trans for trans
                                     #                       in openTransitions
                                     #                       if trans != d]
                             openTransitions.remove(h.index)
