@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../'))
 project = 'WesterParse'
 copyright = u'2021, Robert Snarrenberg'
 author = u'Robert Snarrenberg'
-version = release = '2.1.1'
+version = release = '2.1.2'
 
 # -- General configuration ---------------------------------------------------
 
