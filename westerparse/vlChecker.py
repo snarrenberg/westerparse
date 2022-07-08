@@ -1526,14 +1526,19 @@ def getVerticalityContentDictFromDuet(duet, offset):
 
 
 # NOT CURRENTLY IN USE, MAY COME IN HANDY FOR SONORITY CHECKING
-def getAllVerticalContentDictionariesList(score):
+def getVerticalContentDictionariesList(score, offsets='all'):
     """
     Generate an offset list for a score, then construct a content dictionary
     for the parts at every offset: the keys are part numbers in the duet
     and the values are notes (rests). Accepts as input: duet, context.score.
     """
     contentDictList = {}
-    offsetList = getOffsetList(score)
+    if offsets == 'all':
+        offsetList = getOffsetList(score)
+    elif offsets == 'on':
+        offsetList = getOnbeatOffsetList(score)
+    elif offsets == 'off':
+        offsetList = getOffbeatOffsetList(score)
     for offset in offsetList:
         partCount = len(score.parts)
         partNum = 0
