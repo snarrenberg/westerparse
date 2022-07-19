@@ -2637,6 +2637,44 @@ class Parser:
                     return
                 else:
                     self.arcBasic = list(reversed(basicArcCand))
+                # 2022-07-19, added function to remove secondary arcs that
+                # conflict with new basic arc
+                # Because this method of inferring basic arc can contradict
+                # arcs in the preliminary arc list, look for crossed arcs.
+                if self.arcBasic is None:
+                    pass
+                else:
+                    # Remove arcs that cross S2-S3, S3-S3 boundaries.
+                    self.arcs.sort()
+                    ints = pairwise(self.arcBasic)
+                    purgeList = []
+                    # Find offending arcs.
+                    for arc in self.arcs:
+                        # arc crosses over initial node of basic ard
+                        rules1 = [
+                            arc[0] < self.arcBasic[0],
+                            self.arcBasic[0] < arc[-1]
+                        ]
+                        if all(rules1):
+                            purgeList.append(arc)
+                    for int in ints:
+                        a = int[0]
+                        b = int[1]
+                        for arc in self.arcs:
+                            # arc crosses internal nodes of basic arc
+                            rules2 = [
+                                a <= arc[0] < b,
+                                arc[-1] > b,
+                                arc != self.arcBasic]
+                            if all(rules2):
+                                purgeList.append(arc)
+                    for arc in purgeList:
+                        removeDependenciesFromArc(self.notes, arc)
+                        self.arcs.remove(arc)
+                    # Add basic step motion arc if not already in arcs.
+                    if self.arcBasic not in self.arcs:
+                        self.arcs.append(self.arcBasic)
+                        addDependenciesFromArc(self.notes, self.arcBasic)
 
             # METHOD 8
             # 8-6, 6-4, 4-2, 1
@@ -3327,7 +3365,7 @@ class Parser:
             basic structure where possible. [Not yet implemented.]
             """
             # TODO Implement Westergaard preferences for coherent
-            # interpretations, pp. 63ff.
+            #   interpretations, pp. 63ff.
             pass
 
         def assignSecondaryRules(self):
