@@ -2637,44 +2637,7 @@ class Parser:
                     return
                 else:
                     self.arcBasic = list(reversed(basicArcCand))
-                # 2022-07-19, added function to remove secondary arcs that
-                # conflict with new basic arc
-                # Because this method of inferring basic arc can contradict
-                # arcs in the preliminary arc list, look for crossed arcs.
-                if self.arcBasic is None:
-                    pass
-                else:
-                    # Remove arcs that cross S2-S3, S3-S3 boundaries.
-                    self.arcs.sort()
-                    ints = pairwise(self.arcBasic)
-                    purgeList = []
-                    # Find offending arcs.
-                    for arc in self.arcs:
-                        # arc crosses over initial node of basic ard
-                        rules1 = [
-                            arc[0] < self.arcBasic[0],
-                            self.arcBasic[0] < arc[-1]
-                        ]
-                        if all(rules1):
-                            purgeList.append(arc)
-                    for int in ints:
-                        a = int[0]
-                        b = int[1]
-                        for arc in self.arcs:
-                            # arc crosses internal nodes of basic arc
-                            rules2 = [
-                                a <= arc[0] < b,
-                                arc[-1] > b,
-                                arc != self.arcBasic]
-                            if all(rules2):
-                                purgeList.append(arc)
-                    for arc in purgeList:
-                        removeDependenciesFromArc(self.notes, arc)
-                        self.arcs.remove(arc)
-                    # Add basic step motion arc if not already in arcs.
-                    if self.arcBasic not in self.arcs:
-                        self.arcs.append(self.arcBasic)
-                        addDependenciesFromArc(self.notes, self.arcBasic)
+                self.purgeCrossedArcs()
 
             # METHOD 8
             # 8-6, 6-4, 4-2, 1
@@ -3131,32 +3094,7 @@ class Parser:
                                                          self.arcBasic[4])
                 self.attachOpenheadsToStructuralLefthead(self.arcBasic[5],
                                                          self.arcBasic[6])
-            # Because this method of inferring basic arc can contradict
-            # arcs in the preliminary arc list, look for crossed arcs.
-            if self.arcBasic is None:
-                pass
-            else:
-                # Remove arcs that cross S2-S3, S3-S3 boundaries.
-                self.arcs.sort()
-                ints = pairwise(self.arcBasic)
-                purgeList = []
-                # Find offending arcs.
-                for int in ints:
-                    a = int[0]
-                    b = int[1]
-                    for arc in self.arcs:
-                        cond1 = a <= arc[0] < b
-                        cond2 = arc[-1] > b
-                        cond3 = arc != self.arcBasic
-                        if cond1 and cond2 and cond3:
-                            purgeList.append(arc)
-                for arc in purgeList:
-                    removeDependenciesFromArc(self.notes, arc)
-                    self.arcs.remove(arc)
-                # Add basic step motion arc if not already in arcs.
-                if self.arcBasic not in self.arcs:
-                    self.arcs.append(self.arcBasic)
-                    addDependenciesFromArc(self.notes, self.arcBasic)
+            self.purgeCrossedArcs()
 
             logger.debug('Method ' + str(self.method)
                          + ' for creating basic step motion.'
@@ -3177,45 +3115,13 @@ class Parser:
             self.attachOpenheadsToStructuralLefthead(0, self.S3Index)
             self.attachOpenheadsToStructuralLefthead(self.S3Index,
                                                      self.S1Index)
+            self.purgeCrossedArcs()
+            # # TODO Figure out and explain why it is necessary
+            # #  to look for crossed arcs here. Only affects third species.
+            # #  Weird result in WP024, but better results in
+            #     # TODO: Reset Note attributes.
+            #     # TODO Remove anticipations of S3.
 
-            # TODO Figure out and explain why it is necessary
-            #  to look for crossed arcs here. Only affects third species.
-            #  Weird result in WP024, but better results in
-            self.arcs.sort()
-            if self.arcBasic is None:
-                pass
-            else:
-                # Remove arcs that cross S2-S3, S3-S3 boundaries.
-                # TODO Is this necessary for bass lines?
-                self.arcs.sort()
-                ints = pairwise(self.arcBasic)
-                purgeList = []
-                # Find offending arcs.
-                for int in ints:
-                    a = int[0]
-                    b = int[1]
-                    for arc in self.arcs:
-                        if (a <= arc[0] < b < arc[-1]
-                                and arc != self.arcBasic):
-                            purgeList.append(arc)
-                if purgeList:
-                    logger.debug(f'Basic arc: {self.arcBasic}')
-                    logger.debug(f'Purging crossed arcs: {purgeList}')
-                for arc in purgeList:
-                    removeDependenciesFromArc(self.notes, arc)
-                    self.arcs.remove(arc)
-                # Add basic step motion arc.
-                self.arcs.append(self.arcBasic)
-                addDependenciesFromArc(self.notes, self.arcBasic)
-
-                # TODO: Reset Note attributes.
-                # TODO Remove anticipations of S3.
-                for arc in self.arcs:
-                    rules = [len(arc) == 2,
-                             arc[1] == self.S3Index]
-                    if all(rules):
-                        removeDependenciesFromArc(self.notes, arc)
-                        self.arcs.remove(arc)
 
         def parseGeneric(self):
             """The line has already passed the generic test, so all that is to
@@ -3314,6 +3220,39 @@ class Parser:
             # as the basic arc.
             if self.arcBasic is None:
                 self.arcBasic = [self.S2Index, self.S1Index]
+
+        def purgeCrossedArcs(self):
+            # Because some methods of inferring a basic arc can contradict
+            # arcs in the preliminary arc list, find and remove
+            # any secondary arcs that conflict with basic arc.
+            if self.arcBasic is None:
+                pass
+            else:
+                # Remove arcs that cross basic arc nodes.
+                self.arcs.sort()
+                purgeList = []
+                # Look for arc that crosses initial node of basic arc
+                for arc in self.arcs:
+                    if arc[0] < self.arcBasic[0] < arc[-1]:
+                        purgeList.append(arc)
+                # arc crosses internal nodes of basic arc
+                ints = pairwise(self.arcBasic)
+                for int in ints:
+                    a = int[0]
+                    b = int[1]
+                    for arc in self.arcs:
+                        if a <= arc[0] < b < arc[-1] > b and arc != self.arcBasic:
+                            purgeList.append(arc)
+                if purgeList:
+                    logger.debug(f'Basic arc: {self.arcBasic}')
+                    logger.debug(f'Purging crossed arcs: {purgeList}')
+                for arc in purgeList:
+                    removeDependenciesFromArc(self.notes, arc)
+                    self.arcs.remove(arc)
+                # Add basic step motion arc if not already in arcs.
+                if self.arcBasic not in self.arcs:
+                    self.arcs.append(self.arcBasic)
+                    addDependenciesFromArc(self.notes, self.arcBasic)
 
         def attachOpenheadsToStructuralLefthead(self, structuralLefthead,
                                                 rightLimit):
