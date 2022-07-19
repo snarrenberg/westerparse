@@ -2538,9 +2538,9 @@ class Parser:
             # Reinterpret the line, starting with the S2 candidate.
             # This is a radical solution that does not work well
             # and shouldn't really ignore all the preparse work.
-            # Test cases: 2020_05_19T16_58_53_914Z.musicxml;
-            #             Westergaard070g.musicxml
+            # Test cases: Westergaard070g.musicxml
             #             WP000
+            #             WP309
             #             WP311
             # TODO Prefer S2 on beat in third species,
             # if there are two candidates in the same bar.
@@ -2660,8 +2660,7 @@ class Parser:
                     rules2 = [self.notes[arc[0]].csd.value == 5,
                               self.notes[arc[-1]].csd.value == 3,
                               offPre <= self.notes[arc[0]].offset < offDom]
-                    rules3 = [arc[0] == self.S2Index,
-                              self.notes[arc[0]].csd.value == 3,
+                    rules3 = [self.notes[arc[0]].csd.value == 3,
                               self.notes[arc[-1]].csd.value == 1]
                     if all(rules1):
                         eightSixArcs.append(arc)
