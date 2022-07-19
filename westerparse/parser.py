@@ -2566,7 +2566,19 @@ class Parser:
                     h = self.notes[basicArcCand[-1]]
                     # Look for descending steps to S1.
                     if isStepDown(j, h) and j.csd.value < self.S2Value:
-                        basicArcCand.append(j.index)
+                        # If third species, determine whether the candidate
+                        # is the righthead of a local repetition.
+                        isLocalRighthead = False
+                        if self.species == 'third' and not isTriadMember(j, stufe=0):
+                            for arc in self.arcs:
+                                if arc[-1] == j.index and self.notes[arc[0]].csd.value == self.notes[arc[-1]].csd.value:
+                                    isLocalRighthead = True
+                        # Skip righthead of local repetition.
+                        if isLocalRighthead:
+                            pass
+                        # Otherwise add note index to basic arc
+                        else:
+                            basicArcCand.append(j.index)
                     elif isStepDown(j, h) and j.csd.value == self.S2Value:
                         # Skip the pitch if it is a repetition of S2
                         # (prefer the lefthead).
