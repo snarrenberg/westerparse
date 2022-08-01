@@ -1430,7 +1430,8 @@ class Parser:
                     # A. Look for an open head to attach to.
                     if h != 0 and not isDiatonicStep(self.notes[h], j):
                         skippedHeads.append(h)
-                    elif isDiatonicStep(self.notes[h], j):                        # logger.debug(f'Case marker 139')
+                    elif isDiatonicStep(self.notes[h], j):
+                        logger.debug(f'Case marker 139')
                         self.notes[h].dependency.dependents.append(j.index)
                         j.dependency.lefthead = h
                         openTransitions.append(j.index)
