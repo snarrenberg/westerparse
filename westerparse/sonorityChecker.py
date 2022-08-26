@@ -23,8 +23,6 @@ from music21 import *
 import westerparse.vlChecker as vl
 # from westerparse import context
 # from westerparse import consecutions
-# from westerparse import theoryAnalyzerWP
-# from westerparse import theoryResultWP
 
 # -----------------------------------------------------------------------------
 # MODULE VARIABLES
@@ -35,18 +33,19 @@ sonorityReport = ''
 sonorityErrors = []
 
 # set preferences for sonorities
-onBeatImperfectMin = .75  # percentage
-onBeatUnisonMax = .05  # percentage
+onBeatImperfectMin = .50  # percentage
+onBeatUnisonMax = .10  # percentage
 onBeatPerfectMax = .20  # percentage
 tiedOverDissonanceMin = .50  # percentage
-offbeatDissonanceMin = .50  # percentage
+offbeatDissonanceMinSecond = .50  # percentage
+offbeatDissonanceMinThird = .25  # percentage
 # downbeatHarmonyDensity =
 
 # preferences errors
 # pferrors = []
-# preferences for consecutive imperfect intervals
-imperfectStreakLimit = 4
-imperfectSeriesLimit = 3
+# preferences for consecutive imperfect sonorities
+seriesLimit = 3
+streakLimit = 4
 
 # implement interest rules
     # look for narrow ambitus
@@ -67,7 +66,6 @@ imperfectSeriesLimit = 3
     # run independently or in conjunction with voice-leading check
     # need to be able to access measure number for each sonority/interval
     # for reporting to user
-    # perhaps modify theoryAnalyzer's getVerticalPairs
     # or get from elements of vPair
         # add attributes to vPair
             # .measure (integer) for time of onset??
@@ -109,8 +107,6 @@ imperfectSeriesLimit = 3
     # test adjacency of upper parts, rarely more than octave
     # test adjacency of lower parts, rarely more than twelfth
 
-# def firstSpeciesSonorities(score, analyzer, partNum1=None, partNum2=None):
-#    pass
 
 # -----------------------------------------------------------------------------
 # Sonority Class
@@ -214,7 +210,7 @@ def getAllVerticalities(score):
     # make a list of verticalities that have notes and rests
     # the keys are part numbers in the duet
     #     and the values are notes (rests)
-    return vl.getAllVerticalContentDictionariesList(score)
+    return vl.getVerticalContentDictionariesList(score, offsets='all')
 
 
 def getBassDuetPartNumbers(score):
@@ -328,116 +324,75 @@ def getAdjacencyRatingsReport(score):
     return adjacencyReport
 
 
-
-
-def checkImperfectSequences(duet):
-    # original written by Tony Li
-    # use for first species in two parts
-    # ? use for any duet where parts are in the same species
-    vps = vl.getVerticalPairs(duet)
-    maxThirdsStreak = 0
-    maxThirdsSeries = 0
-    maxSixthsStreak = 0
-    maxSixthsSeries = 0
+def checkSonoritySequences(score):
+    sl = getSonorityList(score)
+    # collect sequences as a tuple of generic interval list and length
+    # e.g., ([10], 4) or ([6, 3], 5)
+    # based on a function originally written by Tony Li
+    seriesList = []
+    streakList = []
     pferrors = []
-    # Find maximum number of consecutive imperfect intervals:
-    #     streak = with change of direction
-    #     series = without a change of direction
     n = 0
-    while n < len(vps):
-        if vps[n] is not None:
-            itvl = interval.Interval(vps[n][0], vps[n][1])
-            if itvl.simpleName in {'m3', 'M3', 'm6', 'M6'}:
-                streak = 1
-                series = 1
-                done = False
-                intSize = itvl.generic.directed  # 3 or 6
-                while not done:
-                    if n < len(vps) - 1:
-                        n += 1
-                        newInt = interval.Interval(vps[n][0],
-                                                   vps[n][1])
-                        if (newInt.simpleName in {'m3', 'M3', 'm6', 'M6'}
-                           and newInt.generic.directed == intSize):
-                            streak += 1
-                            series += 1
-                            if streak >= 3:
-                                #Check for a change of direction
-                                rules = [
-                                    (vps[n][0] > vps[n-1][0]
-                                     and vps[n-1][0] < vps[n-2][0]),
-                                    (vps[n][0] < vps[n-1][0]
-                                     and vps[n-1][0] > vps[n-2][0])
-                                     ]
-                                if any(rules):
-                                    series = streak - 1
-                                    # record series if longer than previous
-                                    if (series > maxThirdsSeries
-                                       and intSize % 7 == 3):
-                                        maxThirdsSeries = series
-                                    elif (series > maxSixthsSeries
-                                       and intSize % 7 == 6):
-                                        maxSixthsSeries = series
-                                    # reset series variables
-                                    series = 1
-                                else:
-                                    continue
-                        else:
-                            # record streak if longer than previous
-                            if streak == series:
-                                if (series > maxThirdsSeries
-                                   and intSize % 7 == 3):
-                                    maxThirdsSeries = series
-                                elif (series > maxSixthsSeries
-                                      and intSize % 7 == 6):
-                                    maxSixthsSeries = series
-                            elif streak > series:
-                                if (streak > maxThirdsStreak
-                                   and intSize % 7 == 3):
-                                    maxThirdsStreak = streak
-                                elif (streak > maxSixthsStreak
-                                      and intSize % 7 == 6):
-                                    maxSixthsStreak = streak
-                            done = True
+    while n < len(sl):
+        maxSeries = 0
+        maxStreak = 0
+        if sl[n].intervalsGeneric():
+            streak = 1
+            series = 1
+            done = False
+            firstSonority = sl[n]
+            while not done:
+                if n < len(sl) - 1:
+                    n += 1
+                    nextSonority = sl[n]
+                    if (nextSonority.intervalsGeneric() == firstSonority.intervalsGeneric()):
+                        streak += 1
+                        series += 1
+                        if streak >= 3:
+                            # look for change of direction
+                            if (sl[n-1].soprano().consecutions.leftDirection
+                                != sl[n].soprano().consecutions.leftDirection):
+                                series = streak - 1
+                                # if the series is too long, add to list
+                                if streak == series and series > seriesLimit:
+                                    seriesList.append((firstSonority.intervalsGeneric(), series))
+                                # reset the series length
+                                series = 1
+                            else:
+                                continue
                     else:
-                        done = True
-                        n += 1
+                        # once a new sonority is found
+                        # if it is a series and is too long, add to list
+                        if streak == series and series > seriesLimit:
+                            seriesList.append(
+                                (firstSonority.intervalsGeneric(), series))
+                        # if it is a streak and is too long, add to list
+                        elif streak > series and streak > streakLimit:
+                            streakList.append(
+                                (firstSonority.intervalsGeneric(), streak))
+                        # break the loop to start afresh
+                        break
+                else:
+                    done = True
+                    n += 1
             else:
                 n += 1
         else:
             n += 1
-    if maxThirdsSeries > imperfectSeriesLimit:
-        error = ('The maximum number of parallel thirds in the same '
-                 'direction is ' + str(maxThirdsSeries)
-                 + ', \nwhich exceeds the recommended limit of '
-                 + str(imperfectSeriesLimit) + '.')
+    for ser in seriesList:
+        error = (f'The maximum number of parallel {ser[0]}s '
+                 f'in the same direction is {ser[1]}, '
+                 f'\n  which exceeds the recommended limit of {seriesLimit}.')
         pferrors.append(error)
-    if maxThirdsStreak > imperfectStreakLimit:
-        error = ('The maximum number of parallel thirds with a change '
-                 'of direction is ' + str(maxThirdsStreak)
-                 + ', \nwhich exceeds the recommended limit of '
-                 + str(imperfectStreakLimit) + '.')
-        pferrors.append(error)
-    if maxSixthsSeries > imperfectSeriesLimit:
-        error = ('The maximum number of parallel sixths in the same '
-                 'direction is ' + str(maxSixthsSeries)
-                 + ', \nwhich exceeds the recommended limit of '
-                 + str(imperfectSeriesLimit) + '.')
-        pferrors.append(error)
-    if maxSixthsStreak > imperfectStreakLimit:
-        error = ('The maximum number of parallel sixths with a change '
-                 'of direction is ' + str(maxSixthsStreak)
-                 + ', \nwhich exceeds the recommended limit of '
-                 + str(imperfectStreakLimit) + '.')
+    for str in streakList:
+        error = (f'The maximum number of parallel {str[0]}s '
+                 f'with a change of direction is {str[1]}, '
+                 f'\n  which exceeds the recommended limit of {seriesLimit}.')
         pferrors.append(error)
     if pferrors:
         return pferrors
     else:
-        return 'There are no monotonous streaks or series of thirds or sixths.'
-
-
-
-
+        return [f'There are no monotonous streaks or series of sonorities.']
 
 
 def getOnbeatIntervals(duet):
@@ -514,29 +469,16 @@ def getSonorityClass(noteList):
     return sonority
 
 
-def getOnbeatDyads(score, analyzer, partNum1, partNum2):
+def getOnbeatDyads(duet):
     onbeatDyads = []
-    vPairList = analyzer.getVerticalPairs(score, partNum1, partNum2)
-    for vPair in vPairList:
-        if vPair is not None:
-            # use isOnbeat(note) from vlChecker
-            if isOnbeat(vPair[0]) and isOnbeat(vPair[1]):
-                onbeatDyads.append(vPair)
+    pass
     return onbeatDyads
 
 
 
 def isOnbeatVerticality(verticality):
-    """Tests whether a verticality is initiated on the downbeat."""
-    # does not work!!!
-    vnotes = verticality.getObjectsByClass('Note')
     isOnbeat = True
-    print(verticality.offset)
-    for note in vnotes:
-        print(note)
-        if note.beat != 1.0:
-            vOnbeat = False
-            break
+    pass
     return isOnbeat
 
 
@@ -551,9 +493,7 @@ def getFullSonorities(vertList):
     """Given a list of all the verticalities,
     select only those that have a note in every part
     """
-    texture = len(vertList[-1].objects)
-    vertList = [vert for vert in vertList
-                if len(vert.objects) == texture]
+    pass
     return vertList
 
 
@@ -569,19 +509,22 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None,
         outerVoicesOnly: [True, False]
         includeTerminals: [True, False]
     """
-    vertList = getFullSonorities(getAllVerticalities(score))
 
     # get verts by beat position
     if beatPosition == 'on':
-        vl = getOnbeatVertList(vertList)
+        vertList = getOnbeatSonorities(score)
     elif beatPosition == 'off':
-        vl = getOffbeatVertList(vertList)
+        vertList = getOffbeatSonorities(score)
     else:
-        vl = vertList
+        vertList = getSonorityList(score)
 
     # Trim list if terminals excluded.
     if not includeTerminals:
-        vl = vl[1:-1]
+        vertList = vertList[1:-1]
+
+    if len(vertList) == 0 and beatPosition == 'off':
+        return (f'There are no offbeat sonorities to evaluate.')
+
 
     # Count the number of parts in the final verticality,
     # as a reliable measure of the basic texture.
@@ -601,35 +544,136 @@ def getSonorityRating(score, beatPosition=None, sonorityType=None,
     # Initialize the counter and divisor.
     sonorityCount = 0
     # Set list length to nonzero number.
-    totl = len(vl) * len(partPairs)
+    totl = len(vertList) * len(partPairs)
     if totl == 0:
         totl = 1
     # Count the relevant sonorites.
     for pair in partPairs:
         bassPartNum = pair[0]
         topPartNum = pair[1]
-        for vert in vl:
-            bassPart = vert.getObjectsByPart(bassPartNum,
-                                             classFilterList='Note')
-            topPart = vert.getObjectsByPart(topPartNum,
-                                            classFilterList='Note')
+        for vert in vertList:
+            bassPart = vert.bass()
+            topPart = vert.soprano()
             if (sonorityType == 'imperfect'
-               and isImperfectVerticalConsonance(bassPart, topPart)):
+               and vl.isImperfectVerticalConsonance(bassPart, topPart)):
                 sonorityCount += 1
             elif (sonorityType == 'perfect'
-                  and isPerfectVerticalConsonance(bassPart, topPart)):
+                  and vl.isPerfectVerticalConsonance(bassPart, topPart)):
                 sonorityCount += 1
             elif (sonorityType == 'dissonant'
-                  and isVerticalDissonance(bassPart, topPart)):
+                  and vl.isVerticalDissonance(bassPart, topPart)):
                 sonorityCount += 1
             elif (sonorityType == 'unison'
-                  and isUnison(bassPart, topPart)):
+                  and vl.isUnison(bassPart, topPart)):
                 sonorityCount += 1
             elif (sonorityType == 'octave'
-                  and isOctave(bassPart, topPart)):
+                  and vl.isOctave(bassPart, topPart)):
                 sonorityCount += 1
     return sonorityCount/totl
-#    return '{:.1%}'.format(sonorityCount/totl)
+    # rating = '{:.1%}'.format(sonorityCount/totl)
+    # if beatPosition == 'on':
+    #     report = (f'Rating for nonterminal on-the-beat '
+    #               f'{sonorityType} sonorities: {rating}.')
+    # elif beatPosition == 'off':
+    #     report = (f'Rating for nonterminal off-the-beat '
+    #               f'{sonorityType} sonorities: {rating}.')
+    # else:
+    #     report = (f'Rating for all nonterminal '
+    #               f'{sonorityType} sonorities: {rating}.')
+    # return report
+    # return '{:.1%}'.format(sonorityCount/totl)
+
+
+
+def checkSonorityRating(score):
+    prefReport = []
+    if len(score.parts) < 2:
+        report = f'There are no sonorities to evaluate.'
+        prefReport.append(report)
+        return prefReport
+    for pt in score.parts:
+        if pt.species == 'second':
+            species = 'second'
+        elif pt.species == 'third':
+            species = 'third'
+        elif pt.species == 'fourth':
+            species = 'fourth'
+        else:
+            species = 'first'
+    onBeatImperfectMin = .50  # percentage
+    onBeatUnisonMax = .10  # percentage
+    onBeatPerfectMax = .20  # percentage
+    tiedOverDissonanceMin = .50  # percentage
+    offbeatDissonanceMinSecond = .50  # percentage
+    offbeatDissonanceMinThird = .25  # percentage
+
+    if species == 'first':
+        onImperf = getSonorityRating(score, beatPosition=None,
+                                     sonorityType='imperfect',
+                                     outerVoicesOnly=True,
+                                     includeTerminals=False)
+        if onImperf < .50:
+            percentage = '{:.1%}'.format(onImperf)
+            error = (f'Only {percentage} of onbeat intervals are imperfect, '
+                     f'which falls short of the desired minimum of 50%.')
+            prefReport.append(error)
+
+    elif species == 'second':
+        onImperf = getSonorityRating(score, beatPosition='on',
+                                     sonorityType='imperfect',
+                                     outerVoicesOnly=True,
+                                     includeTerminals=False)
+        if onImperf < .50:
+            percentage = '{:.1%}'.format(onImperf)
+            error = (f'Only {percentage} of onbeat intervals are imperfect, '
+                     f'which falls short of the desired minimum of 50%.')
+            prefReport.append(error)
+
+        offDiss = getSonorityRating(score, beatPosition='off',
+                                     sonorityType='dissonant',
+                                     outerVoicesOnly=True,
+                                     includeTerminals=False)
+        if offDiss < .50:
+            percentage = '{:.1%}'.format(offDiss)
+            error = (f'Only {percentage} of offbeat intervals are dissonant, '
+                     f'which falls short of the desired minimum of 50%.')
+            prefReport.append(error)
+
+    elif species == 'third':
+        onImperf = getSonorityRating(score, beatPosition='on',
+                                     sonorityType='imperfect',
+                                     outerVoicesOnly=True,
+                                     includeTerminals=False)
+        if onImperf < .50:
+            percentage = '{:.1%}'.format(onImperf)
+            error = (f'Only {percentage} of onbeat intervals are imperfect, '
+                     f'which falls short of the desired minimum of 50%.')
+            prefReport.append(error)
+        offDiss = getSonorityRating(score, beatPosition='off',
+                                    sonorityType='dissonant',
+                                    outerVoicesOnly=True,
+                                    includeTerminals=False)
+        if offDiss < .25:
+            percentage = '{:.1%}'.format(offDiss)
+            error = (f'Only {percentage} of offbeat intervals are dissonant, '
+                 f'which falls short of the desired minimum of 25%.')
+            prefReport.append(error)
+
+    elif species == 'fourth':
+        onDiss = getSonorityRating(score, beatPosition='on',
+                                   sonorityType='dissonant',
+                                   outerVoicesOnly=True,
+                                   includeTerminals=False)
+        if onDiss < .50:
+            percentage = '{:.1%}'.format(onDiss)
+            error = (f'Only {percentage} of tied-over notes are dissonant, '
+                     f'which falls short of the desired minimum of 50%.')
+            prefReport.append(error)
+
+    if not prefReport:
+        report = (f'All sonority preferences are satisfied.')
+        prefReport.append(report)
+    return prefReport
 
 
 def getDensityRating(score, beatPosition=None,
