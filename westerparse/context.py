@@ -345,12 +345,12 @@ class GlobalContext(Context):
                  part.scale.pitchFromDegree(5)])
             part.dominantTriad = chord.Chord(
                 [part.scale.pitchFromDegree(5),
-                 part.scale.pitchFromDegree(7, direction='ascending'),
+                 part.scale.pitchFromDegree(7, direction=scale.Direction.ASCENDING),
                  part.scale.pitchFromDegree(2)])
             part.predominantTriad = chord.Chord(
                 [part.scale.pitchFromDegree(2),
                  part.scale.pitchFromDegree(4),
-                 part.scale.pitchFromDegree(6, direction='descending')])
+                 part.scale.pitchFromDegree(6, direction=scale.Direction.DESCENDING)])
 
             # Assign scale degrees to notes.
             for indx, note in enumerate(part.recurse().notes):
