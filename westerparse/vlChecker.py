@@ -188,7 +188,6 @@ def checkCounterpoint(context, report=True):
     else:
         pass
 
-
 def checkDuet(context, duet):
     """
     Check the voice-leading of each duet, depending upon which simple
