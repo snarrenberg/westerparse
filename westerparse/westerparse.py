@@ -63,7 +63,7 @@ logger.addHandler(f_handler)
 # OPERATIONAL VARIABLES
 # -----------------------------------------------------------------------------
 
-usePreferredParseSets = True
+usePreferredParseSets = Truea
 
 # -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
@@ -165,6 +165,8 @@ def evaluateLines(source,
         logger.debug(f'\n{cxt.parseReport}')
         if show is None or report is True:
             print(cxt.parseReport)
+        elif show == 'Boolean':
+            return True
         return True
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files
@@ -203,7 +205,12 @@ def evaluateCounterpoint(source,
         ee.show()
     else:
         vlChecker.vlErrors = []
-        vlChecker.checkCounterpoint(cxt, report=True)
+        vlChecker.checkCounterpoint(cxt, report)
+        if not report:
+            if vlChecker.vlErrors:
+                return False
+            else:
+                return True
 
 # -----------------------------------------------------------------------------
 # MAIN AUXILIARY SCRIPT
