@@ -1214,6 +1214,23 @@ class Parser:
                     j.csd.direction == 'ascending'):
                 if i.dependency.lefthead is None:
                     pass
+                    for t in reversed(openHeads):
+                        h = self.notes[t]
+                        if not isDiatonicStep(h, i):
+                            openHeads.remove(t)
+                        elif isDiatonicStep(h, i):
+                            h.dependency.dependents.append(i.index)
+                            h.dependency.dependents.append(j.index)
+                            i.dependency.dependents.append(j.index)
+                            j.dependency.dependents.append(i.index)
+                            i.dependency.lefthead = h.index
+                            j.dependency.lefthead = h.index
+                            # TODO: I don't think i.index has in all cases
+                            #  been added to openTransitions.
+                            if i.index in openTransitions:
+                                openTransitions.remove(i.index)
+                            openTransitions.append(j.index)
+                            break
                 elif (i.csd.value % 7 == 5 and
                       j.csd.value % 7 == 6 and
                       i.csd.direction == 'descending'):
@@ -1295,7 +1312,7 @@ class Parser:
                 arcGenerateTransition(i.index, part, arcs)
             elif (i.csd.direction == 'ascending'
                   and j.csd.direction == 'bidirectional'):
-                # Added this if trap to capture 8-#7-#6-5 in minor
+                # Added this if-trap to capture 8-#7-#6-5 in minor
                 # Westergaard057c
                 if i.csd.value % 7 == 6 and j.csd.value % 7 == 5:
                     j.dependency.lefthead = i.index
