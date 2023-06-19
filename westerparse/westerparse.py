@@ -63,7 +63,7 @@ logger.addHandler(f_handler)
 # OPERATIONAL VARIABLES
 # -----------------------------------------------------------------------------
 
-usePreferredParseSets = Truea
+usePreferredParseSets = True
 
 # -----------------------------------------------------------------------------
 # EXCEPTION HANDLERS
