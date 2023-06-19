@@ -325,14 +325,14 @@ if __name__ == "__main__":
             westerparse.evaluateLines(data_source, show='parsedata')
             pass
 
-    sources = glob.glob('parse_corpus/*')
-    data_extractor(sources)
+    # sources = glob.glob('parse_corpus/*')
+    # data_extractor(sources)
 
 #    vltester(source, keynote='C', mode='major')
 #    reporter(source, verify)
 
 
-    # tester(source, 53)
+    tester(source, 53)
     #
     from westerparse import vlChecker
 
