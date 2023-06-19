@@ -200,7 +200,7 @@ def testValidatedKey(score, keynote, mode, kharm):
             partErrors = partErrors + error + '\n\t'
         # (3) Test leaps in monotriadic first, second and fourth species.
         leapPairs = {(note.pitch.name, note.next().pitch.name)
-                     for note in part.flat.notes
+                     for note in part.flatten().notes
                      if note.consecutions.rightType == 'skip'}
         if (not kharm
                 and part.species in ['first', 'second', 'fourth'] and
