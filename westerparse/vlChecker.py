@@ -1516,8 +1516,8 @@ def getVerticalityContentDictFromDuet(duet, offset):
     while partNum < partCount:
         partNotes = [el for el in
                      duet.parts[
-                         partNum].flatten().notesAndRests.getElementsByOffset(
-                         offset, mustBeginInSpan=False)]
+                         partNum].flatten().getElementsByOffset(
+                         offset, mustBeginInSpan=False, classList=[note.Note, note.Rest])]
         # assume that there's just one note or rest to a part here
         contentDict[partNum] = partNotes[0]
         partNum += 1
@@ -1545,8 +1545,9 @@ def getVerticalContentDictionariesList(score, offsets='all'):
         while partNum < partCount:
             partNotes = [el for el in
                          score.parts[
-                             partNum].flatten().notesAndRests.getElementsByOffset(
-                             offset, mustBeginInSpan=False)]
+                             partNum].flatten().getElementsByOffset(
+                             offset, mustBeginInSpan=False, classList=[
+                                 note.Note, note.Rest])]
             # assume that there's just one note or rest to a part here
             contentDict[partNum] = partNotes[0]
             partNum += 1
@@ -1597,17 +1598,17 @@ def getAllVLQsFromDuet(duet):
         os1 = offsetList[i]
         os2 = offsetList[i+1]
         # check that there are no rests before making the VLQ
-        if (part1.flatten().notesAndRests.getElementAtOrBefore(os1).isNote and
-                part1.flatten().notesAndRests.getElementAtOrBefore(
-                    os2).isNote and
-                part2.flatten().notesAndRests.getElementAtOrBefore(
-                    os1).isNote and
-                part2.flatten().notesAndRests.getElementAtOrBefore(
-                    os2).isNote):
-            v1n1 = part1.flatten().notes.getElementAtOrBefore(os1)
-            v1n2 = part1.flatten().notes.getElementAtOrBefore(os2)
-            v2n1 = part2.flatten().notes.getElementAtOrBefore(os1)
-            v2n2 = part2.flatten().notes.getElementAtOrBefore(os2)
+        if (part1.flatten().getElementAtOrBefore(os1, classList=[note.Note, note.Rest]).isNote and
+                part1.flatten().getElementAtOrBefore(
+                    os2, classList=[note.Note, note.Rest]).isNote and
+                part2.flatten().getElementAtOrBefore(
+                    os1, classList=[note.Note, note.Rest]).isNote and
+                part2.flatten().getElementAtOrBefore(
+                    os2, classList=[note.Note, note.Rest]).isNote):
+            v1n1 = part1.flatten().getElementAtOrBefore(os1, classList=[note.Note])
+            v1n2 = part1.flatten().getElementAtOrBefore(os2, classList=[note.Note])
+            v2n1 = part2.flatten().getElementAtOrBefore(os1, classList=[note.Note])
+            v2n2 = part2.flatten().getElementAtOrBefore(os2, classList=[note.Note])
             a = voiceLeading.VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2)
             allVLQs.append(a)
     return allVLQs
@@ -1631,17 +1632,17 @@ def getOnbeatVLQs(duet):
         os1 = offsetList[i]
         os2 = offsetList[i+1]
         # check that there are no rests before making the VLQ
-        if (part1.flatten().notesAndRests.getElementAtOrBefore(os1).isNote and
-                part1.flatten().notesAndRests.getElementAtOrBefore(
-                    os2).isNote and
-                part2.flatten().notesAndRests.getElementAtOrBefore(
-                    os1).isNote and
-                part2.flatten().notesAndRests.getElementAtOrBefore(
-                    os2).isNote):
-            v1n1 = part1.flatten().notes.getElementAtOrBefore(os1)
-            v1n2 = part1.flatten().notes.getElementAtOrBefore(os2)
-            v2n1 = part2.flatten().notes.getElementAtOrBefore(os1)
-            v2n2 = part2.flatten().notes.getElementAtOrBefore(os2)
+        if (part1.flatten().getElementAtOrBefore(os1, classList=[note.Note, note.Rest]).isNote and
+                part1.flatten().getElementAtOrBefore(
+                    os2, classList=[note.Note, note.Rest]).isNote and
+                part2.flatten().getElementAtOrBefore(
+                    os1, classList=[note.Note, note.Rest]).isNote and
+                part2.flatten().getElementAtOrBefore(
+                    os2, classList=[note.Note, note.Rest]).isNote):
+            v1n1 = part1.flatten().getElementAtOrBefore(os1, classList=[note.Note])
+            v1n2 = part1.flatten().getElementAtOrBefore(os2, classList=[note.Note])
+            v2n1 = part2.flatten().getElementAtOrBefore(os1, classList=[note.Note])
+            v2n2 = part2.flatten().getElementAtOrBefore(os2, classList=[note.Note])
             a = voiceLeading.VoiceLeadingQuartet(v1n1, v1n2, v2n1, v2n2)
             allVLQs.append(a)
     return allVLQs
@@ -1669,37 +1670,37 @@ def getNonconsecutiveOffbeatToOnbeatVLQs(duet):
         os1 = offsetList[i]
         os2 = offsetList[i+1]
         # check that there are no rests before proceeding
-        if (part1.flatten().notesAndRests.getElementAtOrBefore(os1).isNote and
-                part1.flatten().notesAndRests.getElementAtOrBefore(
-                    os2).isNote and
-                part2.flatten().notesAndRests.getElementAtOrBefore(
-                    os1).isNote and
-                part2.flatten().notesAndRests.getElementAtOrBefore(
-                    os2).isNote):
-            if (part1.flatten().notes.getElementAtOrBefore(os1).beat > 1.0 or
-                    part2.flatten().notes.getElementAtOrBefore(
-                        os1).beat > 1.0):
-                if not (part1.flatten().notes.getElementAtOrBefore(
-                        os2).beat == 1.0 and
-                        part2.flatten().notes.getElementAtOrBefore(
-                            os2).beat == 1.0):
+        if (part1.flatten().getElementAtOrBefore(os1, classList=[note.Note, note.Rest]).isNote and
+                part1.flatten().getElementAtOrBefore(
+                    os2, classList=[note.Note, note.Rest]).isNote and
+                part2.flatten().getElementAtOrBefore(
+                    os1, classList=[note.Note, note.Rest]).isNote and
+                part2.flatten().getElementAtOrBefore(
+                    os2, classList=[note.Note, note.Rest]).isNote):
+            if (part1.flatten().getElementAtOrBefore(os1).beat > 1.0 or
+                    part2.flatten().getElementAtOrBefore(
+                        os1, classList=[note.Note]).beat > 1.0):
+                if not (part1.flatten().getElementAtOrBefore(
+                        os2, classList=[note.Note]).beat == 1.0 and
+                        part2.flatten().getElementAtOrBefore(
+                            os2, classList=[note.Note]).beat == 1.0):
                     nextOnbeat = False
                     n = 2
                     while nextOnbeat == False:
                         os2 = offsetList[i+n]
-                        if (part1.flatten().notes.getElementAtOrBefore(
-                                os2).beat == 1.0 and
-                                part2.flatten().notes.getElementAtOrBefore(
-                                    os2).beat == 1.0):
+                        if (part1.flatten().getElementAtOrBefore(
+                                os2, classList=[note.Note]).beat == 1.0 and
+                                part2.flatten().getElementAtOrBefore(
+                                    os2, classList=[note.Note]).beat == 1.0):
                             nextOnbeat = True
-                            v1n1 = part1.flatten().notes.getElementAtOrBefore(
-                                os1)
-                            v1n2 = part1.flatten().notes.getElementAtOrBefore(
-                                os2)
-                            v2n1 = part2.flatten().notes.getElementAtOrBefore(
-                                os1)
-                            v2n2 = part2.flatten().notes.getElementAtOrBefore(
-                                os2)
+                            v1n1 = part1.flatten().getElementAtOrBefore(
+                                os1, classList=[note.Note])
+                            v1n2 = part1.flatten().getElementAtOrBefore(
+                                os2, classList=[note.Note])
+                            v2n1 = part2.flatten().getElementAtOrBefore(
+                                os1, classList=[note.Note])
+                            v2n2 = part2.flatten().getElementAtOrBefore(
+                                os2, classList=[note.Note])
                             a = voiceLeading.VoiceLeadingQuartet(v1n1, v1n2,
                                                                  v2n1, v2n2)
                             allVLQs.append(a)
