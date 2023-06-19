@@ -256,7 +256,7 @@ def findScoreKeys(score):
     # prefer keys in which most lines end on the tonic degree.
     if len(scoreKeyCandidates) > 1:
         for part in score.parts:
-            part.finalpitch = part.flat.notes[-1].pitch.name
+            part.finalpitch = part.flatten().notes[-1].pitch.name
         ks = list(scoreKeyCandidates)
         ksweighted = []
         for k in ks:
@@ -272,7 +272,7 @@ def findScoreKeys(score):
     # prefer keys in which some lines begin on the tonic degree.
     if len(scoreKeyCandidates) > 1:
         for part in score.parts:
-            part.initialpitch = part.flat.notes[0].pitch.name
+            part.initialpitch = part.flatten().notes[0].pitch.name
         ks = list(scoreKeyCandidates)
         ksweighted = []
         for k in ks:
@@ -363,11 +363,11 @@ def leapTestStrong(leapPairs, triad):
 
 
 def getPartKeysUsingScale(part):
-    chromaResidues = {note.pitch.ps % 12 for note in part.flat.notes}
-    residueInit = part.flat.notes[0].pitch.ps % 12
-    residueFin = part.flat.notes[-1].pitch.ps % 12
+    chromaResidues = {note.pitch.ps % 12 for note in part.flatten().notes}
+    residueInit = part.flatten().notes[0].pitch.ps % 12
+    residueFin = part.flatten().notes[-1].pitch.ps % 12
     leapPairResidues = {(note.pitch.ps % 12, note.next().pitch.ps % 12)
-                        for note in part.flat.notes
+                        for note in part.flatten().notes
                         if note.consecutions.rightType == 'skip'}
 
     # Run tests for all chromatic-enharmonic minor and major keys.
@@ -412,24 +412,24 @@ def getPartKeysUsingScale(part):
     for t in tFactorsMinor:
         mode = 'minor'
         if residueInit == t:
-            keynote = part.flat.notes[0].pitch.name
+            keynote = part.flatten().notes[0].pitch.name
             keyCandidates.append((keynote, mode))
         elif residueInit == (t+3) % 12:
-            keynote = part.flat.notes[0].pitch.transpose('-m3').name
+            keynote = part.flatten().notes[0].pitch.transpose('-m3').name
             keyCandidates.append((keynote, mode))
         elif residueInit == (t+7) % 12:
-            keynote = part.flat.notes[0].pitch.transpose('-P5').name
+            keynote = part.flatten().notes[0].pitch.transpose('-P5').name
             keyCandidates.append((keynote, mode))
     for t in tFactorsMajor:
         mode = 'major'
         if residueInit == t:
-            keynote = part.flat.notes[0].pitch.name
+            keynote = part.flatten().notes[0].pitch.name
             keyCandidates.append((keynote, mode))
         elif residueInit == (t+4) % 12:
-            keynote = part.flat.notes[0].pitch.transpose('-M3').name
+            keynote = part.flatten().notes[0].pitch.transpose('-M3').name
             keyCandidates.append((keynote, mode))
         elif residueInit == (t+7) % 12:
-            keynote = part.flat.notes[0].pitch.transpose('-P5').name
+            keynote = part.flatten().notes[0].pitch.transpose('-P5').name
             keyCandidates.append((keynote, mode))
 
     part.keyCandidatesFromScale = keyCandidates
@@ -437,7 +437,7 @@ def getPartKeysUsingScale(part):
 def getPartKeyUsingHangingNotes(part):
     hangingNotes = []
     displacedNotes = []
-    line = [n.pitch for n in part.flat.notes]
+    line = [n.pitch for n in part.flatten().notes]
     ln = len(line)
     while ln > 0:
         x = line[-1]
