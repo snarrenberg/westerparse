@@ -1015,8 +1015,9 @@ def selectPreferredParseSets(cxt, primaryPartNum):
     lowestDifference = 1000
     for interpPrimary in primPart.interpretations['primary']:
         for interpBass in bassPart.interpretations['bass']:
-            a = primPart.recurse().flatten().notes[interpPrimary.S3Final].offset
-            b = bassPart.recurse().flatten().notes[interpBass.S3Index].offset
+            # 2023-06-19 removed recurse() before flatten()
+            a = primPart.flatten().notes[interpPrimary.S3Final].offset
+            b = bassPart.flatten().notes[interpBass.S3Index].offset
             domOffsetDiff = (a - b)
             if abs(domOffsetDiff) < lowestDifference:
                 lowestDifference = abs(domOffsetDiff)
