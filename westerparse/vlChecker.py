@@ -3,7 +3,7 @@
 # Purpose:      Framework for analyzing voice leading in species counterpoint
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2022 by Robert Snarrenberg
+# Copyright:    (c) 2023 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """
