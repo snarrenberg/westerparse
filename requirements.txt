@@ -1,5 +1,4 @@
 -e .
-python ~= 3.9
 music21 ~= 9.1.0
 westerparse ~= 2.1.3
 pillow ~= 9.5.0
