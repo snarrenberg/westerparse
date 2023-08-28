@@ -900,11 +900,13 @@ class Parser:
                         openHeads[:] = [head for head in openHeads
                                         if head not in pruneHeads]
                         openHeads.append(j.index)
-                        return
-                else:
-                    if i.index not in openHeads:
-                        openHeads.append(i.index)
-                    openHeads.append(j.index)
+                        # 2023-08-28 removed the following return in order to
+                        # capture resolution of multiple secondary structures
+                        # return
+                    else:
+                        if i.index not in openHeads:
+                            openHeads.append(i.index)
+                        openHeads.append(j.index)
             else:
                 openHeads.append(j.index)
 
