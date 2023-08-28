@@ -180,15 +180,15 @@ def testValidatedKey(score, keynote, mode, kharm):
                      thisScale.pitchFromDegree(3).name,
                      thisScale.pitchFromDegree(5).name]
         # (1) Test first and last notes.
-        if part.flat.notes[0].pitch.name not in thisTriad:
+        if part.flatten().notes[0].pitch.name not in thisTriad:
             error = ('The first note is not a triad pitch.')
             partErrors = partErrors + error + '\n\t'
-        if part.flat.notes[-1].pitch.name not in thisTriad:
+        if part.flatten().notes[-1].pitch.name not in thisTriad:
             error = ('The last note is not a triad pitch.')
             partErrors = partErrors + error + '\n\t'
         # (2) Test for scale pitches.
         nonscalars = 0
-        for n in part.flat.notes:
+        for n in part.flatten().notes:
             if n.pitch.name not in thisCollection:
                 nonscalars += 1
         if nonscalars == 1:
