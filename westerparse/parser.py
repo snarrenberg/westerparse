@@ -2447,6 +2447,10 @@ class Parser:
                                     ]
                                     if all(rules3):
                                         arcSegments.append(arc3)
+                                # if no third arc is found,
+                                # break off the search
+                                if len(arcSegments) < 3:
+                                    break
                         if len(arcSegments) == 3:
                             arc1 = arcSegments[0]
                             arc2 = arcSegments[1]
@@ -3666,7 +3670,6 @@ class Parser:
                     return nextLevel
 
                 nextLevel = getNextLevel(span)
-
                 # (1) Search for possible branches across or within the span.
                 # A dependent arc can fit into a span in one of four ways:
                 #     (1) crossBranches connect leftEdge to rightEdge.
