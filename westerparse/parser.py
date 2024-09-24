@@ -907,6 +907,11 @@ class Parser:
                         if i.index not in openHeads:
                             openHeads.append(i.index)
                         openHeads.append(j.index)
+                        # 2024-09-23 added the following return in order to
+                        # fix resolution with multiple secondary structures
+                        # stops the search when the most recent open
+                        #   transition remains unresolved
+                        return
             else:
                 openHeads.append(j.index)
 
@@ -1206,6 +1211,8 @@ class Parser:
                             self.notes[d].dependency.righthead = j.index
                             j.dependency.dependents.append(d)
                         arcGenerateTransition(i.index, part, arcs)
+                        break
+                    elif not isStepDown(h, j) and not isStepUp(h, j):
                         break
 
         # CASE FIVE: Step from nonharmonic to nonharmonic.
