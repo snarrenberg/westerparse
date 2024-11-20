@@ -1101,6 +1101,7 @@ class Parser:
                                 if self.notes[d].csd.value != i.csd.value:
                                     self.notes[
                                         d].dependency.righthead = j.index
+                                    self.notes[j.index].dependency.dependents.append(d)
                             openTransitions.remove(i.index)
                             if (self.notes[i.dependency.lefthead]
                                     != self.notes[i.dependency.righthead]):
@@ -1125,6 +1126,7 @@ class Parser:
                                     self.notes[
                                         d].dependency.righthead = j.index
                                     j.dependency.dependents.append(d)
+                                    self.notes[j.index].dependency.dependents.append(d)
                             openTransitions.remove(i.index)
                             if (self.notes[i.dependency.lefthead]
                                     != self.notes[i.dependency.righthead]):
@@ -1192,6 +1194,7 @@ class Parser:
                                         and isStepDown(self.notes[d], h)):
                                     self.notes[
                                         d].dependency.righthead = j.index
+                                    self.notes[j.index].dependency.dependents.append(d)
                             openTransitions.remove(h.index)
                             arcGenerateTransition(h.index, part, arcs)
                             openHeads[:] = [head for head in openHeads
@@ -1199,6 +1202,11 @@ class Parser:
                             if j.index not in openHeads:
                                 openHeads.append(j.index)
                     elif i.index in openTransitions:
+                        logger.debug(
+                            f'Case 4, problematic code block')
+                        # TODO 2024-11-08 incorrectly resolving b7-8 in minor
+                        #   what does this block do?
+                        #   See WP006: correctly resolves E-natural
                         i.dependency.righthead = j.index
                         j.dependency.dependents.append(i.index)
                         openTransitions.remove(i.index)
@@ -1517,8 +1525,15 @@ class Parser:
                             for arc in arcs:
                                 if isEmbeddedInArc(newLefthead, arc):
                                     arcs.remove(arc)
+                                    # append the final transitional element
+                                    # in the new arc and resort
+                                    openTransitions.append(arc[-2])
+                                    openTransitions = sorted(openTransitions)
+                                    # revise old dependencies
                                     for idx in arc[1:-1]:
-                                        openTransitions.append(idx)
+                                        # 2024-10-04 revised to append only
+                                        # the penultimate idx
+                                        # openTransitions.append(idx)
                                         self.notes[
                                             idx].dependency.righthead = None
                                         self.notes[arc[
@@ -1526,6 +1541,8 @@ class Parser:
                                             idx)
                                     if arc[-1] in openHeads:
                                         openHeads.remove(arc[-1])
+                            # TODO making sure openTransitions is properly sorted
+                            #   this may no longer be necessary; see 10 lines up
                             openTransitions = sorted(openTransitions)
                             for t in openTransitions:
                                 if j.dependency.lefthead < t < j.index:
@@ -3456,6 +3473,11 @@ class Parser:
                                  ' in measure ' + str(i.measureNumber) +
                                  ' is not resolved.')
                         self.errors.append(error)
+                    if self.lineType == 'bass' and self.harmonicSpecies:
+                        if i.index > self.S3Index and i.csd.value % 7 != 5:
+                            error = ('Illegal insertion after S3 in harmonic '
+                                     'bass line')
+                            self.errors.append(error)
 
         def pruneArcs(self):
             # Find arcs to merge into longer passing motions.
@@ -4175,8 +4197,8 @@ class Parser:
 
         # Currently there is no preference where S3 occurs in a bass line.
         # TODO: Eventually this must be supplemented by a preference for
-        # consonant coordination with an S3 in the upper line:
-        # either simultaneous with or subsequent to sd2.
+        #   consonant coordination with an S3 in the upper line:
+        #   either simultaneous with or subsequent to sd2.
 
         # If there are several candidates for high or low five,
         # prefer ones in which S3 occurs past the midway point of the line.
