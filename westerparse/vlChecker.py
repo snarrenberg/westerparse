@@ -478,7 +478,6 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                          + str(interval.Interval(vPair[1], vPair[0]).name)
                          + '.')
                 vlErrors.append(error)
-
         # TODO Need to figure out rules for 3 or more parts.
         elif not duet.includesBass:
             pass
@@ -551,7 +550,7 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
     weakSuspensions = {'upper': ['m2-1', 'M2-1'],
                        'lower': ['m7-8', 'M7-8', 'P4-5']}
     # List of dissonances inferred from Westergaard lists:
-    validDissonances = ['m2', 'M2', 'A2', 'd4', 'P4',
+    validDissonances = ['m2', 'M2', 'A2', 'd4', 'P4', 'A4',
                         'A5', 'd5', 'A5', 'm7', 'd7', 'M7']
 
     # Function for distinguishing between intervals 9 and 2 in upper lines.
