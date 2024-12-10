@@ -160,8 +160,14 @@ if __name__ == "__main__":
     # source = '../examples/corpus/WP008.musicxml'
     # source = '../examples/corpus/Westergaard075a.musicxml'
     # source = '../examples/corpus/WP000.musicxml'
-    # source = '../examples/corpus/WP022.musicxml'
-    source = '../examples/corpus/WP309.musicxml'
+    # source = '../examples/corpus/WP001.musicxml'
+    # source = '../examples/corpus/WP002.musicxml'
+    # source = '../examples/corpus/WP003.musicxml'
+    # source = '../examples/corpus/WP004.musicxml'
+    # source = '../examples/corpus/WP005.musicxml'
+    # source = '../examples/corpus/WP006.musicxml'
+    # source = '../examples/corpus/WP019.musicxml'
+    # source = '../examples/corpus/WP309.musicxml'
     # source = '../examples/corpus/WP405.musicxml'
     # source = '../examples/corpus/WP001.musicxml'
 
@@ -187,7 +193,18 @@ if __name__ == "__main__":
     # source = 'TestScoresXML/2022_05_31T18_56_28_644Z.musicxml'
     # source = 'TestScoresXML/2022_06_02T09_19_48_464Z.musicxml'
     # source = 'TestScoresXML/2022_06_07T17_52_57_966Z.musicxml'
-
+    # source = 'TestScoresXML/2023_08_28T17_54_24_250Z.musicxml'
+    # source = 'TestScoresXML/2023_09_15T18_49_52_266Z.musicxml'
+    # source = 'TestScoresXML/2023_09_15T18_51_22_947Z.musicxml'
+    # source = 'TestScoresXML/SilversteinFirst.musicxml'
+    # source = 'TestScoresXML/2024_09_10T23_12_00_629Z.musicxml'
+    # source = 'TestScoresXML/2024_09_24T18_07_05_557Z.musicxml'
+    # source = 'TestScoresXML/asmt3-2.musicxml'
+    # source = 'TestScoresXML/asmt3-2-revision.musicxml'
+    # source = 'TestScoresXML/asmt4-1.musicxml'
+    # source = 'TestScoresXML/2024_10_02T23_05_35_956Z.musicxml'
+    # source = 'TestScoresXML/2024_11_01T22_52_33_440Z.musicxml'
+    source = 'TestScoresXML/2024_11_26T18_13_40_525Z.musicxml'
 
     def tester(source, verify):
         if verify == 1: # tests for generability as any type of line
@@ -198,13 +215,13 @@ if __name__ == "__main__":
         elif verify == 100: # tests for generability as harmonic counterpoint
             westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
-                                      startPredominant=10,
-                                      startDominant=12)
+                                      startPredominant=8,
+                                      startDominant=10)
         elif verify == 101:
             westerparse.evaluateLines(source, show=None,
                                       harmonicSpecies=True,
-                                      startPredominant=10,
-                                      startDominant=12)
+                                      startPredominant=8,
+                                      startDominant=10)
         elif verify == 110:
             westerparse.evaluateLines(source, show='show',
                                       partSelection=0,
@@ -331,8 +348,9 @@ if __name__ == "__main__":
 #    vltester(source, keynote='C', mode='major')
 #    reporter(source, verify)
 
-
-    tester(source, 53)
+    # s = converter.parse(source)
+    # s.show()
+    tester(source, 2)
     #
     from westerparse import vlChecker
 
