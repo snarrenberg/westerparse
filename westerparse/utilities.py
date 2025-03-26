@@ -43,6 +43,28 @@ def shiftStack(stack, buffer):
     stack.pop(-1)
     buffer.insert(0, lastnote)
 
+
+
+def create_html_report(input):
+    """
+    Converts a report string to an HTML string,
+    wrapping each line in the specified tag.
+
+    Args:
+        output: The string to convert.
+        tag: The HTML tag to wrap each line in.
+
+    Returns:
+        An HTML string.
+    """
+    output = ''
+    lines = input.splitlines()
+    for line in lines:
+        line = line.replace('\t', ' ')
+    html_lines = [f"<p>{line}</p>" for line in lines]
+    return "\n".join(html_lines)
+
+
 # -----------------------------------------------------------------------------
 
 
@@ -51,3 +73,6 @@ if __name__ == '__main__':
     pass
 # -----------------------------------------------------------------------------
 # eof
+
+    report = '\nError Report\n\tFirst line of report\n\t\tSecond line of report\n\t\t\tThird line of report'
+    print(create_html_report(report))
