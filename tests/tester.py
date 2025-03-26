@@ -204,14 +204,21 @@ if __name__ == "__main__":
     # source = 'TestScoresXML/asmt4-1.musicxml'
     # source = 'TestScoresXML/2024_10_02T23_05_35_956Z.musicxml'
     # source = 'TestScoresXML/2024_11_01T22_52_33_440Z.musicxml'
-    source = 'TestScoresXML/2024_11_26T18_13_40_525Z.musicxml'
+    # source = 'TestScoresXML/2024_11_26T18_13_40_525Z.musicxml'
+    source = 'TestScoresXML/2020_10_24T14_46_04_066Z.musicxml'
 
     def tester(source, verify):
+        """various testing options for westerparse"""
         if verify == 1: # tests for generability as any type of line
             westerparse.evaluateLines(source, show=None)
         elif verify == 2:
             westerparse.evaluateCounterpoint(source, report=True)
-        
+
+        elif verify == 1111:
+            westerparse.evaluateLines(source, show='html')
+        elif verify == 2222:
+            westerparse.evaluateCounterpoint(source, report='html')
+
         elif verify == 100: # tests for generability as harmonic counterpoint
             westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
@@ -327,7 +334,7 @@ if __name__ == "__main__":
         print('Inferred key:', cxt.key.nameString)
         print('Number of parts:', len(cxt.parts))
         for part in cxt.parts:
-            print('Part', part.partNum, 'species:', part.species)
+            print('\tPart', part.partNum, 'species:', part.species)
         tester(source, verify)
             
     def vltester(source, keynote, mode):
@@ -350,7 +357,8 @@ if __name__ == "__main__":
 
     # s = converter.parse(source)
     # s.show()
-    tester(source, 2)
+    tester(source, 2222)
+    # reporter(source, 1)
     #
     from westerparse import vlChecker
 
