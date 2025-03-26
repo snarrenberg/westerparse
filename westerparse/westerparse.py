@@ -167,6 +167,8 @@ def evaluateLines(source,
             print(cxt.parseReport)
         elif show == 'Boolean':
             return True
+        elif show == 'html':
+            print(utilities.create_html_report(cxt.parseReport))
         return True
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files

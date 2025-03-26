@@ -106,7 +106,7 @@ import logging
 
 from music21 import *
 
-from westerparse.utilities import pairwise
+from westerparse.utilities import pairwise, create_html_report
 
 # -----------------------------------------------------------------------------
 # LOGGER
@@ -167,13 +167,17 @@ def checkCounterpoint(context, report=True):
     # Report voice-leading errors, if asked.
     if report:
         if not vlErrors:
-            result = ('No voice-leading errors found.\n')
+            result = ('VOICE LEADING REPORT\nNo voice-leading errors found.\n')
         else:
-            result = ('VOICE LEADING REPORT \nThe following '
+            result = ('VOICE LEADING REPORT\nThe following '
                       'voice-leading errors were found:')
             for error in vlErrors:
                 result = result + '\n\t\t' + error
-        print(result)
+        if report == 'html':
+            print(create_html_report(result))
+        else:
+            print(result)
+
         # Report sonority advice, if enabled.
         if sonorityCheck:
             if not vlAdvice:
@@ -184,7 +188,10 @@ def checkCounterpoint(context, report=True):
                 for item in vlAdvice:
                     advice = advice + '\n\t' + item
             if advice:
-                print(advice)
+                if report == 'html':
+                    print(create_html_report(advice))
+                else:
+                    print(advice)
     else:
         pass
 
