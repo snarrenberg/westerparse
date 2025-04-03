@@ -113,7 +113,8 @@ from westerparse.utilities import pairwise, create_html_report
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
 logger.propagate = False
 # logging handlers
 f_handler = logging.FileHandler('vl.txt', mode='w')

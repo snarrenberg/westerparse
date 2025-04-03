@@ -31,7 +31,8 @@ from westerparse.utilities import pairwise
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
 # logging handlers
 f_handler = logging.FileHandler('parser.txt', mode='w')
 f_handler.setLevel(logging.DEBUG)

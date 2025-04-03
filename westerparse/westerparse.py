@@ -48,7 +48,8 @@ from westerparse import utilities
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
 logger.propagate = False
 # logging handlers
 f_handler = logging.FileHandler('westerparse.txt', mode='w')
