@@ -67,7 +67,7 @@ class ContextError(Exception):
 
     def logerror(self):
         log = open(self.logfile, 'a')
-        print(self.desc, file=log)
+        # print(self.desc, file=log)
 
 
 class EvaluationException(Exception):
@@ -75,7 +75,8 @@ class EvaluationException(Exception):
         self.logfile = logfile
 
     def show(self):
-        printLogfile(self.logfile)
+        pass
+        # printLogfile(self.logfile)
 
 # TODO: Figure out how to accommodate tonal ambiguity:
 #   Make a global context for each option?
@@ -479,7 +480,8 @@ class GlobalContext(Context):
             for n in ts.score.parts[0].flatten().notes:
                 if ts.start <= n.offset <= ts.end:
                     tsNotes.append(n.index)
-            pass  # print(tsNotes)
+            pass
+            # print(tsNotes)
 
     def makeTwoPartContexts(self):
         partNumPairs = vlChecker.getAllPartNumPairs(self.score)

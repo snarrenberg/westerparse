@@ -165,11 +165,13 @@ def evaluateLines(source,
         parseContext(cxt, show, partSelection, partLineType)
         logger.debug(f'\n{cxt.parseReport}')
         if show is None or report is True:
-            print(cxt.parseReport)
+            pass
+            # print(cxt.parseReport)
         elif show == 'Boolean':
             return True
         elif show == 'html':
-            print(utilities.create_html_report(cxt.parseReport))
+            # print(utilities.create_html_report(cxt.parseReport))
+            return utilities.create_html_report(cxt.parseReport)
         return True
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files
@@ -207,8 +209,9 @@ def evaluateCounterpoint(source,
     except context.EvaluationException as ee:
         ee.show()
     else:
-        vlChecker.vlErrors = []
-        vlChecker.checkCounterpoint(cxt, report)
+        result = vlChecker.checkCounterpoint(cxt, report)
+        if report == 'html':
+            return utilities.create_html_report(result)
         if not report:
             if vlChecker.vlErrors:
                 return False
@@ -1187,7 +1190,8 @@ def showParses(cxt, show, parseSets):
             filename = ('/home/spenteco/1/snarrenberg/parses_from_context/'
                         + 'parser_output_' + timestamp + '.musicxml')
             content.write('musicxml', filename)
-            print(filename)
+            pass
+            # print(filename)
         elif show == 'writeToCorpusServer':
             timestamp = str(time.time())
             filename = ('./media/tmp/'

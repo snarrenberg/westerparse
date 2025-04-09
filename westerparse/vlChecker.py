@@ -175,7 +175,7 @@ def checkCounterpoint(context, report=True):
             for error in vlErrors:
                 result = result + '\n\t\t' + error
         if report == 'html':
-            print(create_html_report(result))
+            return result
         else:
             print(result)
 
@@ -190,7 +190,7 @@ def checkCounterpoint(context, report=True):
                     advice = advice + '\n\t' + item
             if advice:
                 if report == 'html':
-                    print(create_html_report(advice))
+                    return create_html_report(advice)
                 else:
                     print(advice)
     else:

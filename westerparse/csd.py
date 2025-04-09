@@ -23,8 +23,9 @@ class CSDError(Exception):
         self.logfile = 'logfile.txt'
 
     def logerror(self):
-        log = open(self.logfile, 'a')
-        print('CSD Error:', self.desc, file=log)
+        pass
+        # log = open(self.logfile, 'a')
+        # print('CSD Error:', self.desc, file=log)
 
 # -----------------------------------------------------------------------------
 # MAIN CLASS
