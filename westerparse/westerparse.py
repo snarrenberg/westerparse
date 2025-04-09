@@ -96,6 +96,8 @@ def evaluateLines(source,
        `show` -- Parses will be displayed using the music notation application
        that the user has configured for music21.
 
+       'html' -- A HTML report is generated.
+
        `writeToServer` -- Reserved for use by the WesterParse website
        to write parses to musicxml files, which are then displayed in
        the browser window.
@@ -184,6 +186,9 @@ def evaluateCounterpoint(source,
                          **kwargs):
     """
     Determine whether voice leading conforms to Westergaard's rules.
+
+    If report is set to True, the program will produce a text report.
+    If report is set to 'html', the program will produce a HTML report.
     """
     logger.debug(f'Evaluating voice leading in {source}.')
     context.clearLogfile('logfile.txt')
