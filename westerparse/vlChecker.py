@@ -190,7 +190,7 @@ def checkCounterpoint(context, report=True):
                     advice = advice + '\n\t' + item
             if advice:
                 if report == 'html':
-                    return create_html_report(advice)
+                    return advice
                 else:
                     print(advice)
     else:
