@@ -50,9 +50,9 @@ logfile = 'logfile.txt'
 
 
 def clearLogfile(logfile):
-    file = open(logfile, 'w+')
-#    file.truncate(0)
-    file.close()
+    pass
+    # file = open(logfile, 'w+')
+    # file.close()
 
 
 def printLogfile(logfile):
@@ -66,7 +66,8 @@ class ContextError(Exception):
         self.logfile = logfile
 
     def logerror(self):
-        log = open(self.logfile, 'a')
+        pass
+        # log = open(self.logfile, 'a')
         # print(self.desc, file=log)
 
 
