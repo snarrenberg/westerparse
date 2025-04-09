@@ -437,7 +437,6 @@ def parsePart(part, cxt):
     logger.debug(f'\nValid parses of part {part.partNum}: {part.interpretations}')
 
 
-
 def checkFinalStep(part, cxt):
     """
     Check primary lines for compliance with rule G2, which requires that at
