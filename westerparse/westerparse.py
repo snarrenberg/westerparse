@@ -1142,6 +1142,7 @@ def writeCounterpointDataFiles(cxt, parseSets):
         # extractCounterpointDataFromParseSets(cxt, parseSet, label)
         pass
 
+
 def extractCounterpointDataFromParseSets(cxt, parseSet, label):
     """Prepare a json data file for a particular set of parses.
     Each file contains n sets of data:
