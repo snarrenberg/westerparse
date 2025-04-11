@@ -70,16 +70,15 @@ MAJORMODE = {'triad': [0, 4, 7], 'scale': [0, 2, 4, 5, 7, 9, 11]}
 
 
 class KeyFinderError(Exception):
-    logfile = 'logfile.txt'
+    # logfile = 'logfile.txt'
 
     def __init__(self, desc):
         self.desc = desc
-        self.logfile = 'logfile.txt'
+        self.report = ''
 
     def logerror(self):
-        pass
-        # log = open(self.logfile, 'a')
-        # print('Key Finder Error:', self.desc, file=log)
+        self.report += f'KEY FINDER ERROR:\n{self.desc}'
+        return self.report
 
 # -----------------------------------------------------------------------------
 # MAIN SCRIPTS
@@ -93,16 +92,15 @@ def testKey(score, knote=None, kmode=None, kharm=False):
         userKey = validateKeySelection(knote, kmode)
     except KeyFinderError as kfe:
         kfe.logerror()
-        return False
+        return (False, kfe.report)
     # (2) Test each part for generic errors.
     try:
         testValidatedKey(score, knote, kmode, kharm)
     except KeyFinderError as kfe:
         kfe.logerror()
-        # return userKey
-        return False
+        return (False, kfe.report)
     else:
-        return userKey
+        return (True, userKey)
 
 
 def inferKey(score):
@@ -112,15 +110,15 @@ def inferKey(score):
         allPartKeys = findPartKeys(score)
     except KeyFinderError as kfe:
         kfe.logerror()
-        return False
+        return (False, kfe.report)
     # (2) And then find the keys of the score.
     try:
         key = findScoreKeys(score)
     except KeyFinderError as kfe:
         kfe.logerror()
-        return False
+        return (False, kfe.report)
     else:
-        return key
+        return (True, key)
 
 # -----------------------------------------------------------------------------
 # HELPER SCRIPTS
@@ -183,10 +181,10 @@ def testValidatedKey(score, keynote, mode, kharm):
         # (1) Test first and last notes.
         if part.flatten().notes[0].pitch.name not in thisTriad:
             error = ('The first note is not a triad pitch.')
-            partErrors = partErrors + error + '\n\t'
+            partErrors += '\n\t' + error
         if part.flatten().notes[-1].pitch.name not in thisTriad:
             error = ('The last note is not a triad pitch.')
-            partErrors = partErrors + error + '\n\t'
+            partErrors += '\n\t' + error
         # (2) Test for scale pitches.
         nonscalars = 0
         for n in part.flatten().notes:
@@ -194,11 +192,11 @@ def testValidatedKey(score, keynote, mode, kharm):
                 nonscalars += 1
         if nonscalars == 1:
             error = ('One note in the line does not belong to the scale.')
-            partErrors = partErrors + error + '\n\t'
+            partErrors += '\n\t' + error
         if nonscalars > 1:
             error = (str(nonscalars)
                      + ' notes in the line do not belong to the scale.')
-            partErrors = partErrors + error + '\n\t'
+            partErrors += '\n\t' + error
         # (3) Test leaps in monotriadic first, second and fourth species.
         leapPairs = {(note.pitch.name, note.next().pitch.name)
                      for note in part.flatten().notes
@@ -207,12 +205,12 @@ def testValidatedKey(score, keynote, mode, kharm):
                 and part.species in ['first', 'second', 'fourth'] and
                 leapTestWeak(leapPairs, thisTriad) is False):
             error = ('At least one leap fails to include a triad pitch.')
-            partErrors = partErrors + error + '\n\t'
+            partErrors += '\n\t' + error
         if partErrors:
-            partErrorStr = ('\nProblems found in ' + part.name
+            partErrorStr = ('Problems found in ' + part.name
                             + '. Given key = ' + keynote + ' '
-                            + mode + '.\n\t' + partErrors)
-        userKeyErrors = userKeyErrors + partErrorStr
+                            + mode + partErrors)
+        userKeyErrors += partErrorStr
 
     if len(userKeyErrors) > 0:
         raise KeyFinderError(userKeyErrors)

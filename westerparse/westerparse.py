@@ -151,7 +151,6 @@ def evaluateLines(source,
      given as measure numbers.
     """
     logger.debug(f'Evaluating lines in {source}.')
-    context.clearLogfile('logfile.txt')
     # Make the global context.
     if partLineType == 'any' or '':
         partLineType = None
@@ -159,9 +158,14 @@ def evaluateLines(source,
         cxt = makeGlobalContext(source, **kwargs)
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files
-        if show != 'parsedata':
-            fce.show()
+        if show == 'html':
+            return utilities.create_html_report(fce.desc)
+        elif show == 'parsedata':
+            pass
+        else:
+            fce.report()
         return
+
     # Parse the global context.
     try:
         parseContext(cxt, show, partSelection, partLineType)
@@ -176,8 +180,13 @@ def evaluateLines(source,
         return True
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files
-        if show != 'parsedata':
-            fce.show()
+        if show == 'html':
+            return utilities.create_html_report(fce.desc)
+        elif show == 'parsedata':
+            pass
+        else:
+            fce.report()
+            print(fce.desc)
 
 
 def evaluateCounterpoint(source,
@@ -191,27 +200,26 @@ def evaluateCounterpoint(source,
     If report is set to 'html', the program will produce a HTML report.
     """
     logger.debug(f'Evaluating voice leading in {source}.')
-    context.clearLogfile('logfile.txt')
     # Make the global context.
     try:
         cxt = makeGlobalContext(source, **kwargs)
     except context.EvaluationException as fce:
-        fce.show()
+        if report == 'html':
+            return utilities.create_html_report(fce.desc)
+        else:
+            print(fce.desc)
         return
     # Validate the context as contrapuntal.
     try:
         if len(cxt.parts) == 1:
             raise context.ContextError(
-                  'Context Error: The composition is only a single line. '
+                  'The composition is only a single line. '
                   'There is no voice-leading to check.')
     except context.ContextError as ce:
         ce.logerror()
+        if report == 'html':
+            return utilities.create_html_report(ce.report)
     # If context is contrapuntal, evaluate the voice leading.
-    try:
-        if len(cxt.parts) == 1:
-            raise context.EvaluationException
-    except context.EvaluationException as ee:
-        ee.show()
     else:
         result = vlChecker.checkCounterpoint(cxt, report)
         if report == 'html':
@@ -298,14 +306,14 @@ def parseContext(cxt,
         partsForParsing = validatePartSelection(cxt, partSelection)
     except context.ContextError as ce:
         ce.logerror()
-        raise context.EvaluationException
+        raise context.EvaluationException(ce.report)
 
     # (3) Validate line type selection.
     try:
         validateLineTypeSelection(cxt, partSelection, partLineType)
     except context.ContextError as ce:
         ce.logerror()
-        raise context.EvaluationException
+        raise context.EvaluationException(ce.report)
 
     # (4) Run the parser, collect errors, and log parses.
     for part in partsForParsing:
@@ -344,8 +352,8 @@ def parseContext(cxt,
         createParseReport(cxt, generability, partsForParsing, partSelection,
                           partLineType)
     except context.ContextError as ce:
-        ce.logerror()
-        raise context.EvaluationException
+        ce.desc = 'PARSE REPORT:\n' + ce.desc
+        raise context.EvaluationException(ce.desc)
 
     # (8) Gather the interpretations of the selected part(s)
     #       in the specified manner.
@@ -379,7 +387,7 @@ def validatePartSelection(cxt, partSelection):
             else:
                 pts = ' parts'
             raise context.ContextError(
-                'Context Error: The composition has only '
+                'The composition has only '
                 + str(len(cxt.parts)) + pts
                 + ', so the part selection must fall in the range of 0-'
                 + str(len(cxt.parts)-1)
@@ -409,7 +417,7 @@ def validateLineTypeSelection(cxt, partSelection, partLineType):
         else:
             pass
         raise context.ContextError(
-            'Context Error: You have selected the following line type: '
+            'You have selected the following line type: '
             + f'{partLineType}. '
             + '\nHowever, line type selection is only permitted '
             + 'when the source is a single line \nor there is a valid '
@@ -746,21 +754,21 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
             if upperPrimary and lowerBass:
                 if len(cxt.parts) == 2:
                     result = ('The upper line is generable as a '
-                              'primary line. \nThe lower line '
+                              'primary line.\nThe lower line '
                               'is generable as a bass line.')
                 else:
                     result = ('At least one upper line is generable '
-                              'as a primary line. \nThe lower line '
+                              'as a primary line.\nThe lower line '
                               'is generable as a bass line.')
             # ERRORS
             elif not upperPrimary and lowerBass:
                 if len(cxt.parts) == 2:
                     error = ('The upper line is not generable '
-                             'as a primary line. \nBut the lower '
+                             'as a primary line.\nBut the lower '
                              'line is generable as a bass line.')
                 else:
                     error = ('No upper line is generable as a '
-                             'primary line. \nBut the lower line '
+                             'primary line.\nBut the lower line '
                              'is generable as a bass line.')
                 for gul in genericUpperLines:
                     if cxt.errorsDict[gul]:
@@ -772,40 +780,40 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
             elif upperPrimary and not lowerBass:
                 if len(cxt.parts) == 2:
                     error = ('The upper line is generable as a '
-                             'primary line. \nBut the lower line '
+                             'primary line.\nBut the lower line '
                              'is not generable as a bass line.')
                 else:
                     error = ('At least one upper line is generable '
-                             'as a primary line. \nBut the lower line '
+                             'as a primary line.\nBut the lower line '
                              'is not generable as a bass line.')
                 bln = cxt.parts[-1].name
                 if cxt.errorsDict[bln]:
                     error = (error + '\n\tThe following linear '
                              'errors were found in the bass line:')
-                    for err in cxt.errorsDict[bln]['bass']:
+                    for err in cxt.errorsDict[bln].get('bass', []):
                         error = error + '\n\t\t\t' + str(err)
                 raise context.ContextError(error)
             elif not upperPrimary and not lowerBass:
                 if len(cxt.parts) == 2:
                     error = ('The upper line is not generable as a '
-                             'primary line. \nNor is the lower line '
+                             'primary line.\nNor is the lower line '
                              'generable as a bass line.')
                 else:
                     error = ('No upper line is generable as '
-                             'a primary line. \nNor is the lower '
+                             'a primary line.\nNor is the lower '
                              'line generable as a bass line.')
                 for part in cxt.parts[:-1]:
-                    if cxt.errorsDict[part.name]:
+                    if cxt.errorsDict[part.name].get('primary'):
                         error = (error + '\n\tThe following linear '
                                  'errors were found in ' + part.name + ':')
                         for err in cxt.errorsDict[part.name]['primary']:
-                            error = error + '\n\t\t\t' + str(err)
+                            error = error + '\n\t\t' + str(err)
                 bln = cxt.parts[-1].name
-                if cxt.errorsDict[bln]:
+                if cxt.errorsDict[bln].get('bass'):
                     error = (error + '\n\tThe following linear errors '
                              'were found in the bass line:')
                     for err in cxt.errorsDict[bln]['bass']:
-                        error = error + '\n\t\t\t' + str(err)
+                        error = error + '\n\t\t' + str(err)
                 raise context.ContextError(error)
             # Update parse report if no errors found.
             cxt.parseReport = cxt.parseReport + '\n' + result
@@ -823,23 +831,23 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                 pass
             else:
                 for err in cxt.errorsDict[part.name]['parser errors']:
-                    error = error + '\n\t\t\t' + str(err)
+                    error = error + '\n\t\t' + str(err)
                 if not cxt.errorsDict[part.name]['parser errors']:
-                    error = error + '\n\t\t\tUnspecified error.'
+                    error = error + '\n\t\tUnspecified error.'
             try:
                 cxt.errorsDict[part.name]['primary']
             except KeyError:
                 pass
             else:
                 for err in cxt.errorsDict[part.name]['primary']:
-                    error = error + '\n\t\t\t' + str(err)
+                    error = error + '\n\t\t' + str(err)
             try:
                 cxt.errorsDict[part.name]['bass']
             except KeyError:
                 pass
             else:
                 for err in cxt.errorsDict[part.name]['bass']:
-                    error = error + '\n\t\t\t' + str(err)
+                    error = error + '\n\t\t' + str(err)
             raise context.ContextError(error)
         else:
             for part in cxt.parts[:-1]:
@@ -859,14 +867,14 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                     pass
                 else:
                     for err in cxt.errorsDict[part.name]['parser errors']:
-                        error = error + '\n\t\t\t' + str(err)
+                        error = error + '\n\t\t' + str(err)
                 try:
                     cxt.errorsDict[part.name]['primary']
                 except KeyError:
                     pass
                 else:
                     for err in cxt.errorsDict[part.name]['primary']:
-                        error = error + '\n\t\t\t' + str(err)
+                        error = error + '\n\t\t' + str(err)
             for part in cxt.parts[-1:]:
                 if part.isBass:
                     error = (error + '\n\t' + part.name +
@@ -881,14 +889,14 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                     pass
                 else:
                     for err in cxt.errorsDict[part.name]['parser errors']:
-                        error = error + '\n\t\t\t' + str(err)
+                        error = error + '\n\t\t' + str(err)
                 try:
                     cxt.errorsDict[part.name]['bass']
                 except KeyError:
                     pass
                 else:
                     for err in cxt.errorsDict[part.name]['bass']:
-                        error = error + '\n\t\t\t' + str(err)
+                        error = error + '\n\t\t' + str(err)
 
         raise context.ContextError(error)
 

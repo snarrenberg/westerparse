@@ -46,38 +46,25 @@ logger.addHandler(f_handler)
 # EXCEPTION HANDLERS
 # -----------------------------------------------------------------------------
 
-logfile = 'logfile.txt'
-
-
-def clearLogfile(logfile):
-    pass
-    # file = open(logfile, 'w+')
-    # file.close()
-
-
-def printLogfile(logfile):
-    with open(logfile) as file:
-        print(file.read())
-
 
 class ContextError(Exception):
     def __init__(self, desc):
         self.desc = desc
-        self.logfile = logfile
+        self.report = ''
 
     def logerror(self):
-        pass
-        # log = open(self.logfile, 'a')
-        # print(self.desc, file=log)
+        self.report += f'CONTEXT ERROR:\n{self.desc}'
+        return self.report
 
 
 class EvaluationException(Exception):
-    def __init__(self):
-        self.logfile = logfile
-
-    def show(self):
+    def __init__(self, desc):
+        self.desc = desc
         pass
-        # printLogfile(self.logfile)
+
+    def report(self):
+        pass
+        # print(self.desc)
 
 # TODO: Figure out how to accommodate tonal ambiguity:
 #   Make a global context for each option?
@@ -176,7 +163,7 @@ class GlobalContext(Context):
             validateParts(self.score)
         except ContextError as ce:
             ce.logerror()
-            raise EvaluationException
+            raise EvaluationException(ce.report)
             return
         # (2) General set up for notes and parts.
         # To parts: assign numbers, rhythmic species, error list.
@@ -226,7 +213,7 @@ class GlobalContext(Context):
                                              self.barDuration)
             except ContextError as ce:
                 ce.logerror()
-                raise EvaluationException
+                raise EvaluationException(ce.report)
                 return
             else:
                 self.harmonicSpanDict = {
@@ -251,7 +238,7 @@ class GlobalContext(Context):
                 self.getLocalOnbeatHarmonies()
             except ContextError as ce:
                 ce.logerror()
-                raise EvaluationException()
+                raise EvaluationException(ce.report)
                 return
 
     def __repr__(self):
@@ -286,20 +273,22 @@ class GlobalContext(Context):
         kharm = self.harmonicSpecies
         # (1a) If user provides key, validate and test.
         if knote and kmode:
-            self.key = keyFinder.testKey(self.score, knote, kmode, kharm)
-            if not self.key:
-                raise EvaluationException
+            user_key_test_result = keyFinder.testKey(self.score, knote, kmode, kharm)
+            if not user_key_test_result[0]:
+                raise EvaluationException(user_key_test_result[1])
                 return
             else:
+                self.key = user_key_test_result[1]
                 self.keyFromUser = True
         # (1b) Else attempt to derive a key from the score.
         else:
-            self.key = keyFinder.inferKey(self.score)
-            if not self.key:
-                raise EvaluationException
+            infer_key_test_result = keyFinder.inferKey(self.score)
+            if not infer_key_test_result[0]:
+                raise EvaluationException(infer_key_test_result[1])
                 return
             else:
                 self.keyFromUser = False
+                self.key = infer_key_test_result[1]
         # (2) If successful, create a pretty name for the key.
         if self.key.getTonic().accidental is not None:
             keyAccidental = '-' + self.key.getTonic().accidental.name
@@ -362,7 +351,7 @@ class GlobalContext(Context):
                 # established that all of the pitches belong to the scale,
                 # so this exception is probably not necessary:
                 if not note.csd:
-                    raise EvaluationException
+                    raise EvaluationException('temp text for csd exception, contact sysadmin')
                     return
 
     # For parsing third or fifth species and for counterpoint

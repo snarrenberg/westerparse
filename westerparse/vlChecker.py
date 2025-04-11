@@ -173,7 +173,7 @@ def checkCounterpoint(context, report=True):
             result = ('VOICE LEADING REPORT\nThe following '
                       'voice-leading errors were found:')
             for error in vlErrors:
-                result = result + '\n\t\t' + error
+                result = result + '\n\t' + error
         if report == 'html':
             return result
         else:
