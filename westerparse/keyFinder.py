@@ -77,7 +77,7 @@ class KeyFinderError(Exception):
         self.report = ''
 
     def logerror(self):
-        self.report += f'KEY FINDER ERROR:\n{self.desc}'
+        self.report += f'KEY FINDER ERROR\n{self.desc}'
         return self.report
 
 # -----------------------------------------------------------------------------

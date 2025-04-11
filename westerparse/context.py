@@ -53,7 +53,7 @@ class ContextError(Exception):
         self.report = ''
 
     def logerror(self):
-        self.report += f'CONTEXT ERROR:\n{self.desc}'
+        self.report += f'CONTEXT ERROR\n{self.desc}'
         return self.report
 
 

@@ -352,7 +352,6 @@ def parseContext(cxt,
         createParseReport(cxt, generability, partsForParsing, partSelection,
                           partLineType)
     except context.ContextError as ce:
-        ce.desc = 'PARSE REPORT:\n' + ce.desc
         raise context.EvaluationException(ce.desc)
 
     # (8) Gather the interpretations of the selected part(s)
