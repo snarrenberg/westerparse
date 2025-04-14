@@ -3,7 +3,7 @@
 # Purpose:      Framework for determining the key of simple tonal lines
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2022 by Robert Snarrenberg
+# Copyright:    (c) 2025 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # -----------------------------------------------------------------------------
 """

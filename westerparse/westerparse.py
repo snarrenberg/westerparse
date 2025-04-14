@@ -3,7 +3,7 @@
 # Purpose:     Evaluating Westergaardian species counterpoint
 #
 # Author:      Robert Snarrenberg
-# Copyright:   (c) 2023 by Robert Snarrenberg
+# Copyright:   (c) 2025 by Robert Snarrenberg
 # License:     BSD, see license.txt
 # -----------------------------------------------------------------------------
 """

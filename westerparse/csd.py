@@ -3,7 +3,7 @@
 # Purpose:      Object for storing scale degree properties of a note
 #
 # Author:       Robert Snarrenberg
-# Copyright:    (c) 2021 by Robert Snarrenberg
+# Copyright:    (c) 2025 by Robert Snarrenberg
 # License:      BSD, see license.txt
 # ------------------------------------------------------------------------------
 """
