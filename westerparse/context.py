@@ -534,11 +534,12 @@ def validateParts(score):
     if len(score.parts) < 1:
         error = 'The source does not contain any parts.'
         raise ContextError(error)
-    else:
-        for num, part in enumerate(score.parts):
-            if len(part.recurse().notes) < 1:
-                error = ('Part ' + str(num+1) + ' contains no notes.')
-                raise ContextError(error)
+    for part in score.parts:
+        for measure in part.getElementsByClass('Measure'):
+            if measure.barDuration.quarterLength != measure.duration:
+                # print('partial measure')
+                error = ('One or more measures does not contain enough notes. Please complete the exercise and try again.')
+            raise ContextError(error)
 
 
 def assignSpecies(part):
