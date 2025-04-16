@@ -274,6 +274,7 @@ class GlobalContext(Context):
         # (1a) If user provides key, validate and test.
         if knote and kmode:
             user_key_test_result = keyFinder.testKey(self.score, knote, kmode, kharm)
+            logger.debug(f'user_key_test_result = {user_key_test_result}')
             if not user_key_test_result[0]:
                 raise EvaluationException(user_key_test_result[1])
                 return
@@ -283,6 +284,7 @@ class GlobalContext(Context):
         # (1b) Else attempt to derive a key from the score.
         else:
             infer_key_test_result = keyFinder.inferKey(self.score)
+            logger.debug(f'infer_key_test_result = {infer_key_test_result}')
             if not infer_key_test_result[0]:
                 raise EvaluationException(infer_key_test_result[1])
                 return
