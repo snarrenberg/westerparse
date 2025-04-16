@@ -536,9 +536,18 @@ def validateParts(score):
         raise ContextError(error)
     for part in score.parts:
         for measure in part.getElementsByClass('Measure'):
-            if measure.barDuration.quarterLength != measure.duration:
-                # print('partial measure')
-                error = ('One or more measures does not contain enough notes. Please complete the exercise and try again.')
+            if measure.barDuration.quarterLength < measure.duration.quarterLength:
+                error = ('At least one measure does not contain enough notes. Please complete the exercise and try again.')
+                raise ContextError(error)
+            elif measure.barDuration.quarterLength > measure.duration.quarterLength:
+                error = (
+                    'At least one measure contains too many notes. Please revise the exercise and try again.')
+                raise ContextError(error)
+        final_measure = part.measure(-1)
+        final_measure_notes = final_measure.notes
+        if len(final_measure_notes) != 1:
+            error = (
+                'The final measure contains too many notes. Please revise the exercise and try again.')
             raise ContextError(error)
 
 
