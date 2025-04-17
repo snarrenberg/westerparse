@@ -48,8 +48,8 @@ from westerparse import utilities
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-# logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
+# logger.setLevel(logging.DEBUG)
 logger.propagate = False
 # logging handlers
 f_handler = logging.FileHandler('westerparse.txt', mode='w')
@@ -151,7 +151,6 @@ def evaluateLines(source,
      given as measure numbers.
     """
     logger.debug(f'Evaluating lines in {source}.')
-    return f'trying desperately to respond'
     # Make the global context.
     if partLineType == 'any' or '':
         partLineType = None
@@ -188,6 +187,7 @@ def evaluateLines(source,
         else:
             fce.report()
             print(fce.desc)
+    return f'trying desperately to respond'
 
 
 def evaluateCounterpoint(source,
