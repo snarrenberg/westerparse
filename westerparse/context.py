@@ -537,14 +537,14 @@ def validateParts(score):
     for part in score.parts:
         for measure in part.getElementsByClass('Measure'):
             if len([n for n in measure.notes]) == 0 or measure.barDuration.quarterLength < measure.duration.quarterLength:
-                error = ('At least one measure does not contain enough notes. Please complete the exercise and try again.')
+                error = ('At least one measure does not contain enough notes.\nPlease complete the exercise and try again.')
                 raise ContextError(error)
             elif measure.barDuration.quarterLength > measure.duration.quarterLength:
                 error = (
-                    'At least one measure contains too many notes. Please revise the exercise and try again.')
+                    'At least one measure contains too many notes.\nPlease revise the exercise and try again.')
                 raise ContextError(error)
             elif measure.number > 1 and (len([nr for nr in measure.notesAndRests]) != len([n for n in measure.notes])):
-                error = ('At least one measure other than the first contains a rest. Please reivse the exercise and try again.')
+                error = ('At least one measure other than the first contains a rest.\nPlease reivse the exercise and try again.')
                 raise ContextError(error)
             elif measure.number == 1:
                 initial_pitch = False
@@ -552,14 +552,14 @@ def validateParts(score):
                     if n.isNote:
                         initial_pitch = True
                     if n.isRest and initial_pitch:
-                        error = ('The first measure has a rest after a note. Please revise the exercise and try again.')
+                        error = ('The first measure has a rest after a note.\nPlease revise the exercise and try again.')
                         raise ContextError(error)
         final_measure = part.measure(-1)
         final_measure_notes = final_measure.notes
 
         if len(final_measure_notes) != 1:
             error = (
-                'The final measure contains too many notes. Please revise the exercise and try again.')
+                'The final measure contains too many notes.\nPlease revise the exercise and try again.')
             raise ContextError(error)
 
 
