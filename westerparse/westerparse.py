@@ -151,6 +151,7 @@ def evaluateLines(source,
      given as measure numbers.
     """
     logger.debug(f'Evaluating lines in {source}.')
+    return f'trying desperately to respond'
     # Make the global context.
     if partLineType == 'any' or '':
         partLineType = None
