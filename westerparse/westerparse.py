@@ -187,7 +187,6 @@ def evaluateLines(source,
         else:
             fce.report()
             print(fce.desc)
-    return f'trying desperately to respond'
 
 
 def evaluateCounterpoint(source,
