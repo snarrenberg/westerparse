@@ -168,7 +168,6 @@ def evaluateLines(source,
 
     # Parse the global context.
     try:
-        return f'trying desperately to respond with good news in html'
         parseContext(cxt, show, partSelection, partLineType)
         logger.debug(f'\n{cxt.parseReport}')
         if show is None or report is True:
@@ -180,7 +179,6 @@ def evaluateLines(source,
             return utilities.create_html_report(cxt.parseReport)
         return True
     except context.EvaluationException as fce:
-        return f'trying desperately to respond with error in html'
         # suppress error reporting when generating parse data files
         if show == 'html':
             return utilities.create_html_report(fce.desc)
