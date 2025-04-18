@@ -552,7 +552,7 @@ def validateParts(score):
                     if n.isNote:
                         initial_pitch = True
                     if n.isRest and initial_pitch:
-                        error = ('The first measure has a rest after a note.\nPlease revise the exercise and try again.')
+                        error = ('The first measure has a rest after a note or is incomplete.\nPlease revise the exercise and try again.')
                         raise ContextError(error)
         final_measure = part.measure(-1)
         final_measure_notes = final_measure.notes
