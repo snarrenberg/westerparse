@@ -141,7 +141,7 @@ class GlobalContext(Context):
     #. Measure-long local harmonic contexts are created,
        for use in parsing events in third species.
     """
-    def __init__(self, score, **kwargs):
+    def __init__(self, score, partSelection, **kwargs):
         super().__init__()
         self.score = score
         self.parts = self.score.parts
@@ -151,6 +151,7 @@ class GlobalContext(Context):
         self.errors = []
         self.errorsDict = {}
         self.parseReport = ''
+        self.partSelection = partSelection
         if kwargs.get('harmonicSpecies'):
             self.harmonicSpecies = kwargs['harmonicSpecies']
         else:
@@ -160,7 +161,7 @@ class GlobalContext(Context):
         # (1) Verify that there are parts populated with notes.
         # TODO: only check selected parts
         try:
-            validateParts(self.score)
+            validateParts(self.score, partSelection)
         except ContextError as ce:
             ce.logerror()
             raise EvaluationException(ce.report)
@@ -530,12 +531,16 @@ class TsPart:
 # -----------------------------------------------------------------------------
 
 
-def validateParts(score):
+def validateParts(score, partSelection):
     if len(score.parts) < 1:
         error = 'The source does not contain any parts.'
         raise ContextError(error)
-    for part in score.parts:
+    for num, part in enumerate(score.parts):
+        if num != partSelection:
+            continue
         for measure in part.getElementsByClass('Measure'):
+            # print(measure.barDuration.quarterLength,
+            #       measure.duration.quarterLength)
             if len([n for n in measure.notes]) == 0 or measure.barDuration.quarterLength < measure.duration.quarterLength:
                 error = ('At least one measure does not contain enough notes.\nPlease complete the exercise and try again.')
                 raise ContextError(error)

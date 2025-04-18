@@ -155,7 +155,7 @@ def evaluateLines(source,
     if partLineType == 'any' or '':
         partLineType = None
     try:
-        cxt = makeGlobalContext(source, **kwargs)
+        cxt = makeGlobalContext(source, partSelection, **kwargs)
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files
         if show == 'html':
@@ -235,7 +235,7 @@ def evaluateCounterpoint(source,
 # -----------------------------------------------------------------------------
 
 
-def makeGlobalContext(source, **kwargs):
+def makeGlobalContext(source, partSelection, **kwargs):
     """
     Import a musicxml file and convert to music21 Stream.
     Then create a :py:class:`~context.GlobalContext`.
@@ -243,7 +243,7 @@ def makeGlobalContext(source, **kwargs):
     s = converter.parse(source)
     # create a global context object and prep for evaluation
     # if errors encountered, script will exit and report
-    gxt = context.GlobalContext(s, filename=source, **kwargs)
+    gxt = context.GlobalContext(s, partSelection, filename=source, **kwargs)
     return gxt
 
 # -----------------------------------------------------------------------------
@@ -831,8 +831,9 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
             else:
                 for err in cxt.errorsDict[part.name]['parser errors']:
                     error = error + '\n\t\t' + str(err)
-                if not cxt.errorsDict[part.name]['parser errors']:
-                    error = error + '\n\t\tUnspecified error.'
+                # 2025-04-18 turn off unspecified error msg
+                # if not cxt.errorsDict[part.name]['parser errors']:
+                #     error = error + '\n\t\tUnspecified error.'
             try:
                 cxt.errorsDict[part.name]['primary']
             except KeyError:
