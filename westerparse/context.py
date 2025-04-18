@@ -16,6 +16,7 @@ and local contexts.
 
 from music21 import *
 import logging
+import os
 
 from westerparse import vlChecker
 from westerparse import parser
@@ -164,7 +165,9 @@ class GlobalContext(Context):
             validateParts(self.score, partSelection)
         except ContextError as ce:
             ce.logerror()
-            raise EvaluationException(ce.report)
+            fn = os.path.basename(self.filename)
+            rpt = f'{fn}\n{ce.report}'
+            raise EvaluationException(rpt)
             return
         # (2) General set up for notes and parts.
         # To parts: assign numbers, rhythmic species, error list.
@@ -214,7 +217,9 @@ class GlobalContext(Context):
                                              self.barDuration)
             except ContextError as ce:
                 ce.logerror()
-                raise EvaluationException(ce.report)
+                fn = os.path.basename(self.filename)
+                rpt = f'{fn}\n{ce.report}'
+                raise EvaluationException(rpt)
                 return
             else:
                 self.harmonicSpanDict = {
@@ -277,7 +282,9 @@ class GlobalContext(Context):
             user_key_test_result = keyFinder.testKey(self.score, knote, kmode, kharm)
             logger.debug(f'user_key_test_result = {user_key_test_result}')
             if not user_key_test_result[0]:
-                raise EvaluationException(user_key_test_result[1])
+                fn = os.path.basename(self.filename)
+                rpt = f'{fn}\n{user_key_test_result[1]}'
+                raise EvaluationException(rpt)
                 return
             else:
                 self.key = user_key_test_result[1]
@@ -287,7 +294,9 @@ class GlobalContext(Context):
             infer_key_test_result = keyFinder.inferKey(self.score)
             logger.debug(f'infer_key_test_result = {infer_key_test_result}')
             if not infer_key_test_result[0]:
-                raise EvaluationException(infer_key_test_result[1])
+                fn = os.path.basename(self.filename)
+                rpt = f'{fn}\n{user_key_test_result[1]}'
+                raise EvaluationException(rpt)
                 return
             else:
                 self.keyFromUser = False
@@ -554,7 +563,7 @@ def validateParts(score, partSelection):
                 for n in measure.notesAndRests:
                     if n.isNote:
                         initial_pitch = True
-                        # continue
+                        continue
                     if n.isRest and initial_pitch:
                         error = ('The first measure has a rest after a note or is incomplete.\nPlease revise the exercise and try again.')
                         raise ContextError(error)

@@ -106,12 +106,12 @@ def evaluateLines(source,
        user's local directory. [Eventually the user will be able to select
        a directory by editing a configuration.py file.]  By default, the
        files are written to 'parses_from_context/'.  The name for each
-       file consists of the prefix 'parser_output\_', a timestamp,
+       file consists of the prefix 'parser_output', a timestamp,
        and the suffix '.musicxml'.
 
        `writeToPng` -- Use the application MuseScore to produce png files.
        MuseScore first generates an xml file and then derives the png
-       file.  These are named with the prefix 'parser_output\_',
+       file.  These are named with the prefix 'parser_output',
        a timestamp, and the appropriate suffix.  Note that Musescore
        inserts '-1' before adding the '.png' suffix. The default
        directory for these files is 'tempimages/'.  [This, too, can be
@@ -159,7 +159,10 @@ def evaluateLines(source,
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files
         if show == 'html':
-            return utilities.create_html_report(fce.desc)
+            fn = os.path.basename(source)
+            desc = f'{fn}\n{fce.desc}'
+            return utilities.create_html_report(desc)
+            # return utilities.create_html_report(fce.desc)
         elif show == 'parsedata':
             pass
         else:
@@ -218,7 +221,9 @@ def evaluateCounterpoint(source,
     except context.ContextError as ce:
         ce.logerror()
         if report == 'html':
-            return utilities.create_html_report(ce.report)
+            fn = os.path.basename(source)
+            rpt = f'{fn}\n{ce.report}'
+            return utilities.create_html_report(rpt)
     # If context is contrapuntal, evaluate the voice leading.
     else:
         result = vlChecker.checkCounterpoint(cxt, report)
@@ -306,14 +311,14 @@ def parseContext(cxt,
         partsForParsing = validatePartSelection(cxt, partSelection)
     except context.ContextError as ce:
         ce.logerror()
-        raise context.EvaluationException(ce.report)
+        raise context.EvaluationException(ce.desc)
 
     # (3) Validate line type selection.
     try:
         validateLineTypeSelection(cxt, partSelection, partLineType)
     except context.ContextError as ce:
         ce.logerror()
-        raise context.EvaluationException(ce.report)
+        raise context.EvaluationException(ce.desc)
 
     # (4) Run the parser, collect errors, and log parses.
     for part in partsForParsing:
@@ -352,6 +357,7 @@ def parseContext(cxt,
         createParseReport(cxt, generability, partsForParsing, partSelection,
                           partLineType)
     except context.ContextError as ce:
+        # ce.logerror()
         raise context.EvaluationException(ce.desc)
 
     # (8) Gather the interpretations of the selected part(s)
@@ -385,13 +391,15 @@ def validatePartSelection(cxt, partSelection):
                 pts = ' part'
             else:
                 pts = ' parts'
-            raise context.ContextError(
-                'The composition has only '
+            fn = os.path.basename(cxt.filename)
+            error = (f'{fn}\nCONTEXT ERROR\n'
+                + 'The composition has only '
                 + str(len(cxt.parts)) + pts
                 + ', so the part selection must fall in the range of 0-'
                 + str(len(cxt.parts)-1)
-                + '. Hence the selection of part '
+                + '.\nHence the selection of part '
                 + str(partSelection) + ' is invalid.')
+            raise context.ContextError(error)
         else:
             if partSelection >= 0:
                 partsSelected = cxt.parts[partSelection:partSelection+1]
@@ -415,13 +423,14 @@ def validateLineTypeSelection(cxt, partSelection, partLineType):
             return True
         else:
             pass
-        raise context.ContextError(
-            'You have selected the following line type: '
-            + f'{partLineType}. '
-            + '\nHowever, line type selection is only permitted '
-            + 'when the source is a single line \nor there is a valid '
-            + 'part selection.'
-            )
+        fn = os.path.basename(cxt.filename)
+        error = (f'{fn}\nCONTEXT ERROR\n'
+                 + 'You have selected the following line type: '
+                 + f'{partLineType}. '
+                 + '\nHowever, line type selection is only permitted '
+                 + 'when the source is a single line\nor there is a valid '
+                 + 'part selection.')
+        raise context.ContextError(error)
 
 
 def parsePart(part, cxt):
@@ -689,7 +698,8 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
     and a required error report if errors arise.
     """
     # Base string for reporting parse results.
-    cxt.parseReport = 'PARSE REPORT'
+    fn = os.path.basename(cxt.filename)
+    cxt.parseReport = f'{fn}\nPARSE REPORT'
 
     # Gather information on the key to report to the user.
     if cxt.keyFromUser:
@@ -735,6 +745,7 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                     if cxt.errorsDict[part.name][partLineType]:
                         for err in cxt.errorsDict[part.name][partLineType]:
                             error = error + '\n\t\t' + str(err)
+                    error = f'{fn}\nPARSE REPORT\n' + error
                     raise context.ContextError(error)
             # Update parse report if no errors found.
             cxt.parseReport = cxt.parseReport + '\n' + result
@@ -775,6 +786,7 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                                  'errors were found in ' + gul + ':')
                         for err in cxt.errorsDict[gul]['parser errors']:
                             error = error + '\n\t\t\t' + str(err)
+                error = f'{fn}\nPARSE REPORT\n' + error
                 raise context.ContextError(error)
             elif upperPrimary and not lowerBass:
                 if len(cxt.parts) == 2:
@@ -791,6 +803,7 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                              'errors were found in the bass line:')
                     for err in cxt.errorsDict[bln].get('bass', []):
                         error = error + '\n\t\t\t' + str(err)
+                error = f'{fn}\nPARSE REPORT\n' + error
                 raise context.ContextError(error)
             elif not upperPrimary and not lowerBass:
                 if len(cxt.parts) == 2:
@@ -813,6 +826,7 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                              'were found in the bass line:')
                     for err in cxt.errorsDict[bln]['bass']:
                         error = error + '\n\t\t' + str(err)
+                error = f'{fn}\nPARSE REPORT\n' + error
                 raise context.ContextError(error)
             # Update parse report if no errors found.
             cxt.parseReport = cxt.parseReport + '\n' + result

@@ -103,6 +103,7 @@ or :py:func:'fourthSpeciesControlOfDissonance'.
 
 import unittest
 import logging
+import os
 
 from music21 import *
 
@@ -167,10 +168,11 @@ def checkCounterpoint(context, report=True):
 
     # Report voice-leading errors, if asked.
     if report:
+        fn = os.path.basename(context.filename)
         if not vlErrors:
-            result = ('VOICE LEADING REPORT\nNo voice-leading errors found.\n')
+            result = (f'{fn}\nVOICE LEADING REPORT\nNo voice-leading errors found.\n')
         else:
-            result = ('VOICE LEADING REPORT\nThe following '
+            result = (f'{fn}\nVOICE LEADING REPORT\nThe following '
                       'voice-leading errors were found:')
             for error in vlErrors:
                 result = result + '\n\t' + error
@@ -195,6 +197,7 @@ def checkCounterpoint(context, report=True):
                     print(advice)
     else:
         pass
+
 
 def checkDuet(context, duet):
     """

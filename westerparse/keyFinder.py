@@ -70,7 +70,6 @@ MAJORMODE = {'triad': [0, 4, 7], 'scale': [0, 2, 4, 5, 7, 9, 11]}
 
 
 class KeyFinderError(Exception):
-    # logfile = 'logfile.txt'
 
     def __init__(self, desc):
         self.desc = desc
@@ -365,6 +364,10 @@ def getPartKeysUsingScale(part):
     chromaResidues = {note.pitch.ps % 12 for note in part.flatten().notes}
     residueInit = part.flatten().notes[0].pitch.ps % 12
     residueFin = part.flatten().notes[-1].pitch.ps % 12
+    leapPairResidues = set()
+    for note in part.flatten().notes:
+        if note.consecutions.rightType == 'skip':
+            leapPairResidues.add((note.pitch.ps % 12, note.next().pitch.ps % 12))
     leapPairResidues = {(note.pitch.ps % 12, note.next().pitch.ps % 12)
                         for note in part.flatten().notes
                         if note.consecutions.rightType == 'skip'}
@@ -383,7 +386,7 @@ def getPartKeysUsingScale(part):
 
         terminals = terminalsTest(residueInit, residueFin, thisMinorTriad)
         scalars = scaleTest(chromaResidues, thisMinorScale)
-        # EXEMPT THIRD SPECIES LINES FROM LEAPS TEST.
+        # EXEMPT THIRD SPECIES LINES AND HARMONIC SPECIES FROM LEAPS TEST.
         if (part.harmonicSpecies
                 or part.species not in ['first', 'second', 'fourth']):
             leaps = True
