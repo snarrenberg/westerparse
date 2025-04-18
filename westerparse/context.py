@@ -539,10 +539,10 @@ def validateParts(score, partSelection):
         if num != partSelection:
             continue
         for measure in part.getElementsByClass('Measure'):
-            # print(measure.barDuration.quarterLength,
-            #       measure.duration.quarterLength)
             if len([n for n in measure.notes]) == 0 or measure.barDuration.quarterLength < measure.duration.quarterLength:
-                error = ('At least one measure does not contain enough notes.\nPlease complete the exercise and try again.')
+                # error = ('At least one measure does not contain enough notes.\nPlease complete the exercise and try again.')
+                # temp trap for testing
+                error = str([n for n in measure.notes])
                 raise ContextError(error)
             elif measure.barDuration.quarterLength > measure.duration.quarterLength:
                 error = (
