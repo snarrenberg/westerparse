@@ -536,7 +536,7 @@ def validateParts(score, partSelection):
         error = 'The source does not contain any parts.'
         raise ContextError(error)
     for num, part in enumerate(score.parts):
-        if num != partSelection:
+        if partSelection and num != partSelection:
             continue
         for measure in part.getElementsByClass('Measure'):
             if len([n for n in measure.notes]) == 0 or measure.barDuration.quarterLength < measure.duration.quarterLength:
@@ -556,12 +556,13 @@ def validateParts(score, partSelection):
                 for n in measure.notesAndRests:
                     if n.isNote:
                         initial_pitch = True
+                        # continue
                     if n.isRest and initial_pitch:
                         error = ('The first measure has a rest after a note or is incomplete.\nPlease revise the exercise and try again.')
                         raise ContextError(error)
+
         final_measure = part.measure(-1)
         final_measure_notes = final_measure.notes
-
         if len(final_measure_notes) != 1:
             error = (
                 'The final measure contains too many notes.\nPlease revise the exercise and try again.')
