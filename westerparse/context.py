@@ -200,11 +200,11 @@ class GlobalContext(Context):
         # TODO Move harmonic species span stuff to a different place.
         if self.harmonicSpecies:
             if kwargs.get('startPredominant'):
-                offPre = (kwargs['startPredominant'] - 1) * self.barDuration
+                offPre = (int(kwargs['startPredominant']) - 1) * self.barDuration
             else:
                 offPre = None
             if kwargs.get('startDominant'):
-                offDom = (kwargs['startDominant'] - 1) * self.barDuration
+                offDom = (int(kwargs['startDominant']) - 1) * self.barDuration
             offClosTon = (self.score.measures - 1) * self.barDuration
             try:
                 validateHarmonicSegmentation(offPre,
