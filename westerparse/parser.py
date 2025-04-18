@@ -76,8 +76,8 @@ addLocalRepetitions = True
 # -----------------------------------------------------------------------------
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-# logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 logger.propagate = False
 # logging handlers
 f_handler = logging.FileHandler('parser.txt', mode='w')
@@ -1796,11 +1796,11 @@ class Parser:
                 buildErrors = []
                 if self.notes[0].csd.value % 7 != 0:
                     buildError = ('Bass structure error: The line '
-                                  'does not begin on the tonic degree.')
+                                  'does not begin on the tonic degree (S2).')
                     buildErrors.append(buildError)
                 if self.notes[-1].csd.value % 7 != 0:
                     buildError = ('Bass structure error: The line '
-                                  'does not end on the tonic degree.')
+                                  'does not end on the tonic degree (S1).')
                     buildErrors.append(buildError)
                 s3cands = []
                 n = len(buffer)
@@ -1848,7 +1848,7 @@ class Parser:
                 buildErrors = []
                 if self.notes[-1].csd.value % 7 != 0:
                     buildError = ('Primary structure error: The line '
-                                  'does not end on the tonic degree.')
+                                  'does not end on the tonic degree (S1).')
                     buildErrors.append(buildError)
                 s2cands = []  # holder for Notes that might become S2
                 n = len(buffer)
@@ -1905,11 +1905,11 @@ class Parser:
                 buildErrors = []
                 if self.notes[0].csd.value % 7 != 0:
                     buildError = ('Bass structure error: The line '
-                                  'does not begin on the tonic degree.')
+                                  'does not begin on the tonic degree (S2).')
                     buildErrors.append(buildError)
                 if self.notes[-1].csd.value % 7 != 0:
                     buildError = ('Bass structure error: The line '
-                                  'does not end on the tonic degree.')
+                                  'does not end on the tonic degree (S1).')
                     buildErrors.append(buildError)
                 buffer = [self.notes[head] for head in self.D_openHeads]
                 stack = []
@@ -1962,7 +1962,7 @@ class Parser:
                 buildErrors = []
                 if self.notes[-1].csd.value % 7 != 0:
                     buildError = ('Primary structure error: The line '
-                                  'does not end on the tonic degree.')
+                                  'does not end on the tonic degree (S1).')
                     buildErrors.append(buildError)
                 t = self.notes[-1].csd.value
                 s2cands = [self.notes[head] for head in self.T_openHeads
