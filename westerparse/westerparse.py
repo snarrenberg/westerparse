@@ -202,7 +202,7 @@ def evaluateCounterpoint(source,
     logger.debug(f'Evaluating voice leading in {source}.')
     # Make the global context.
     try:
-        cxt = makeGlobalContext(source, **kwargs)
+        cxt = makeGlobalContext(source, partSelection=None, **kwargs)
     except context.EvaluationException as fce:
         if report == 'html':
             return utilities.create_html_report(fce.desc)
