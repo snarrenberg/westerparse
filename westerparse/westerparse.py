@@ -159,10 +159,7 @@ def evaluateLines(source,
     except context.EvaluationException as fce:
         # suppress error reporting when generating parse data files
         if show == 'html':
-            fn = os.path.basename(source)
-            desc = f'{fn}\n{fce.desc}'
-            return utilities.create_html_report(desc)
-            # return utilities.create_html_report(fce.desc)
+            return utilities.create_html_report(fce.desc)
         elif show == 'parsedata':
             pass
         else:
