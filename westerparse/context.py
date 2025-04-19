@@ -560,12 +560,14 @@ def validateParts(score, partSelection):
                 raise ContextError(error)
             elif measure.number == 1:
                 initial_pitch = False
+                nrs = [nr for nr in measure.notesAndRests]
                 for n in measure.notesAndRests:
                     if n.isNote:
                         initial_pitch = True
                         continue
                     if n.isRest and initial_pitch:
                         error = ('The first measure has a rest after a note.\nPlease revise the exercise and try again.')
+                        error += str(nrs) + '\n' + error
                         raise ContextError(error)
                     else:
                         continue
