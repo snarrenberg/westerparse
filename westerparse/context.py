@@ -560,7 +560,7 @@ def validateParts(score, partSelection):
                 raise ContextError(error)
             elif measure.number == 1:
                 initial_pitch = False
-                nrs = [nr for nr in measure.notesAndRests]
+                nrs = [nr.fullName for nr in measure.notesAndRests]
                 for n in measure.notesAndRests:
                     if n.isNote:
                         initial_pitch = True
