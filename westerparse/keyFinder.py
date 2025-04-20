@@ -197,7 +197,7 @@ def testValidatedKey(score, keynote, mode, kharm):
                      + ' notes in the line do not belong to the scale.')
             partErrors += '\n\t' + error
         # (3) Test leaps in monotriadic first, second and fourth species.
-        leapPairs = {(note.pitch.name, note.next().pitch.name)
+        leapPairs = {(note.pitch.name, note.next('Note').pitch.name)
                      for note in part.flatten().notes
                      if note.consecutions.rightType == 'skip'}
         if (not kharm
