@@ -567,7 +567,7 @@ def validateParts(score, partSelection):
                         continue
                     if n.isRest and initial_pitch:
                         error = ('The first measure has a rest after a note.\nPlease revise the exercise and try again.')
-                        error += str(nrs) + '\n' + error
+                        error += f'\n{nrs}'
                         raise ContextError(error)
                     else:
                         continue
