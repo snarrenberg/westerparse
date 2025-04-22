@@ -1671,7 +1671,7 @@ class Parser:
                     # C. If neither of these works, return an error.
                     elif self.part.species not in ['third', 'fifth']:
                         logger.debug(f'Case marker 170')
-                        error = ('The non-tonic-triad pitch '
+                        error = ('The Dnon-tonic-triad pitch '
                                  + j.nameWithOctave + ' in measure '
                                  + str(j.measureNumber)
                                  + ' cannot be generated.')
@@ -1681,7 +1681,7 @@ class Parser:
                 if (self.part.species not in ['third', 'fifth']
                         and j.dependency.lefthead is None):  # is None, in case
                     # lefthead is 0
-                    error = ('The non-tonic-triad pitch '
+                    error = ('The Enon-tonic-triad pitch '
                              + j.nameWithOctave + ' in measure '
                              + str(j.measureNumber)
                              + ' cannot be generated.')
