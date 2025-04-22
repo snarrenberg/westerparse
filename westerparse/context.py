@@ -548,10 +548,8 @@ def validateParts(score, partSelection):
         if partSelection is not None and num != partSelection:
             continue
         for measure in part.getElementsByClass('Measure'):
-            nrs = [nr.fullName for nr in measure.notesAndRests]
             if len([n for n in measure.notes]) == 0 or measure.barDuration.quarterLength < measure.duration.quarterLength:
                 error = ('At least one measure does not contain enough notes.\nPlease complete the exercise and try again.')
-                error += f'\n{nrs}'
                 raise ContextError(error)
             elif measure.barDuration.quarterLength > measure.duration.quarterLength:
                 error = (
@@ -562,14 +560,12 @@ def validateParts(score, partSelection):
                 raise ContextError(error)
             elif measure.number == 1:
                 initial_pitch = False
-                nrs = [nr.fullName for nr in measure.notesAndRests]
                 for n in measure.notesAndRests:
                     if n.isNote:
                         initial_pitch = True
                         continue
                     if n.isRest and initial_pitch:
                         error = ('The first measure has a rest after a note.\nPlease revise the exercise and try again.')
-                        error += f'\n{nrs}'
                         raise ContextError(error)
                     else:
                         continue
