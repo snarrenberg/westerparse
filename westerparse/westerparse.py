@@ -840,13 +840,13 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
             except KeyError:
                 pass
             else:
-                if isinstance(cxt.errorsDict[part.name]['parser errors'][0], list):
-                    for errs in cxt.errorsDict[part.name]['parser errors']:
-                        for err in errs:
-                            error += '\n\t\t' + str(err)
-                else:
-                    for err in cxt.errorsDict[part.name]['parser errors']:
-                        error += '\n\t\t' + str(err)
+                for errs in cxt.errorsDict[part.name]['parser errors']:
+                    if isinstance(errs, list):
+                        for errs in cxt.errorsDict[part.name]['parser errors']:
+                            for err in errs:
+                                error += '\n\t\t' + str(err)
+                    else:
+                        error += '\n\t\t' + str(errs)
 
                 # 2025-04-18 turn off unspecified error msg
                 # if not cxt.errorsDict[part.name]['parser errors']:
@@ -856,13 +856,9 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
             except KeyError:
                 pass
             else:
-                if isinstance(cxt.errorsDict[part.name]['parser errors'][0], list):
-                    for errs in cxt.errorsDict[part.name]['parser errors']:
-                        for err in errs:
-                            error += '\n\t\t' + str(err)
-                else:
-                    for err in cxt.errorsDict[part.name]['parser errors']:
-                        error += '\n\t\t' + str(err)
+                # TODO check older version to see which dictionary key this called
+                for err in cxt.errorsDict[part.name]['primary']:
+                    error += '\n\t\t' + str(err)
             try:
                 cxt.errorsDict[part.name]['bass']
             except KeyError:
