@@ -295,7 +295,7 @@ class GlobalContext(Context):
             logger.debug(f'infer_key_test_result = {infer_key_test_result}')
             if not infer_key_test_result[0]:
                 fn = os.path.basename(self.filename)
-                rpt = f'{fn}\n{user_key_test_result[1]}'
+                rpt = f'{fn}\n{infer_key_test_result[1]}'
                 raise EvaluationException(rpt)
                 return
             else:
