@@ -840,9 +840,9 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
             except KeyError:
                 pass
             else:
-                for err in cxt.errorsDict[part.name]['parser errors']:
-                    # print(err[0])
-                    error = error + '\n\t\t' + str(err)
+                for errs in cxt.errorsDict[part.name]['parser errors']:
+                   for err in errs: # print(err[0])
+                        error += '\n\t\t' + str(err)
                 # 2025-04-18 turn off unspecified error msg
                 # if not cxt.errorsDict[part.name]['parser errors']:
                 #     error = error + '\n\t\tUnspecified error.'
@@ -851,8 +851,9 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
             except KeyError:
                 pass
             else:
-                for err in cxt.errorsDict[part.name]['primary']:
-                    error = error + '\n\t\t' + str(err)
+                for errs in cxt.errorsDict[part.name]['parser errors']:
+                   for err in errs: # print(err[0])
+                        error += '\n\t\t' + str(err)
             try:
                 cxt.errorsDict[part.name]['bass']
             except KeyError:
