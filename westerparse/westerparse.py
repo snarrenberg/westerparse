@@ -841,6 +841,7 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                 pass
             else:
                 for err in cxt.errorsDict[part.name]['parser errors']:
+                    # print(err[0])
                     error = error + '\n\t\t' + str(err)
                 # 2025-04-18 turn off unspecified error msg
                 # if not cxt.errorsDict[part.name]['parser errors']:
