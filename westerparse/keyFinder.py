@@ -223,7 +223,10 @@ def findPartKeys(score):
         getPartKeyUsingHangingNotes(part)
 
         if part.keyCandidatesFromScale == []:
-            error = 'Unable to derive a key from one or more of the parts.'
+            if len(score.parts) == 1:
+                error = 'WesterParse is unable to derive a key from the given part.'
+            else:
+                error = 'WesterParse is unable to derive a key from one or more of the parts.'
             raise KeyFinderError(error)
 
 
