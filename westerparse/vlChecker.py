@@ -377,7 +377,7 @@ def checkControlOfDissonance(context, duet, VLQs):
             error = (f'Bar {lowerNote.measureNumber}: '
                      f'Dissonant interval off the beat that is not '
                      'approached and left by step: '
-                     f'{interval.Interval(lowerNote, upperNote).name}')
+                     f'{interval.Interval(lowerNote, upperNote).name}.')
             vlErrors.append(error)
 
         # Both notes start at the same time, both of them are tied over:
