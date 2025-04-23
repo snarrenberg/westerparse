@@ -221,6 +221,8 @@ def evaluateCounterpoint(source,
             fn = os.path.basename(source)
             rpt = f'{fn}\n{ce.report}'
             return utilities.create_html_report(rpt)
+        else:
+            print(ce.report)
     # If context is contrapuntal, evaluate the voice leading.
     else:
         result = vlChecker.checkCounterpoint(cxt, report)
