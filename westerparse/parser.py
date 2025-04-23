@@ -1686,7 +1686,8 @@ class Parser:
                              + str(j.measureNumber)
                              + ' cannot be generated.')
                     # in some cases (all?), this duplicates an error reported
-                    # in case C directly above
+                    # in case C directly above and perhaps elsewhere, so do not
+                    # duplicate
                     if error not in self.errors:
                         self.errors.append(error)
 
