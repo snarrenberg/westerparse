@@ -174,6 +174,7 @@ def checkCounterpoint(context, report=True):
         else:
             result = (f'{fn}\nVOICE LEADING REPORT\nThe following '
                       'voice-leading errors were found:')
+            vlErrors.sort()
             for error in vlErrors:
                 result = result + '\n\t' + error
         if report == 'html':
@@ -351,10 +352,9 @@ def checkControlOfDissonance(context, duet, VLQs):
         if (all(rules1) and not (all(rules2a)
                                  or all(rules2b)
                                  or all(rules2c))):
-            error = ('Dissonance between co-initiated notes in bar '
-                     + str(upperNote.measureNumber) + ': '
-                     + str(interval.Interval(lowerNote, upperNote).name)
-                     + '.')
+            error = (f'Bar {upperNote.measureNumber}: '
+                     f'Dissonance between co-initiated notes: '
+                     f'{interval.Interval(lowerNote, upperNote).name}.')
             vlErrors.append(error)
 
         # Rules for non-co-initiated simultaneities.
@@ -374,11 +374,10 @@ def checkControlOfDissonance(context, duet, VLQs):
         # Test non-co-initiated sumultaneities.
         if (all(rules3) and ((all(rules4) and not all(rules5a))
                              or (not all(rules4) and not all(rules5b)))):
-            error = ('Dissonant interval off the beat that is not '
-                     'approached and left by step in bar '
-                     + str(lowerNote.measureNumber) + ': '
-                     + str(interval.Interval(lowerNote, upperNote).name)
-                     + '.')
+            error = (f'Bar {lowerNote.measureNumber}: '
+                     f'Dissonant interval off the beat that is not '
+                     'approached and left by step: '
+                     f'{interval.Interval(lowerNote, upperNote).name}')
             vlErrors.append(error)
 
         # Both notes start at the same time, both of them are tied over:
@@ -420,10 +419,9 @@ def checkControlOfDissonance(context, duet, VLQs):
         if ((all(rules1a) or all(rules1b))
                 and not (all(rules2a) or all(rules2b))
                 and (all(rules3))):
-            error = ('Consecutive dissonant intervals in bar '
-                     + str(vlq.v1n1.measureNumber)
-                     + ' are not approached and left '
-                       'in the same direction.')
+            error = (f'Bar {vlq.v1n1.measureNumber}: '
+                     f'Consecutive dissonant intervals are not approached '
+                     f'and left in the same direction.')
             vlErrors.append(error)
 
     # TODO Fix so that it works with higher species
@@ -462,32 +460,29 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                 not vPair[speciesPart].consecutions.rightType == 'step'
             ]
             if all(rules):
-                error = ('Dissonant interval on the beat that is '
-                         'either not prepared or not resolved in bar '
-                         + str(vPair[0].measureNumber) + ': '
-                         + str(interval.Interval(vPair[0], vPair[1]).name)
-                         + '.')
+                error = (f'Bar {vPair[0].measureNumber}: Dissonant '
+                         f'interval on the beat that is either not prepared '
+                         f'or not resolved: '
+                         f'{interval.Interval(vPair[0], vPair[1]).name}.')
                 vlErrors.append(error)
             # Look for second-species onbeat dissonance.
             rules = [vPair[speciesPart].beat == 1.0,
                      vPair[speciesPart].tie is None,
                      not isConsonanceAboveBass(vPair[1], vPair[0])]
             if all(rules):
-                error = ('Dissonant interval on the beat that is not '
-                         'permitted when fourth species is broken in bar '
-                         + str(vPair[0].measureNumber) + ': '
-                         + str(interval.Interval(vPair[1], vPair[0]).name)
-                         + '.')
+                error = (f'Bar {vPair[0].measureNumber}: Dissonant '
+                         f'interval on the beat that is not '
+                         f'permitted when fourth species is broken: '
+                         f'{interval.Interval(vPair[1], vPair[0]).name}.')
                 vlErrors.append(error)
             # Look for offbeat note that is dissonant and tied over.
             rules = [vPair[speciesPart].beat > 1.0,
                      not isConsonanceAboveBass(vPair[1], vPair[0]),
                      vPair[0].tie is not None or vPair[1].tie is not None]
             if all(rules):
-                error = ('Dissonant interval off the beat in bar '
-                         + str(vPair[0].measureNumber) + ': '
-                         + str(interval.Interval(vPair[1], vPair[0]).name)
-                         + '.')
+                error = (f'Bar {vPair[0].measureNumber}: Dissonant '
+                         f'interval off the beat: '
+                         f'{interval.Interval(vPair[1], vPair[0]).name}.')
                 vlErrors.append(error)
         # TODO Need to figure out rules for 3 or more parts.
         elif not duet.includesBass:
@@ -507,10 +502,10 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
         if speciesNote.tie is None and speciesNote.beat > 1.0:
             if (not allowSecondSpeciesBreak
                     and speciesNote.measureNumber != context.score.measures - 1):
-                error = ('Breaking of fourth species is allowed only '
-                         'at the end and not in bars '
-                         + str(speciesNote.measureNumber) + ' to '
-                         + str(speciesNote.measureNumber + 1) + '.')
+                error = (f'Bar {speciesNote.measureNumber} to '
+                         f'bar {(speciesNote.measureNumber + 1)}:'
+                         f'Breaking of fourth species is allowed only '
+                         'at the end.')
                 vlErrors.append(error)
             elif (allowSecondSpeciesBreak
                   and speciesNote.measureNumber != context.score.measures - 1):
@@ -520,20 +515,19 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                 if all(rules):
                     breakcount += 1
                 elif breakcount >= 1:
-                    error = ('Breaking of fourth species is only '
-                             'allowed once during the exercise.')
+                    error = (f'Breaking of fourth species is only '
+                             f'allowed once during the exercise.')
                     vlErrors.append(error)
                 elif earliestBreak > speciesNote.measureNumber:
-                    error = ('Breaking of fourth species in bars '
-                             + str(speciesNote.measureNumber)
-                             + ' to ' + str(speciesNote.measureNumber + 1)
-                             + ' occurs too early.')
+                    error = (f'Bar {speciesNote.measureNumber} to '
+                             f'bar {(speciesNote.measureNumber + 1)}: '
+                             f'Breaking of fourth species in bars '
+                             f'occurs too early.')
                     vlErrors.append(error)
                 elif speciesNote.measureNumber > latestBreak:
-                    error = ('Breaking of fourth species in bars '
-                             + str(speciesNote.measureNumber)
-                             + ' to ' + str(speciesNote.measureNumber + 1)
-                             + ' occurs too late.')
+                    error = (f'Bar {speciesNote.measureNumber} to '
+                             f'bar {(speciesNote.measureNumber + 1)}: '
+                             f'Breaking of fourth species occurs too late.')
                     vlErrors.append(error)
                 # If the first vInt is dissonant, the speciesNote
                 # will be checked later.
@@ -547,9 +541,9 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                     logger.debug(f'{isVerticalDissonance(vlq.v1n1, vlq.v2n1)}'
                                  f'{isVerticalDissonance(vlq.v1n2, vlq.v2n2)}'
                                  )
-                    error = ('Dissonance off the beat in bar '
-                             + str(speciesNote.measureNumber)
-                             + ' is not approached and left by step.')
+                    error = (f'Bar {speciesNote.measureNumber}: '
+                             f'Dissonance off the beat is not approached '
+                             f'and left by step.')
                     vlErrors.append(error)
 
     # Westergaard's lists of suspensions, by type:
@@ -597,18 +591,18 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
             if (syncopeList[bar] not in strongSuspensions['upper']
                     and syncopeList[bar] not in intermediateSuspensions[
                         'upper']):
-                error = ('The dissonant syncopation in bar '
-                         + str(bar) + ' is not permitted: '
-                         + str(syncopeList[bar]) + '.')
+                error = (f'Bar {bar}: '
+                         f'The dissonant syncopation is not permitted: '
+                         f'{syncopeList[bar]}.')
                 vlErrors.append(error)
     elif speciesPart == 1:
         for bar in syncopeList:
             if (syncopeList[bar] not in strongSuspensions['lower']
                     and syncopeList[bar] not in intermediateSuspensions[
                         'lower']):
-                error = ('The dissonant syncopation in bar '
-                         + str(bar) + ' is not permitted: '
-                         + str(syncopeList[bar]) + '.')
+                error = (f'Bar {bar}: '
+                         f'The dissonant syncopation is not permitted: '
+                         f'{syncopeList[bar]}.')
                 vlErrors.append(error)
     # logger.debug(f'Syncopes list: {syncopeList}.')
 
@@ -629,12 +623,12 @@ def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
         'Note')[0]
     # check the types of forbidden motion
     if isSimilarUnison(vlq):
-        error = ('Forbidden similar motion to unison going into bar '
-                 + str(vlq.v2n2.measureNumber) + '.')
+        error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                 f'Forbidden similar motion to unison.')
         vlErrors.append(error)
     if isSimilarFromUnison(vlq):
-        error = ('Forbidden similar motion from unison in bar '
-                 + str(vlq.v2n1.measureNumber) + '.')
+        error = (f'Bar {vlq.v2n1.measureNumber}: '
+                 f'Forbidden similar motion from unison.')
         vlErrors.append(error)
     if isSimilarOctave(vlq):
         rules = [vlq.hIntervals[0].name in ['m2', 'M2'],
@@ -642,8 +636,8 @@ def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
                  vlq.v1n2.measureNumber == context.score.measures,
                  vlq.v2n2.measureNumber == context.score.measures]
         if not all(rules):
-            error = ('Forbidden similar motion to octave going into bar '
-                     + str(vlq.v2n2.measureNumber) + '.')
+            error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                     f'Forbidden similar motion to octave.')
             vlErrors.append(error)
     if isSimilarFifth(vlq):
         rules1 = [vlq.hIntervals[0].name in ['m2', 'M2']]
@@ -655,20 +649,20 @@ def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
                   vlq.v2n2.csd.value % 7 != vlqBassNote.csd.value % 7]
         if not ((all(rules1) and all(rules2))
                 or (all(rules1) and all(rules3))):
-            error = ('Forbidden similar motion to fifth going into bar '
-                     + str(vlq.v2n2.measureNumber) + '.')
+            error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                     f'Forbidden similar motion to fifth.')
             vlErrors.append(error)
     if isParallelUnison(vlq):
-        error = ('Forbidden parallel motion to unison going into bar '
-                 + str(vlq.v2n2.measureNumber) + '.')
+        error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                 f'Forbidden parallel motion to unison.')
         vlErrors.append(error)
     if isParallelOctave(vlq):
-        error = ('Forbidden parallel motion to octave going into bar '
-                 + str(vlq.v2n2.measureNumber) + '.')
+        error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                 f'Forbidden parallel motion to octave.')
         vlErrors.append(error)
     if isParallelFifth(vlq):
-        error = ('Forbidden parallel motion to fifth going '
-                 'into bar ' + str(vlq.v2n2.measureNumber) + '.')
+        error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                 f'Forbidden parallel motion to fifth.')
         vlErrors.append(error)
     if isVoiceCrossing(vlq):
         # Voice crossing can happen when both parts move or obliquely
@@ -676,29 +670,29 @@ def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
         if duet.parts[0].parentID == len(context.parts) - 1 or duet.parts[
             1].parentID == len(context.parts) - 1:
             if vlq.v1n1.beatStrength > vlq.v1n2.beatStrength:
-                error = f'Voice crossing in bar {vlq.v2n2.measureNumber}.'
+                error = f'Bar {vlq.v2n2.measureNumber}: Voice crossing.'
             else:
-                error = (f'Voice crossing going into bar '
-                         f'{vlq.v2n2.measureNumber}.')
+                error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                         f'Voice crossing.')
             vlErrors.append(error)
         else:
             if vlq.v1n1.beatStrength > vlq.v1n2.beatStrength:
-                alert = (f'ALERT: Upper voices cross in bar '
-                         f'{vlq.v2n2.measureNumber}.')
+                alert = (f'Bar {vlq.v2n2.measureNumber}: '
+                         f'ALERT: Upper voices cross.')
             else:
-                alert = (f'ALERT: Upper voices cross going into bar '
-                         f'{vlq.v2n2.measureNumber}.')
+                alert = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                         f'ALERT: Upper voices cross.')
             vlErrors.append(alert)
     if isVoiceOverlap(vlq):
         # Voice overlap can only happen with both parts move
         if duet.parts[0].parentID == len(context.parts) - 1 or duet.parts[
             1].parentID == len(context.parts) - 1:
-            error = ('Voice overlap going into bar '
-                     + str(vlq.v2n2.measureNumber) + ".")
+            error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                     f'Voice overlap.')
             vlErrors.append(error)
         else:
-            alert = ('ALERT: Upper voices overlap going into bar '
-                     + str(vlq.v2n2.measureNumber) + '.')
+            alert = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                     f'ALERT: Upper voices overlap.')
             vlErrors.append(alert)
     if isCrossRelation(vlq):
         # TODO add permissions for second (and third?) species, ITT, p. 115
@@ -708,8 +702,8 @@ def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
             cond2 = [duet.parts[1].species == 'second',
                      isDiatonicStep(vlq.v2n1, vlq.v2n2)]
             if not (all(cond1) or all(cond2)):
-                error = ('Cross relation going into bar '
-                         + str(vlq.v2n2.measureNumber) + '.')
+                error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                         f'Cross relation.')
                 vlErrors.append(error)
         else:
             # Test for step motion in another part.
@@ -728,8 +722,8 @@ def checkForbiddenMotionsOntoBeatWithoutSyncope(context, duet, vlq):
                         crossStep = True
                         break
             if not crossStep:
-                error = ('Cross relation going into bar '
-                         + str(vlq.v2n2.measureNumber) + '.')
+                error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                         f'Cross relation.')
                 vlErrors.append(error)
 
 
@@ -756,16 +750,16 @@ def checkSecondSpeciesForbiddenMotions(context, duet, VLQs):
     vlqOnbeatList = getOnbeatVLQs(duet)
     for vlq in vlqOnbeatList:
         if isParallelUnison(vlq):
-            error = ('Forbidden parallel motion to unison from bar '
-                     + str(vlq.v1n1.measureNumber) + ' to bar '
-                     + str(vlq.v1n2.measureNumber) + '.')
+            error = (f'Bar {vlq.v1n1.measureNumber} to '
+                     f'bar {vlq.v1n2.measureNumber}: '
+                     f'Forbidden parallel motion to unison.')
             vlErrors.append(error)
         # TODO Revise for three parts, Westergaard p. 143.
         # Requires looking at simultaneous VLQs in a pair of verticalities.
         if isParallelOctave(vlq):
-            error = ('Forbidden parallel motion to octave from bar '
-                     + str(vlq.v1n1.measureNumber) + ' to bar '
-                     + str(vlq.v1n2.measureNumber) + '.')
+            error = (f'Bar {vlq.v1n1.measureNumber} to '
+                     f'bar {vlq.v1n2.measureNumber}: '
+                     f'Forbidden parallel motion to octave.')
             vlErrors.append(error)
         if isParallelFifth(vlq):
             parDirection = interval.Interval(vlq.v1n1, vlq.v1n2).direction
@@ -800,10 +794,9 @@ def checkSecondSpeciesForbiddenMotions(context, duet, VLQs):
                     break
             # TODO verify that the logic of the rules evaluation is correct
             if not (all(rules1) or rules2):
-                error = ('Forbidden parallel motion to pefect fifth from the '
-                         'downbeat of bar ' + str(vlq.v1n1.measureNumber)
-                         + ' to the downbeat of bar '
-                         + str(vlq.v1n2.measureNumber) + '.')
+                error = (f'Bar {vlq.v1n1.measureNumber}, downbeat, to '
+                         f'bar {vlq.v1n2.measureNumber} downbeat: '
+                         f'Forbidden parallel motion to pefect fifth.')
                 vlErrors.append(error)
 
 
@@ -827,21 +820,20 @@ def checkThirdSpeciesForbiddenMotions(context, duet, VLQs):
                 if isVoiceCrossing(vlq):
                     # Strict rule when the bass is involved.
                     if duet.includesBass:
-                        error = ('Voice crossing in bar '
-                                 + str(vlq.v2n2.measureNumber) + '.')
+                        error = (f'Bar {vlq.v2n2.measureNumber}: Voice crossing.')
                         vlErrors.append(error)
                     else:
-                        alert = ('ALERT: Upper voices cross in bar '
-                                 + str(vlq.v2n2.measureNumber) + '.')
+                        alert = (f'Bar {vlq.v2n2.measureNumber}: '
+                                 f'ALERT: Upper voices cross.')
                         vlErrors.append(alert)
 
     def checkMotionsBeatToBeat():
         # Check motion from beat to beat.
         for vlq in getOnbeatVLQs(duet):
             if isParallelUnison(vlq):
-                error = ('Forbidden parallel motion to unison from bar '
-                         + str(vlq.v1n1.measureNumber) + ' to bar '
-                         + str(vlq.v1n2.measureNumber) + '.')
+                error = (f'Bar {vlq.v1n1.measureNumber} to '
+                         f'bar {vlq.v1n2.measureNumber}: '
+                         f'Forbidden parallel motion to unison.')
                 vlErrors.append(error)
             if isParallelOctave(vlq) or isParallelFifth(vlq):
                 parDirection = interval.Interval(vlq.v1n1, vlq.v1n2).direction
@@ -882,10 +874,9 @@ def checkThirdSpeciesForbiddenMotions(context, duet, VLQs):
                         break
                 # TODO Verify that the logic of the rules evaluation is correct.
                 if not (all(rules1) or rules2):
-                    error = ('Forbidden parallel motion from the downbeat '
-                             'of bar ' + str(vlq.v1n1.measureNumber) +
-                             ' to the downbeat of bar '
-                             + str(vlq.v1n2.measureNumber) + '.')
+                    error = (f'Bar {vlq.v1n1.measureNumber}, downbeat, to '
+                             f'bar {vlq.v1n2.measureNumber}, downbeat: '
+                             f'Forbidden parallel motion.')
                     vlErrors.append(error)
 
     def checkMotionsOffToOnBeat():
@@ -893,9 +884,9 @@ def checkThirdSpeciesForbiddenMotions(context, duet, VLQs):
         vlqNonconsecutivesList = getNonconsecutiveOffbeatToOnbeatVLQs(duet)
         for vlq in vlqNonconsecutivesList:
             if isParallelUnison(vlq):
-                error = ('Forbidden parallel motion to unison from bar '
-                         + str(vlq.v1n1.measureNumber) + ' to bar '
-                         + str(vlq.v1n2.measureNumber) + '.')
+                error = (f'Bar {vlq.v1n1.measureNumber} to '
+                         f'bar {vlq.v1n2.measureNumber}: '
+                         f'Forbidden parallel motion to unison.')
                 vlErrors.append(error)
             if isParallelOctave(vlq):
                 parDirection = interval.Interval(vlq.v1n1, vlq.v1n2).direction
@@ -934,10 +925,9 @@ def checkThirdSpeciesForbiddenMotions(context, duet, VLQs):
                         rules2 = True
                         break
                 if not (all(rules1) or rules2):
-                    error = ('Forbidden parallel octaves from an offbeat '
-                             'note in bar ' + str(vlq.v1n1.measureNumber)
-                             + ' to the downbeat of bar '
-                             + str(vlq.v1n2.measureNumber) + ".")
+                    error = (f'Bar {vlq.v1n1.measureNumber}, offbeat, to '
+                             f'bar {vlq.v1n2.measureNumber}, downbeat: '
+                             f'Forbidden parallel octaves.')
                     vlErrors.append(error)
 
     checkMotionsOntoBeat()
@@ -976,21 +966,21 @@ def checkFourthSpeciesForbiddenMotions(context, duet, VLQs):
     # evaluate the offbeat VLQs
     for vlq in vlqsOffbeat:
         if isParallelUnison(vlq):
-            error = ('Forbidden parallel motion to unison going into bar '
-                     + str(vlq.v2n2.measureNumber))
+            error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                     f'Forbidden parallel motion to unison.')
             vlErrors.append(error)
         if isParallelOctave(vlq):
             thisBar = vlq.v1n2.measureNumber
             thisOnbeatPair = vPairsOnbeatDict[thisBar]
             if not isConsonanceAboveBass(thisOnbeatPair[0], thisOnbeatPair[1]):
-                error = ('Forbidden parallel motion to octave going into bar '
-                         + str(vlq.v2n2.measureNumber))
+                error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                         f'Forbidden parallel motion to octave.')
                 vlErrors.append(error)
     # evaluate the onbeat VLQs
     for vlq in vlqsOnbeat:
         if isParallelUnison(vlq):
-            error = ('Forbidden parallel motion to unison going into bar '
-                     + str(vlq.v2n2.measureNumber))
+            error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                     f'Forbidden parallel motion to unison.')
             vlErrors.append(error)
     # Check second-species motion across barlines,
     # looking at vlq with initial untied offbeat note.
@@ -1006,8 +996,8 @@ def checkFourthSpeciesForbiddenMotions(context, duet, VLQs):
         if (isParallelOctave(vlq)
                 and vlq.v1n2.tie is None
                 and vlq.v2n2.tie is None):
-            error = ('Forbidden parallel motion to octave going into bar '
-                     + str(vlq.v2n2.measureNumber))
+            error = (f'Bar {vlq.v2n2.measureNumber}, approach: '
+                     f'Forbidden parallel motion to octave.')
             vlErrors.append(error)
 
 
@@ -1038,8 +1028,8 @@ def checkFirstSpeciesNonconsecutiveParallels(context, duet):
                         bar1 = vpt[0][0].measureNumber
                         bar2 = vpt[2][0].measureNumber
                         error = (
-                            f'Non-consecutive parallel {p_int} in bars {bar1}'
-                            f' and {bar2}.')
+                            f'Bar {bar1} and bar {bar2}: '
+                            f'Non-consecutive parallels.')
                         vlErrors.append(error)
 
 
@@ -1059,13 +1049,13 @@ def checkSecondSpeciesNonconsecutiveUnisons(duet):
                     and vPair[speciesPart].beat == 1.5
                     and vPair[speciesPart].measureNumber - 1
                     == firstUnison[0]):
-                error = ('Offbeat unisons in bars '
-                         + str(firstUnison[0]) + ' and '
-                         + str(vPair[speciesPart].measureNumber))
+                error = (f'Bar {firstUnison[0]} and '
+                         f'bar {vPair[speciesPart].measureNumber}: '
+                         f'Offbeat unisons.')
                 vlErrors.append(error)
         if vPair is not None:
             if (interval.Interval(vPair[0], vPair[1]).name == 'P1'
-                    and vPair[speciesPart].beat > 1.0):
+                and vPair[speciesPart].beat > 1.0):
                 firstUnison = (vPair[speciesPart].measureNumber, vPair)
 
 
@@ -1090,10 +1080,9 @@ def checkSecondSpeciesNonconsecutiveOctaves(duet):
                     if (vPair[speciesPart].consecutions.leftDirection
                             == firstOctave[1][
                                 speciesPart].consecutions.leftDirection):
-                        error = ('Offbeat octaves in bars ' + str(
-                            firstOctave[0])
-                                 + ' and '
-                                 + str(vPair[speciesPart].measureNumber))
+                        error = (f'Bar {firstOctave[0]} and '
+                                 f'bar {vPair[speciesPart].measureNumber}: '
+                                 f'Offbeat octaves.')
                         vlErrors.append(error)
                 elif interval.Interval(firstOctave[1][speciesPart],
                                        vPair[speciesPart]).generic.isSkip:
@@ -1104,9 +1093,9 @@ def checkSecondSpeciesNonconsecutiveOctaves(duet):
                                 speciesPart].consecutions.rightInterval.isDiatonicStep):
                         continue
                     else:
-                        error = ('Offbeat octaves in bars '
-                                 + str(firstOctave[0]) + ' and '
-                                 + str(vPair[speciesPart].measureNumber))
+                        error = (f'Bar {firstOctave[0]} and '
+                                 f'bar {vPair[speciesPart].measureNumber}: '
+                                 f'Offbeat octaves.')
                         vlErrors.append(error)
         if vPair is not None:
             if (interval.Interval(vPair[0], vPair[1]).name == 'P8'
@@ -1125,27 +1114,27 @@ def checkConsecutions(context):
         if part.species in ['second', 'third']:
             for n in part.recurse().notes:
                 if n.consecutions.leftType == 'same':
-                    error = ('Direct repetition in bar '
-                             + str(n.measureNumber) + '.')
+                    error = (f'Bar {n.measureNumber}: '
+                             f'Direct repetition.')
                     vlErrors.append(error)
         if part.species == 'fourth':
             for n in part.recurse().notes:
                 if n.tie:
                     if (n.tie.type == 'start'
                             and n.consecutions.rightType != 'same'):
-                        error = ('Pitch not tied across the barline '
-                                 'into bar ' + str(n.measureNumber + 1) + '.')
+                        error = (f'Bar {(n.measureNumber + 1)}, approach: '
+                                 f'Pitch not tied across the barline.')
                         vlErrors.append(error)
                     elif (n.tie.type == 'stop'
                           and n.consecutions.leftType != 'same'):
-                        error = ('Pitch not tied across the barline '
-                                 'into bar ' + str(n.measureNumber) + '.')
+                        error = (f'Bar {n.measureNumber}, approach: '
+                                 f'Pitch not tied across the barline.')
                         vlErrors.append(error)
                 # TODO allow breaking into second species
                 elif not n.tie:
                     if n.consecutions.rightType == 'same':
-                        error = ('Direct repetition around bar '
-                                 + str(n.measureNumber) + '.')
+                        error = (f'Bar {n.measureNumber}, vicinity: '
+                                 f'Direct repetition.')
                         vlErrors.append(error)
 
 
@@ -1358,12 +1347,12 @@ def checkFourthLeapsInBass(context):
                         break
 
         if impliedSixFour and bn1Meas == bn2Meas:
-            error = ('Prohibited leap of a fourth in bar '
-                     + str(bn1Meas) + '.')
+            error = (f'Bar {bn1Meas}: '
+                     f'Prohibited leap of a fourth.')
             vlErrors.append(error)
         elif impliedSixFour and bn1Meas != bn2Meas:
-            error = ('Prohibited leap of a fourth in bars '
-                     + str(bn1Meas) + '-' + str(bn2Meas) + '.')
+            error = (f'Bar {bn1Meas} to bar {bn2Meas}: '
+                     f'Prohibited leap of a fourth.')
             vlErrors.append(error)
 
 
