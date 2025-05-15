@@ -67,7 +67,7 @@ if __name__ == "__main__":
     #    source = 'TestScoresXML/FourthSpecies01.musicxml'
     # source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
     # source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
-    # source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
+    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
     # source = 'TestScoresXML/FourthSpecies20.musicxml'
     # source = 'TestScoresXML/FourthSpecies21.musicxml'
     # source = 'TestScoresXML/FourthSpecies22.musicxml'
@@ -141,14 +141,14 @@ if __name__ == "__main__":
     # source = 'TestScoresXML/2021_10_26T19_58_05_175Z.musicxml'
 
     # source = 'TestScoresXML/2022_02_15T19_11_33_693Z.musicxml'
-    # source = 'TestScoresXML/WP141.musicxml'
+    # source = 'TestScoresXML/WP14/1.musicxml'
 
 
     # source = 'TestScoresXML/chorale066.6.musicxml'
     # source = 'TestScoresXML/Christus_der_ist_mein_Leben.musicxml'
 
 #    source = 'TestScoresXML/'
-    
+
     # source = 'TestScoresXML/Third_Species_Line_Test_0.musicxml'
 
 #    source = 'TestScoresXML/HarmonicSecondSpecies01.musicxml'
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     # source = '../examples/corpus/Westergaard075a.musicxml'
     # source = '../examples/corpus/WP000.musicxml'
     # source = '../examples/corpus/WP022.musicxml'
-    source = '../examples/corpus/WP309.musicxml'
+    # source = '../examples/corpus/WP309.musicxml'
     # source = '../examples/corpus/WP405.musicxml'
     # source = '../examples/corpus/WP001.musicxml'
 
@@ -194,7 +194,13 @@ if __name__ == "__main__":
             westerparse.evaluateLines(source, show=None)
         elif verify == 2:
             westerparse.evaluateCounterpoint(source, report=True)
-        
+
+        elif verify == 1111:  # tests for generability as any type of line
+            return westerparse.evaluateLines(source, show='html')
+
+        elif verify == 2222:
+            return westerparse.evaluateCounterpoint(source, report='html')
+
         elif verify == 100: # tests for generability as harmonic counterpoint
             westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
@@ -303,7 +309,7 @@ if __name__ == "__main__":
 
         else:
             print('ERROR: No valid evaluation option selected.')
-            
+
     def reporter(source, verify):
         print('Input:', source)
         cxt = westerparse.makeGlobalContext(source)
@@ -312,11 +318,124 @@ if __name__ == "__main__":
         for part in cxt.parts:
             print('Part', part.partNum, 'species:', part.species)
         tester(source, verify)
-            
+
     def vltester(source, keynote, mode):
             westerparse.evaluateCounterpoint(source, report=True,
                                              keynote=keynote, mode=mode,
                                              validateKey=False)
+
+    def unit_tests(test):        # UNIT TESTS for HTML reporting
+        if test == 1:
+            # no notes in line
+            source = 'TestScoresXML/WP_Test01.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 2:
+            # invalid key from user
+            source = 'TestScoresXML/WP_Test02.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html', keynote='D$', mode='manor')
+        if test == 3:
+            # no inferrable key
+            source = 'TestScoresXML/WP_Test02.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html', keynote='D', mode='minor')
+        if test == 4:
+            # no inferrable key
+            source = 'TestScoresXML/WP_Test04.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 5:
+            # invalid part selection
+            source = 'TestScoresXML/WP_Test02.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html', partSelection=2)
+        if test == 6:
+            # part selection not permitted
+            source = 'TestScoresXML/WP_Test06.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html', partLineType='generic')
+        if test == 7:
+            # valid and parsable
+            source = 'TestScoresXML/WP_Test06.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 8:
+            # parser errors in upper and lower lines
+            source = 'TestScoresXML/WP_Test08.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 9:
+            # valid and parsable as bass line
+            source = 'TestScoresXML/WP_Test02.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html', partLineType='bass')
+        if test == 10:
+            # valid and parsable as upper line
+            source = 'TestScoresXML/WP_Test02.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html', partLineType='primary')
+        if test == 11:
+            # incomplete parts
+            source = 'TestScoresXML/WP_Test07.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 12:
+            # too many notes in final bar
+            source = 'TestScoresXML/WP_Test09.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 13:
+            # rests in bar other than first
+            source = 'TestScoresXML/WP_Test10.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 14:
+            # misplaced rest in first bar
+            source = 'TestScoresXML/WP_Test11.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 15:
+            #
+            source = 'TestScoresXML/WP_Test12.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 16:
+            # unresolved local insertion
+            source = 'TestScoresXML/WP_Test13.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 17:
+            # keyFinder error
+            source = 'TestScoresXML/WP_Test14.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html', partSelection=1)
+        if test == 18:
+            # parser error, NTT w/o lefthead
+            source = 'TestScoresXML/WP_Test15.musicxml'
+            rpt = westerparse.evaluateLines(source, show='html')
+        if test == 51:
+            # no notes in line
+            source = 'TestScoresXML/WP_Test01.musicxml'
+            rpt = westerparse.evaluateCounterpoint(source, report='html')
+        if test == 52:
+            # invalid key from user
+            source = 'TestScoresXML/WP_Test02.musicxml'
+            rpt = westerparse.evaluateCounterpoint(source, report='html', keynote='D$', mode='manor')
+        if test == 53:
+            # no inferrable key
+            source = 'TestScoresXML/WP_Test04.musicxml'
+            rpt = westerparse.evaluateCounterpoint(source, report='html')
+        if test == 54:
+            # not contrapuntal
+            source = 'TestScoresXML/WP_Test02.musicxml'
+            rpt = westerparse.evaluateCounterpoint(source, report='html')
+        if test == 55:
+            # improper harmonic segmentation
+            source = 'TestScoresXML/WP_Test05.musicxml'
+            rpt = westerparse.evaluateCounterpoint(source,
+                                                   report='html',
+                                                   harmonicSpecies=True,
+                                                   startPredominant=8,
+                                                   startDominant=14)
+        if test == 56:
+            # voice-leading errors
+            source = 'TestScoresXML/WP_Test16.musicxml'
+            rpt = westerparse.evaluateCounterpoint(source, report='html')
+        return rpt
+
+    # testno = 56
+    # rpt = unit_tests(testno)
+    # print(f'TEST CASE {testno}\n{rpt}')
+
+
+    # unit_test_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 51, 52, 53, 54, 55, 56]
+    # for id in unit_test_ids:
+    #     rpt = unit_tests(id)
+    #     print(f'TEST CASE {id}\n{rpt}\n')
 
 
     def data_extractor(sources):
@@ -328,12 +447,15 @@ if __name__ == "__main__":
     # sources = glob.glob('parse_corpus/*')
     # data_extractor(sources)
 
-#    vltester(source, keynote='C', mode='major')
-#    reporter(source, verify)
+    # vltester(source, keynote='D$', mode='manor')
+    # reporter(source, 11)
 
 
-    tester(source, 53)
-    #
+    html = tester(source, 2222)
+    print(html)
+
+    # tester(source, 2)
+
     from westerparse import vlChecker
 
     # cxt = westerparse.makeGlobalContext(source)
