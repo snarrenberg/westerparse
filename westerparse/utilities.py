@@ -59,7 +59,7 @@ def create_html_report(input):
     """
     output = ''
     lines = input.splitlines()
-    lines = [line.replace('\t', '&nbsp;') for line in lines]
+    lines = [line.replace('\t', '&nbsp;&nbsp;') for line in lines]
     html_lines = [f"""<p>{line}</p>""" for line in lines]
     return """\n""".join(html_lines)
 
