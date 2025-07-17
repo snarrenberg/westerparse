@@ -691,7 +691,8 @@ class Parser:
         if self.part.species in ['third', 'fifth'] and openTransitions:
             for idx in openTransitions:
                 # TODO First look for 'resolution'.
-                self.notes[idx].rule.name = 'L0'
+                # self.notes[idx].rule.name = 'L0'
+                pass
         elif openTransitions:
             mns = [str(self.notes[t].measureNumber) for t in openTransitions]
             mns = ', '.join(mns)
@@ -3480,6 +3481,11 @@ class Parser:
                         i.rule.name = 'X'
                 elif i.rule.name is None:
                     i.rule.name = 'x'
+                if i.rule.name in ['X', 'x']:
+                    error = ('The pitch ' + i.nameWithOctave +
+                         ' in measure ' + str(i.measureNumber) +
+                         ' cannot be generated.')
+                    self.errors.append(error)
 
         def testLocalResolutions(self):
             """For any note identified as a local insertion (rule L3),
