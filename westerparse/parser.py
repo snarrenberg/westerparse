@@ -1514,7 +1514,8 @@ class Parser:
                     # TODO May need to turn off in third species.
                     elif (h == 0
                           and i.dependency.lefthead is None
-                          and i.index != h):
+                          and i.index != h
+                          and self.part.species not in ['third', 'fifth']):
                         # Test cases: Westergaard100k, soprano; Primary05.
                         # (Search 1) Look in reverse at the terminals of current
                         # arcs and select the most recent that is step-related;
@@ -2541,9 +2542,8 @@ class Parser:
                 selectedArcs = [arc for arc in fiveThreeArcs
                                 if arcLength(arc) == arcSpan]
                 if not selectedArcs:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this '
+                             f'S2 candidate: {str(self.S2Value + 1)}.')
                     self.errors.append(error)
                     return
                 selectedArc = selectedArcs[0]
