@@ -3480,7 +3480,9 @@ class Parser:
                     if i.tie.type != 'stop':
                         i.rule.name = 'X'
                 elif i.rule.name is None:
-                    i.rule.name = 'x'
+                    # i.rule.name = 'x'
+                    i.rule.name = 'L3'
+                    # print(i.index, i.dependency.lefthead, i.dependency.righthead, i.dependency.dependents)
                 if i.rule.name in ['X', 'x']:
                     error = ('The pitch ' + i.nameWithOctave +
                          ' in measure ' + str(i.measureNumber) +
