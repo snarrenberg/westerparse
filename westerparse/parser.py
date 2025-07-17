@@ -49,7 +49,7 @@ import itertools
 import copy
 import logging
 import unittest
-
+from datetime import datetime
 from music21 import *
 
 from westerparse.utilities import pairwise, shiftBuffer, shiftStack
@@ -1117,23 +1117,30 @@ class Parser:
                         elif (isStepDown(i, j)
                               and i.csd.direction
                               in ['descending', 'bidirectional']):
-                            i.dependency.righthead = j.index
-                            j.dependency.dependents.append(i.index)
-                            # Add dependents that aren't repetitions.
-                            # TODO limit to dependents that should belong to
-                            #   the new arc.
-                            for d in i.dependency.dependents:
-                                if self.notes[d].csd.value != i.csd.value:
-                                    self.notes[
-                                        d].dependency.righthead = j.index
-                                    j.dependency.dependents.append(d)
-                                    self.notes[j.index].dependency.dependents.append(d)
-                            openTransitions.remove(i.index)
-                            if (self.notes[i.dependency.lefthead]
-                                    != self.notes[i.dependency.righthead]):
-                                if j.index not in openHeads:
-                                    openHeads.append(j.index)
-                            arcGenerateTransition(i.index, part, arcs)
+                            # added on 07-17-2025-07 to catch problem of 5-#6 in minor
+                            if (self.context.key.mode == 'minor'
+                                    and i.csd.direction == 'bidirectional'
+                                    and i.csd.value == 5
+                                    and self.notes[i.dependency.lefthead].csd.value == 4):
+                                openHeads.append(j.index)
+                            else:
+                                i.dependency.righthead = j.index
+                                j.dependency.dependents.append(i.index)
+                                # Add dependents that aren't repetitions.
+                                # TODO limit to dependents that should belong to
+                                #   the new arc.
+                                for d in i.dependency.dependents:
+                                    if self.notes[d].csd.value != i.csd.value:
+                                        self.notes[
+                                            d].dependency.righthead = j.index
+                                        j.dependency.dependents.append(d)
+                                        self.notes[j.index].dependency.dependents.append(d)
+                                openTransitions.remove(i.index)
+                                if (self.notes[i.dependency.lefthead]
+                                        != self.notes[i.dependency.righthead]):
+                                    if j.index not in openHeads:
+                                        openHeads.append(j.index)
+                                arcGenerateTransition(i.index, part, arcs)
                         elif (isStepUp(i, j)
                               and i.csd.direction == 'descending'
                               and isStepUp(self.notes[i.dependency.lefthead],
@@ -1354,6 +1361,32 @@ class Parser:
                 openTransitions.remove(i.index)
                 arcGenerateTransition(i.index, part, arcs)
                 openHeads.remove(i.dependency.lefthead)
+            elif (i.csd.direction == 'descending'
+                  and j.csd.direction == 'bidirectional'
+                  and self.part.species not in ['third', 'fifth']):
+                # For catching 8-b7-#6-5 in minor, revised 2025-07-17
+                # check for 8 as lefthead of b7, then close arc at #6
+                # generability of #6 will be handled in Case Four
+                if self.notes[i.dependency.lefthead].csd.value == 7:
+                    i.dependency.righthead = j.index
+                    j.dependency.dependents.append(i.index)
+                    openTransitions.append(j.index)
+                    openTransitions.remove(i.index)
+                    arcGenerateTransition(i.index, part, arcs)
+                    # look for 5 as head of j
+                    for t in reversed(openHeads):
+                        h = self.notes[t]
+                        if not isDiatonicStep(h, j):
+                            openHeads.remove(t)
+                        elif isStepUp(h, j):
+                            j.dependency.lefthead = t
+                            self.notes[t].dependency.dependents.append(j.index)
+                else:
+                    error = ('The non-tonic-triad pitch '
+                             + i.nameWithOctave + ' in measure '
+                             + str(j.measureNumber)
+                             + ' cannot be generated.')
+                    self.errors.append(error)
             else:
                 # For catching things in third species...
                 j.dependency.lefthead = i.dependency.lefthead
