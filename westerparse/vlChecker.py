@@ -174,8 +174,13 @@ def checkCounterpoint(context, report=True):
         else:
             result = (f'{fn}\nVOICE LEADING REPORT\nThe following '
                       'voice-leading errors were found:')
-            vlErrors.sort()
-            for error in vlErrors:
+            # remove duplicates and sort errors
+            vlErrorList = []
+            for e in vlErrors:
+                if e not in vlErrorList:
+                    vlErrorList.append(e)
+            vlErrorList.sort()
+            for error in vlErrorList:
                 result = result + '\n\t' + error
         if report == 'html':
             return result
