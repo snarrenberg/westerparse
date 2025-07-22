@@ -376,7 +376,7 @@ def checkControlOfDissonance(context, duet, VLQs):
         rules5b = [lowerNote.consecutions.leftType == 'step',
                    lowerNote.consecutions.rightType == 'step']
 
-        # Test non-co-initiated sumultaneities.
+        # Test non-co-initiated simultaneities.
         if (all(rules3) and ((all(rules4) and not all(rules5a))
                              or (not all(rules4) and not all(rules5b)))):
             error = (f'Bar {lowerNote.measureNumber}: '
