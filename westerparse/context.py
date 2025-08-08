@@ -324,9 +324,8 @@ class GlobalContext(Context):
                 selectedPart = len(self.parts) -1
             else:
                 selectedPart = self.partSelection
-
         for num, part in enumerate(self.parts):
-            if num != selectedPart:
+            if self.partSelection is not None and num != selectedPart:
                 continue
             # Part tonic = lowest tonic degree in the line's register.
             # Find tonic pitch class.
