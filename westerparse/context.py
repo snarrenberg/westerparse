@@ -285,7 +285,7 @@ class GlobalContext(Context):
             temp_score = self.score
         # (1a) If user provides key, validate and test.
         if knote and kmode:
-            user_key_test_result = keyFinder.testKey(self.score, knote, kmode, kharm)
+            user_key_test_result = keyFinder.testKey(temp_score, knote, kmode, kharm)
             logger.debug(f'user_key_test_result = {user_key_test_result}')
             if not user_key_test_result[0]:
                 fn = os.path.basename(self.filename)
