@@ -544,8 +544,12 @@ def validateParts(score, partSelection):
     if len(score.parts) < 1:
         error = 'The source does not contain any parts.'
         raise ContextError(error)
+    if partSelection == -1:
+        selectedPartNum = len(score.parts) - 1
+    else:
+        selectedPartNum = partSelection
     for num, part in enumerate(score.parts):
-        if partSelection is not None and num != partSelection:
+        if selectedPartNum is not None and num != selectedPartNum:
             continue
         for measure in part.getElementsByClass('Measure'):
             if len([n for n in measure.notes]) == 0 or measure.barDuration.quarterLength > measure.duration.quarterLength:
