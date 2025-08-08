@@ -277,6 +277,12 @@ class GlobalContext(Context):
         knote = kwargs.get('keynote')
         kmode = kwargs.get('mode')
         kharm = self.harmonicSpecies
+        # Examine only selected part:
+        if self.partSelection is not None:
+            temp_score = stream.Score()
+            temp_score.append(self.parts[self.partSelection])
+        else:
+            temp_score = self.score
         # (1a) If user provides key, validate and test.
         if knote and kmode:
             user_key_test_result = keyFinder.testKey(self.score, knote, kmode, kharm)
@@ -291,7 +297,7 @@ class GlobalContext(Context):
                 self.keyFromUser = True
         # (1b) Else attempt to derive a key from the score.
         else:
-            infer_key_test_result = keyFinder.inferKey(self.score)
+            infer_key_test_result = keyFinder.inferKey(temp_score)
             logger.debug(f'infer_key_test_result = {infer_key_test_result}')
             if not infer_key_test_result[0]:
                 fn = os.path.basename(self.filename)
