@@ -3209,7 +3209,6 @@ class Parser:
             #     # TODO: Reset Note attributes.
             #     # TODO Remove anticipations of S3.
 
-
         def parseGeneric(self):
             """The line has already passed the generic test, so all that is to
             be done is: determine whether there is a basic step motion
@@ -3261,7 +3260,7 @@ class Parser:
                                 n)
                             self.notes[n].rule.name = 'S3'
                             self.arcBasic = arc1
-                            break
+                            # break
                         break
                     # Look for two arcs that can be embedded or merged
                     # into a basic step motion.
@@ -3340,6 +3339,18 @@ class Parser:
                 if self.arcBasic not in self.arcs:
                     self.arcs.append(self.arcBasic)
                     addDependenciesFromArc(self.notes, self.arcBasic)
+
+        def reParseLineSegment(self, left_boundary_index, right_boundary_index):
+            buffer = []
+            stack = []
+            open_heads = []
+            open_transitions = []
+            for i in self.notes:
+                if left_boundary_index <= i <= right_boundary_index:
+                    buffer.append(i)
+
+
+            pass
 
         def attachOpenheadsToStructuralLefthead(self, structuralLefthead,
                                                 rightLimit):
@@ -3476,6 +3487,8 @@ class Parser:
                 if i.rule.name == 'E3' and i.dependency.dependents == []:
                     i.noteheadParenthesis = True
                 # TODO Figure out why some notes still don't have rules.
+                #   casualties of brute force reinterpretation during
+                #   parsePrimary, method 7
                 elif i.rule.name is None and i.tie:
                     if i.tie.type != 'stop':
                         i.rule.name = 'X'
