@@ -796,8 +796,7 @@ def createParseReport(cxt, generability, partsForParsing, partSelection,
                     error = ('At least one upper line is generable '
                              'as a primary line.\nBut the lower line '
                              'is not generable as a bass line.')
-                bln = cxt.parts[-1].name
-                if cxt.errorsDict[bln]:
+                if cxt.errorsDict[part.name].get('bass'):
                     error = (error + '\n\tThe following linear '
                              'errors were found in the bass line:')
                     for err in cxt.errorsDict[bln].get('bass', []):
