@@ -3260,7 +3260,6 @@ class Parser:
                                 n)
                             self.notes[n].rule.name = 'S3'
                             self.arcBasic = arc1
-                            # break
                         break
                     # Look for two arcs that can be embedded or merged
                     # into a basic step motion.
