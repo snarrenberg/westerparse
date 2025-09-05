@@ -403,7 +403,7 @@ def validatePartSelection(cxt, partSelection):
             if partSelection >= 0:
                 partsSelected = cxt.parts[partSelection:partSelection+1]
             else:
-                partsSelected = cxt.parts[partSelection::partSelection-1]
+                partsSelected = cxt.parts[partSelection:]
     elif len(cxt.parts) == 1:
         partsSelected = cxt.parts[0:1]
     elif partSelection is None:
