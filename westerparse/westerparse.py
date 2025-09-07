@@ -1096,8 +1096,7 @@ def selectPreferredParseSets(cxt, primaryPartNum):
             structuralConsonances = 0
             for s in SList:
                 u = primPart.flatten().notes[s]
-                b = cxt.parts[
-                                 -1].flatten().notes.getElementsByOffset(
+                b = cxt.parts[-1].flatten().notes.getElementsByOffset(
                                  u.offset, mustBeginInSpan=False)[0]
                 if vlChecker.isConsonanceAboveBass(b, u):
                     structuralConsonances += 1
