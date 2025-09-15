@@ -1373,8 +1373,8 @@ class Parser:
                         self.notes[t].dependency.dependents.append(j.index)
                 if not j.dependency.lefthead:
                     error = ('The non-tonic-triad pitch '
-                             + i.nameWithOctave + ' in measure '
-                             + str(i.measureNumber)
+                             + j.nameWithOctave + ' in measure '
+                             + str(j.measureNumber)
                              + ' cannot be generated.')
                     self.errors.append(error)
             elif (i.csd.direction == 'descending'
