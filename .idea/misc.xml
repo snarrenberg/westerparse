@@ -3,7 +3,7 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.11 (wpdev4)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (wpdev4)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.12 (wpfrontend)" project-jdk-type="Python SDK" />
   <component name="TaskProjectConfiguration">
     <server type="GitHub" url="https://github.com" />
   </component>

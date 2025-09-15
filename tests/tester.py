@@ -67,7 +67,7 @@ if __name__ == "__main__":
     #    source = 'TestScoresXML/FourthSpecies01.musicxml'
     # source = 'TestScoresXML/FourthSpecies02.musicxml'   # vl error
     # source = 'TestScoresXML/FourthSpecies03.musicxml'   # vl error
-    source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
+    # source = 'TestScoresXML/FourthSpecies04.musicxml'   # vl errors
     # source = 'TestScoresXML/FourthSpecies20.musicxml'
     # source = 'TestScoresXML/FourthSpecies21.musicxml'
     # source = 'TestScoresXML/FourthSpecies22.musicxml'
@@ -106,6 +106,10 @@ if __name__ == "__main__":
     # source = 'TestScoresXML/2020_07_20T15_56_50_689Z.musicxml'
     # source = 'TestScoresXML/2020_07_20T17_15_38_905Z.musicxml'
     # source = 'TestScoresXML/2020_08_24T20_39_55_774Z.musicxml'
+    # source = 'TestScoresXML/2020_09_11T14_43_44_987Z.musicxml'
+    # source = 'TestScoresXML/2025_07_17_1114_31494.musicxml'
+    # source = 'TestScoresXML/2020_08_26T17_50_33_151Z.musicxml'
+    # source = 'TestScoresXML/2020_10_24T14_46_50_334Z.musicxml'
     # source = 'TestScoresXML/2020_09_11T14_43_44_987Z.musicxml'
 
 
@@ -187,13 +191,22 @@ if __name__ == "__main__":
     # source = 'TestScoresXML/2022_05_31T18_56_28_644Z.musicxml'
     # source = 'TestScoresXML/2022_06_02T09_19_48_464Z.musicxml'
     # source = 'TestScoresXML/2022_06_07T17_52_57_966Z.musicxml'
+    # source = 'TestScoresXML/2025_08_06_1046_19243.musicxml'
+    # source = 'TestScoresXML/2025_08_08_1203_41679.musicxml'
+    # source = 'TestScoresXML/2025_08_20_1047_37654.musicxml'
+    # source = 'TestScoresXML/2025_09_04_1911_50853.musicxml'
+    source = 'TestScoresXML/2025_09_15_1311_07555.musicxml'
+
 
 
     def tester(source, verify):
         if verify == 1: # tests for generability as any type of line
-            westerparse.evaluateLines(source, show=None)
+            # print(source)
+            westerparse.evaluateLines(source, show='html')
         elif verify == 2:
-            westerparse.evaluateCounterpoint(source, report=True)
+            westerparse.evaluateCounterpoint(source, report='html')
+        elif verify == 21:
+            westerparse.evaluateCounterpoint(source)
 
         elif verify == 1111:  # tests for generability as any type of line
             return westerparse.evaluateLines(source, show='html')
@@ -427,12 +440,14 @@ if __name__ == "__main__":
             rpt = westerparse.evaluateCounterpoint(source, report='html')
         return rpt
 
-    # testno = 56
+    # testno = 4
     # rpt = unit_tests(testno)
     # print(f'TEST CASE {testno}\n{rpt}')
 
 
-    # unit_test_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 51, 52, 53, 54, 55, 56]
+    # Test no. 5 not working, 2025-08-18
+
+    # unit_test_ids = [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 51, 52, 53, 54, 55, 56]
     # for id in unit_test_ids:
     #     rpt = unit_tests(id)
     #     print(f'TEST CASE {id}\n{rpt}\n')
@@ -448,15 +463,15 @@ if __name__ == "__main__":
     # data_extractor(sources)
 
     # vltester(source, keynote='D$', mode='manor')
-    # reporter(source, 11)
+    # reporter(source, 1)
 
 
-    html = tester(source, 2222)
+    html = tester(source, 1)
     print(html)
+    
+    # tester(source, 1)
 
-    # tester(source, 2)
-
-    from westerparse import vlChecker
+    # from westerparse import vlChecker
 
     # cxt = westerparse.makeGlobalContext(source)
     # duets = cxt.makeTwoPartContexts()
@@ -476,5 +491,6 @@ if __name__ == "__main__":
 #    westerparse.evaluateLines(source, show=None, partSelection=0, partLineType='primary')
     
 #    context.evaluateLines(source, show='show', partSelection=None, partLineType=None)
+
 
 

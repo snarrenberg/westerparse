@@ -1362,6 +1362,21 @@ class Parser:
                 openTransitions.remove(i.index)
                 arcGenerateTransition(i.index, part, arcs)
                 openHeads.remove(i.dependency.lefthead)
+                # added lefthead search 2025-09-15
+                # look for 8 as head of j
+                for t in reversed(openHeads):
+                    h = self.notes[t]
+                    if not isDiatonicStep(h, j):
+                        openHeads.remove(t)
+                    elif isStepDown(h, j):
+                        j.dependency.lefthead = t
+                        self.notes[t].dependency.dependents.append(j.index)
+                if not j.dependency.lefthead:
+                    error = ('The non-tonic-triad pitch '
+                             + i.nameWithOctave + ' in measure '
+                             + str(i.measureNumber)
+                             + ' cannot be generated.')
+                    self.errors.append(error)
             elif (i.csd.direction == 'descending'
                   and j.csd.direction == 'bidirectional'
                   and self.part.species not in ['third', 'fifth']):
@@ -1773,14 +1788,14 @@ class Parser:
 
         # CASE TEN: Dissonant skip.
         elif all(case10):
-            logger.debug(f'Parse transition {i.index}-{j.index}: case 11')
+            logger.debug(f'Parse transition {i.index}-{j.index}: case 10')
             error = ('Nongenerable leap between ' + i.nameWithOctave +
                      ' and ' + j.nameWithOctave + ' in the line.')
             self.errors.append(error)
 
         # CASE ELEVEN: Leap larger than an octave.
         elif all(case11):
-            logger.debug('Parse transition: case 12')
+            logger.debug('Parse transition: case 11')
             logger.debug(f'Case marker 185')
             error = ('Leap larger than an octave between '
                      + i.nameWithOctave +
@@ -3498,7 +3513,7 @@ class Parser:
                 if i.rule.name in ['X', 'x']:
                     error = ('The pitch ' + i.nameWithOctave +
                          ' in measure ' + str(i.measureNumber) +
-                         ' cannot be generated.')
+                         ' is not generable.')
                     self.errors.append(error)
 
         def testLocalResolutions(self):
