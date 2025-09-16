@@ -314,6 +314,13 @@ class GlobalContext(Context):
             keyAccidental = ''
         self.key.nameString = (self.key.getTonic().step
                                + keyAccidental + ' ' + self.key.mode)
+        # (3) If inferred key does not match given key signature,
+        # report this to the user.
+        if self.key.sharps != self.score.flatten().keySignature.sharps:
+            error = (f'The inferred key signature does not match the key '
+                     f'signature entered by the user.')
+            raise EvaluationException(error)
+            # raise ContextError(error)
 
     def setupPartsTonality(self):
         # Set part properties: part number, tonic degree,
