@@ -320,8 +320,7 @@ class GlobalContext(Context):
             error = (f'The inferred key of {self.key.nameString} does not '
                      f'match the key signature provided. Change the key '
                      f'signature accordingly and try again')
-            # raise EvaluationException(error)
-            raise ContextError(error)
+            raise EvaluationException(error)
 
     def setupPartsTonality(self):
         # Set part properties: part number, tonic degree,
