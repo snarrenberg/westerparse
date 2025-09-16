@@ -319,7 +319,7 @@ class GlobalContext(Context):
         if self.key.sharps != self.score.flatten().keySignature.sharps:
             error = (f'The inferred key of {self.key.nameString} does not '
                      f'match the key signature provided. Change the key '
-                     f'signature accordingly and try again')
+                     f'signature accordingly and try again.')
             raise EvaluationException(error)
 
     def setupPartsTonality(self):
