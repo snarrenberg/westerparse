@@ -1333,6 +1333,20 @@ def checkFourthLeapsInBass(context):
                             impliedSixFour = False
                             break
 
+            # Check second species bass part for note that
+            # denies the implication.
+            if context.parts[bnPartNum].species == 'second':
+                bn1Measure = bn1.measureNumber
+                # Get the notes in the bar of the first bass note.
+                bassnotes = context.parts[bnPartNum].flatten().notes
+                barns1 = [n for n in bassnotes
+                          if n.measureNumber == bn1Measure]
+                for n in barns1:
+                    rules3a = [isDiatonicStep(n, bn2)]
+                    if all(rules3a):
+                        impliedSixFour = False
+                        break
+
             # Check third species bass part for note that
             # denies the implication.
             if context.parts[bnPartNum].species == 'third':
