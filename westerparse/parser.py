@@ -50,6 +50,8 @@ import copy
 import logging
 import unittest
 from datetime import datetime
+from operator import truediv
+
 from music21 import *
 
 from westerparse.utilities import pairwise, shiftBuffer, shiftStack
@@ -884,6 +886,9 @@ class Parser:
                         # add the new arc only if it doesn't contradict
                         # an existing arc
                         testArc = [h.dependency.lefthead, h.index, j.index]
+                        if not isValidMinorModeArc(testArc, self.notes):
+                            return
+                            # print('arc not valid in minor')
                         if conflictsWithOtherArc(testArc, arcs):
                             return
                         else:
@@ -4792,6 +4797,63 @@ def conflictsWithOtherArc(arc, arcs):
                         conflict = True
                         break
     return conflict
+
+
+def isValidMinorModeArc(arc, notes):
+    """Check whether an arc is valid in minor mode.
+    in case the arc terminals match one of these options,
+    test validity of the transitional element(s)
+    a. 5-b6-5
+    b. 5-#6-#7, 5-#6-b7
+    c. 5-#6-#7-8
+    d. 8-b7-b6-5
+    e. #7-#6-5
+    f. b7-b6-5
+    g. 8-b7-#6, 8-b7-b6
+    """
+    case1 = [notes[arc[0]].csd.value == 4,  # a
+              notes[arc[1]].csd.value == 5,
+              notes[arc[-1]].csd.value == 4]
+    case2 = [notes[arc[0]].csd.value == 4,  # b
+              notes[arc[-1]].csd.value == 6]
+    case3 = [notes[arc[0]].csd.value == 4,  # c
+              notes[arc[-1]].csd.value == 7]
+    case4 = [notes[arc[0]].csd.value == 7,  # d
+              notes[arc[-1]].csd.value == 4]
+    case5 = [notes[arc[0]].csd.value == 6,  # e
+              notes[arc[0]].csd.dir == 'ascending',
+              notes[arc[-1]].csd.value == 4]
+    case6 = [notes[arc[0]].csd.value == 6,  # f
+              notes[arc[0]].csd.dir == 'descending',
+             notes[arc[-1]].csd.value == 4]
+    case7 = [notes[arc[0]].csd.value == 7,  # g
+              notes[arc[-1]].csd.value == 5]
+
+    if (all (case1)
+            and notes[arc[1]].csd.dir == 'descending'):
+        return True
+    elif (all (case2)
+          and notes[arc[1]].csd.dir == 'bidirectional'):
+        return True
+    elif (all(case3)
+          and notes[arc[1]].csd.dir == 'bidirectional'
+          and notes[arc[2]].csd.dir == 'ascending'):
+        return True
+    elif (all(case4)
+          and notes[arc[1]].csd.dir == 'descending'
+          and notes[arc[2]].csd.dir == 'descending'):
+        return True
+    elif (all(case5)
+          and notes[arc[1]].csd.dir == 'bidirectional'):
+        return True
+    elif (all(case6)
+          and notes[arc[1]].csd.dir == 'descending'):
+        return True
+    elif (all(case7)
+          and notes[arc[1]].csd.dir == 'descending'):
+        return True
+    else:
+        return False
 
 
 def isIndependent(note):
