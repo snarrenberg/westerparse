@@ -4810,6 +4810,7 @@ def isValidMinorModeArc(arc, notes):
     e. #7-#6-5
     f. b7-b6-5
     g. 8-b7-#6, 8-b7-b6
+    h. 8-#7-8
     """
     case1 = [notes[arc[0]].csd.value == 4,  # a
               notes[arc[1]].csd.value == 5,
@@ -4828,6 +4829,9 @@ def isValidMinorModeArc(arc, notes):
              notes[arc[-1]].csd.value == 4]
     case7 = [notes[arc[0]].csd.value == 7,  # g
               notes[arc[-1]].csd.value == 5]
+    case8 = [notes[arc[0]].csd.value == 7,  # h
+              notes[arc[1]].csd.value == 6,
+              notes[arc[-1]].csd.value == 7]
 
     if (all (case1)
             and notes[arc[1]].csd.dir == 'descending'):
@@ -4851,6 +4855,9 @@ def isValidMinorModeArc(arc, notes):
         return True
     elif (all(case7)
           and notes[arc[1]].csd.dir == 'descending'):
+        return True
+    elif (all(case8)
+          and notes[arc[1]].csd.dir == 'ascending'):
         return True
     else:
         return False
