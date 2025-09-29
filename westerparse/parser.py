@@ -4840,33 +4840,33 @@ def isValidMinorModeArc(arc, notes):
               notes[arc[-1]].csd.value == 7]
 
     if (all (case1)
-            and notes[arc[1]].csd.dir == 'descending'):
-        return True
-    elif (all (case2)
-          and notes[arc[1]].csd.dir == 'bidirectional'):
-        return True
-    elif (all(case3)
-          and notes[arc[1]].csd.dir == 'bidirectional'
-          and notes[arc[2]].csd.dir == 'ascending'):
-        return True
-    elif (all(case4)
-          and notes[arc[1]].csd.dir == 'descending'
-          and notes[arc[2]].csd.dir == 'descending'):
-        return True
-    elif (all(case5)
-          and notes[arc[1]].csd.dir == 'bidirectional'):
-        return True
-    elif (all(case6)
-          and notes[arc[1]].csd.dir == 'descending'):
-        return True
-    elif (all(case7)
-          and notes[arc[1]].csd.dir == 'descending'):
-        return True
-    elif (all(case8)
-          and notes[arc[1]].csd.dir == 'ascending'):
-        return True
-    else:
+            and not notes[arc[1]].csd.dir == 'descending'):
         return False
+    elif (all (case2)
+          and not notes[arc[1]].csd.dir == 'bidirectional'):
+        return False
+    elif (all(case3)
+          and not (notes[arc[1]].csd.dir == 'bidirectional'
+          and notes[arc[2]].csd.dir == 'ascending')):
+        return False
+    elif (all(case4)
+          and not (notes[arc[1]].csd.dir == 'descending'
+          and notes[arc[2]].csd.dir == 'descending')):
+        return False
+    elif (all(case5)
+          and not notes[arc[1]].csd.dir == 'bidirectional'):
+        return False
+    elif (all(case6)
+          and not notes[arc[1]].csd.dir == 'descending'):
+        return False
+    elif (all(case7)
+          and not notes[arc[1]].csd.dir == 'descending'):
+        return False
+    elif (all(case8)
+          and not notes[arc[1]].csd.dir == 'ascending'):
+        return False
+    else:
+        return True
 
 
 def isIndependent(note):
