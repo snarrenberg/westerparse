@@ -2568,8 +2568,9 @@ class Parser:
                 selectedArcs = [arc for arc in fiveThreeArcs
                                 if arcLength(arc) == arcSpan]
                 if not selectedArcs:
-                    error = (f'No composite step motion found from this '
-                             f'S2 candidate: {str(self.S2Value + 1)}.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 selectedArc = selectedArcs[0]
@@ -2601,8 +2602,9 @@ class Parser:
                             break
                 # Check for success.
                 if len(basicArcCand) != 2:
-                    error = ('No composite step motion found from this '
-                             'S2 candidate: ' + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 else:
@@ -2744,8 +2746,9 @@ class Parser:
                                         basicArcCand[x + 1] = b.index
                 # Check to make sure the basic step motion is complete.
                 if len(basicArcCand) != (self.S2Value + 1):
-                    error = ('No basic step motion found from this S2 '
-                             'candidate: ' + str(self.S2Value + 1) + '.')
+                    error = (f'No basic step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 else:
@@ -2762,9 +2765,9 @@ class Parser:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -2797,9 +2800,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -2811,9 +2814,9 @@ class Parser:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -2840,9 +2843,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -2854,9 +2857,9 @@ class Parser:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -2883,9 +2886,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -2917,9 +2920,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -2957,9 +2960,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -2971,9 +2974,9 @@ class Parser:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -3001,9 +3004,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -3014,9 +3017,9 @@ class Parser:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -3035,9 +3038,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -3062,9 +3065,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -3075,9 +3078,9 @@ class Parser:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -3096,9 +3099,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -3123,9 +3126,9 @@ class Parser:
                     # TODO for now, return just the first basic arc found
                     self.arcBasic = arcBasicCandidates[0]
                 else:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -3143,9 +3146,9 @@ class Parser:
                             self.arcBasic = [self.S2Index, idx, self.S1Index]
                             break
                 if self.arcBasic is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
@@ -3155,9 +3158,9 @@ class Parser:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
                 s3cands = [n.index for n in self.notes
@@ -3170,16 +3173,18 @@ class Parser:
                             self.arcBasic = [self.S2Index, idx, self.S1Index]
                             break
                 if self.arcBasic is None:
-                    error = ('No composite step motion found from '
-                             'this S2 candidate: '
-                             + str(self.S2Value + 1) + '.')
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                     self.errors.append(error)
                     return
 
             # report error if no basic arc found after method is applied:
             if self.arcBasic is None:
-                error = ('No basic step motion found from this S2 '
-                         'candidate: ' + str(self.S2Value + 1) + '.')
+                error = (
+                    f'No basic step motion found from this S2 candidate: '
+                    f'scale degree {self.S2Value % 7 + 1} '
+                    f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
                 self.errors.append(error)
                 return
             # If a basic arc is created, set the rule labels for S3 notes.
@@ -4818,6 +4823,8 @@ def isValidMinorModeArc(arc, notes):
     g. 8-b7-#6, 8-b7-b6
     h. 8-#7-8
     """
+    # TODO add  % 7 to check csd values
+    #   will need to adjust for cases involving sd8
     case1 = [notes[arc[0]].csd.value == 4,  # a
               notes[arc[1]].csd.value == 5,
               notes[arc[-1]].csd.value == 4]
