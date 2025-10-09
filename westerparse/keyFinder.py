@@ -136,7 +136,7 @@ def validateKeySelection(knote, kmode):
                  'C# minor', 'C# major',
                  'D- major',
                  'D minor', 'D major',
-                 'D# minor'
+                 'D# minor',
                  'E- minor', 'E- major',
                  'E minor', 'E major',
                  'F minor', 'F major',
@@ -150,6 +150,7 @@ def validateKeySelection(knote, kmode):
         # Pass to next step if key not provided by user.
         return None
     elif str(knote + ' ' + kmode) not in validKeys:
+        print(validKeys)
         error = ('The user-selected key (' + knote
                  + ' ' + kmode + ') is not a valid key.')
         raise KeyFinderError(error)
