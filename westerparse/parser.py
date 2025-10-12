@@ -886,7 +886,7 @@ class Parser:
                         # add the new arc only if it doesn't contradict
                         # an existing arc
                         testArc = [h.dependency.lefthead, h.index, j.index]
-                        if not isValidMinorModeArc(testArc, self.notes):
+                        if self.context.key.mode == 'minor' and not isValidMinorModeArc(testArc, self.notes):
                             return
                             # print('arc not valid in minor')
                         if conflictsWithOtherArc(testArc, arcs):
