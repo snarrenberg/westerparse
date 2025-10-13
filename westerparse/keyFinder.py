@@ -179,10 +179,10 @@ def testValidatedKey(score, keynote, mode, kharm):
                      thisScale.pitchFromDegree(5).name]
         # (1) Test first and last notes.
         if part.flatten().notes[0].pitch.name not in thisTriad:
-            error = ('The first note is not a triad pitch.')
+            error = ('The first note is not a tonic-triad pitch.')
             partErrors += '\n\t' + error
         if part.flatten().notes[-1].pitch.name not in thisTriad:
-            error = ('The last note is not a triad pitch.')
+            error = ('The last note is not a tonic-triad pitch.')
             partErrors += '\n\t' + error
         # (2) Test for scale pitches.
         nonscalars = 0
@@ -203,7 +203,7 @@ def testValidatedKey(score, keynote, mode, kharm):
         if (not kharm
                 and part.species in ['first', 'second', 'fourth'] and
                 leapTestWeak(leapPairs, thisTriad) is False):
-            error = ('At least one leap fails to include a triad pitch.')
+            error = ('At least one leap fails to include a tonic-triad pitch.')
             partErrors += '\n\t' + error
         if partErrors:
             partErrorStr = ('Problems found in ' + part.name
