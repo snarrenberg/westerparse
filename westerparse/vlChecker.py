@@ -919,6 +919,7 @@ def checkThirdSpeciesForbiddenMotions(context, duet, VLQs):
                           != parDirection,
                           vSpeciesNote2.consecutions.rightDirection
                           != parDirection,
+                          vSpeciesNote2.consecutions.rightDirection,
                           vSpeciesNote2.consecutions.leftType == 'step',
                           vSpeciesNote2.consecutions.leftType == 'step']
                 # Test for appearance of note as consonance in first bar.
