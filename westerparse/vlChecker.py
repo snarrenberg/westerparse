@@ -498,7 +498,19 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
     breakcount = 0
     earliestBreak = 4
     latestBreak = context.score.measures - 4
+    firstVLQ = VLQs[0]
+    if speciesPart == 0:
+        firstNote = firstVLQ.v1n1
+    elif speciesPart == 1:
+        firstNote = firstVLQ.v2n1
+    if firstNote.tie is None:
+        error = (f'Bar {firstNote.measureNumber} to '
+                 f'bar {(firstNote.measureNumber + 1)}: '
+                 f'Fourth species must begin with a syncopation.')
+        vlErrors.append(error)
+
     for vlq in VLQs:
+        # Look at first vlq and check whether the first note is tied over.
         # Look for vlq where second note in species line is not tied over.
         if speciesPart == 0:
             speciesNote = vlq.v1n2
@@ -526,7 +538,7 @@ def checkFourthSpeciesControlOfDissonance(context, duet, VLQs):
                 elif earliestBreak > speciesNote.measureNumber:
                     error = (f'Bar {speciesNote.measureNumber} to '
                              f'bar {(speciesNote.measureNumber + 1)}: '
-                             f'Breaking of fourth species in bars '
+                             f'Breaking of fourth species '
                              f'occurs too early.')
                     vlErrors.append(error)
                 elif speciesNote.measureNumber > latestBreak:
