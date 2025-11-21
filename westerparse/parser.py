@@ -131,6 +131,17 @@ class Parser:
         self.context = context
         self.notes = self.part.flatten().notes
 
+        # set variables if parsing a line segment
+        self.segment = False
+        if kwargs.get('segment'):
+            self.segment = kwargs['segment']
+        else:
+            self.segment == False
+        if kwargs.get('seg_start'):
+            self.seg_start = kwargs['seg_start']
+        if kwargs.get('seg_stop'):
+            self.seg_stop = kwargs['seg_stop']
+
         # Collect errors by part, line type, and individual parse.
         # Raise exceptions in context.py: parseContext.
         self.errors = []  # syntax errors arising during pre-parse,
@@ -185,6 +196,9 @@ class Parser:
             self.showPartialParse(self.notes[0],
                                   self.notes[-1], self.arcs, [], [])
 
+        # Interrupt parser if just parsing a line segment.
+        if self.segment:
+            return
         # Interrupt parser if preliminary parsing is unsuccessful.
         # and report errors
         if self.errors:
@@ -264,7 +278,13 @@ class Parser:
         # Initialize the lists of open heads and transitions
         openHeads = [0]
         openTransitions = []
-        #        openLocals = []
+
+        # fill stack, buffer and open heads for line segment parsing
+        if self.segment:
+            g_buffer = [n for n in self.notes if (not n.tie or n.tie.type == 'start') and self.seg_start <= n.index <= self.seg_stop]
+            g_stack =[n for n in self.notes if (not n.tie or n.tie.type == 'start') and n.index < self.seg_start]
+            openHeads = [g_buffer[0].index]
+
         # Set the global harmonic referents
         harmonyStart = [p for p in self.part.tonicTriad.pitches]
         harmonyEnd = [p for p in self.part.tonicTriad.pitches]
@@ -1065,6 +1085,7 @@ class Parser:
                 if openHeads:
                     for t in reversed(openHeads):
                         h = self.notes[t]
+                        # h = getNoteByIndex(self.notes, t)
                         # If i is the only open head, ...
                         if i.index == h.index:
                             j.dependency.lefthead = i.index
@@ -1074,6 +1095,7 @@ class Parser:
                             j.dependency.lefthead = h.index
                             h.dependency.dependents.append(j.index)
                             break
+                    # TODO: 2025-11-21 should this block be indented further??
                     else:
                         j.dependency.lefthead = i.index
                         i.dependency.dependents.append(j.index)
@@ -1082,7 +1104,7 @@ class Parser:
                     logger.debug(f'Case marker 051')
                     j.dependency.lefthead = i.index
                     i.dependency.dependents.append(j.index)
-                if j not in openTransitions:
+                if j.index not in openTransitions:
                     openTransitions.append(j.index)
 
         # CASE FOUR: Step from nonharmonic to harmonic pitch.
@@ -1113,7 +1135,71 @@ class Parser:
                             if (self.notes[i.dependency.lefthead]
                                     != self.notes[i.dependency.righthead]):
                                 openHeads.append(j.index)
-                            arcGenerateTransition(i.index, part, arcs)
+                            isValidArc = arcGenerateTransition(i.index, part,
+                                                               arcs)
+
+                            if not isValidArc:
+                                # (A) restore dependency information that was just altered
+                                for d in i.dependency.dependents:
+                                    if self.notes[d].csd.value != i.csd.value:
+                                        self.notes[
+                                            j.index].dependency.dependents.remove(
+                                            d)
+                                        self.notes[j.index].dependency.dependents.remove(i.index)
+                                # and restore i to the open transitions
+                                openTransitions.append(i.index)
+
+                                # (B) Reparse a segment of the line
+                                # (1) Determine the lefthand limit for reparsing
+                                #       (a) lefthead of the earliest open transition
+                                #       (b) the most recent open head
+                                if self.notes[openTransitions[0]].dependency.lefthead != None:
+                                    left_limit = self.notes[openTransitions[0]].dependency.lefthead
+                                else:
+                                    left_limit = openHeads[-1]
+                                # (2) find nonharmonic tones not yet in arcs:
+                                #        add to open transitions and reset dependents to None
+                                for idx in range(left_limit, j.index):
+                                    if not isHarmonic(self.notes[idx], harmonyStart):
+                                        if idx not in openTransitions:
+                                            openTransitions.append(idx)
+                                        self.notes[idx].dependency.dependents = []
+                                # sort the open transitions
+                                openTransitions.sort()
+
+                                # (3) look for demoted heads going back to this lefthand limit
+                                demotedHeads = [note.index for note in self.notes
+                                                if left_limit < note.index < i.index
+                                                and isIndependent(note)]
+                                if demotedHeads:
+                                    # print(f'{demotedHeads} = list of demoted but available heads')
+                                    # print(part.flatten().notes[i.index-1].dependency.lefthead)
+
+                                    # (a) try using a demoted head to interpret line segment ending with j
+                                    for dh in reversed(demotedHeads):
+                                        # parse line segment between dh and j
+                                        # create a Parser object for the segment and then parse it
+                                        # notes retain their index positions in the main line
+                                        line_segment = stream.Stream()
+                                        for n in self.notes:
+                                            line_segment.append(n)
+                                        line_segment.lineType = None
+                                        line_segment.partNum = 0
+                                        line_segment.tonicTriad = part.tonicTriad
+                                        line_segment.species = part.species
+                                        logger.debug(f'Parsing line segment from {dh} to {j.index}.')
+                                        SegmentParser = Parser(line_segment, self.context,
+                                                               segment=True,
+                                                               seg_start=dh, seg_stop=j.index)
+                                        for arc in SegmentParser.arcs:
+                                            arcs.append(arc)
+                                            for idx in arc:
+                                                if idx in openTransitions:
+                                                    openTransitions.remove(idx)
+
+                                        shiftStack(stack, buffer)
+                                        logger.debug(f'Resuming global line pars at {j.index}.')
+
                             # If lefthead of transition is not in triad,
                             # remove from open heads.
                             if not (
@@ -2091,8 +2177,7 @@ class Parser:
         newParse.tonic = self.part.tonic
         newParse.mode = self.part.mode
         newParse.partNum = self.part.partNum
-        # newParse.notes = self.notes
-        newParse.notes = copy.copy(self.notes.stream())
+        newParse.notes = copy.deepcopy(self.notes.stream())
         newParse.errors = buildErrors
         newParse.notes[newParse.S1Index].rule.name = 'S1'
         newParse.method = method
@@ -3370,18 +3455,6 @@ class Parser:
                     self.arcs.append(self.arcBasic)
                     addDependenciesFromArc(self.notes, self.arcBasic)
 
-        def reParseLineSegment(self, left_boundary_index, right_boundary_index):
-            buffer = []
-            stack = []
-            open_heads = []
-            open_transitions = []
-            for i in self.notes:
-                if left_boundary_index <= i <= right_boundary_index:
-                    buffer.append(i)
-
-
-            pass
-
         def attachOpenheadsToStructuralLefthead(self, structuralLefthead,
                                                 rightLimit):
             """Examine the span between a structural lefthead and a righthand
@@ -4619,12 +4692,18 @@ def arcGenerateTransition(i, part, arcs):
                 part.flatten().notes[i].dependency.lefthead):
             elements.append(d)
     thisArc = sorted(elements)
-    arcs.append(thisArc)
     # See if it's a neighbor or passing.
-    if part.flatten().notes[thisArc[-1]] == part.flatten().notes[thisArc[0]]:
-        arcType = 'neighbor'
-    else:
+    arcType = None
+    if isPassingArc(thisArc, part.flatten().notes):
         arcType = 'passing'
+    elif isNeighboringArc(thisArc, part.flatten().notes):
+        arcType = 'neighboring'
+    # Add arc if it is valid, else return false
+    if arcType is not None:
+        arcs.append(thisArc)
+        return True
+    else:
+        return False
 
 
 def arcGenerateRepetition(j, part, arcs):
