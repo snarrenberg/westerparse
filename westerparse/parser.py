@@ -1172,10 +1172,7 @@ class Parser:
                                                 if left_limit < note.index < i.index
                                                 and isIndependent(note)]
                                 if demotedHeads:
-                                    # print(f'{demotedHeads} = list of demoted but available heads')
-                                    # print(part.flatten().notes[i.index-1].dependency.lefthead)
-
-                                    # (a) try using a demoted head to interpret line segment ending with j
+                                    # try using a demoted head to interpret line segment ending with j
                                     for dh in reversed(demotedHeads):
                                         # parse line segment between dh and j
                                         # create a Parser object for the segment and then parse it
