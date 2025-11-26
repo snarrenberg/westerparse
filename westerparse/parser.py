@@ -304,7 +304,6 @@ class Parser:
                 i = g_stack[-1]
                 j = g_buffer[0]
                 # Parse the transition i-j.
-                print(f'parsing buffer: {g_buffer}')
                 self.parseTransition(g_stack, g_buffer, self.part, i, j,
                                      harmonyStart, harmonyEnd, openHeads,
                                      openTransitions, arcs)
