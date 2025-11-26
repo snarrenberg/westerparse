@@ -304,6 +304,7 @@ class Parser:
                 i = g_stack[-1]
                 j = g_buffer[0]
                 # Parse the transition i-j.
+                print(f'parsing buffer: {g_buffer}')
                 self.parseTransition(g_stack, g_buffer, self.part, i, j,
                                      harmonyStart, harmonyEnd, openHeads,
                                      openTransitions, arcs)
@@ -908,7 +909,6 @@ class Parser:
                         testArc = [h.dependency.lefthead, h.index, j.index]
                         if self.context.key.mode == 'minor' and not isValidMinorModeArc(testArc, self.notes):
                             return
-                            # print('arc not valid in minor')
                         if conflictsWithOtherArc(testArc, arcs):
                             return
                         else:
@@ -1196,6 +1196,7 @@ class Parser:
 
                                         shiftStack(stack, buffer)
                                         logger.debug(f'Resuming global line pars at {j.index}.')
+                                        # problematic if already at the end of the line
 
                             # If lefthead of transition is not in triad,
                             # remove from open heads.
@@ -4923,30 +4924,30 @@ def isValidMinorModeArc(arc, notes):
               notes[arc[-1]].csd.value == 7]
 
     if (all (case1)
-            and not notes[arc[1]].csd.dir == 'descending'):
+            and not notes[arc[1]].csd.direction == 'descending'):
         return False
     elif (all (case2)
-          and not notes[arc[1]].csd.dir == 'bidirectional'):
+          and not notes[arc[1]].csd.direction == 'bidirectional'):
         return False
     elif (all(case3)
-          and not (notes[arc[1]].csd.dir == 'bidirectional'
-          and notes[arc[2]].csd.dir == 'ascending')):
+          and not (notes[arc[1]].csd.direction == 'bidirectional'
+          and notes[arc[2]].csd.direction == 'ascending')):
         return False
     elif (all(case4)
-          and not (notes[arc[1]].csd.dir == 'descending'
-          and notes[arc[2]].csd.dir == 'descending')):
+          and not (notes[arc[1]].csd.direction == 'descending'
+          and notes[arc[2]].csd.direction == 'descending')):
         return False
     elif (all(case5)
-          and not notes[arc[1]].csd.dir == 'bidirectional'):
+          and not notes[arc[1]].csd.direction == 'bidirectional'):
         return False
     elif (all(case6)
-          and not notes[arc[1]].csd.dir == 'descending'):
+          and not notes[arc[1]].csd.direction == 'descending'):
         return False
     elif (all(case7)
-          and not notes[arc[1]].csd.dir == 'descending'):
+          and not notes[arc[1]].csd.direction == 'descending'):
         return False
     elif (all(case8)
-          and not notes[arc[1]].csd.dir == 'ascending'):
+          and not notes[arc[1]].csd.direction == 'ascending'):
         return False
     else:
         return True
