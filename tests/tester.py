@@ -172,7 +172,7 @@ if __name__ == "__main__":
     # source = '../examples/corpus/WPH200.musicxml' # 10, 12
     # source = '../examples/corpus/WPH201.musicxml' # 8, 10
     # source = '../examples/corpus/WPH202.musicxml' # ERRORS
-    # source = '../examples/corpus/WPH203.musicxml' # 8, 10
+    # source = '../examples/corpus/WPH203.musicxml' # 8, 10 Needs a solution to allow sd3 at start of dominant
     # source = '../examples/corpus/WPH204.musicxml' # 11, 13
     # source = '../examples/corpus/WPH205.musicxml' # 7, 9
     # source = '../examples/corpus/WPH206.musicxml' #
@@ -195,8 +195,13 @@ if __name__ == "__main__":
     # source = 'TestScoresXML/2025_08_08_1203_41679.musicxml'
     # source = 'TestScoresXML/2025_08_20_1047_37654.musicxml'
     # source = 'TestScoresXML/2025_09_04_1911_50853.musicxml'
-    source = 'TestScoresXML/2025_10_30_0859_46322.musicxml'
+    # source = 'TestScoresXML/2025_10_30_0859_46322.musicxml'
+    source = 'TestScoresXML/2025_11_24_1438_46485.musicxml'
 
+    
+
+    # source = 'TestScoresXML/2025_11_25_1655_44966.musicxml' # harmonic species, try bars 10 and 12 or 10 and 13
+    # source = 'TestScoresXML/2025_11_26_0951_58524.musicxml' # harmonic species, try bars 10 and 12 or 10 and 13
 
 
     def tester(source, verify):
@@ -217,13 +222,13 @@ if __name__ == "__main__":
         elif verify == 100: # tests for generability as harmonic counterpoint
             westerparse.evaluateLines(source, show='show',
                                       harmonicSpecies=True,
-                                      startPredominant=10,
-                                      startDominant=12)
+                                      startPredominant=8,
+                                      startDominant=10)
         elif verify == 101:
             westerparse.evaluateLines(source, show=None,
                                       harmonicSpecies=True,
-                                      startPredominant=10,
-                                      startDominant=12)
+                                      startPredominant=7,
+                                      startDominant=9)
         elif verify == 110:
             westerparse.evaluateLines(source, show='show',
                                       partSelection=0,
@@ -235,8 +240,8 @@ if __name__ == "__main__":
                                       partSelection=0,
                                       partLineType='primary',
                                       harmonicSpecies=True,
-                                      startPredominant=7,
-                                      startDominant=9)
+                                      startPredominant=10,
+                                      startDominant=13)
 
         elif verify == 3:
             westerparse.evaluateLines(source, show=None)
@@ -465,7 +470,7 @@ if __name__ == "__main__":
     # vltester(source, keynote='D$', mode='manor')
     # reporter(source, 1)
 
-
+    # html = tester(source, 100)
     html = tester(source, 1)
     print(html)
     
