@@ -390,6 +390,7 @@ class Parser:
                 h_openHeads = []
                 # add index of first note of buffer to open heads
                 # if it is harmonic
+                print('oiuoiuoiuo', h_span[0], h_span[3])
                 if isHarmonic(h_span[0][0], h_span[1]):
                     h_openHeads.append(h_span[0][0].index)
                 # TODO grab open trans from prior spans
@@ -3768,6 +3769,11 @@ class Parser:
                     n.rule.level = 1
                 if n.rule.name == 'S3':
                     n.rule.level = 2
+                if n.rule.name == 'S4':
+                    n.rule.level = 3
+                    self.arcBasic.append(n.index)
+                    self.arcBasic.sort()
+                    print(self.arcBasic)
             # Set level of first note if not in basic arc.
             if self.arcBasic[0] != 0:
                 self.notes[0].rule.level = 3
@@ -3798,6 +3804,19 @@ class Parser:
                     if spanLength(segment) > 0:
                         spans.append(segment)
 
+            # Given a span, determine the level of the next element
+            # embedded in that span, using the levels of the span edges.
+            def getNextLevel(span):
+                leftEdgeLevel = self.notes[span[0]].rule.level
+                rightEdgeLevel = self.notes[span[1]].rule.level
+                if leftEdgeLevel and rightEdgeLevel:
+                    nextLevel = max(leftEdgeLevel, rightEdgeLevel) + 1
+                elif leftEdgeLevel and not rightEdgeLevel:
+                    nextLevel = leftEdgeLevel + 1
+                elif not leftEdgeLevel and rightEdgeLevel:
+                    nextLevel = rightEdgeLevel + 1
+                return nextLevel
+
             # Create a list to hold all the fillable spans.
             spans = []
 
@@ -3816,6 +3835,51 @@ class Parser:
 
             # Add any spans in the basic arc.
             addSpansFromArc(self.arcBasic, spans)
+
+            # Add spans related to harmonic progression
+            # Subdivide any nonzero spans if they include
+            # a harmonic span boundary
+            # Subdivide any nonzero spans if they include
+            # a harmonic span boundary
+            if self.harmonicSpecies:
+                # get index of first note in predominant span, if there is one
+                if self.harmonicSpanDict['offsetPredominant'] is not None:
+                    pred_start = self.notes.getElementAtOrBefore(
+                        self.harmonicSpanDict['offsetPredominant']).index
+                    for span in spans:
+                        add_new_span = False
+                        nextLevel = getNextLevel(span)
+                        if span[0] < pred_start < span[1]:
+                            self.notes[pred_start].rule.level = nextLevel
+                            new_span = (span[0], pred_start)
+                            if spanLength(new_span) > 0:
+                                add_new_span = True
+                                spans.append(new_span)
+                            new_span = (pred_start, span[1])
+                            if spanLength(new_span) > 0:
+                                add_new_span = True
+                                spans.append(new_span)
+                        if add_new_span:
+                            spans.remove(span)
+                # get index of first note in dominant span
+                dom_start = self.notes.getElementAtOrBefore(
+                    self.harmonicSpanDict['offsetDominant']).index
+                for span in spans:
+                    add_new_span = False
+                    nextLevel = getNextLevel(span)
+                    if span[0] < dom_start < span[1]:
+                        self.notes[dom_start].rule.level = nextLevel
+                        new_span = (span[0], dom_start)
+                        if spanLength(new_span) > 0:
+                            add_new_span = True
+                            spans.append(new_span)
+                        new_span = (dom_start, span[1])
+                        if spanLength(new_span) > 0:
+                            add_new_span = True
+                            spans.append(new_span)
+                    if add_new_span:
+                        spans.remove(span)
+
 
             # For testing whether an insertion conforms
             # to the intervallic constraints:
@@ -3845,17 +3909,6 @@ class Parser:
                 rightEdge = span[1]
                 leftEdgeLevel = self.notes[span[0]].rule.level
                 rightEdgeLevel = self.notes[span[1]].rule.level
-
-                def getNextLevel(span):
-                    leftEdgeLevel = self.notes[span[0]].rule.level
-                    rightEdgeLevel = self.notes[span[1]].rule.level
-                    if leftEdgeLevel and rightEdgeLevel:
-                        nextLevel = max(leftEdgeLevel, rightEdgeLevel) + 1
-                    elif leftEdgeLevel and not rightEdgeLevel:
-                        nextLevel = leftEdgeLevel + 1
-                    elif not leftEdgeLevel and rightEdgeLevel:
-                        nextLevel = rightEdgeLevel + 1
-                    return nextLevel
 
                 nextLevel = getNextLevel(span)
                 # (1) Search for possible branches across or within the span.
