@@ -274,12 +274,13 @@ class Parser:
         g_buffer = [n for n in self.notes
                     if not n.tie or n.tie.type == 'start']
         g_stack = []
+        # PROBLEM: should not set arcs to empty when resuming a global parse after segment parse
         arcs = []
         # Initialize the lists of open heads and transitions
         openHeads = [0]
         openTransitions = []
 
-        # fill stack, buffer and open heads for line segment parsing
+        # Fill stack, buffer and open heads for line segment parsing
         if self.segment:
             g_buffer = [n for n in self.notes if (not n.tie or n.tie.type == 'start') and self.seg_start <= n.index <= self.seg_stop]
             g_stack =[n for n in self.notes if (not n.tie or n.tie.type == 'start') and n.index < self.seg_start]
@@ -1192,10 +1193,16 @@ class Parser:
                                             for idx in arc:
                                                 if idx in openTransitions:
                                                     openTransitions.remove(idx)
-
                                         shiftStack(stack, buffer)
-                                        logger.debug(f'Resuming global line pars at {j.index}.')
-                                        # problematic if already at the end of the line
+                                        logger.debug(f'Resuming global line parse at {j.index}.')
+                                        if openTransitions:
+                                            for t in reversed(openTransitions):
+                                                if (isStepUp(self.notes[t], j)
+                                                    and i.csd.direction
+                                                        in ['ascending', 'bidirectional']):
+                                                    self.notes[t].dependency.righthead = j.index
+                                                    arcGenerateTransition(t, part, arcs)
+                                                    openTransitions.remove(t)
 
                             # If lefthead of transition is not in triad,
                             # remove from open heads.
