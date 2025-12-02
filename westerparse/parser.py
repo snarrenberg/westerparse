@@ -390,7 +390,6 @@ class Parser:
                 h_openHeads = []
                 # add index of first note of buffer to open heads
                 # if it is harmonic
-                print('oiuoiuoiuo', h_span[0], h_span[3])
                 if isHarmonic(h_span[0][0], h_span[1]):
                     h_openHeads.append(h_span[0][0].index)
                 # TODO grab open trans from prior spans
@@ -2456,7 +2455,6 @@ class Parser:
                                                self.notes) == 'falling'):
                             p_arc = arc
                             break
-                    # print(p_arc, n_arc)
                     if p_arc and n_arc_dir == 'lower':
                         self.arcEmbed(p_arc, n_arc)
                     elif p_arc and n_arc_dir == 'upper':
@@ -2465,7 +2463,6 @@ class Parser:
                         new_arc = [p_arc[0], n_arc[1], n_arc[2]]
                         self.arcs.append(new_arc)
                         addDependenciesFromArc(self.notes, new_arc)
-                    # print(self.arcs)
 
             # METHOD 0
             # From any S2 candidate, look for one existing basic step motion
@@ -3596,7 +3593,6 @@ class Parser:
                 elif i.rule.name is None:
                     # i.rule.name = 'x'
                     i.rule.name = 'L3'
-                    # print(i.index, i.dependency.lefthead, i.dependency.righthead, i.dependency.dependents)
                 if i.rule.name in ['X', 'x']:
                     error = ('The pitch ' + i.nameWithOctave +
                          ' in measure ' + str(i.measureNumber) +
@@ -3773,7 +3769,6 @@ class Parser:
                     n.rule.level = 3
                     self.arcBasic.append(n.index)
                     self.arcBasic.sort()
-                    print(self.arcBasic)
             # Set level of first note if not in basic arc.
             if self.arcBasic[0] != 0:
                 self.notes[0].rule.level = 3
