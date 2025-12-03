@@ -1137,7 +1137,8 @@ class Parser:
                                 openHeads.append(j.index)
                             isValidArc = arcGenerateTransition(i.index, part,
                                                                arcs)
-
+                            # TODO: 2025-12-02 The following is a temporary solution
+                            #  that is far too specific ...
                             if not isValidArc:
                                 # (A) restore dependency information that was just altered
                                 for d in i.dependency.dependents:
