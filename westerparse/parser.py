@@ -1140,6 +1140,7 @@ class Parser:
                             # TODO: 2025-12-02 The following is a temporary solution
                             #  that is far too specific ...
                             if not isValidArc:
+                                print(isValidArc, i.index)
                                 # (A) restore dependency information that was just altered
                                 for d in i.dependency.dependents:
                                     if self.notes[d].csd.value != i.csd.value:
@@ -4624,9 +4625,9 @@ def isNeighboringArc(arc, notes):
               isDiatonicStep(i, j),
               isDiatonicStep(j, k),
               k.csd.value == i.csd.value]
-    rules2 = [k.csd.direction == 'bidirectional',
-              j.csd.value > k.csd.value and k.csd.direction == 'descending',
-              j.csd.value < k.csd.value and k.csd.direction == 'ascending']
+    rules2 = [j.csd.direction == 'bidirectional',
+              j.csd.value > k.csd.value and j.csd.direction == 'descending',
+              j.csd.value < k.csd.value and j.csd.direction == 'ascending']
     if all(rules1) and any(rules2):
         # TODO Could add conditions to add label modifier: upper, lower.
         return True
@@ -4754,8 +4755,10 @@ def arcGenerateTransition(i, part, arcs):
     # Add arc if it is valid, else return false
     if arcType is not None:
         arcs.append(thisArc)
+        # print([(n, part.flatten().notes[n].nameWithOctave) for n in thisArc])
         return True
     else:
+        print([(n, part.flatten().notes[n].nameWithOctave) for n in thisArc])
         return False
 
 
