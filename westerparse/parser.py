@@ -2182,7 +2182,9 @@ class Parser:
         newParse.species = self.part.species
         newParse.tonic = self.part.tonic
         newParse.mode = self.part.mode
-        newParse.partNum = self.part.partNum
+        # set measure number for each note, because they won't survive deepcopy
+        for note in self.notes:
+                note.measNum = note.measureNumber
         newParse.notes = copy.deepcopy(self.notes.stream())
         newParse.errors = buildErrors
         newParse.notes[newParse.S1Index].rule.name = 'S1'
@@ -2659,7 +2661,7 @@ class Parser:
                 if not selectedArcs:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 selectedArc = selectedArcs[0]
@@ -2693,7 +2695,7 @@ class Parser:
                 if len(basicArcCand) != 2:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 else:
@@ -2837,7 +2839,7 @@ class Parser:
                 if len(basicArcCand) != (self.S2Value + 1):
                     error = (f'No basic step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 else:
@@ -2856,7 +2858,7 @@ class Parser:
                 if offPre is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -2891,7 +2893,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -2905,7 +2907,7 @@ class Parser:
                 if offPre is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -2934,7 +2936,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -2948,7 +2950,7 @@ class Parser:
                 if offPre is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -2977,7 +2979,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3011,7 +3013,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3051,7 +3053,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3065,7 +3067,7 @@ class Parser:
                 if offPre is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -3095,7 +3097,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3108,7 +3110,7 @@ class Parser:
                 if offPre is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -3129,7 +3131,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3156,7 +3158,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3169,7 +3171,7 @@ class Parser:
                 if offPre is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 for arc in self.arcs:
@@ -3190,7 +3192,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3217,7 +3219,7 @@ class Parser:
                 else:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3237,7 +3239,7 @@ class Parser:
                 if self.arcBasic is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3249,7 +3251,7 @@ class Parser:
                 if offPre is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
                 s3cands = [n.index for n in self.notes
@@ -3264,7 +3266,7 @@ class Parser:
                 if self.arcBasic is None:
                     error = (f'No composite step motion found from this S2 candidate: '
                              f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
                     self.errors.append(error)
                     return
 
@@ -3273,7 +3275,7 @@ class Parser:
                 error = (
                     f'No basic step motion found from this S2 candidate: '
                     f'scale degree {self.S2Value % 7 + 1} '
-                    f'in measure {str(self.notes[self.S2Index].measureNumber)}.')
+                    f'in measure {str(self.notes[self.S2Index].measNum)}.')
                 self.errors.append(error)
                 return
             # If a basic arc is created, set the rule labels for S3 notes.
@@ -3572,7 +3574,7 @@ class Parser:
                             i.noteheadParenthesis = True
                         else:
                             error = ('The pitch ' + i.nameWithOctave +
-                                     ' in measure ' + str(i.measureNumber) +
+                                     ' in measure ' + str(i.measNum) +
                                      ' is not generable.')
                             self.errors.append(error)
                     # TODO: the following may be redundant
@@ -3587,7 +3589,7 @@ class Parser:
                             i.noteheadParenthesis = True
                         else:
                             error = ('The pitch ' + i.nameWithOctave +
-                                     'in measure ' + str(i.measureNumber)
+                                     'in measure ' + str(i.measNum)
                                      + 'is not generable.')
                             self.errors.append(error)
 
@@ -3604,7 +3606,7 @@ class Parser:
                     i.rule.name = 'L3'
                 if i.rule.name in ['X', 'x']:
                     error = ('The pitch ' + i.nameWithOctave +
-                         ' in measure ' + str(i.measureNumber) +
+                         ' in measure ' + str(i.measNum) +
                          ' is not generable.')
                     self.errors.append(error)
 
@@ -3635,7 +3637,7 @@ class Parser:
                                 break
                     if not resolved:
                         error = ('The local insertion ' + i.nameWithOctave +
-                                 ' in measure ' + str(i.measureNumber) +
+                                 ' in measure ' + str(i.measNum) +
                                  ' is not resolved.')
                         self.errors.append(error)
                     if self.lineType == 'bass' and self.harmonicSpecies:
