@@ -713,8 +713,9 @@ class Parser:
 
         if self.part.species in ['third', 'fifth'] and openTransitions:
             for idx in openTransitions:
-                # TODO First look for 'resolution'.
-                # self.notes[idx].rule.name = 'L0'
+                # Third species may have some unresolved notes that could be
+                # part of a global structure. These will be
+                # parsed during buildParse.
                 pass
         elif openTransitions:
             mns = [str(self.notes[t].measureNumber) for t in openTransitions]
@@ -2182,6 +2183,7 @@ class Parser:
         newParse.species = self.part.species
         newParse.tonic = self.part.tonic
         newParse.mode = self.part.mode
+        newParse.partNum = self.part.partNum
         # set measure number for each note, because they won't survive deepcopy
         for note in self.notes:
                 note.measNum = note.measureNumber
@@ -3516,99 +3518,76 @@ class Parser:
 
         def assignSecondaryRules(self):
             """Find any note that does not yet have a rule assigned and
-            determine the appropriate rule based on its dependency.
-            """
-            # TODO rewrite for harmonic species
-            for i in self.notes:
-                idl = i.dependency.lefthead
-                idr = i.dependency.righthead
-                if (i.rule.name is None and
-                        ((i.tie and i.tie.type == 'start') or not i.tie)):
-                    # CASE ONE: Look for passing and neighboring arcs.
-                    if (idl is not None and
-                            idr is not None):
-                        # For neighboring arcs, determine whether
-                        # the heads are tonic-triad pitches or not.
-                        if (self.notes[idl].csd.value ==
-                                self.notes[idr].csd.value):
-                            if isTriadMember(self.notes[idr], 0):
-                                i.rule.name = 'E2'
-                                if self.notes[idr].rule.name is None:
-                                    self.notes[idr].rule.name = 'E1'
-                            else:
-                                i.rule.name = 'L2'
-                                if self.notes[idr].rule.name is None:
-                                    self.notes[idr].rule.name = 'L1'
-                        # For passing arcs
-                        else:
-                            i.rule.name = 'E4'
-                            if (self.notes[idr].rule.name is None and
-                                    isTriadMember(self.notes[idr], 0)):
-                                self.notes[idr].rule.name = 'E3'
+            determine the appropriate rule, starting with notes in arcs,
+            then independent tonic-triad notes, and then local harmonic
+            tones in third and harmonic species."""
 
-                    # CASE TWO: Repetitions.
-                    elif (idl is not None and
-                          idr is None):
-                        if (self.notes[idl].csd.value
-                                == i.csd.value):
-                            if isTriadMember(i, 0):
-                                i.rule.name = 'E1'
-                            else:
-                                i.rule.name = 'L1'
-
-                    # CASE UNKNOWN:
-                    elif idl != idr:
-                        # What's the function of this section?
-                        i.rule.name = 'Ex'
-
-                    # CASE THREE: Independent notes, global and local.
-                    if (idl is None
-                            and idr is None):
-                        if isTriadMember(i, 0):
-                            i.rule.name = 'E3'
-                            i.noteheadParenthesis = True
-                        elif (not isTriadMember(i, 0) and
-                              (self.species in ['third', 'fifth']
-                               or self.harmonicSpecies)):
-                            i.rule.name = 'L3'
-                            i.noteheadParenthesis = True
+            # First pass: repetitions, neighbors and passings
+            for arc in self.arcs:
+                # Create shortcuts
+                left_term = self.notes[arc[0]]
+                right_term = self.notes[arc[-1]]
+                # Assign rule to right terminal of repetitions
+                if len(arc) == 2:
+                    if right_term.rule.name is None:
+                        if isTriadMember(right_term, 0):
+                            right_term.rule.name = 'E1'
                         else:
-                            error = ('The pitch ' + i.nameWithOctave +
-                                     ' in measure ' + str(i.measNum) +
-                                     ' is not generable.')
-                            self.errors.append(error)
-                    # TODO: the following may be redundant
-                    elif i.dependency.dependents is None:
-                        if isTriadMember(i, 0):
-                            i.rule.name = 'E3'
-                            i.noteheadParenthesis = True
-                        elif (not isTriadMember(i, 0) and
-                              (self.species in ['third', 'fifth']
-                               or self.harmonicSpecies)):
-                            i.rule.name = 'L3'
-                            i.noteheadParenthesis = True
+                            right_term.rule.name = 'L1'
+                # Assign rule to neighbor and right terminal
+                elif len(arc) == 3 and right_term.csd.value == left_term.csd.value:
+                    if right_term.rule.name is None:
+                        if isTriadMember(right_term, 0):
+                            right_term.rule.name = 'E1'
+                            self.notes[arc[1]].rule.name = 'E2'
                         else:
-                            error = ('The pitch ' + i.nameWithOctave +
-                                     'in measure ' + str(i.measNum)
-                                     + 'is not generable.')
+                            right_term.rule.name = 'L1'
+                            self.notes[arc[1]].rule.name = 'L2'
+                # Assign rule to passing tones
+                elif len(arc) >= 3:
+                    for idx in arc[1:-1]:
+                        if self.notes[idx].rule.name is None:
+                            self.notes[idx].rule.name = 'E4'
+            # Second pass: tonic arc terminals
+            for arc in self.arcs:
+                # Create shortcuts
+                left_term = self.notes[arc[0]]
+                right_term = self.notes[arc[-1]]
+                if left_term.rule.name is None:
+                    if isTriadMember(left_term, 0):
+                        left_term.rule.name = 'E3'
+                if right_term.rule.name is None:
+                    if isTriadMember(right_term, 0):
+                        right_term.rule.name = 'E3'
+
+            # Third pass: independent tonic triad notes
+            arc_indexes = []
+            for arc in self.arcs:
+                for idx in arc:
+                    if idx not in arc_indexes:
+                        arc_indexes.append(idx)
+            for n in self.notes:
+                # ignore tie-initiating notes
+                if n.tie and n.tie.type == 'stop':
+                    continue
+                # look at independent notes without rules
+                if n.index not in arc_indexes and n.rule.name is None:
+                    if isTriadMember(n, 0):
+                        n.rule.name = 'E3'
+
+            # Fourth pass, for third species
+            if self.species in ['third', 'fifth'] or self.harmonicSpecies:
+                for n in self.notes:
+                    if n.rule.name is None:
+                        if isValidLocalInsertion(n.index, self.notes):
+                            n.rule.name = 'L3'
+                        else:
+                            n.rule.name = 'X'
+                            error = ('The pitch ' + n.nameWithOctave +
+                                 ' in measure ' + str(n.measNum) +
+                                 ' is not generable.')
                             self.errors.append(error)
 
-                if i.rule.name == 'E3' and i.dependency.dependents == []:
-                    i.noteheadParenthesis = True
-                # TODO Figure out why some notes still don't have rules.
-                #   casualties of brute force reinterpretation during
-                #   parsePrimary, method 7
-                elif i.rule.name is None and i.tie:
-                    if i.tie.type != 'stop':
-                        i.rule.name = 'X'
-                elif i.rule.name is None:
-                    # i.rule.name = 'x'
-                    i.rule.name = 'L3'
-                if i.rule.name in ['X', 'x']:
-                    error = ('The pitch ' + i.nameWithOctave +
-                         ' in measure ' + str(i.measNum) +
-                         ' is not generable.')
-                    self.errors.append(error)
 
         def testLocalResolutions(self):
             """For any note identified as a local insertion (rule L3),
@@ -4732,6 +4711,31 @@ def isLocalRepetition(noteIndex, notes, arcs):
     return isLocalRepetition
 
 
+def isValidLocalInsertion(noteIndex, notes):
+    targetNote = notes[noteIndex]
+    otherNotes = [n for n in notes if n.index != noteIndex and n.measNum == targetNote.measNum]
+    # print(targetNote, [(n.index, n.rule.name) for n in otherNotes])
+    cond1 = False
+    cond2 = True
+    for n in otherNotes:
+        if not n.rule.name:
+            continue
+        rules1 = [isLinearConsonance(n, targetNote),
+                  n.rule.name[0] in ['S', 'E']]
+        rules2a = [n.consecutions.leftType == 'skip', n.consecutions.rightType == 'skip']
+        rules2b = [isLinearConsonance(n, targetNote),
+                  ]
+        # test for consonance with globally generated note (required)
+        if all(rules1):
+            cond1 = True
+        # test for consonance with notes entered or left by skip
+        if any(rules2a) and all(rules2b):
+            cond2 = False
+    # print(noteIndex, cond1, cond2)
+    if cond1 and cond2:
+        return True
+    return False
+
 def arcGenerateTransition(i, part, arcs):
     # Assemble an arc after a righthead is detected.
     # Variable i is a note.index, the last transitional element before
@@ -4757,7 +4761,6 @@ def arcGenerateTransition(i, part, arcs):
     # Add arc if it is valid, else return false
     if arcType is not None:
         arcs.append(thisArc)
-        # print([(n, part.flatten().notes[n].nameWithOctave) for n in thisArc])
         return True
     else:
         print([(n, part.flatten().notes[n].nameWithOctave) for n in thisArc])
