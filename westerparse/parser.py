@@ -3588,7 +3588,6 @@ class Parser:
                                  ' is not generable.')
                             self.errors.append(error)
 
-
         def testLocalResolutions(self):
             """For any note identified as a local insertion (rule L3),
             determine whether it is subsequently displaced stepwise to a
@@ -4250,7 +4249,6 @@ class Parser:
         # Remove parses that have errors.
         self.parses = [parse for parse in self.parses
                        if self.parseErrorsDict[parse.label] == []]
-
         # remove duplicate parses
         if self.parses:
             unique_parses = [self.parses[0]]
@@ -4308,12 +4306,57 @@ class Parser:
 
         # TODO If no parses were successful, return the errors:
         if not self.parses:
-            errors = [self.parseErrorsDict[key]
-                      for key in self.parseErrorsDict]
-            for error in errors:
-                if error not in self.errors:
-                    self.errors.append(error)
-            pass
+            # Return local linear errors that are common to all parses.
+            # If none, return parse errors that pertain to basic step motion.
+
+            # Make a list of all errors in all parses
+            errors_digest = []
+            errors_lists = [self.parseErrorsDict[key]
+                      for key in self.parseErrorsDict if key]
+            for list in errors_lists:
+                for error in list:
+                    errors_digest.append(error)
+
+            # sort errors into linear and basic arc
+            linear_errors = []
+            basic_errors = []
+            for error in errors_digest:
+                if error[0:2] != 'No':
+                    linear_errors.append(error)
+                else:
+                    basic_errors.append(error)
+
+            # Find ubiquitous linear errors
+            if linear_errors:
+                # Count occurrences of each error
+                error_counts = {}
+                for error in linear_errors:
+                    error_counts[error] = error_counts.get(error, 0) + 1
+
+                # Find the maximum count
+                top_weight = max(error_counts.values())
+
+                # Get all errors with the maximum count
+                ubiquitous_errors = [error for error, count in
+                                     error_counts.items() if
+                                     count == top_weight]
+                self.errors = ubiquitous_errors
+
+            # Find ubiquitous basic errors
+            else:
+                # Count occurrences of each error
+                error_counts = {}
+                for error in basic_errors:
+                    error_counts[error] = error_counts.get(error, 0) + 1
+
+                # Find the maximum count
+                top_weight = max(error_counts.values())
+
+                # Get all errors with the maximum count
+                ubiquitous_errors = [error for error, count in
+                                     error_counts.items() if
+                                     count == top_weight]
+                self.errors = ubiquitous_errors
 
     def selectPreferredParses(self):
         """Given a list of successful interpretations from :py:class:`~Parser`,
