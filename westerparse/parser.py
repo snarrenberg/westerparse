@@ -3587,6 +3587,16 @@ class Parser:
                                  ' in measure ' + str(n.measNum) +
                                  ' is not generable.')
                             self.errors.append(error)
+            else:
+                for n in self.notes:
+                    if n.tie and n.tie.type == 'stop':
+                        continue
+                    elif n.rule.name is None:
+                        n.rule.name = 'X'
+                        error = ('The pitch ' + n.nameWithOctave +
+                                 ' in measure ' + str(n.measNum) +
+                                 ' is not generable.')
+                        self.errors.append(error)
 
         def testLocalResolutions(self):
             """For any note identified as a local insertion (rule L3),
@@ -4757,7 +4767,6 @@ def isLocalRepetition(noteIndex, notes, arcs):
 def isValidLocalInsertion(noteIndex, notes):
     targetNote = notes[noteIndex]
     otherNotes = [n for n in notes if n.index != noteIndex and n.measNum == targetNote.measNum]
-    # print(targetNote, [(n.index, n.rule.name) for n in otherNotes])
     cond1 = False
     cond2 = True
     for n in otherNotes:
@@ -4774,7 +4783,6 @@ def isValidLocalInsertion(noteIndex, notes):
         # test for consonance with notes entered or left by skip
         if any(rules2a) and all(rules2b):
             cond2 = False
-    # print(noteIndex, cond1, cond2)
     if cond1 and cond2:
         return True
     return False
@@ -4806,7 +4814,6 @@ def arcGenerateTransition(i, part, arcs):
         arcs.append(thisArc)
         return True
     else:
-        print([(n, part.flatten().notes[n].nameWithOctave) for n in thisArc])
         return False
 
 
