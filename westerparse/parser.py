@@ -1141,7 +1141,7 @@ class Parser:
                             # TODO: 2025-12-02 The following is a temporary solution
                             #  that is far too specific ...
                             if not isValidArc:
-                                print(isValidArc, i.index)
+                                # print(isValidArc, i.index)
                                 # (A) restore dependency information that was just altered
                                 for d in i.dependency.dependents:
                                     if self.notes[d].csd.value != i.csd.value:
@@ -3576,6 +3576,17 @@ class Parser:
                         n.rule.name = 'E3'
 
             # Fourth pass, for third species
+            # Non-tonic arc terminals
+            for arc in self.arcs:
+                # Create shortcuts
+                left_term = self.notes[arc[0]]
+                right_term = self.notes[arc[-1]]
+                if left_term.rule.name is None:
+                    if not isTriadMember(left_term, 0):
+                        left_term.rule.name = 'L3'
+                if right_term.rule.name is None:
+                    if not isTriadMember(right_term, 0):
+                        right_term.rule.name = 'L3'
             if self.species in ['third', 'fifth'] or self.harmonicSpecies:
                 for n in self.notes:
                     if n.rule.name is None:
@@ -4702,7 +4713,7 @@ def isPassingArc(arc, notes):
                   and n1.csd.direction in ('bidirectional', 'ascending')]
         rules3 = [passdir == 'falling' and n1.csd.value > n2.csd.value,
                   passdir == 'rising' and n1.csd.value < n2.csd.value]
-        if all(rules1) and any(rules2) and any(rules3):
+        if all(rules1) and any(rules2) and any(rules3) or isValidMinorModeArc(arc, notes):
             continue
         else:
             return False
@@ -4810,6 +4821,7 @@ def arcGenerateTransition(i, part, arcs):
     elif isNeighboringArc(thisArc, part.flatten().notes):
         arcType = 'neighboring'
     # Add arc if it is valid, else return false
+    print(thisArc, arcType)
     if arcType is not None:
         arcs.append(thisArc)
         return True
