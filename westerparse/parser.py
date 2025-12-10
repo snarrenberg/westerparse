@@ -4821,7 +4821,6 @@ def arcGenerateTransition(i, part, arcs):
     elif isNeighboringArc(thisArc, part.flatten().notes):
         arcType = 'neighboring'
     # Add arc if it is valid, else return false
-    print(thisArc, arcType)
     if arcType is not None:
         arcs.append(thisArc)
         return True
