@@ -4775,14 +4775,14 @@ def isValidLocalInsertion(noteIndex, notes):
         rules1 = [isLinearConsonance(n, targetNote),
                   n.rule.name[0] in ['S', 'E']]
         rules2a = [n.consecutions.leftType == 'skip', n.consecutions.rightType == 'skip']
-        rules2b = [isLinearConsonance(n, targetNote),
-                  ]
+        rules2b = [isLinearConsonance(n, targetNote)]
         # test for consonance with globally generated note (required)
         if all(rules1):
             cond1 = True
         # test for consonance with notes entered or left by skip
-        if any(rules2a) and all(rules2b):
+        if any(rules2a) and not all(rules2b):
             cond2 = False
+
     if cond1 and cond2:
         return True
     return False
