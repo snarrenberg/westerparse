@@ -1520,7 +1520,6 @@ class Parser:
         elif all(case6):
             logger.debug(f'Parse transition {i.index}-{j.index}: case 6')
             openLocals = []
-            print(i.index, j.index)
             if i.dependency.lefthead is None:
                 # look for a lefthead
                 for t in reversed(openHeads):
