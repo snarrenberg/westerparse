@@ -907,13 +907,14 @@ class Parser:
                     if isDirectedStep(h, j):
                         # add the new arc only if it doesn't contradict
                         # an existing arc
-                        testArc = [h.dependency.lefthead, h.index, j.index]
+                        testArc = getTestArcTransition(t, part, j.index, arcs)
+                        # testArc = [h.dependency.lefthead, h.index, j.index]
                         if self.context.key.mode == 'minor' and not isValidMinorModeArc(testArc, self.notes):
+                            # print('rejection 1')
                             return
                         if conflictsWithOtherArc(testArc, arcs):
+                            # print('rejection 2')
                             return
-                        else:
-                            pass
                         h.dependency.righthead = j.index
                         if h.dependency.dependents:
                             for d in h.dependency.dependents:
@@ -1519,6 +1520,7 @@ class Parser:
         elif all(case6):
             logger.debug(f'Parse transition {i.index}-{j.index}: case 6')
             openLocals = []
+            print(i.index, j.index)
             if i.dependency.lefthead is None:
                 # look for a lefthead
                 for t in reversed(openHeads):
@@ -2028,7 +2030,7 @@ class Parser:
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
                 # using a series of methods to infer a basic step motion.
-                methods = 8
+                methods = 9
                 if not buildErrors:
                     for cand in s2cands:
                         logger.debug(f'Building parses for S2 candidate: '
@@ -2149,7 +2151,7 @@ class Parser:
                 # Create a Parse object for each S2cand
                 # and then turn over further processes to each Parse object,
                 # using a series of methods to infer a basic step motion.
-                methods = 20
+                methods = 21
                 if not buildErrors:
                     for cand in s2cands:
                         logger.debug(f'Building parses for S2 candidate: '
@@ -2305,12 +2307,14 @@ class Parser:
             else:
                 pass
 
+            # Consolidate arcs into longer passing motions if possible.
+            self.pruneArcs()
             # Assign rules to notes in secondary structures.
             self.assignSecondaryRules()
             # Test for resolution of local insertions in third species.
             self.testLocalResolutions()
-            # Consolidate arcs into longer passing motions if possible.
-            self.pruneArcs()
+            # # Consolidate arcs into longer passing motions if possible.
+            # self.pruneArcs()
             # Calculate the structural level of each note and arc.
             if getStructuralLevels:
                 self.setDependencyLevels()
@@ -2440,6 +2444,8 @@ class Parser:
             #. Look for a nonfinal arc from S2 whose terminus ==
                S1.csd.value, and extend the arc to end on S1Index
                if possible.
+            #. Look for existing arc from 8-5 and 5–2 and merge them with
+               S1Index into a basic arc.
             #. Reinterpret the line, looking for a descending step motion
                from S2 and then parsing the remaining notes.
                The least reliable method.
@@ -2743,6 +2749,43 @@ class Parser:
                         self.arcBasic = arc
 
             # METHOD 7
+            # Look for 8–5, 5–2, 1 in third species
+            # Brute force: ignore S2 cand
+            elif self.method == 7 and self.species == 'third':
+                eightFiveArcs = []
+                fiveTwoArcs = []
+                arcBasicCandidates = []
+                for arc in self.arcs:
+                    rules1 = [self.notes[arc[0]].csd.value == 7,
+                              self.notes[arc[-1]].csd.value == 4]
+                    rules2 = [self.notes[arc[0]].csd.value == 4,
+                              self.notes[arc[-1]].csd.value == 1]
+                    if all(rules1):
+                        eightFiveArcs.append(arc)
+                    if all(rules2):
+                        fiveTwoArcs.append(arc)
+                if eightFiveArcs and fiveTwoArcs:
+                    for arc1 in eightFiveArcs:
+                        for arc2 in fiveTwoArcs:
+                            if arc2[0] >= arc1[-1]:
+                                self.arcMerge(arc1, arc2)
+                                self.arcExtend(arc1, self.S1Index)
+                                arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                    # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                    self.S2Index = arcBasicCandidates[0][0]
+                    self.S2Degree = self.notes[self.S2Index].csd.degree
+                    self.S2Value = self.notes[self.S2Index].csd.value
+                    self.notes[self.S2Index].rule.name = 'S2'
+                else:
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 8
             # Reinterpret the line, starting with the S2 candidate.
             # This is a radical solution that does not work well
             # and shouldn't really ignore all the preparse work.
@@ -2753,7 +2796,7 @@ class Parser:
             # TODO Prefer S2 on beat in third species,
             # if there are two candidates in the same bar.
             # TODO currently turned off for harmonic species
-            elif self.method == 7 and not self.harmonicSpecies:
+            elif self.method == 8 and not self.harmonicSpecies:
                 # Refill buffer with context from S2 to end of line.
                 self.buffer = [n for n in self.notes[self.S2Index:]
                                if not n.tie or n.tie.type == 'start']
@@ -2848,10 +2891,10 @@ class Parser:
                     self.arcBasic = list(reversed(basicArcCand))
                 self.purgeCrossedArcs()
 
-            # METHOD 8
+            # METHOD 9
             # 8-6, 6-4, 4-2, 1
             # TODO what if offPre is None???
-            elif self.method == 8 and self.S2Value == 7:
+            elif self.method == 9 and self.S2Value == 7:
                 eightSixArcs = []
                 sixFourArcs = []
                 fourTwoArcs = []
@@ -2899,9 +2942,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 9: 8-4, 4-2, 1
+            # METHOD 10: 8-4, 4-2, 1
             # 2 occurs in the dominant
-            elif self.method == 9 and self.S2Value == 7:
+            elif self.method == 10 and self.S2Value == 7:
                 eightFourArcs = []
                 fourTwoArcs = []
                 offPre = self.harmonicSpanDict['offsetPredominant']
@@ -2942,9 +2985,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 10: 8-4, 4-2, 1
+            # METHOD 11: 8-4, 4-2, 1
             # 2 occurs in the predominant
-            elif self.method == 10 and self.S2Value == 7:
+            elif self.method == 11 and self.S2Value == 7:
                 eightFourArcs = []
                 fourTwoArcs = []
                 offPre = self.harmonicSpanDict['offsetPredominant']
@@ -2985,8 +3028,8 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 11: 8-5,--, 5-2, 1
-            elif self.method == 11 and self.S2Value == 7:
+            # METHOD 12: 8-5,--, 5-2, 1
+            elif self.method == 12 and self.S2Value == 7:
                 eightFiveArcs = []
                 fiveTwoArcs = []
                 offDom = self.harmonicSpanDict['offsetDominant']
@@ -3019,9 +3062,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 12: 8-5,4-2, 1
+            # METHOD 13: 8-5,4-2, 1
             # 2 occurs in the dominant
-            elif self.method == 12 and self.S2Value == 7:
+            elif self.method == 13 and self.S2Value == 7:
                 eightFiveArcs = []
                 fourTwoArcs = []
                 offPre = self.harmonicSpanDict['offsetPredominant']
@@ -3059,9 +3102,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 13: 8-5,4-2, 1
+            # METHOD 14: 8-5,4-2, 1
             # 2 occurs in the predominant
-            elif self.method == 13 and self.S2Value == 7:
+            elif self.method == 14 and self.S2Value == 7:
                 eightFiveArcs = []
                 fourTwoArcs = []
                 offPre = self.harmonicSpanDict['offsetPredominant']
@@ -3103,9 +3146,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 14: 5-2, 1
+            # METHOD 15: 5-2, 1
             # 2 occurs in the preDom
-            elif self.method == 14 and self.S2Value % 7 == 4:
+            elif self.method == 15 and self.S2Value % 7 == 4:
                 fiveTwoArcs = []
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
@@ -3137,9 +3180,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 15: 5-2, 1
+            # METHOD 16: 5-2, 1
             # 2 occurs in the dominant
-            elif self.method == 15 and self.S2Value % 7 == 4:
+            elif self.method == 16 and self.S2Value % 7 == 4:
                 fiveTwoArcs = []
                 offDom = self.harmonicSpanDict['offsetDominant']
                 for arc in self.arcs:
@@ -3152,40 +3195,6 @@ class Parser:
                 arcBasicCandidates = []
                 if fiveTwoArcs:
                     for arc1 in fiveTwoArcs:
-                        self.arcExtend(arc1, self.S1Index)
-                        arcBasicCandidates.append(arc1)
-                if arcBasicCandidates:
-                    # TODO for now, return just the first basic arc found
-                    self.arcBasic = arcBasicCandidates[0]
-                else:
-                    error = (f'No composite step motion found from this S2 candidate: '
-                             f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
-                    self.errors.append(error)
-                    return
-
-            # METHOD 16: 5, 4-2, 1
-            # 2 occurs in the predominant
-            elif self.method == 16 and self.S2Value % 7 == 4:
-                fourTwoArcs = []
-                offPre = self.harmonicSpanDict['offsetPredominant']
-                offDom = self.harmonicSpanDict['offsetDominant']
-                if offPre is None:
-                    error = (f'No composite step motion found from this S2 candidate: '
-                             f'scale degree {self.S2Value % 7 + 1} '
-                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
-                    self.errors.append(error)
-                    return
-                for arc in self.arcs:
-                    rules = [self.notes[arc[0]].csd.value == 3,
-                             self.notes[arc[-1]].csd.value == 1,
-                             offPre <= self.notes[arc[0]].offset < offDom]
-                    if all(rules):
-                        fourTwoArcs.append(arc)
-                arcBasicCandidates = []
-                if self.S2Value == 4 and fourTwoArcs:
-                    for arc1 in fourTwoArcs:
-                        self.arcExtend(arc1, self.S2Index)
                         self.arcExtend(arc1, self.S1Index)
                         arcBasicCandidates.append(arc1)
                 if arcBasicCandidates:
@@ -3199,8 +3208,42 @@ class Parser:
                     return
 
             # METHOD 17: 5, 4-2, 1
-            # 2 occurs in the dominant
+            # 2 occurs in the predominant
             elif self.method == 17 and self.S2Value % 7 == 4:
+                fourTwoArcs = []
+                offPre = self.harmonicSpanDict['offsetPredominant']
+                offDom = self.harmonicSpanDict['offsetDominant']
+                if offPre is None:
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
+                    self.errors.append(error)
+                    return
+                for arc in self.arcs:
+                    rules = [self.notes[arc[0]].csd.value == 3,
+                             self.notes[arc[-1]].csd.value == 1,
+                             offPre <= self.notes[arc[0]].offset < offDom]
+                    if all(rules):
+                        fourTwoArcs.append(arc)
+                arcBasicCandidates = []
+                if self.S2Value == 4 and fourTwoArcs:
+                    for arc1 in fourTwoArcs:
+                        self.arcExtend(arc1, self.S2Index)
+                        self.arcExtend(arc1, self.S1Index)
+                        arcBasicCandidates.append(arc1)
+                if arcBasicCandidates:
+                    # TODO for now, return just the first basic arc found
+                    self.arcBasic = arcBasicCandidates[0]
+                else:
+                    error = (f'No composite step motion found from this S2 candidate: '
+                             f'scale degree {self.S2Value % 7 + 1} '
+                             f'in measure {str(self.notes[self.S2Index].measNum)}.')
+                    self.errors.append(error)
+                    return
+
+            # METHOD 18: 5, 4-2, 1
+            # 2 occurs in the dominant
+            elif self.method == 18 and self.S2Value % 7 == 4:
                 fourTwoArcs = []
                 offDom = self.harmonicSpanDict['offsetDominant']
                 for arc in self.arcs:
@@ -3225,9 +3268,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 18: 3, 2, 1
+            # METHOD 19: 3, 2, 1
             # 2 occurs in the dominant
-            elif self.method == 18 and self.S2Value % 7 == 2:
+            elif self.method == 19 and self.S2Value % 7 == 2:
                 offDom = self.harmonicSpanDict['offsetDominant']
                 s3cands = [n.index for n in self.notes
                            if (offDom <= n.offset
@@ -3245,9 +3288,9 @@ class Parser:
                     self.errors.append(error)
                     return
 
-            # METHOD 19: 3, 2, 1
+            # METHOD 20: 3, 2, 1
             # 2 occurs in the predominant
-            elif self.method == 19 and self.S2Value % 7 == 2:
+            elif self.method == 20 and self.S2Value % 7 == 2:
                 offPre = self.harmonicSpanDict['offsetPredominant']
                 offDom = self.harmonicSpanDict['offsetDominant']
                 if offPre is None:
@@ -3522,8 +3565,9 @@ class Parser:
             then independent tonic-triad notes, and then local harmonic
             tones in third and harmonic species."""
 
+            second_arcs = [arc for arc in self.arcs if arc != self.arcBasic]
             # First pass: repetitions, neighbors and passings
-            for arc in self.arcs:
+            for arc in second_arcs:
                 # Create shortcuts
                 left_term = self.notes[arc[0]]
                 right_term = self.notes[arc[-1]]
@@ -3543,13 +3587,15 @@ class Parser:
                         else:
                             right_term.rule.name = 'L1'
                             self.notes[arc[1]].rule.name = 'L2'
+                    else:
+                        self.notes[arc[1]].rule.name = 'E2'
                 # Assign rule to passing tones
                 elif len(arc) >= 3:
                     for idx in arc[1:-1]:
                         if self.notes[idx].rule.name is None:
                             self.notes[idx].rule.name = 'E4'
             # Second pass: tonic arc terminals
-            for arc in self.arcs:
+            for arc in second_arcs:
                 # Create shortcuts
                 left_term = self.notes[arc[0]]
                 right_term = self.notes[arc[-1]]
@@ -3562,7 +3608,7 @@ class Parser:
 
             # Third pass: independent tonic triad notes
             arc_indexes = []
-            for arc in self.arcs:
+            for arc in second_arcs:
                 for idx in arc:
                     if idx not in arc_indexes:
                         arc_indexes.append(idx)
@@ -3577,16 +3623,18 @@ class Parser:
 
             # Fourth pass, for third species
             # Non-tonic arc terminals
-            for arc in self.arcs:
+            for arc in second_arcs:
                 # Create shortcuts
                 left_term = self.notes[arc[0]]
                 right_term = self.notes[arc[-1]]
                 if left_term.rule.name is None:
                     if not isTriadMember(left_term, 0):
-                        left_term.rule.name = 'L3'
+                        if isValidLocalInsertion(left_term.index, self.notes):
+                            left_term.rule.name = 'L3'
                 if right_term.rule.name is None:
                     if not isTriadMember(right_term, 0):
-                        right_term.rule.name = 'L3'
+                        if isValidLocalInsertion(right_term.index, self.notes):
+                            right_term.rule.name = 'L3'
             if self.species in ['third', 'fifth'] or self.harmonicSpecies:
                 for n in self.notes:
                     if n.rule.name is None:
@@ -3646,11 +3694,18 @@ class Parser:
                             self.errors.append(error)
 
         def pruneArcs(self):
-            # Find arcs to merge into longer passing motions.
+            # Find arcs to merge into longer passing motions, but not if the
+            # second arc starts with a component of the basic arc.
             for arc1 in self.arcs:
+                mergeable = False
+                if self.notes[arc1[-1]].rule.name:
+                    if self.notes[arc1[-1]].rule.name[0] != 'S':
+                        mergeable = True
+                else:
+                    mergeable = True
                 for arc2 in self.arcs:
                     rules1 = [arc1[-1] == arc2[0],
-                              self.notes[arc1[-1]].rule.name[0] != 'S',
+                              mergeable,
                               isLinearConsonance(self.notes[arc1[0]],
                                                  self.notes[arc2[-1]])]
                     # TODO Consider changing the conditions
@@ -4707,14 +4762,16 @@ def isPassingArc(arc, notes):
         n1 = notes[int[0]]
         n2 = notes[int[1]]
         rules1 = [isDiatonicStep(n1, n2) is True]
-        rules2 = [passdir == 'falling'
-                  and n1.csd.direction in ('bidirectional', 'descending'),
-                  passdir == 'rising'
-                  and n1.csd.direction in ('bidirectional', 'ascending')]
+        # rules2 = [passdir == 'falling'
+        #           and n1.csd.direction in ('bidirectional', 'descending'),
+        #           passdir == 'rising'
+        #           and n1.csd.direction in ('bidirectional', 'ascending')]
         rules3 = [passdir == 'falling' and n1.csd.value > n2.csd.value,
                   passdir == 'rising' and n1.csd.value < n2.csd.value]
-        if all(rules1) and any(rules2) and any(rules3) or isValidMinorModeArc(arc, notes):
+        if all(rules1) and any(rules3):
             continue
+        # if all(rules1) and any(rules2) and any(rules3):
+        #     continue
         else:
             return False
     return True
@@ -4793,10 +4850,37 @@ def isValidLocalInsertion(noteIndex, notes):
         # test for consonance with notes entered or left by skip
         if any(rules2a) and not all(rules2b):
             cond2 = False
-
     if cond1 and cond2:
         return True
     return False
+
+def getTestArcTransition(i, part, righthead_cand_idx, arcs):
+    # Assemble an arc after a righthead is detected.
+    # Variable i is a note.index, the last transitional element before
+    # a righthead.  Test for arc type in self.line.notes.
+    # Also assigns a type.
+    elements = []
+    for elem in (part.flatten().notes[i].dependency.lefthead,
+                 i, righthead_cand_idx):
+        elements.append(elem)
+    for d in part.flatten().notes[i].dependency.dependents:
+        if (d < i and
+                part.flatten().notes[d].dependency.lefthead ==
+                part.flatten().notes[i].dependency.lefthead):
+            elements.append(d)
+    thisArc = sorted(elements)
+    # See if it's a neighbor or passing.
+    arcType = None
+    if isPassingArc(thisArc, part.flatten().notes):
+        arcType = 'passing'
+    elif isNeighboringArc(thisArc, part.flatten().notes):
+        arcType = 'neighboring'
+    # Add arc if it is valid, else return false
+    if arcType is not None:
+        return thisArc
+    else:
+        return None
+
 
 def arcGenerateTransition(i, part, arcs):
     # Assemble an arc after a righthead is detected.
