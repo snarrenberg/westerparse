@@ -1221,7 +1221,6 @@ def showParses(cxt, show, parseSets):
                         + 'parser_output_' + timestamp + '.musicxml')
             content.write('musicxml', filename)
             pass
-            # print(filename)
         elif show == 'writeToCorpusServer':
             timestamp = str(time.time())
             filename = ('./media/tmp/'
