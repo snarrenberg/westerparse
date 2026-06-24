@@ -3634,17 +3634,48 @@ class Parser:
                     if not isTriadMember(right_term, 0):
                         if isValidLocalInsertion(right_term.index, self.notes):
                             right_term.rule.name = 'L3'
-            if self.species in ['third', 'fifth'] or self.harmonicSpecies:
+
+            if self.species in ['third', 'fifth']:
                 for n in self.notes:
                     if n.rule.name is None:
                         if isValidLocalInsertion(n.index, self.notes):
                             n.rule.name = 'L3'
                         else:
                             n.rule.name = 'X'
-                            error = ('The pitch ' + n.nameWithOctave +
-                                 ' in measure ' + str(n.measNum) +
-                                 ' is not generable.')
+                            error = (f'The pitch {n.nameWithOctave} in measure '
+                                     f'{str(n.measNum)} is not generable.')
                             self.errors.append(error)
+
+            elif self.harmonicSpecies:
+                Pspan_notes = []
+                if self.harmonicSpanDict['offsetPredominant'] is not None:
+                    Pspan_notes = [n for n in self.notes if self.harmonicSpanDict[
+                                       'offsetPredominant'] <= n.offset
+                                   < self.harmonicSpanDict[
+                                       'offsetDominant']]
+                Dspan_notes = [n for n in self.notes
+                               if self.harmonicSpanDict['offsetDominant']
+                               <= n.offset
+                               < self.harmonicSpanDict['offsetClosingTonic']]
+
+                for n in Pspan_notes:
+                    if (n.csd.value % 7 in {1, 3, 5} and n.rule.name is None):
+                        n.rule.name = 'L3'
+                    elif n.rule.name is None:
+                        n.rule.name = 'X'
+                        error = (f'The pitch {n.nameWithOctave} in measure '
+                                 f'{str(n.measNum)} is not generable.')
+                        self.errors.append(error)
+
+                for n in Dspan_notes:
+                    if (n.csd.value % 7 in {4, 6, 1} and n.rule.name is None):
+                        n.rule.name = 'L3'
+                    elif n.rule.name is None:
+                        n.rule.name = 'X'
+                        error = (f'The pitch {n.nameWithOctave} in measure '
+                                 f'{str(n.measNum)} is not generable.')
+                        self.errors.append(error)
+
             else:
                 for n in self.notes:
                     if n.tie and n.tie.type == 'stop':
@@ -4851,6 +4882,28 @@ def isValidLocalInsertion(noteIndex, notes):
             cond2 = False
     if cond1 and cond2:
         return True
+    return False
+
+def isValidHarmonicInsertion(noteIndex, notes):
+    targetNote = notes[noteIndex]
+    # otherNotes = [n for n in notes if n.index != noteIndex and n.measNum == targetNote.measNum]
+    # cond1 = False
+    # cond2 = True
+    # for n in otherNotes:
+    #     if not n.rule.name:
+    #         continue
+    #     rules1 = [isLinearConsonance(n, targetNote),
+    #               n.rule.name[0] in ['S', 'E']]
+    #     rules2a = [n.consecutions.leftType == 'skip', n.consecutions.rightType == 'skip']
+    #     rules2b = [isLinearConsonance(n, targetNote)]
+    #     # test for consonance with globally generated note (required)
+    #     if all(rules1):
+    #         cond1 = True
+    #     # test for consonance with notes entered or left by skip
+    #     if any(rules2a) and not all(rules2b):
+    #         cond2 = False
+    # if cond1 and cond2:
+    #     return True
     return False
 
 def getTestArcTransition(i, part, righthead_cand_idx, arcs):
