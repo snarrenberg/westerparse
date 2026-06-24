@@ -1,4 +1,4 @@
 -e .
-music21 ~= 9.5.0
-westerparse ~= 2.5
+music21 ~= 10.5.0
+westerparse ~= 2.5.0
 setuptools ~= 67.0.0
