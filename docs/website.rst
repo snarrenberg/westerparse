@@ -15,10 +15,13 @@ WesterParse Web Site
 Westegaardian Species Counterpoint Online
 -----------------------------------------
 
-URL: https://talus.artsci.wustl.edu/westerparse/
+URL: https://westerparse.research-stage.artsci.wustl.edu/
 
-The web interface was created by Stephen Pentecost, Senior Digital 
-Humanities Specialist at Washington University in St. Louis.
+The web interface was initially created by Stephen Pentecost, Senior Digital
+Humanities Specialist at Washington University in St. Louis. In 2025, the web
+interface was rebuilt by a team of talented undergraduate students:
+Michelle Zhang, Dexter Chen, and James Baba, with assitance from Doug Knox
+and Tumaini Usiri in WashU's Digital Humanities Workshop.
 
 Initial Setup
 -------------

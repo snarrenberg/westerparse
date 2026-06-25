@@ -10,21 +10,7 @@ most without.
 Using the Web-Based Corpus Viewer
 ---------------------------------
 
-Visit https://ada.artsci.wustl.edu/wp_web_project/corpus/
-
-Using the Stand-Alone Corpus Viewer
------------------------------------
-
-Requires Tkinter, PIL (pillow), and MuseScore.
-
-Navigate to the examples folder and then run the corpus viewer
-from the terminal.
-
-.. code-block:: shell
-   
-   $ python viewer.py
-
-This will open a GUI.
+Visit https://westerparse.research-stage.artsci.wustl.edu//wp_web_project/corpus/
 
 Select a corpus to view: either lines or counterpoint.
 

@@ -12,7 +12,7 @@ traditional species counterpoint may only need to consult Westergaard's rules:
 If you are new to species counterpoint, you may find the following guide of use:
     
 * :download:`Species Counterpoint in the Tradition of Fux, Schenker, and
-  Westergaard <SpeciesText.pdf>` 
+  Westergaard <https://westerparse.research-stage.artsci.wustl.edu/SpeciesText.pdf>`
 
 What software do I need to install to run the project on my own system?
 
@@ -28,7 +28,7 @@ Yes:
 
 * Westegaardian Species Counterpoint Online: 
       
-  * https://talus.artsci.wustl.edu/westerparse/
+  * https://westerparse.research-stage.artsci.wustl.edu/
       
 If you want to know how the program interprets Westergaard's own examples of
 counterpoint, you can use the WesterParse Corpus Viewer, which includes over
@@ -114,7 +114,7 @@ Installation Instructions
 -------------------------
 
 Python 3 can be obtained from: http://www.python.org. You will need Python
-v3.7 or later.
+v3.11 or later.
 
 Install ``music21``.
 
