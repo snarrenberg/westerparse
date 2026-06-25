@@ -1423,16 +1423,16 @@ class Parser:
                             if not connectsToHead:
                                 # Set things up to allow for
                                 # connection to a later head.
-                                # openHeads.append(i.index)
-                                # i.dependency.dependents.append(j.index)
-                                # j.dependency.lefthead = i.index
-                                # openTransitions.append(j.index)
-                                # TODO 2025-09-29 rewrote this, maybe wrong!!
-                                j.dependency.lefthead = i.dependency.lefthead
+                                openHeads.append(i.index)
                                 i.dependency.dependents.append(j.index)
-                                j.dependency.dependents.append(i.index)
-                                openTransitions.remove(i.index)
+                                j.dependency.lefthead = i.index
                                 openTransitions.append(j.index)
+                                # TODO 2025-09-29 rewrote this, maybe wrong!!
+                                # j.dependency.lefthead = i.dependency.lefthead
+                                # i.dependency.dependents.append(j.index)
+                                # j.dependency.dependents.append(i.index)
+                                # openTransitions.remove(i.index)
+                                # openTransitions.append(j.index)
             elif (i.csd.direction == 'ascending'
                   and j.csd.direction == 'descending'):
                 logger.debug(f'Case marker 102')
