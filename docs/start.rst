@@ -161,7 +161,10 @@ Then import :literal:`westerparse` and evaluate one of the sample files:
 How to Get Support
 ------------------
 
-If you are having issues, please contact me at: `snarrenberg@wustl.edu <mailto:snarrenberg@wustl.edu?subject=WesterParse%20RTD%20Inquiry>`
+.. raw:: html
+
+   If you are having issues, please contact me at:
+   <a href="mailto:snarrenberg@wustl.edu?subject=WesterParse">snarrenberg@wustl.edu</a>
 
 License
 -------
