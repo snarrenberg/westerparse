@@ -164,7 +164,7 @@ How to Get Support
 .. raw:: html
 
    If you are having issues, please contact me at:
-   <a href="mailto:snarrenberg@wustl.edu?subject=WesterParse">snarrenberg@wustl.edu</a>
+   <a href="mailto:snarrenberg@wustl.edu?subject=WesterParse%20RDT%20Inquiry">snarrenberg@wustl.edu</a>
 
 License
 -------
