@@ -4423,6 +4423,10 @@ class Parser:
                 for error in list:
                     errors_digest.append(error)
 
+            # if no errors arose during parsing, return
+            if not errors_digest:
+                return
+
             # sort errors into linear and basic arc
             linear_errors = []
             basic_errors = []
