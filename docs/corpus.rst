@@ -4,7 +4,7 @@ Viewing the WesterParse Corpus
 To test for compliance with Westergaard's rules, I have assembled a small 
 corpus of examples, including many from Westergaard's book (these are
 identified by page number in the filename).  There are over 70 single lines
-and over 50 examples of two-part counterpoint, some with errors and
+and over y0 examples of two-part counterpoint, some with errors and
 most without.
 
 Using the Web-Based Corpus Viewer
