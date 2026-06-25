@@ -163,7 +163,8 @@ def evaluateLines(source,
         elif show == 'parsedata':
             pass
         else:
-            fce.report()
+            print(fce.desc)
+            # fce.report()
         return
 
     # Parse the global context.
@@ -171,8 +172,9 @@ def evaluateLines(source,
         parseContext(cxt, show, partSelection, partLineType)
         logger.debug(f'\n{cxt.parseReport}')
         if show is None or report is True:
+            # print(utilities.create_html_report(cxt.parseReport))
             pass
-            # print(cxt.parseReport)
+            print(cxt.parseReport)
         elif show == 'Boolean':
             return True
         elif show == 'html':
@@ -185,7 +187,7 @@ def evaluateLines(source,
         elif show == 'parsedata':
             pass
         else:
-            fce.report()
+            # fce.report()
             print(fce.desc)
 
 
