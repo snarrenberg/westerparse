@@ -27,9 +27,6 @@ If the file is counterpoint, you may choose either to evaluate the
 counterpoint or to display the the linear syntax (i.e., the parses of the lines).
 If you choose to display the syntax, be patient, as it takes several seconds
 to generate the image files that will be displayed onscreen.
-The viewer can display up to four parses.  In most cases, the number of
-preferred parses does not exceed this number. The viewer displays
-a message indicating the total number of preferred parses.
 
 Brief reports on parsing and voice leading are displayed above the music.
 
