@@ -11,8 +11,10 @@ traditional species counterpoint may only need to consult Westergaard's rules:
 
 If you are new to species counterpoint, you may find the following guide of use:
     
-* :download:`Species Counterpoint in the Tradition of Fux, Schenker, and
-  Westergaard <https://westerparse.research-stage.artsci.wustl.edu/SpeciesText.pdf>`
+* .. raw:: html
+
+     <a href="https://westerparse.research-stage.artsci.wustl.edu/SpeciesText.pdf" target="_blank">
+     Species Counterpoint in the Tradition of Fux, Schenker, and Westergaard</a>
 
 What software do I need to install to run the project on my own system?
 
