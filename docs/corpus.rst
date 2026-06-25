@@ -10,7 +10,10 @@ most without.
 Using the Web-Based Corpus Viewer
 ---------------------------------
 
-Visit <a href="https://westerparse.research-stage.artsci.wustl.edu//wp_web_project/corpus/" target="_blank">WesterParse Corpus Site</a>
+.. raw:: html
+
+   Visit <a href="https://westerparse.research-stage.artsci.wustl.edu/wp_web_project/corpus/" target="_blank">WesterParse Corpus Site</a>
+
 
 Select a corpus to view: either lines or counterpoint.
 
