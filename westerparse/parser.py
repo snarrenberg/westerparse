@@ -3545,7 +3545,7 @@ class Parser:
                                           self.arcs)
                     # TODO Consider working on this.
                     if all(rules2):
-                        # May also want to transfer dependent neighbors to the
+                        # Transfer dependent neighbors to the
                         # newly created repetition arcs
                         pass
 
@@ -5142,7 +5142,7 @@ def conflictsWithOtherArc(arc, arcs):
                         conflict = True
                         break
 
-        elif cond5a:
+        elif cond5b:
             if len(extArc) > 2:
                 for d in extArc[1:-1]:
                     if d > arc[0]:
