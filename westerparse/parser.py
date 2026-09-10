@@ -1741,7 +1741,7 @@ class Parser:
                                     == 'ascending'
                                 ]
                                 rules5 = [
-                                    self.notes[arc[1]].csd.value % 7 == 6,
+                                    self.notes[arc[1]].csd.value % 7 == 5, # fixed 2026-09-10
                                     self.notes[arc[1]].csd.direction
                                     == 'bidirectional'
                                 ]
