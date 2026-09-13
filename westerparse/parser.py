@@ -1084,6 +1084,7 @@ class Parser:
             elif not openTransitions:
                 # Connect to an earlier head with the same
                 # pitch as i, if available.
+                # TODO 2026-09-14 This causes problems if the arc has to be purged
                 if openHeads:
                     for t in reversed(openHeads):
                         h = self.notes[t]
@@ -1093,10 +1094,11 @@ class Parser:
                             j.dependency.lefthead = i.index
                             i.dependency.dependents.append(j.index)
                             break
-                        elif h == i:
-                            j.dependency.lefthead = h.index
-                            h.dependency.dependents.append(j.index)
-                            break
+                        # 2026-09-14 turned off the following elif statement
+                        # elif h == i:
+                        #     j.dependency.lefthead = h.index
+                        #     h.dependency.dependents.append(j.index)
+                        #     break
                     # TODO: 2025-11-21 should this block be indented further??
                     else:
                         j.dependency.lefthead = i.index
