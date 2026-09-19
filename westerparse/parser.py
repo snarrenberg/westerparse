@@ -1018,18 +1018,22 @@ class Parser:
             if openTransitions:
                 for t in reversed(openTransitions):
                     h = self.notes[t]
+                    # check whether one of the notes must move in the same direction
+                    # TODO may only depend on the direction of the first note!
                     rules1 = [isStepUp(h, j),
-                              h.csd.direction
-                              in ['ascending', 'bidirectional'],
-                              j.csd.direction
-                              in ['ascending', 'bidirectional'],
+                              (h.csd.direction == 'ascending' or j.csd.direction == 'ascending'),
+                              # h.csd.direction
+                              # in ['ascending', 'bidirectional'],
+                              # j.csd.direction
+                              # in ['ascending', 'bidirectional'],
                               h.dependency.dependents == []
                               ]
                     rules2 = [isStepDown(h, j),
-                              h.csd.direction
-                              in ['descending', 'bidirectional'],
-                              j.csd.direction
-                              in ['descending', 'bidirectional'],
+                              (h.csd.direction == 'descending' or j.csd.direction == 'descending'),
+                              # h.csd.direction
+                              # in ['descending', 'bidirectional'],
+                              # j.csd.direction
+                              # in ['descending', 'bidirectional'],
                               h.dependency.dependents == []
                               ]
                     # TODO The rules need to take into account where h is
@@ -1737,13 +1741,19 @@ class Parser:
                                                     in openTransitions
                                                     if arc[1] < idx < j.index]
                                 rules3 = [not openTransBetween]
+                                # find leading tone neighbor
                                 rules4 = [
                                     self.notes[arc[1]].csd.value % 7 == 6,
                                     self.notes[arc[1]].csd.direction
+                                    # == 'bidirectional' # change 2026-09-16
                                     == 'ascending'
+                                    # in ['ascending', 'bidirectional']
                                 ]
+                                # find upper neighbor to ^5
                                 rules5 = [
-                                    self.notes[arc[1]].csd.value % 7 == 5, # fixed 2026-09-10
+                                    self.notes[arc[1]].csd.value % 7 == 6,
+                                    # fixed 2026-09-10, was 6
+                                    # this fix broke analysis of WP002
                                     self.notes[arc[1]].csd.direction
                                     == 'bidirectional'
                                 ]
@@ -2386,6 +2396,8 @@ class Parser:
                     arc1.append(n)
                 # Revise dependencies.
                 addDependenciesFromArc(self.notes, arc1)
+                return True
+            return False
 
         def arcEmbed(self, arc1, arc2):
             """Embed a repetition inside a passing motion."""
@@ -3726,6 +3738,12 @@ class Parser:
                             self.errors.append(error)
 
         def pruneArcs(self):
+            """Merge arcs into longer passing motions until no merge applies."""
+            while self._pruneOnce():
+                pass
+
+        def _pruneOnce(self):
+            """Perform at most one merge. Return True if a merge happened."""
             # Find arcs to merge into longer passing motions, but not if the
             # second arc starts with a component of the basic arc.
             for arc1 in self.arcs:
@@ -3735,9 +3753,11 @@ class Parser:
                         mergeable = True
                 else:
                     mergeable = True
+                if not mergeable:
+                    continue
+
                 for arc2 in self.arcs:
                     rules1 = [arc1[-1] == arc2[0],
-                              mergeable,
                               isLinearConsonance(self.notes[arc1[0]],
                                                  self.notes[arc2[-1]])]
                     # TODO Consider changing the conditions
@@ -3750,30 +3770,34 @@ class Parser:
                               < self.notes[arc1[-1]].csd.value,
                               self.notes[arc2[0]].csd.value
                               < self.notes[arc2[-1]].csd.value]
-                    if all(rules1) and (all(rules2) or all(rules3)):
-                        mergePairOption = (arc1, arc2)
-                        # Make sure that neither arc is embedded
-                        # in another arc.
-                        for arc in self.arcs:
-                            arc1Embedded = False
-                            arc2Embedded = False
-                            if (mergePairOption[0][-1] == arc[-1] and
-                                    arc[0] < mergePairOption[0][0]):
-                                arc1Embedded = True
-                                break
-                            if (mergePairOption[1][0] == arc[0] and
-                                    arc[-1] > mergePairOption[1][-1]):
-                                arc2Embedded = True
-                                break
-                        # If neither is embedded, merge the two.
-                        if not arc1Embedded and not arc2Embedded:
-                            self.arcMerge(mergePairOption[0],
-                                          mergePairOption[1])
-                            # TODO Is it necessary to set the rules here?
-                            # What about the removed node?
-                            # Should it also be set to 'E4'?
-                            for elem in mergePairOption[0][1:-1]:
-                                self.notes[elem].rule.name = 'E4'
+                    if not (all(rules1) and (all(rules2) or all(rules3))):
+                        continue
+
+                    # Make sure that neither arc is embedded in another arc.
+                    embedded = False
+                    for arc in self.arcs:
+                        if arc1[-1] == arc[-1] and arc[0] < arc1[0]:
+                            embedded = True
+                            break
+                        if arc2[0] == arc[0] and arc[-1] > arc2[-1]:
+                            embedded = True
+                            break
+                    if embedded:
+                        continue
+
+                    # If neither is embedded, merge the two.
+                    if not self.arcMerge(arc1, arc2):
+                        continue
+
+                    # arc1 was extended in place, so its interior now includes
+                    # the former shared node and arc2's interior notes.
+                    for elem in arc1[1:-1]:
+                        self.notes[elem].rule.name = 'E4'
+
+                    # self.arcs has changed: stop and rescan from scratch.
+                    return True
+
+            return False
 
         def gatherArcs(self):
             arc_label_counter = 0
