@@ -1226,9 +1226,10 @@ class Parser:
                             # added on 07-17-2025-07 to catch problem of 5-#6 in minor
                             if (self.context.key.mode == 'minor'
                                     and i.csd.direction == 'bidirectional'
-                                    and i.csd.value == 5
-                                    and self.notes[i.dependency.lefthead].csd.value == 4):
+                                    and i.csd.value % 7 == 5
+                                    and self.notes[i.dependency.lefthead].csd.value % 7 == 4):
                                 openHeads.append(j.index)
+                                return
                             else:
                                 i.dependency.righthead = j.index
                                 j.dependency.dependents.append(i.index)
